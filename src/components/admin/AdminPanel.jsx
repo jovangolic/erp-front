@@ -36,6 +36,7 @@ const AdminPanel = () => {
                     <Link to={"/manage-confirmationDocument"}>Manage Confirmation-Document</Link><br />
                     <Link to={"/manage-bar-Code"}>Manage Bar-Code</Link><br />
                     <Link to={"/manage-tokens"}>Manage Tokens</Link><br />
+                    
                 </>
             )}
 
@@ -43,6 +44,11 @@ const AdminPanel = () => {
             {user && user.roles.includes("SUPER_ADMIN") && (
                 <>
                     <Link to={"/manage-settings"}>System Settings</Link><br />
+                    <Link to={"/manage-dashboard"}>Manage Dashboard</Link><br />
+                    <Link to={"/manage-help"}>Manage Help</Link><br />
+                    <Link to={"/manage-option"}>Manage Option</Link><br />
+                    <Link to={"/manage-fileOpt"}>Manage FileOpt</Link><br />
+                    <Link to={"/manage-editOpt"}>Manage EditOpt</Link><br />
                     {/* Specifične opcije za super-admina */}
                 </>
             )}

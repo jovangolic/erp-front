@@ -6,9 +6,9 @@ const RequireAdminAuth = ({ children }) => {
     const { user } = useAuth();
 
     // Ako korisnik nije ulogovan ili nema odgovarajuću ulogu
-    if (!user || !user.roles.includes('ADMIN')) {
+    if (!user || (!user.roles.includes('ADMIN') && !user.roles.includes('SUPER_ADMIN'))) {
         return <Navigate to="/login" />;
-    }
+    }   
 
     return children;
 };

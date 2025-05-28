@@ -94,6 +94,30 @@ export async function getVendorByEmail(email){
     }
 }
 
+export async function getById(id){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vendors/get-one/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error, "Greska prilikom dobavljanja jednog");
+    }
+}
+
+export async function getAllVendors(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vendors/get-all-vendors`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error, "Greska prilikom dobavljanja svih");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

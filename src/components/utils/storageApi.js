@@ -192,6 +192,18 @@ export async function getByNameContainingIgnoreCase(name){
     }
 }
 
+export async function getAllStorage(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/get-all-storages`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error, "Greska prilikom dobavjanja svih skladista");
+    }
+}
+
 
 if (typeof data === 'object') {
   const messages = Object.entries(data)

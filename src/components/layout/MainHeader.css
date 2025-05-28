@@ -1,0 +1,50 @@
+/* src/layout/MainHeader.css */
+
+/* Stilovi za header banner */
+.header-banner {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Prilagodi visinu po potrebi */
+    background: url('path-to-your-image.jpg') no-repeat center center/cover;
+}
+
+/* Overlay stil */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Tamniji overlay */
+}
+
+/* Animirani tekst */
+.animated-texts {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+}
+
+.animated-title {
+    font-size: 3rem;
+    font-weight: bold;
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Fade-in animacija za tekst */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Stil za "hotel-color" */
+.hotel-color {
+    color: #FF6347; /* Primer boje (možeš prilagoditi) */
+}

@@ -1,16 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { hasRole } from "../auth/checkRole"; 
 
 const AdminPanel = () => {
-    const { user } = useAuth();  // Uzmi podatke o korisniku iz AuthProvider
+    const { user } = useAuth();
+
+    const isGeneralAdmin = hasRole(user, ["ADMIN", "SUPER_ADMIN", "STORAGE_FOREMAN", "STORAGE_EMPLOYEE"]);
+    const isSuperAdmin = hasRole(user, ["SUPER_ADMIN"]);
 
     return (
         <section className="container mt-5">
             <h2>Welcome to the Admin Panel</h2>
             <hr />
-            {/* Ove funkcionalnosti su dostupne samo adminu, smenovodji i magacioneru */}
-            {user && (user.roles.includes("ADMIN") || user.roles.includes("SUPER_ADMIN") || user.roles.includes("STORAGE_FOREMAN") || user.roles.includes("STORAGE_EMPLOYEE")) && (
+
+            {isGeneralAdmin && (
                 <>
                     <Link to={"/manage-users"}>Manage Users</Link><br />
                     <Link to={"/manage-roles"}>Manage Roles</Link><br />
@@ -36,12 +40,10 @@ const AdminPanel = () => {
                     <Link to={"/manage-confirmationDocument"}>Manage Confirmation-Document</Link><br />
                     <Link to={"/manage-bar-Code"}>Manage Bar-Code</Link><br />
                     <Link to={"/manage-tokens"}>Manage Tokens</Link><br />
-                    
                 </>
             )}
 
-            {/* Specifične opcije za SUPER_ADMIN */}
-            {user && user.roles.includes("SUPER_ADMIN") && (
+            {isSuperAdmin && (
                 <>
                     <Link to={"/manage-settings"}>System Settings</Link><br />
                     <Link to={"/manage-dashboard"}>Manage Dashboard</Link><br />
@@ -49,7 +51,6 @@ const AdminPanel = () => {
                     <Link to={"/manage-option"}>Manage Option</Link><br />
                     <Link to={"/manage-fileOpt"}>Manage FileOpt</Link><br />
                     <Link to={"/manage-editOpt"}>Manage EditOpt</Link><br />
-                    {/* Specifične opcije za super-admina */}
                 </>
             )}
         </section>

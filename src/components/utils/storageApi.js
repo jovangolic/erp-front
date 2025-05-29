@@ -1,33 +1,42 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 
-export async function createStorage(name,location,capacity, storageType){
-    try{
+export async function createStorage(name, location, capacity, shelves, type, goods) {
+    try {
         const requestBody = {
-            name:name, location:location, capacity:parseFloat(capacity),
-            type: storageType // Mora biti "PRODUCTION" ili "DISTRIBUTION"
+            name,
+            location,
+            capacity: parseFloat(capacity),
+            shelves,
+            goods, // dodato!
+            type: type.toUpperCase()
         };
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/storages/create/new-storage`,requestBody,{
-            headers:getHeader()
-        });
+
+        const response = await api.post(
+            `${import.meta.env.VITE_API_BASE_URL}/storages/create/new-storage`,
+            requestBody,
+            { headers: getHeader() }
+        );
         return response.data;
-    }
-    catch(error){
-        if(error.response && error.response.data){
+    } catch (error) {
+        if (error.response && error.response.data) {
             throw new Error(error.response.data);
-        }
-        else{
+        } else {
             throw new Error(`Greška prilikom kreiranja skladišta: ${error.message}`);
         }
     }
 }
 
-export async function updateStorage(storageId, name,location, capacity, storageType){
+export async function updateStorage(storageId, name,location, capacity, type, goods,shelves){
     try{
         const requestBody = {
-            id:storageId, name:name, location:location, capacity:parseFloat(capacity),
-            type: storageType.toUpperCase()};
-        
+            name,
+            location,
+            capacity: parseFloat(capacity),
+            shelves,
+            goods, // dodato!
+            type: type.toUpperCase()
+        };
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/storages/update/${storageId}`,requestBody,
             {
                 headers:getHeader()

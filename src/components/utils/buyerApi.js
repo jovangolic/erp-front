@@ -18,20 +18,20 @@ export async function createBuyer(companyName,pib, address,contactPerson, email,
     }
 }
 
-export async function updateBuyer(id,companyName, address,contactPerson, email, phoneNumber ){
-    try{
-        const requestBody = {companyName, pib, address, contactPerson, email, phoneNumber};
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/buyers/update/${id}`,requestBody,{
-            headers:getHeader()
-        });
+export async function updateBuyer(pib, companyName, address, contactPerson, email, phoneNumber) {
+    try {
+        const requestBody = { companyName, address, contactPerson, email, phoneNumber };
+        const response = await api.put(
+            `${import.meta.env.VITE_API_BASE_URL}/buyers/update/${pib}`,
+            requestBody,
+            { headers: getHeader() }
+        );
         return response.data;
-    }
-    catch(error){
-        if(error.response && error.response.data){
+    } catch (error) {
+        if (error.response && error.response.data) {
             throw new Error(error.response.data);
-        }
-        else{
-            throw new Error(`Greška prilikom azuriranja kupca: ${error.message}`);
+        } else {
+            throw new Error(`Greška prilikom ažuriranja kupca: ${error.message}`);
         }
     }
 }
@@ -98,6 +98,18 @@ export async function searchBuyers(keyword){
         return response.data;
     }catch(error){
         handleApiError(error, "Greska prilikom ptrezivanja kupca po zadatoj reci");
+    }
+}
+
+export async function getBuyerByPid(pib){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-pib/${pib}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom pretrage po pib-u");
     }
 }
 

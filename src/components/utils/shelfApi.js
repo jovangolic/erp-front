@@ -87,7 +87,7 @@ export async function existsByRowCountAndColumnAndStorageId(storageId, rowCount,
 
 export async function findByStorageId(storageId){
     try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}`,{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/by-storage/${storageId}`,{
             headers:getHeader()
         });
         return response.data;
@@ -132,6 +132,23 @@ export async function findByRowCountAndColsAndStorageId(storageId, rowCount, col
         handleApiError(error, "Greska prilikom pretrage po redu, koloni i storageId");
     }
 }
+
+export async function getShelfWithGoods(ishelfI){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/${shelfId}/with-goods`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska, polica je prazna");
+    }
+}
+
+export const getShelvesByStorageId = async (storageId) => {
+  const response = await api.get(`/shelves/by-storage/${storageId}`);
+  return response.data;
+};
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

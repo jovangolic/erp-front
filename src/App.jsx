@@ -7,6 +7,12 @@ import Registration from "./Registration";
 import AdminPanel from "./components/AdminPanel";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import Dashboard from "./components/dashboard/Dashboard";
+import EditBuyer from "./components/Buyer/EditBuyer";
+import InventoryList from "./components/Inventory/InventoryList";
+import StorageList from "./components/Storage/StorageList";
+import StorageGoods from "./components/Storage/StorageGoods";
+import StorageShelves from "./components/Storage/StorageShelves";
+
 
 const App = () => {
     return (
@@ -16,7 +22,11 @@ const App = () => {
                     {/* Javne rute */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Registration />} />
-                    
+                    <Route path="/buyers/edit/:pib" element={<EditBuyer />} />
+                    <Route path="/inventory/edit/:id" element={<InventoryList />} />
+                    <Route path="/storage" element={<StorageList />} />
+                    <Route path="/storage/:id/goods" element={<StorageGoods />} />
+                    <Route path="/storage/:id/shelves" element={<StorageShelves />} />
                     {/* Zaštićene rute, samo za ulogovane korisnike */}
                     <Route 
                         path="/profile" 

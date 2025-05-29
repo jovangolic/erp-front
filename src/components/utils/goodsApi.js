@@ -163,6 +163,11 @@ export async function findSingleByBarCode(barCode){
     }
 }
 
+export const getGoodsByStorageId = async (storageId) => {
+  const response = await api.get(`/goods/by-storage/${storageId}`);
+  return response.data;
+};
+
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

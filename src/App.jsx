@@ -59,3 +59,6 @@ const App = () => {
 };
 
 export default App;
+
+//git add .
+//warning: in the working copy of 'src/App.jsx', LF will be replaced by CRLF the next time Git touches it

@@ -75,9 +75,9 @@ const Login = () => {
                     <button type="submit" className="btn btn-hotel" style={{ marginRight: "10px" }}>
                         Login
                     </button>
-                    <span style={{ marginLeft: "10px" }}>
-                        Don't' have an account yet?<Link to={"/register"}> Register</Link>
-                    </span>
+                    {/* <span style={{ marginLeft: "10px" }}>
+                        Don't have an account yet?<Link to={"/register"}> Register</Link>
+                        </span> */}
                 </div>
             </form>
         </section>

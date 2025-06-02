@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./AuthProvider";
 import RequireAuth from "./RequireAuth"; // Importuj RequireAuth komponentu
 import Profile from "./Profile";
-import Login from "./Login";
+import Login from "./components/auth/Login";
 import Registration from "./Registration";
 import AdminPanel from "./components/AdminPanel";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -12,6 +12,9 @@ import InventoryList from "./components/Inventory/InventoryList";
 import StorageList from "./components/Storage/StorageList";
 import StorageGoods from "./components/Storage/StorageGoods";
 import StorageShelves from "./components/Storage/StorageShelves";
+import LandingPage from "./pages/LandingPage";
+import AdminCreateUser from "./components/admin/AdminCreateUser";
+import UserCreate from "./components/admin/UserCreate";
 
 
 const App = () => {
@@ -20,6 +23,7 @@ const App = () => {
             <Router>
                 <Routes>
                     {/* Javne rute */}
+                    <Route path="/" element={<LandingPage />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Registration />} />
                     <Route path="/buyers/edit/:pib" element={<EditBuyer />} />
@@ -36,6 +40,14 @@ const App = () => {
                             </RequireAuth>
                         } 
                     />
+                    <Route 
+                        path="/admin/create-user"
+                        element={
+                            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
+                                <AdminCreateUser />
+                            </ProtectedRoute>
+                        }
+                        />
                     <Route 
                         path="/admin-panel" 
                         element={

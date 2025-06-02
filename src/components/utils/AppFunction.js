@@ -126,6 +126,125 @@ export async function createUserByAdmin(registration){
     }
 }
 
+/*Funkcija za refresh token */
+export async function refreshToken(refreshToken) {
+    try {
+        const response = await api.post(`/auth/refresh`, { refreshToken });
+        return response.data;
+    } catch (error) {
+        console.error("Error refreshing token:", error);
+        throw error;
+    }
+}
 
+/* funckija za resetPasswordTest (za testiranje, privremeno)*/
+export async function resetPasswordTest(email, newPassword) {
+    try {
+        const response = await api.post(`/auth/reset-password-test`, null, {
+            params: { email, newPassword },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        throw error;
+    }
+}
+
+/*funkcija za getAllUsers*/
+export async function getAllUsers() {
+    try {
+        const response = await api.get(`/users/get-all`, {
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all users:", error);
+        throw error;
+    }
+}
+
+/*funkcija za getUserByEmail */
+export async function getUserByEmail(email) {
+    try {
+        const response = await api.get(`/users/email/${email}`, {
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching user by email:", error);
+        throw error;
+    }
+}
+
+/*funkcija za getUserByIdentifier*/
+export async function getUserByIdentifier(identifier) {
+    try {
+        const response = await api.get(`/users/identifier/${identifier}`, {
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching user by identifier:", error);
+        throw error;
+    }
+}
+
+export async function updateUser(userId, userUpdateData) {
+    try {
+        const response = await api.put(`/users/update/${userId}`, userUpdateData, {
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error updating user:", error);
+        throw error;
+    }
+}
+
+export async function getUsersByRole(roleName) {
+    try {
+        const response = await api.get(`/users/role/${roleName}`, {
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching users by role:", error);
+        throw error;
+    }
+}
+
+export async function getUserByUsername(username) {
+    try {
+        const response = await api.get(`/users/username/${username}`, {
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching user by username:", error);
+        throw error;
+    }
+}
+
+/*funkcija za createSuperAdmin */
+export async function createSuperAdmin(userRequest) {
+    try {
+        const response = await api.post(`/users/create-superadmin`, userRequest);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating super admin:", error);
+        throw error;
+    }
+}
+
+/*funkcija za createAdmin */
+export async function createAdmin(userRequest) {
+    try {
+        const response = await api.post(`/users/create-admin`, userRequest);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating admin:", error);
+        throw error;
+    }
+}
 
 

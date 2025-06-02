@@ -15,58 +15,67 @@ import StorageShelves from "./components/Storage/StorageShelves";
 import LandingPage from "./pages/LandingPage";
 import AdminCreateUser from "./components/admin/AdminCreateUser";
 import UserCreate from "./components/admin/UserCreate";
-
+import Sidebar from "./components/layout/Sidebar";
+import MainLayout from "./components/layout/MainLayout";
 
 const App = () => {
     return (
         <AuthProvider>
-            <Router>
-                <Routes>
-                    {/* Javne rute */}
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Registration />} />
-                    <Route path="/buyers/edit/:pib" element={<EditBuyer />} />
-                    <Route path="/inventory/edit/:id" element={<InventoryList />} />
-                    <Route path="/storage" element={<StorageList />} />
-                    <Route path="/storage/:id/goods" element={<StorageGoods />} />
-                    <Route path="/storage/:id/shelves" element={<StorageShelves />} />
-                    {/* Zaštićene rute, samo za ulogovane korisnike */}
-                    <Route 
-                        path="/profile" 
-                        element={
-                            <RequireAuth>
-                                <Profile />
-                            </RequireAuth>
-                        } 
-                    />
-                    <Route 
-                        path="/admin/create-user"
-                        element={
-                            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
-                                <AdminCreateUser />
-                            </ProtectedRoute>
-                        }
-                        />
-                    <Route 
-                        path="/admin-panel" 
-                        element={
-                            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "STORAGE_FOREMAN", "STORAGE_EMPLOYEE"]}>
-                                <AdminPanel />
-                            </ProtectedRoute>
-                        } 
-                    />
-                    <Route 
-                        path="/dashboard" 
-                        element={
-                            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        }
-                    />
-                </Routes>
-            </Router>
-        </AuthProvider>
+        <Router>
+            <Routes>
+            {/* Javne rute bez Sidebara */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Registration />} />
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Sve ostale rute sa Sidebar-om */}
+            <Route path="/" element={<MainLayout />}>
+                <Route path="buyers/edit/:pib" element={<EditBuyer />} />
+                <Route path="inventory/edit/:id" element={<InventoryList />} />
+                <Route path="storage" element={<StorageList />} />
+                <Route path="storage/:id/goods" element={<StorageGoods />} />
+                <Route path="storage/:id/shelves" element={<StorageShelves />} />
+
+                <Route
+                path="profile"
+                element={
+                    <RequireAuth>
+                    <Profile />
+                    </RequireAuth>
+                }
+                />
+
+                <Route
+                path="admin/create-user"
+                element={
+                    <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
+                    <AdminCreateUser />
+                    </ProtectedRoute>
+                }
+                />
+
+                <Route
+                path="admin-panel"
+                element={
+                    <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "STORAGE_FOREMAN", "STORAGE_EMPLOYEE"]}>
+                    <AdminPanel />
+                    </ProtectedRoute>
+                }
+                />
+
+                <Route
+                path="dashboard"
+                element={
+                    <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
+                    <Dashboard />
+                    </ProtectedRoute>
+                }
+                />
+                {/* Dodaj ostale rute koje zahtevaju Sidebar */}
+            </Route>
+            </Routes>
+        </Router>
+    </AuthProvider>
     );
 };
 

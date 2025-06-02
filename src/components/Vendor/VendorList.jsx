@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getAllVendors} from "../utils/vendorApi";
+import TableComponent from "../TableComponent/TableComponent";
 
 const VendorList = () => {
 
@@ -13,7 +14,14 @@ const VendorList = () => {
         fetchVenodrs();
     },[]);
 
-    return (
+    const columns = [
+        { header: "Name", accessor: "name" },
+        { header: "Email", accessor: "email" },
+        { header: "Phone-number", accessor: "phoneNumber" },
+        { header: "Address", accessor: "address" },
+    ];
+
+    /*return (
         <div>
             <h2>Vendors List</h2>
             <table className="table table-bordered">
@@ -27,7 +35,7 @@ const VendorList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {inventory.map(item => (
+                    {vendor.map(item => (
                         <tr key={item.id}>
                             <td>{item.name}</td>
                             <td>{item.email}</td>
@@ -41,6 +49,21 @@ const VendorList = () => {
                     ))}
                 </tbody>
             </table>
+        </div>
+    );*/
+    return (
+        <div>
+            <h2>Vendors List</h2>
+            <TableComponent 
+                columns={columns} 
+                data={vendor}
+                actions={(item) => (
+                    <>
+                        <button className="btn btn-warning btn-sm">Edit</button>
+                        <button className="btn btn-danger btn-sm ms-2">Delete</button>
+                    </>
+                )}
+            />
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
-
+import moment from "moment";
 
 export const createConfirmationDocument = async (filePath, userId, shiftId) => {
   const requestBody = {
@@ -8,27 +8,27 @@ export const createConfirmationDocument = async (filePath, userId, shiftId) => {
     shift: { id: shiftId }
   };
 
-  return await api.post('/confirmationDocuments/create/new-confirm-document', requestBody);
+  return await api.post('${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/create/new-confirm-document', requestBody);
 };
 
 export const getConfirmationDocumentById = async (id) => {
-  return await api.get(`/confirmationDocuments/get-one/${id}`);
+  return await api.get(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/get-one/${id}`);
 };
 
 export const getAllConfirmationDocuments = async () => {
-  return await api.get(`/confirmationDocuments/get-all`);
+  return await api.get(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/get-all`);
 };
 
 export const getDocumentsByUser = async (userId) => {
-  return await api.get(`/confirmationDocuments/by-user/${userId}`);
+  return await api.get(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/by-user/${userId}`);
 };
 
 export const getDocumentsCreatedAfter = async (isoDateTimeString) => {
-  return await api.get(`/confirmationDocuments/created-after/${isoDateTimeString}`);
+  return await api.get(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/created-after/${isoDateTimeString}`);
 };
 
 export const deleteConfirmationDocument = async (id) => {
-  return await api.delete(`/confirmationDocuments/delete/${id}`);
+  return await api.delete(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/delete/${id}`);
 };
 
 export const uploadDocument = async (file, userId, shiftId) => {
@@ -37,7 +37,7 @@ export const uploadDocument = async (file, userId, shiftId) => {
   formData.append("userId", userId);
   formData.append("shiftId", shiftId);
 
-  return await api.post("/confirmationDocuments/upload", formData, {
+  return await api.post(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data"
     }
@@ -52,7 +52,7 @@ export const uploadDocument = async (file, userId, shiftId) => {
 
 export const generateAndSaveDocument = async (goodsDispatchDTO) => {
   try {
-    const response = await api.post("/confirmationDocuments/generate", goodsDispatchDTO, {
+    const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/generate`, goodsDispatchDTO, {
       responseType: "blob", // očekuješ PDF fajl
     });
 
@@ -71,4 +71,25 @@ export const generateAndSaveDocument = async (goodsDispatchDTO) => {
     console.error("Greška prilikom generisanja dokumenta:", error);
     throw error;
   }
+};
+
+export async function updateConfirmationDocument(id, filePath, createdAt, userId, shiftId){
+  try{
+    const requestBody = {filePath, createdAt: moment(createdAt).format("YYYY-MM-DDTHH:mm:ss"),userId,shiftId};
+    const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/update/${id}`,requestBody,{
+      headers:getHeader()
+    });
+    return response.data;
+  }
+  catch(error){
+    console.error("Greška prilikom azuriranja dokumenta:", error);
+    throw error;
+  }
+}
+
+export const downloadConfirmationDocument = async (id) => {
+    const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/download/${id}`, {
+        responseType: 'blob' // Vrati PDF fajl kao binarni blob
+    });
+    return response;
 };

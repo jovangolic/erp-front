@@ -134,6 +134,18 @@ export async function getSalesByDate(date){
     }
 }
 
+export async function getAllSales(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/get-all-sales`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greksa prilikom dobavljanja svih prodaja");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

@@ -17,6 +17,10 @@ import AdminCreateUser from "./components/admin/AdminCreateUser";
 import UserCreate from "./components/admin/UserCreate";
 import Sidebar from "./components/layout/Sidebar";
 import MainLayout from "./components/layout/MainLayout";
+import ViewProcurement from "./components/Procurement/ViewProcurement";
+import EditProcurement from "./components/Procurement/EditProcurement";
+import ProcurementList from "./components/Procurement/ProcurementList";
+import AddProcurement from "./components/Procurement/AddProcurement";
 
 const App = () => {
     return (
@@ -27,7 +31,10 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/" element={<LandingPage />} />
-
+            <Route path="/procurements" element={<ProcurementList />} />
+            <Route path="/procurements/view/:procurementId" element={<ViewProcurement />} />
+            <Route path="/procurements/edit/:procurementId" element={<EditProcurement />} />
+            <Route path="/procurements/add" element={<AddProcurement />} />
             {/* Sve ostale rute sa Sidebar-om */}
             <Route path="/" element={<MainLayout />}>
                 <Route path="buyers/edit/:pib" element={<EditBuyer />} />

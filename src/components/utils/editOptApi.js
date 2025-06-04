@@ -1,6 +1,5 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-
 export async function createEditOpt(name,value,type,editable,visible){
     try{
         const requestBody = {name,value,type: (type || "").toUpperCase(),editable,visible};

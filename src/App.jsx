@@ -21,6 +21,19 @@ import ViewProcurement from "./components/Procurement/ViewProcurement";
 import EditProcurement from "./components/Procurement/EditProcurement";
 import ProcurementList from "./components/Procurement/ProcurementList";
 import AddProcurement from "./components/Procurement/AddProcurement";
+import HelpForm from "./components/admin/Help/HelpForm";
+import HelpList from "./components/admin/Help/HelpList";
+import HelpDetails from "./components/admin/Help/HelpDetails";
+import OptionForm from "./components/admin/Options/OptionForm";
+import OptionList from "./components/admin/Options/OptionList";
+import EditOptManager from "./components/admin/Options/EditOptManager";
+import PermissionManager from "./components/admin/Permissions/PermissionManager";
+import RoleManager from "./components/admin/Permissions/RoleManager";
+import ReportGenerator from "./components/admin/Reports/ReportGenerator";
+import ReportList from "./components/admin/Reports/ReportList";
+import RoleCreateForm from "./components/admin/RoleManagement/RoleCreateForm";
+import RoleList from "./components/admin/RoleManagement/RoleList";
+
 
 const App = () => {
     return (
@@ -35,6 +48,25 @@ const App = () => {
             <Route path="/procurements/view/:procurementId" element={<ViewProcurement />} />
             <Route path="/procurements/edit/:procurementId" element={<EditProcurement />} />
             <Route path="/procurements/add" element={<AddProcurement />} />
+            <Route path="/admin/options" element={<OptionList />} />
+            <Route path="/admin/options/new" element={<OptionForm />} />
+            <Route path="/admin/options/edit/:id" element={<OptionForm />} />
+            <Route path="/admin/edit-opts" element={<EditOptManager />} />
+            <Route path="/reports" element={<ReportList />} />
+            <Route path="/reports/generate" element={<ReportGenerator />} />
+            <Route path="/roles" element={<RoleList />} />
+            <Route path="/roles/create" element={<RoleCreateForm />} />
+            <Route path="/roles/edit/:id" element={<RoleCreateForm />} />
+                <nav>
+                <Link to="/permissions">Permisije</Link> |{" "}
+                <Link to="/roles">Uloge</Link>
+            </nav>
+            <Route path="/permissions" element={<PermissionManager />} />
+            <Route path="/roles" element={<RoleManager />} />
+            <Route path="/" element={<HelpList />} />
+            <Route path="/create" element={<HelpForm />} />
+            <Route path="/edit/:id" element={<HelpForm />} />
+            <Route path="/view/:id" element={<HelpDetails />} />
             {/* Sve ostale rute sa Sidebar-om */}
             <Route path="/" element={<MainLayout />}>
                 <Route path="buyers/edit/:pib" element={<EditBuyer />} />
@@ -78,6 +110,11 @@ const App = () => {
                     </ProtectedRoute>
                 }
                 />
+                <Route path="/admin/system-settings" element={
+                    <ProtectedRoute roles={["ROLE_ADMIN", "ROLE_SUPERADMIN"]}>
+                        <SystemSettings />
+                    </ProtectedRoute>
+                    } />
                 {/* Dodaj ostale rute koje zahtevaju Sidebar */}
             </Route>
             </Routes>

@@ -1,6 +1,4 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
-
-
 export async function createFileOpt(extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions){
     try{
         const requestBody = {extension: (extension || "").toUpperCase(),mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions};
@@ -82,6 +80,18 @@ export async function getByExtension(extension){
     }
     catch(error){
         handleApiError(error, "Greska prilikom dobavljanja prema ekstenziji");
+    }
+}
+
+export async function getByAction(action){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/by-availableActions/${action}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom dobavljanja prema akciji");
     }
 }
 

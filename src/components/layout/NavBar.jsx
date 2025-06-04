@@ -61,8 +61,29 @@ const NavBar = () => {
 
                         {/* Link za Admin sekciju, vidljiv samo za Admin i Super Admin */}
                         {isAdminOrSuperAdmin && (
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to="/admin-panel">Admin Panel</NavLink>
+                            <li className="nav-item dropdown">
+                                <a 
+                                    className="nav-link dropdown-toggle"
+                                    href="#"
+                                    id="adminDropdown"
+                                    role="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    Admin Panel
+                                </a>
+                                <ul className="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <NavLink className="dropdown-item" to="/admin/options">
+                                            Opcije
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink className="dropdown-item" to="/admin/edit-opts">
+                                            Editabilne opcije
+                                        </NavLink>
+                                    </li>
+                                </ul>
                             </li>
                         )}
                     </ul>
@@ -72,3 +93,7 @@ const NavBar = () => {
     );
 }
 export default NavBar;
+
+{/*/<li className="nav-item">
+    <NavLink className="nav-link" to="/admin-panel">Admin Panel</NavLink>
+</li> */}

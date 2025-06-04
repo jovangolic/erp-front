@@ -1,6 +1,5 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-
 export async function createOption(label,value,category,active){
     try{
         const requestBody = {label,value,category: (category || "").toUpperCase(),active};

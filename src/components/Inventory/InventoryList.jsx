@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { findAllInventories } from "../../utils/inventoryApi";  // API funkcija za dohvat svih inventara
+import { findAllInventories } from "../utils/inventoryApi";  
 import { Link } from "react-router-dom";
 import TableComponent from "../TableComponent/TableComponent";
 

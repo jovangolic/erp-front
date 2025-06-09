@@ -101,7 +101,7 @@ export async function searchBuyers(keyword){
     }
 }
 
-export async function getBuyerByPid(pib){
+export async function getBuyerByPib(pib){
     try{
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-pib/${pib}`,{
             headers:getHeader()

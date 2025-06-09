@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { loginUser } from "../utils/AppFunction";
+import { loginUser } from "../components/utils/AppFunction";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "../components/auth/AuthProvider";
 
 const LoginForm = ({ role }) => {
   const [errorMessage, setErrorMessage] = useState("");

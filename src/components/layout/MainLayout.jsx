@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Sidebar from "./components/layout/Sidebar";
+import Sidebar from "../layout/Sidebar";
 
 const MainLayout = () => {
   const location = useLocation();

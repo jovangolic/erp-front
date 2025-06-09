@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react"
-import jwt_decode from "jwt-decode"
+import { jwtDecode } from "jwt-decode"
 
 export const AuthContext = createContext({
     user: null,
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem("token")
         if (token) {
             try {
-                const decodedUser = jwt_decode(token)
+                const decodedUser = jwtDecode(token)
 
                 // ✅ Pozivamo proveru isteka tokena
                 if (isTokenExpired(decodedUser)) {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     const handleLogin = (token) => {
-        const decodedUser = jwt_decode(token)
+        const decodedUser = jwtDecode(token)
         localStorage.setItem("userId", decodedUser.sub)
         localStorage.setItem("userRole", decodedUser.roles) // Ovdje se dodaje ulogu korisnika
         localStorage.setItem("token", token) // Spremamo token u localStorage

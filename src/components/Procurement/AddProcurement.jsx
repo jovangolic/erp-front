@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Col, Row, Alert } from "react-bootstrap";
-import { createProcurement } from "../api/procurementApi";
+import { createProcurement } from "../utils/procurementApi";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

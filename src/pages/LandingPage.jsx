@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import LoginForm from "../auth/LoginForm";
+import LoginForm from "./LoginForm";
 
 const LandingPage = () => {
   const [selectedRole, setSelectedRole] = useState("");

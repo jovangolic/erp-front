@@ -8,7 +8,7 @@ export const api = axios.create({
 });
 
 // Helper za dohvat tokena
-const getToken = () => localStorage.getItem("token");
+export const getToken = () => localStorage.getItem("token");
 
 // Header za JSON zahteve
 export const getHeader = () => {
@@ -80,7 +80,9 @@ export async function deleteUser(userId){
 /*funkicja za logovanje, kao parametar se prosledjuje login objekat */
 export async function loginUser(login){
     try{
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login` , login);
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login` , login,{
+            headers:getHeader()
+        });
         if(response.status >= 200 && response.status < 300){
             return response.data
         }
@@ -97,7 +99,9 @@ export async function loginUser(login){
 /*Za rucnu registraciju korisnika tacnije da se korisnik sam registruje */
 export async function registerUser(registration){
     try{
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register-user`, registration);
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/register-user`, registration,{
+            headers:getHeader()
+        });
         return response.data
     }
     catch(error){
@@ -113,7 +117,9 @@ export async function registerUser(registration){
 /*Funkcija za kreiranje zaposlenog od strane admina */
 export async function createUserByAdmin(registration){
     try{
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/create-user`,registration);
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/create-user`,registration,{
+            headers:getHeader()
+        });
         return response.data;
     }
     catch(error){
@@ -129,7 +135,9 @@ export async function createUserByAdmin(registration){
 /*Funkcija za refresh token */
 export async function refreshToken(refreshToken) {
     try {
-        const response = await api.post(`/auth/refresh`, { refreshToken });
+        const response = await api.post(`/auth/refresh`, { refreshToken },{
+            headers:getHeader()
+        });
         return response.data;
     } catch (error) {
         console.error("Error refreshing token:", error);
@@ -228,7 +236,9 @@ export async function getUserByUsername(username) {
 /*funkcija za createSuperAdmin */
 export async function createSuperAdmin(userRequest) {
     try {
-        const response = await api.post(`/users/create-superadmin`, userRequest);
+        const response = await api.post(`/users/create-superadmin`, userRequest,{
+            headers:getHeader()
+        });
         return response.data;
     } catch (error) {
         console.error("Error creating super admin:", error);
@@ -239,7 +249,9 @@ export async function createSuperAdmin(userRequest) {
 /*funkcija za createAdmin */
 export async function createAdmin(userRequest) {
     try {
-        const response = await api.post(`/users/create-admin`, userRequest);
+        const response = await api.post(`/users/create-admin`, userRequest,{
+            headers:getHeader()
+        });
         return response.data;
     } catch (error) {
         console.error("Error creating admin:", error);

@@ -1,4 +1,4 @@
-import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
+import { api, getHeader, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
 export async function createSupplyItem(procurementId, vendorId, cost){

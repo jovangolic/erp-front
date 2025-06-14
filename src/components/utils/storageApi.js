@@ -1,6 +1,5 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-
 export async function createStorage(name, location, capacity, shelves, type, goods) {
     try {
         const requestBody = {

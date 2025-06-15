@@ -3,23 +3,66 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/shipments`
 
-export async function create(shipmentDate,status,providerId,outboundDeliveryId,trackingInfo,originStorageId){
-    try{
-        const requestBody = {shipmentDate:moment(shipmentDate).format("YYYY-MM-DD"),status:(status || "").toUpperCase(), providerId,outboundDeliveryId,trackingInfo,originStorageId};
-        const response = await api.post(url+`/create/new-shipment`,requestBody,{
-            headers:getHeader()
+const validateStatus = ["PENDING","SHIPPED","IN_TRANSIT","DELIVERED","DELAYED","CANCELLED"];
+export function isValidShipmentData({
+  status,
+  validateStatus = [],
+  shipmentDate,
+  storageId,
+  providerId,
+  outboundDeliveryId,
+  trackingInfo = {}
+}) {
+  // Validacija statusa po enum vrednostima
+  if (!status || !validateStatus.includes(status.toUpperCase())) {
+    return false;
+  }
+
+  // Validacija datuma
+  if (!shipmentDate || !moment(shipmentDate, "YYYY-MM-DD", true).isValid()) {
+    return false;
+  }
+
+  // Osnovne vrednosti
+  if (!storageId || !providerId || !outboundDeliveryId) {
+    return false;
+  }
+
+  // Validacija trackingInfo objekta
+  if (
+    !trackingInfo.trackingNumber ||
+    !trackingInfo.currentLocation ||
+    !trackingInfo.estimatedDelivery ||
+    !moment(trackingInfo.estimatedDelivery, "YYYY-MM-DD", true).isValid() ||
+    !trackingInfo.currentStatus ||
+    !validateStatus.includes(trackingInfo.currentStatus.toUpperCase())
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+export async function createShipment(data) {
+    if (!isValidShipmentData({ ...data, validateStatus })) {
+        throw new Error("Sva polja moraju biti popunjena i validna.");
+    }
+    try {
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/shipments/create`, data, {
+        headers: getHeader()
         });
         return response.data;
-    }
-    catch(error){
-        handleApiError(error, "Greska prilikom kreiranja shipment-a");
+    } catch (error) {
+        handleApiError(error, "Greška prilikom kreiranja pošiljke");
     }
 }
 
-export async function update(id,shipmentDate,status,providerId,outboundDeliveryId,trackingInfo,originStorageId ){
+export async function update(id,date){
     try{
-        const requestBody = {shipmentDate:moment(shipmentDate).format("YYYY-MM-DD"),status:(status || "").toUpperCase(), providerId,outboundDeliveryId,trackingInfo,originStorageId};
-        const response = await api.put(url+`/update/${id}`,requestBody,{
+        if (!isValidShipmentData({ ...data, validateStatus })) {
+            throw new Error("Sva polja moraju biti popunjena i validna.");
+        }
+        const response = await api.put(url+`/update/${id}`,date,{
             headers:getHeader()
         });
         return response.data;

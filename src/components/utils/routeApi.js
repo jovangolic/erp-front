@@ -3,6 +3,9 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/routes`;
 
 export async function create(origin,destination,distanceKm){
+    if (!origin || !destination || distanceKm == null || distanceKm <= 0) {
+        throw new Error("Sva polja moraju biti ispravno popunjena.");
+    }
     try{
         const requestBody = {origin,destination, distanceKm};
         const response = await api.post(url+`/create/new-route`,requestBody,{

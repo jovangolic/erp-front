@@ -105,6 +105,10 @@ export async function findAll(){
 
 export async function findByStatus(status){
     try{
+        if (!status || typeof status !== "string") {
+            alert("Status transfera nije validan.");
+            return false;
+        }
         const response = await api.get(url+`/by-status`,{
             params:{
                 status:(status || "").toUpperCase()
@@ -120,6 +124,10 @@ export async function findByStatus(status){
 
 export async function findByTransferDate(date){
     try{
+        if (!date || !moment(date, "YYYY-MM-DD", true).isValid()) {
+            alert("Molimo unesite ispravan datum transfera.");
+            return;
+        }
         const response = await api.get(url+`/transfer-date`,{
             params:{
                 date:moment(date).format("YYYY-MM-DD")
@@ -264,7 +272,11 @@ export async function findByToStorage_Type(toStorageType){
 }
 
 export async function findByStatusAndDateRange(status, start, end){
-    try{    
+    try{ 
+        if (!status || typeof status !== "string") {
+            alert("Status transfera nije validan.");
+            return false;
+        }
         const response = await api.get(url+`/status-and-date-range`,{
             params:{
                 status:(status || "").toUpperCase(),

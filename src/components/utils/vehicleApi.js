@@ -1,6 +1,12 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
+const validateStatus = ["AVAILABLE","IN_USE","UNDER_MAINTENANCE","OUT_OF_SERVICE","RESERVED"];
+
 export async function createVehicle(registrationNumber,model,status){
+    if(!registrationNumber || registrationNumber.trim() === "" || !model || model.trim() ===""|| 
+    !status || !validateStatus.includes(status.toUpperCase())){
+        throw new Error("Sva polja moraju biti popunjena");
+    }
     try{
         const requestBody = {registrationNumber, model, status:(status || "").toUpperCase()};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/vehicles/create/new-vehicle`,requestBody,{
@@ -14,6 +20,10 @@ export async function createVehicle(registrationNumber,model,status){
 }
 
 export async function updateVehicle(id,registrationNumber,model,status){
+    if(!registrationNumber || registrationNumber.trim() === "" || !model || model.trim() ===""|| 
+    !status || !validateStatus.includes(status.toUpperCase())){
+        throw new Error("Sva polja moraju biti popunjena");
+    }
     try{
         const requestBody = {registrationNumber, model, status:(status || "").toUpperCase()};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/vehicles/update/${id}`,requestBody,{
@@ -68,7 +78,7 @@ export async function findByModel(model){
             params:{
                 model:model
             },
-            heeaders:getHeader()
+            headers:getHeader()
         });
         return response.data;
     }

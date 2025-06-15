@@ -1,8 +1,11 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-const url = '${import.meta.env.VITE_API_BASE_URL}/drivers';
+const url = `${import.meta.env.VITE_API_BASE_URL}/drivers`;
 
 export async function createDriver(name, phone){
+    if (!name || !phone || name.trim() === "" || phone.trim() === "") {
+        throw new Error("Ime i broj telefona ne smeju biti prazni.");
+    }
     try{
         const requestBody = {name, phone};
         const response = await api.post(url+`/create/new-driver`,requestBody,{
@@ -16,6 +19,9 @@ export async function createDriver(name, phone){
 }
 
 export async function updateDriver(id, name, phone){
+    if (!name || !phone || name.trim() === "" || phone.trim() === "") {
+        throw new Error("Ime i broj telefona ne smeju biti prazni.");
+    }
     try{
         const requestBody = {name, phone};
         const response = await api.put(url+`/update/${id}`,requestBody,{

@@ -2,9 +2,12 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/logistics-providers`;
 
-export async function create(name, contactPhone, eamil,website){
+export async function create(name, contactPhone, email,website){
     try{
-        const requestBody = {name, contactPhone, eamil, website};
+        if(!name || name.trim()==="" || contactPhone || contactPhone.trim()==="" || !email || email.trim()==="" || !website || website.trim() ===""){
+            throw new Error("Ime i broj telefona ne smeju biti prazni.");
+        }
+        const requestBody = {name, contactPhone, email, website};
         const response = await api.post(url+`/create/new/logistics-provider`,requestBody,{
             headers:getHeader()
         });
@@ -15,9 +18,12 @@ export async function create(name, contactPhone, eamil,website){
     }
 }
 
-export async function update(id, name, contactPhone, eamil,website){
+export async function update(id, name, contactPhone, email,website){
     try{
-        const requestBody = {name, contactPhone, eamil, website};
+        if(!name || name.trim()==="" || contactPhone || contactPhone.trim()==="" || !email || email.trim()==="" || !website || website.trim() ===""){
+            throw new Error("Ime i broj telefona ne smeju biti prazni.");
+        }
+        const requestBody = {name, contactPhone, email, website};
         const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });

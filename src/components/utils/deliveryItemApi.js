@@ -3,9 +3,12 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/delivery-items`;
 
-export async function createinboundDeliveryId(productId,quantity,inboundDeliveryId,outbouboundDeliveryId){
+export async function createinboundDeliveryId(productId,quantity,inboundDeliveryId,outboundDeliveryId){
+    if(!productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
+        throw new Error("Sva polja moraju biti popunjena");
+    }
     try{
-        const requestBody = {productId, quantity,inboundDeliveryId, outbouboundDeliveryId};
+        const requestBody = {productId, quantity,inboundDeliveryId, outboundDeliveryId};
         const response = await api.post(url+`/create/new-delivery-item`,requestBody,{
             headers:getHeader()
         });
@@ -16,9 +19,12 @@ export async function createinboundDeliveryId(productId,quantity,inboundDelivery
     }
 }
 
-export async function update(id,productId,quantity,inboundDeliveryId,outbouboundDeliveryId){
+export async function update(id,productId,quantity,inboundDeliveryId,outboundDeliveryId){
     try{    
-        const requestBody = {productId, quantity,inboundDeliveryId, outbouboundDeliveryId};
+        if(!productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
+            throw new Error("Sva polja moraju biti popunjena");
+        }
+        const requestBody = {productId, quantity,inboundDeliveryId, outboundDeliveryId};
         const response = await api.put(utl+`/update/${id}`,requestBody,{
             headers:getHeader()
         });

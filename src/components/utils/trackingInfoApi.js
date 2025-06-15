@@ -2,13 +2,37 @@ import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/trackingInfos`;
+const validateStatus = ["PENDING","SHIPPED","IN_TRANSIT","DELIVERED","DELAYED","CANCELLED"];
 
-export async function create(trackingNumber, currentLocation,estimatedDelivery,currentStatus,shipmentId){
+export function isValidTrackingInfo({
+  trackingNumber,
+  currentLocation,
+  estimatedDelivery,
+  currentStatus,
+  shipmentId
+}) {
+  if (
+    !trackingNumber ||
+    !currentLocation ||
+    !estimatedDelivery ||
+    (!moment(estimatedDelivery, "YYYY-MM-DD", true).isValid() &&
+     !moment(estimatedDelivery).isValid()) ||
+    !currentStatus ||
+    !validateStatus.includes(currentStatus.toUpperCase()) ||
+    !shipmentId
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+export async function create(date){
     try{
-        const requestBody = {trackingNumber, currentLocation, estimatedDelivery:moment(estimatedDelivery).format("YYYY-MM-DD"),
-            currentStatus:(currentStatus || "").toUpperCase(), shipmentId
-        };
-        const response = await api.post(url+`/create/new-trackingInfo`,requestBody,{
+        if(!isValidTrackingInfo({...date,validateStatus})){
+            throw new Error("Sva polja moraju biti popunjena i validna.");
+        }
+        const response = await api.post(url+`/create/new-trackingInfo`,date,{
             headers:getHeader()
         });
         return response.data;
@@ -18,12 +42,12 @@ export async function create(trackingNumber, currentLocation,estimatedDelivery,c
     }
 }
 
-export async function update(id,trackingNumber, currentLocation,estimatedDelivery,currentStatus,shipmentId){
+export async function update(id,date){
     try{
-       const requestBody = {trackingNumber, currentLocation, estimatedDelivery:moment(estimatedDelivery).format("YYYY-MM-DD"),
-            currentStatus:(currentStatus || "").toUpperCase(), shipmentId
-        };
-        const response = await api.put(url+`/update/${id}`,requestBody,{
+       if(!isValidTrackingInfo({...date,validateStatus})){
+            throw new Error("Sva polja moraju biti popunjena i validna.");
+        }
+        const response = await api.put(url+`/update/${id}`,date,{
             headers:getHeader()
         });
         return response.data;
@@ -86,6 +110,9 @@ export async function findByTrackingNumber(trackingNumber){
 
 export async function findByShipmentId(shipmentId){
     try{
+        if(!shipmentId){
+            throw new Error("ID prenosa mora biti prosleđen.");
+        }
         const response = await api.get(url+`/shipment/${shipmentId}`,{
             headers:getHeader()
         });
@@ -114,6 +141,9 @@ export async function findByEstimatedDeliveryBetween(start, end){
 
 export async function findByCurrentLocationAndCurrentStatus(location, status){
     try{
+        if(!location || !validateStatus.includes(status.toUpperCase())){
+            throw new Error("Location and status moraju biti popunjeni");
+        }
         const response = await api.get(url+`/by-location-status`,{
             params:{
                 location:location,
@@ -184,7 +214,6 @@ export async function findByUpdatedAtBetween(from, to){
     }
     catch(error){
         handleApiError(error, "Greska prema azuriranju izmedju datuma");
-        return resp
     }
 }
 

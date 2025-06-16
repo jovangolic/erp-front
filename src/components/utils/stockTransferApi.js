@@ -3,6 +3,8 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransfers`;
 
+const validateStatus = ["INITIATED","IN_TRANSIT","COMPLETED","CANCELLED"];
+
 export async function create(transferDate, fromStorageId,toStorageId,status, itemRequest){
     try{
         // 1. Provera datuma
@@ -69,6 +71,9 @@ export async function update(id,transferDate, fromStorageId,toStorageId,status, 
 
 export async function deleteStockTransfer (id) {
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -81,6 +86,9 @@ export async function deleteStockTransfer (id) {
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });

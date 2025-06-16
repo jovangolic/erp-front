@@ -59,6 +59,9 @@ export async function update(id,date){
 
 export async function deleteTrackingInfo(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -71,6 +74,9 @@ export async function deleteTrackingInfo(id){
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
@@ -125,6 +131,11 @@ export async function findByShipmentId(shipmentId){
 
 export async function findByEstimatedDeliveryBetween(start, end){
     try{
+        const isStartValid = moment(start, "YYYY-MM-DD", true).isValid();
+        const isEndValid = moment(end, "YYYY-MM-DD", true).isValid();
+            if (!isStartValid || !isEndValid) {
+              return false;
+            }
         const response = await api.get(url+`/estimated-time-delivery`,{
             params:{
                 start:moment(start).format("YYYY-MM-DD"),
@@ -160,6 +171,10 @@ export async function findByCurrentLocationAndCurrentStatus(location, status){
 
 export async function findByEstimatedDelivery(date){
     try{
+        if(!date || !moment(date, "YYYY-MM-DD", true).isValid()) {
+             alert("Molimo unesite ispravan datum transfera.");
+             return;
+         }
         const response = await api.get(url+`/estimated-delivery`,{
             params:{
                 date:moment(date).format("YYYY-MM-DD")
@@ -187,6 +202,11 @@ export async function findAllByOrderByEstimatedDeliveryAsc(){
 
 export async function findByCreatedAtBetween(from, to){
     try{
+        const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
+        const isToValid = moment(to, "YYYY-MM-DD", true).isValid();
+        if (!isFromValid || !isToValid) {
+            return false;
+        }
         const response = await api.get(url+`/create-date-between`,{
             params:{
                 from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
@@ -203,6 +223,11 @@ export async function findByCreatedAtBetween(from, to){
 
 export async function findByUpdatedAtBetween(from, to){
     try{
+        const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
+        const isToValid = moment(to, "YYYY-MM-DD", true).isValid();
+        if (!isFromValid || !isToValid) {
+              return false;
+        }
         const response = await api.get(url+`/update-between`,{
             params:{
                 from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
@@ -219,6 +244,10 @@ export async function findByUpdatedAtBetween(from, to){
 
 export async function findByUpdatedAtAfter(date){
     try{
+        if (!date || !moment(date, "YYYY-MM-DD", true).isValid()) {
+            alert("Molimo unesite ispravan datum transfera.");
+            return;
+        }
         const response = await api.get(url+`/update-after`,{
             params:{
                 date:moment(date).format("YYYY-MM-DDTHH:mm:ss")

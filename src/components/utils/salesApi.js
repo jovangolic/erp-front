@@ -3,6 +3,14 @@ import moment from "moment";
 
 export async function createSales(buyerId, itemSales, createdAt, totalPrice, salesDescription) {
     try {
+        if(
+            !buyerId || !Array.isArray(itemSales) || itemSales.length === 0 ||
+            !moment(createSales,moment.ISO_8601, true).isValid() ||
+            isNaN(totalPrice) || parseFloat(totalPrice) <= 0 ||
+            !salesDescription || typeof salesDescription !== "string" || salesDescription.trim() === ""
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {
             buyerId,
             itemSales,
@@ -27,6 +35,15 @@ export async function createSales(buyerId, itemSales, createdAt, totalPrice, sal
 
 export async function updateSales(id, buyerId, itemSales, createdAt, totalPrice, salesDescription) {
     try {
+        if(
+            !id ||
+            !buyerId || !Array.isArray(itemSales) || itemSales.length === 0 ||
+            !moment(createSales,moment.ISO_8601, true).isValid() ||
+            isNaN(totalPrice) || parseFloat(totalPrice) <= 0 ||
+            !salesDescription || typeof salesDescription !== "string" || salesDescription.trim() === ""
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {
             buyerId,
             itemSales,
@@ -51,6 +68,9 @@ export async function updateSales(id, buyerId, itemSales, createdAt, totalPrice,
 
 export async function deleteSales(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/sales/delete/sale/${id}`,{
             headers:getHeader()
         });
@@ -63,6 +83,12 @@ export async function deleteSales(id){
 
 export async function getByCreatedAtBetween(startDate, endDate){
     try{
+        if(
+            !moment(startDate,moment.ISO_8601, true).isValid() ||
+            !moment(endDate,moment.ISO_8601, true).isValid()
+        ){
+            throw new Error("Opseg datuma mora biti ispravan");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/between-dates`,{
             params:{
                 startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
@@ -79,6 +105,9 @@ export async function getByCreatedAtBetween(startDate, endDate){
 
 export async function getSalesByBuyer(buyerId){
     try{
+        if(!buyerId){
+            throw new Error("Dati buyerId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/get-by-buyer`,{
             params:{
                 buyerId:buyerId
@@ -94,6 +123,9 @@ export async function getSalesByBuyer(buyerId){
 
 export async function getByTotalPrice(totalPrice){
     try{
+        if(isNaN(totalPrice) || parseFloat(totalPrice) <= 0){
+            throw new Error("Ukupna cena mora biti pozitivan broj");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/sale/total-price`,{
             params:{
                 totalPrice:parseFloat(totalPrice)
@@ -109,6 +141,9 @@ export async function getByTotalPrice(totalPrice){
 
 export async function findBySalesId(salesId){
     try{
+        if(!salesId){
+            throw new Error("Dati salesId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/sale/${salesId}`,{
             headers:getHeader()
         });
@@ -121,6 +156,9 @@ export async function findBySalesId(salesId){
 
 export async function getSalesByDate(date){
     try{
+        if (typeof date !== "string" || !moment(date, moment.ISO_8601, true).isValid()) {
+            throw new Error("Datum mora biti validan ISO string.");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/sale-by-date`,{
             params:{
                 date: moment(date).format("YYYY-MM-DD")

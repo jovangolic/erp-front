@@ -1,26 +1,75 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-export async function createSuperAdmin(firstName,lastName,email,username,password,phoneNumber, address,roleIds){
-    try{
-        const requestBody = {firstName,lastName,email,username,password,phoneNumber,address,roleIds};
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/users/create-superadmin`,requestBody,{
-            headers:getHeader()
-        });
-        return response.data;
+export async function createSuperAdmin(
+  firstName, lastName, email, username, password, phoneNumber, address, roleIds
+) {
+  try {
+    // VALIDACIJA
+    if (
+      !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
+      !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
+      !email || typeof email !== "string" || email.trim() === "" ||
+      !username || typeof username !== "string" || username.trim() === "" ||
+      !password || typeof password !== "string" || password.trim() === "" || password.length < 6 ||
+      !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
+      !address || typeof address !== "string" || address.trim() === "" ||
+      !(roleIds instanceof Set) || roleIds.size === 0
+    ) {
+      throw new Error("Sva polja moraju biti popunjena i validna.");
     }
-    catch(error){
-        if(error.response && error.response.data){
-            throw new Error(error.response.data);
-        }
-        else{
-            throw new Error(`Greška prilikom kreiranja naloga za super-admina: ${error.message}`);
-        }
+    // Pretvaranje seta u niz, ako backend očekuje listu (što verovatno jeste slučaj)
+    const roleIdsArray = Array.from(roleIds);
+    const requestBody = {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      phoneNumber,
+      address,
+      roleIds: roleIdsArray
+    };
+    const response = await api.post(
+      `${import.meta.env.VITE_API_BASE_URL}/users/create-superadmin`,
+      requestBody,
+      { headers: getHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw new Error(error.response.data);
+    } else {
+      throw new Error(`Greška prilikom kreiranja naloga za super-admina: ${error.message}`);
     }
+  }
 }
 
 export async function createUserByAdmin(firstName,lastName,email,username,password,phoneNumber, address,roleIds){
     try{
-        const requestBody = {firstName,lastName,email,username,password,phoneNumber,address,roleIds};
+        if (
+      !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
+      !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
+      !email || typeof email !== "string" || email.trim() === "" ||
+      !username || typeof username !== "string" || username.trim() === "" ||
+      !password || typeof password !== "string" || password.trim() === "" || password.length < 6 ||
+      !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
+      !address || typeof address !== "string" || address.trim() === "" ||
+      !(roleIds instanceof Set) || roleIds.size === 0
+    ) {
+      throw new Error("Sva polja moraju biti popunjena i validna.");
+    }
+    // Pretvaranje seta u niz, ako backend očekuje listu (što verovatno jeste slučaj)
+    const roleIdsArray = Array.from(roleIds);
+    const requestBody = {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      phoneNumber,
+      address,
+      roleIds: roleIdsArray
+    };
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/users/admin/create-user`,requestBody,{
             headers:getHeader()
         });
@@ -50,7 +99,30 @@ export async function getAllUsers(){
 
 export async function createAdmin(firstName,lastName,email,username,password,phoneNumber, address,roleIds){
     try{
-        const requestBody = {firstName,lastName,email,username,password,phoneNumber,address,roleIds};
+        if (
+      !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
+      !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
+      !email || typeof email !== "string" || email.trim() === "" ||
+      !username || typeof username !== "string" || username.trim() === "" ||
+      !password || typeof password !== "string" || password.trim() === "" || password.length < 6 ||
+      !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
+      !address || typeof address !== "string" || address.trim() === "" ||
+      !(roleIds instanceof Set) || roleIds.size === 0
+    ) {
+      throw new Error("Sva polja moraju biti popunjena i validna.");
+    }
+    // Pretvaranje seta u niz, ako backend očekuje listu (što verovatno jeste slučaj)
+    const roleIdsArray = Array.from(roleIds);
+    const requestBody = {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      phoneNumber,
+      address,
+      roleIds: roleIdsArray
+    };
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/users/create-admin`,requestBody,{
             headers:getHeader()
         });
@@ -68,6 +140,9 @@ export async function createAdmin(firstName,lastName,email,username,password,pho
 
 export async function deleteUser(userId){
     try{
+        if(!userId){
+            throw new Error("Dati userId nij pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/users/delete/${userId}`,{
             headers:getHeader()
         });
@@ -80,6 +155,9 @@ export async function deleteUser(userId){
 
 export async function getUserByEmail(email){
     try{
+        if(!email || typeof email !=="string" || email.trim()===""){
+            throw new Error("Dati email nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/users/email/${email}`,{
             headers:getHeader()
         });
@@ -92,6 +170,9 @@ export async function getUserByEmail(email){
 
 export async function getUserByIdentifier(identifier){
     try{
+        if(!identifier || typeof identifier !=="string" || identifier.trim()===""){
+            throw new Error("Dati identifier nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/users/identifier/${identifier}`,{
             headers:getHeader()
         });
@@ -104,6 +185,9 @@ export async function getUserByIdentifier(identifier){
 
 export async function getUserById(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/users/${id}`,{
             headers:getHeader()
         });
@@ -116,7 +200,31 @@ export async function getUserById(id){
 
 export async function updateUser(id,firstName,lastName,email,username,password,phoneNumber, address,roleIds ){
     try{
-        const requestBody = {firstName,lastName,email,username,password,phoneNumber, address,roleIds};
+        if (
+      !id ||      
+      !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
+      !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
+      !email || typeof email !== "string" || email.trim() === "" ||
+      !username || typeof username !== "string" || username.trim() === "" ||
+      !password || typeof password !== "string" || password.trim() === "" || password.length < 6 ||
+      !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
+      !address || typeof address !== "string" || address.trim() === "" ||
+      !(roleIds instanceof Set) || roleIds.size === 0
+    ) {
+      throw new Error("Sva polja moraju biti popunjena i validna.");
+    }
+    // Pretvaranje seta u niz, ako backend očekuje listu (što verovatno jeste slučaj)
+    const roleIdsArray = Array.from(roleIds);
+    const requestBody = {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      phoneNumber,
+      address,
+      roleIds: roleIdsArray
+    };
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/users/update/${id}`,requestBody,{
             headers:getHeader()
         });
@@ -146,6 +254,9 @@ export async function getUsersByRole(roleName){
 
 export async function getUserByUsername(username){
     try{
+        if(!username || typeof username !=="string" || username.trim()===""){
+            throw new Error("username mora biti popunjeno");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/users/username/${username}`,{
             headers:getHeader()
         });

@@ -38,6 +38,9 @@ export async function updateVehicle(id,registrationNumber,model,status){
 
 export async function deleteVehicle(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/vehicles/delete/${id}`,{
             headers:getHeader()
         });
@@ -50,6 +53,9 @@ export async function deleteVehicle(id){
 
 export async function findOneById(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/find-one/${id}`,{
             headers:getHeader()
         });
@@ -74,6 +80,9 @@ export async function findAll(){
 
 export async function findByModel(model){
     try{
+        if(!model){
+            throw new Error("Dati model nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/find-by-model`,{
             params:{
                 model:model
@@ -89,6 +98,9 @@ export async function findByModel(model){
 
 export async function findByRegistrationNumber(registrationNumber){
     try{
+        if(!registrationNumber){
+            throw new Error("RegistrationNumber nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/by-registration-number`,{
             params:{
                 registrationNumber:registrationNumber
@@ -104,6 +116,9 @@ export async function findByRegistrationNumber(registrationNumber){
 
 export async function findByStatus(status){
     try{
+        if(!validateStatus.includes(status.toUpperCase())){
+            throw new Error("Status vozila nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/status`,{
             params:{
                 status:(status || "").toUpperCase()
@@ -119,6 +134,9 @@ export async function findByStatus(status){
 
 export async function findByModelAndStatus(model, status){
     try{
+        if(!model || !validateStatus.includes(status.toUpperCase())){
+            throw new Error("Model i status vozila nisu pronadjeni");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/filter-by-model-and-status`,{
             params:{
                 model:model,
@@ -150,6 +168,9 @@ export async function search(key){
 
 export async function filterVehicles(model, status){
     try{
+        if(!model || !validateStatus.includes(status.toUpperCase())){
+            throw new Error("Model i status vozila nisu pronadjeni");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/filter`,{
             params:{
                 model:model,
@@ -166,6 +187,9 @@ export async function filterVehicles(model, status){
 
 export async function findByModelContainingIgnoreCase(modelFragment){
     try{
+        if(!modelFragment){
+            throw new Error("Pretraga po fragmentu modela nije pronadjena");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/modelFragment`,{
             params:{
                 modelFragment:modelFragment

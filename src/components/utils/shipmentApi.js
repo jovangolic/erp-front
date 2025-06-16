@@ -74,6 +74,9 @@ export async function update(id,date){
 
 export async function deleteShipment(id){
     try{
+        if(!id){
+            throw new Error(`ID nije pronadjen`);
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -86,6 +89,9 @@ export async function deleteShipment(id){
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
@@ -110,6 +116,9 @@ export async function findAll(){
 
 export async function findByOutboundDeliveryId(outboundId){
     try{
+        if(!outboundId){
+            throw new Error("Dati outboundId nije pronadjen");
+        }
         const response = await api.get(url+`/outboundDelivery/${outboundId}`,{
             headers:getHeader()
         });
@@ -122,6 +131,9 @@ export async function findByOutboundDeliveryId(outboundId){
 
 export async function findByStatus(status){
     try{
+        if(!validateStatus.includes(status.toUpperCase())){
+            throw new Error("Status nije pronadjen");
+        }
         const response = await api.get(url+`/shipment-status`,{
             params:{
                 status:(status || "").toUpperCase()
@@ -137,6 +149,11 @@ export async function findByStatus(status){
 
 export async function findByShipmentDateBetween(from, to) {
     try{
+        const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
+        const isToValid = moment(to, "YYYY-MM-DD", true).isValid();
+        if (!isFromValid || !isToValid) {
+            return false;
+         }
         const response = await api.get(url+`/date-ranges`,{
             params:{
                 from:moment(from).format("YYYY-MM-DD"),
@@ -153,6 +170,9 @@ export async function findByShipmentDateBetween(from, to) {
 
 export async function findByProviderId(providerId){
     try{
+        if(!providerId){
+            throw new Error("ProviderId nije pornadjen");
+        }
         const response = await api.get(url+`/provider/${providerId}`,{
             headers:getHeader()
         });
@@ -165,6 +185,9 @@ export async function findByProviderId(providerId){
 
 export async function findByProvider_NameContainingIgnoreCase(name){
     try{
+        if(!name){
+            throw new Error("Naziv providera nije pronadjen");
+        }
         const response = await api.get(url+`/provider-name`,{
             params:{
                 name:name
@@ -180,6 +203,9 @@ export async function findByProvider_NameContainingIgnoreCase(name){
 
 export async function findByTrackingInfo_CurrentStatus(status){
     try{
+        if(!validateStatus.includes(status.toUpperCase())){
+            throw new Error("Status nije pronadjen");
+        }
         const response = await api.get(url+`/trackingInfo-status`,{
             params:{
                 status:(status || "").toUpperCase()
@@ -195,6 +221,9 @@ export async function findByTrackingInfo_CurrentStatus(status){
 
 export async function findByTrackingInfoId(trackingInfoId){
     try{
+        if(!trackingInfoId){
+            throw new Error("TrackingInfo ID nije pronadjen");
+        }
         const response = await api.get(url+`/trackingInfo/${trackingInfoId}`,{
             headers:getHeader()
         });
@@ -207,6 +236,9 @@ export async function findByTrackingInfoId(trackingInfoId){
 
 export async function findByOriginStorageId(storageId){
     try{
+        if(!storageId){
+            throw new Error("StorageId nije pornadjen");
+        }
         const response = await api.get(url+`/storage/${storageId}`,{
             headers:getHeader()
         });
@@ -219,6 +251,9 @@ export async function findByOriginStorageId(storageId){
 
 export async function findByOriginStorage_Name(name){
     try{
+        if(!name){
+            throw new Error("Naziv skladista nije pronadjen");
+        }
         const response = await api.get(url+`/storage-name`,{
             params:{
                 name:name
@@ -234,6 +269,9 @@ export async function findByOriginStorage_Name(name){
 
 export async function findByOriginStorage_Location(location){
     try{
+        if(!location){
+            throw new Error("Originalna lokacija skladista nije pronadjena");
+        }
         const response = await api.get(url+`/storage-location`,{
             params:{
                 location:location
@@ -264,6 +302,9 @@ export async function findByOriginStorage_Type(type){
 
 export async function findByOriginStorageIdAndStatus(storageId, status){
     try{
+        if(!storageId || !validateStatus.includes(status.toUpperCase())){
+            throw new Error("StorageId I status nisu pronadjeni");
+        }
         const response = await api.get(url+`/storage-and-status`,{
             params:{
                 storageId:storageId,
@@ -280,6 +321,9 @@ export async function findByOriginStorageIdAndStatus(storageId, status){
 
 export async function searchByOriginStorageName(name){
     try{
+        if(!name){
+            throw new Error("Pretraga po nazivu skladista nije pronadjena");
+        }
         const response = await api.get(url+`/by-storage-name`,{
             params:{
                 name:name
@@ -295,6 +339,9 @@ export async function searchByOriginStorageName(name){
 
 export async function findByTrackingInfo_CurrentLocationContainingIgnoreCase(location){
     try{
+        if(!location){
+            throw new Error("Lokacija trackingInfo-a nije pronadjena");
+        }
         const response = await api.get(url+`/tracking-info-location`,{
             params:{
                 location:location

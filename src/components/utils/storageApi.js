@@ -1,7 +1,14 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
+const validateStorageType = ["PRODUCTION","DISTRIBUTION"];
+
 export async function createStorage(name, location, capacity, shelves, type, goods) {
     try {
+        if(!name || typeof name !=="string" || name.trim()==="" || !location || typeof location !=="string" || location.trim()===""
+    ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 ||
+    !validateStorageType.includes(type.toUpperCase())){
+        throw new Error("Sva polja moraju biti popunjena");
+    }
         const requestBody = {
             name,
             location,
@@ -28,6 +35,11 @@ export async function createStorage(name, location, capacity, shelves, type, goo
 
 export async function updateStorage(storageId, name,location, capacity, type, goods,shelves){
     try{
+        if(!id || !name || typeof name !=="string" || name.trim()==="" || !location || typeof location !=="string" || location.trim()===""
+    ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 ||
+    !validateStorageType.includes(type.toUpperCase())){
+        throw new Error("Sva polja moraju biti popunjena");
+    }
         const requestBody = {
             name,
             location,
@@ -55,6 +67,9 @@ export async function updateStorage(storageId, name,location, capacity, type, go
 
 export async function deleteStorage(storageId){
     try{
+        if(!storageId){
+            throw new Error("Dati storageId nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/storages/delete/${storageId}`,{
             headers:getHeader()
         })
@@ -67,6 +82,9 @@ export async function deleteStorage(storageId){
 
 export async function getByStorageId(storageId){
     try{
+        if(!storageId){
+            throw new Error("Dati storageId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/${storageId}`);
         return response.data;
     }

@@ -44,6 +44,9 @@ export async function update(id, productId, quantity){
 
 export async function deleteStockTransferItem(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -56,6 +59,9 @@ export async function deleteStockTransferItem(id){
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });

@@ -1,8 +1,15 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
-import moment from "moment";
+
+const isUnitMeasureValid = ["KOM","KG","LITAR","METAR","M2"];
+const isSupplierTypeValid = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUPPLIER","ONION_SUPPLIER","BLUEBERRY_SUPPLIER"];
+const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION"];
+const isGoodsTypeValid = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRODUCT", "WRITE_OFS"];
 
 export async function findByName(name){
     try{
+        if(!name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Naziv robe nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-name`,{
             params:{
                 name
@@ -18,6 +25,9 @@ export async function findByName(name){
 
 export async function findByBarCode(barCode){
     try{
+        if(!barCode || typeof barCode !== "string" || barCode.trim() === ""){
+            throw new Error("Naziv barCode nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-barCode`,{
             params:{
                 barCode
@@ -33,6 +43,9 @@ export async function findByBarCode(barCode){
 
 export async function findByUnitMeasure(unitMeasure){
     try{
+        if(!isUnitMeasureValid.includes(unitMeasure.toUpperCase())){
+            throw new Error("Dati unitMeasure nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-unitMeasure`,{
             params:{
                 unitMeasure
@@ -48,6 +61,9 @@ export async function findByUnitMeasure(unitMeasure){
 
 export async function findBySupplierType(supplierType){
     try{
+        if(!isSupplierTypeValid.includes(supplierType.toUpperCase())){
+            throw new Error("Dati supplierType nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-supplierType`,{
             params:{
                 supplierType:supplierType.toUpperCase()
@@ -63,6 +79,9 @@ export async function findBySupplierType(supplierType){
 
 export async function findByStorageType(storageType){
     try{
+        if(!isStorageTypeValid.includes(storageType.toUpperCase())){
+            throw new Error("Dati tip skladista nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-storageType`,{
             params:{
                 storageType:storageType.toUpperCase()
@@ -78,6 +97,9 @@ export async function findByStorageType(storageType){
 
 export async function findByGoodsType(goodsType){
     try{
+        if(!isGoodsTypeValid.includes(goodsType.toUpperCase())){
+            throw new Error("Dati tip robe nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-goodsType`,{
             params:{
                 goodsType:goodsType.toUpperCase()
@@ -93,6 +115,9 @@ export async function findByGoodsType(goodsType){
 
 export async function findByStorageName(storageName){
     try{
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === ""){
+            throw new Error("Dati naziv skladista nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-storageName`,{
             params:{
                 storageName
@@ -108,6 +133,9 @@ export async function findByStorageName(storageName){
 
 export async function findBySupplyId(supplyId){
     try{
+        if(!supplyId){
+            throw new Error("Dati ID za supplyId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/supply/${supplyId}`,{
             headers:getHeader()
         });
@@ -120,6 +148,10 @@ export async function findBySupplyId(supplyId){
 
 export async function findByBarCodeAndGoodsType(barCode, goodsType){
     try{
+        if(!barCode || typeof barCode !== "string" || barCode.trim() === "" ||
+            !isGoodsTypeValid.includes(goodsType.toUpperCase())){
+                throw new Error("Dati barCode i tip robe nije pronadjen");
+            }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-barCode-and-goodsType`,{
             params:{
                 barCode,goodsType:goodsType.toUpperCase()
@@ -135,6 +167,9 @@ export async function findByBarCodeAndGoodsType(barCode, goodsType){
 
 export async function findByBarCodeAndStorageId(barCode, storageId){
     try{
+        if(!barCode || typeof barCode !== "string" || barCode.trim() === "" || storageId){
+            throw new Error("Dati barCode i ID skladista nisu pronadjeni");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-barCode-and-storageId`,{
             params:{
                 barCode, storageId
@@ -150,6 +185,9 @@ export async function findByBarCodeAndStorageId(barCode, storageId){
 
 export async function findSingleByBarCode(barCode){
     try{
+        if(!barCode || typeof barCode !== "string" || barCode.trim() === ""){
+            throw new Error("Dati barCode nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-single-barCode`,{
             params:{
                 barCode
@@ -164,8 +202,16 @@ export async function findSingleByBarCode(barCode){
 }
 
 export const getGoodsByStorageId = async (storageId) => {
-  const response = await api.get(`/goods/by-storage/${storageId}`);
-  return response.data;
+    try{
+        if(!storageId){
+            throw new Error("Dati ID sa skladiste nije pronadjen");
+        }
+        const response = await api.get(`/goods/by-storage/${storageId}`);
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error, "");
+    }
 };
 
 

@@ -1,8 +1,18 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+const isInventoryValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED"];
+
 export async function createInventory(storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status){
     try{
+        if(
+            !storageEmployeeId || !storageForemanId ||
+            !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
+            !Array.isArray(inventoryItems) || inventoryItems.length === 0||
+            !isInventoryValid.includes(status.toUpperCase())
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {storageEmployeeId,storageForemanId,date:moment(date).format("YYYY-MM-DD"), aligned,inventoryItems,status:status.toUpperCase()};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/inventories/create/new-inventory`,requestBody,{
             headers:getHeader()
@@ -21,6 +31,15 @@ export async function createInventory(storageEmployeeId, storageForemanId, date,
 
 export async function updateInventory(id,storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status ){
     try{
+        if(
+            !id ||
+            !storageEmployeeId || !storageForemanId ||
+            !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
+            !Array.isArray(inventoryItems) || inventoryItems.length === 0||
+            !isInventoryValid.includes(status.toUpperCase())
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {storageEmployeeId,storageForemanId,date:moment(date).format("YYYY-MM-DD"), aligned,inventoryItems,status:status.toUpperCase()};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/inventories/update/${id}`,requestBody,{
             headers:getHeader()
@@ -39,6 +58,9 @@ export async function updateInventory(id,storageEmployeeId, storageForemanId, da
 
 export async function deleteInventory(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za Inventory nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/inventories/delete/${id}`,{
             headers:getHeader()
         });
@@ -51,6 +73,9 @@ export async function deleteInventory(id){
 
 export async function findInventoryByStatus(status){
     try{
+        if(!isInventoryValid.includes(status.toUpperCase())){
+            throw new Error("Dati status ne postoji");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/find-by-status`,{
             params:{
                 status:status.toUpperCase()
@@ -66,6 +91,9 @@ export async function findInventoryByStatus(status){
 
 export async function findByStorageEmployeeId(storageEmployeeId){
     try{
+        if(!storageEmployeeId){
+            throw new Error("Dati ID za storageEmployee nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/by-storageEmployeeId`,{
             params:{
                 storageEmployeeId
@@ -81,6 +109,9 @@ export async function findByStorageEmployeeId(storageEmployeeId){
 
 export async function findByStorageForemanId(storageForemanId){
     try{
+        if(!storageForemanId){
+            throw new Error("Dati ID za storageForeman nije pronadjen");
+        }
     const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/by-storageForemanId`,{
         params:{
             storageForemanId
@@ -96,6 +127,9 @@ export async function findByStorageForemanId(storageForemanId){
 
 export async function findOneInventory(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za Inventory nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/find-one/${id}`,{
             headers:getHeader()
         });
@@ -120,6 +154,9 @@ export async function findAllInventories(){
 
 export async function findByDate(date){
     try{
+        if(!moment(date,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Datum mora biti ispravan i validan");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/find-by-date`,{
             params:{
                 date:moment(date).format("YYYY-MM-DD")
@@ -135,6 +172,10 @@ export async function findByDate(date){
 
 export async function findByDateRange(startDate, endDate){
     try{
+        if(!moment(startDate,"YYYY-MM-DD",true).isValid() ||
+           !moment(endDate,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Netacan opseg datuma");
+           }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/find-by-date-range`,{
             params:{
                 startDate:moment(startDate).format("YYYY-MM-DD"),
@@ -151,6 +192,9 @@ export async function findByDateRange(startDate, endDate){
 
 export async function changeStatus(inventoryId, newStatusStr){
     try{
+        if(!inventoryId || !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
+            throw new Error("Nepoznat inventoryId i newStatusStr");
+        }
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/inventories/changeStatus/${inventoryId}`,{
             params:{
                 newStatusStr:newStatusStr.toUpperCase()

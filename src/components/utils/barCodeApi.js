@@ -3,6 +3,11 @@ import moment from "moment";
 
 export async function createBarCode(code, goodsId){
     try{
+        if(
+            !code || typeof code !== "string" || code.trim() === "" || !goodsId
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody={code, goodsId};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/barCodes/create`,requestBody,{
             headers:getHeader()
@@ -21,6 +26,12 @@ export async function createBarCode(code, goodsId){
 
 export async function updateBarCode(id,code, goodsId ){
     try{
+        if(
+            !id ||
+            !code || typeof code !== "string" || code.trim() === "" || !goodsId
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody={code, goodsId};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/barCodes/update/${id}`,requestBody,{
             headers:getHeader()
@@ -39,6 +50,9 @@ export async function updateBarCode(id,code, goodsId ){
 
 export async function deleteBarCode(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za barCode nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/barCodes/delete/${id}`,{
             headers:getHeader()
         });
@@ -51,6 +65,9 @@ export async function deleteBarCode(id){
 
 export async function getOneBarCode(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za barCode nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-one/${id}`,{
             headers:getHeader()
         });
@@ -75,6 +92,9 @@ export async function getAllBarCodes(){
 
 export async function getByCode(code){
     try{
+        if(!code || typeof code !== "string" || code.trim() === ""){
+            throw new Error("Dati code nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-code`,{
             params:{
                 code
@@ -90,6 +110,9 @@ export async function getByCode(code){
 
 export async function getByGoods(goodsId){
     try{
+        if(!goodsId){
+            throw new Error("Dati ID za goods nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-goodsId`,{
             params:{
                 goodsId
@@ -105,6 +128,9 @@ export async function getByGoods(goodsId){
 
 export async function getByScannedBy(scannedBy){
     try{
+        if(!scannedBy || typeof scannedBy !== "string" || scannedBy.trim() == ""){
+            throw new Error("ScannedBy nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-scannedBy`,{
             params:{
                 scannedBy
@@ -120,6 +146,9 @@ export async function getByScannedBy(scannedBy){
 
 export async function getByScannedAtBetween(from, to){
     try{
+        if(!moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Opseg skeniranog datuma nije validan");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-date-between`,{
             params:{
                 from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),

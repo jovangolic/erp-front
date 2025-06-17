@@ -1,11 +1,10 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-
 export async function createInventoryItems(inventoryId,productId, quantity, condition){
     try{
         if(
-            !inventoryId || !productId || isNaN(quantity) || parseFloat(quantity) <= 0 ||
-            isNaN(condition) || parseInt(condition) <= 0
+            !inventoryId || !productId || isNaN(quantity) || parseFloat(quantity) < 0 ||
+            isNaN(condition) || parseInt(condition) < 0
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -29,8 +28,8 @@ export async function updateInventoryItems(id,inventoryId,productId, quantity, c
     try{
         if(
             !id ||
-            !inventoryId || !productId || isNaN(quantity) || parseFloat(quantity) <= 0 ||
-            isNaN(condition) || parseInt(condition) <= 0
+            !inventoryId || !productId || isNaN(quantity) || parseFloat(quantity) < 0 ||
+            isNaN(condition) || parseInt(condition) < 0
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -94,7 +93,7 @@ export async function findAll(){
 
 export async function getByQuantity(quantity){
     try{
-        if(isNaN(quantity) || parseFloat(quantity) <= 0){
+        if(isNaN(quantity) || parseFloat(quantity) < 0){
             throw new Error("Quantity must be at least 0");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventoryItems/by-quantity`,{
@@ -112,7 +111,7 @@ export async function getByQuantity(quantity){
 
 export async function getByCondition(itemCondition){
     try{
-        if(isNaN(itemCondition) || parseInt(itemCondition) <= 0){
+        if(isNaN(itemCondition) || parseInt(itemCondition) < 0){
             throw new Error("ItemCondition mora biti pozitivan broj");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventoryItems/by-condition`,{
@@ -176,21 +175,22 @@ export async function getByProductName(productName){
     }
 }
 
-export async function findItemsWithDifference(threshold){
-    try{
-        if(isNaN(threshold) || parseFloat(threshold) <= 0){
-            throw new Error("Razlicite stavke/items nisu pornadjeni");
+export async function findItemsWithDifference(threshold) {
+    try {
+        const parsedThreshold = parseFloat(parseFloat(threshold).toFixed(2));
+        if (isNaN(parsedThreshold) || parsedThreshold <= 0) {
+            throw new Error("Threshold mora biti broj veći od 0");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventoryItems/find-by-threshold`,{
-            params:{
-                threshold:parseFloat(threshold)
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventoryItems/find-by-threshold`, {
+            params: {
+                threshold: parsedThreshold
             },
-            headers:getHeader()
+            headers: getHeader()
         });
         return response.data;
-    }
-    catch(error){
-        handleApiError(error, "Greska prilikom trazenja stavki inventara prema razlici");
+    } 
+    catch (error) {
+        handleApiError(error, "Greška prilikom traženja stavki inventara prema razlici");
     }
 }
 

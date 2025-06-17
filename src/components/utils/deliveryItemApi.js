@@ -21,7 +21,7 @@ export async function createinboundDeliveryId(productId,quantity,inboundDelivery
 
 export async function update(id,productId,quantity,inboundDeliveryId,outboundDeliveryId){
     try{    
-        if(!productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
+        if(!id || !productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {productId, quantity,inboundDeliveryId, outboundDeliveryId};
@@ -37,6 +37,9 @@ export async function update(id,productId,quantity,inboundDeliveryId,outboundDel
 
 export async function deleteDeliveryItem(id){
     try{
+        if(!id){
+            throw new Error("Dati Id za inboundDelivery nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -49,6 +52,9 @@ export async function deleteDeliveryItem(id){
 
 export async function findById(id){
     try{
+        if(!id){
+            throw new Error("Dati Id za inboundDelivery nije pronadjen");
+        }
         const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
         });
@@ -73,6 +79,9 @@ export async function findAll(){
 
 export async function findByQuantity(quantity){
     try{
+        if(isNaN(quantity) || parseFloat(quantity) <= 0){
+            throw new Error("Kolicina mora biti pozitivan broj");
+        }
         const response = await api.get(url+`/by-quantity`,{
             params:{
                 quantity:quantity
@@ -88,6 +97,9 @@ export async function findByQuantity(quantity){
 
 export async function findByQuantityGreaterThan(quantity){
     try{
+        if(isNaN(quantity) || parseFloat(quantity) <= 0){
+            throw new Error("Kolicina mora biti veca od nula");
+        }
         const response = await api.get(url+`/quantity-greater-than`,{
             params:{
                 quantity:quantity
@@ -103,6 +115,9 @@ export async function findByQuantityGreaterThan(quantity){
 
 export async function findByQuantityLessThan(quantity){
     try{
+        if(isNaN(quantity) || parseFloat(quantity) < 0){
+            throw new Error("Kolicina ne sme biti negativan broj");
+        }
         const response = await api.get(url+`quantity-less-than`,{
             params:{
                 quantity:quantity
@@ -118,6 +133,9 @@ export async function findByQuantityLessThan(quantity){
 
 export async function findByInboundDelivery_DeliveryDateBetween(start, end){
     try{
+        if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Opseg inboundDelivery datuma nije dobar");
+        }
         const response = await api.get(url+`/inbound-date-range`,{
             params:{
                 start:moment(start).format("YYYY-MM-DD"),
@@ -134,6 +152,9 @@ export async function findByInboundDelivery_DeliveryDateBetween(start, end){
 
 export async function findByOutboundDelivery_DeliveryDateBetween(start,end){
     try{
+        if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Opseg outboundDelivery datuma nije dobar");
+        }
         const response = await api.get(url+`/outbound-date-range`,{
             params:{
                 start:moment(start).format("YYYY-MM-DD"),
@@ -150,6 +171,9 @@ export async function findByOutboundDelivery_DeliveryDateBetween(start,end){
 
 export async function findByProduct(productId){
     try{
+        if(!productId){
+            throw new Error("Dati id za proizvod nije pronadjen");
+        }
         const response = await api.get(url+`/product/${productId}`,{
             headers:getHeader()
         });
@@ -162,6 +186,9 @@ export async function findByProduct(productId){
 
 export async function findByInboundDeliveryId(inboundId){
     try{
+        if(!inboundId){
+            throw new Error("Dati id za inboundDelivery nije pronadjen");
+        }
         const response = await api.get(url+`/inbound/${inboundId}`,{
             headers:getHeader()
         });
@@ -174,6 +201,9 @@ export async function findByInboundDeliveryId(inboundId){
 
 export async function findByOutboundDeliveryId(outboundId){
     try{
+        if(!outboundId){
+            throw new Error("Dati id za outboundDelivery nije pronadjen");
+        }
         const response = await api.get(url+`/outbound/${outboundId}`,{
             headers:getHeader()
         });
@@ -186,6 +216,9 @@ export async function findByOutboundDeliveryId(outboundId){
 
 export async function findByProduct_Name(name){
     try{
+        if(!name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Dati naziv proizvoda nije pronadjen");
+        }
         const response = await api.get(url+`/name/${name}`,{
             headers:getHeader()
         });

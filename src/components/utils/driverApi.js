@@ -3,8 +3,11 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/drivers`;
 
 export async function createDriver(name, phone){
-    if (!name || !phone || name.trim() === "" || phone.trim() === "") {
-        throw new Error("Ime i broj telefona ne smeju biti prazni.");
+    if (
+        !name || typeof name !== "string" || name.trim() === "" ||
+        !phone || typeof phone !== "string" || phone.trim() === ""
+    ) {
+        throw new Error("Sva polja moraju biti validna i popunjena");
     }
     try{
         const requestBody = {name, phone};
@@ -19,8 +22,11 @@ export async function createDriver(name, phone){
 }
 
 export async function updateDriver(id, name, phone){
-    if (!name || !phone || name.trim() === "" || phone.trim() === "") {
-        throw new Error("Ime i broj telefona ne smeju biti prazni.");
+    if (
+        !name || typeof name !== "string" || name.trim() === "" ||
+        !phone || typeof phone !== "string" || phone.trim() === ""
+    ) {
+        throw new Error("Sva polja moraju biti validna i popunjena");
     }
     try{
         const requestBody = {name, phone};
@@ -36,6 +42,9 @@ export async function updateDriver(id, name, phone){
 
 export async function deleteDriver(id){
     try{
+        if(!id){
+            throw new Error("Dati ID vozaca nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -48,6 +57,9 @@ export async function deleteDriver(id){
 
 export async function findOneById(id){
     try{
+        if(!id){
+            throw new Error("Dati ID vozaca nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
@@ -72,6 +84,9 @@ export async function findAllDrivers(){
 
 export async function findByName(name){
     try{
+        if(!name || typeof name !== "string" || name.trim() === "" ){
+            throw new Error("Dato ime vozaca nije pronadjeno");
+        }
         const response = await api.get(url+`/by-name`,{
             params:{
                 name:name
@@ -87,6 +102,9 @@ export async function findByName(name){
 
 export async function findByPhone(phone){
     try{
+        if(!phone || typeof phone !== "string" || phone.trim() === ""){
+            throw new Error("Dati broj-telefona vozaca nije pronadjen");
+        }
         const response = await api.get(url+`/by-phone`,{
             params:{
                 phone:phone

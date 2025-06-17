@@ -1,8 +1,22 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+const isInvoiceStatusValid = ["DRAFT","ISSUED","PAID","CANCELLED","OVERDUE"];  
+
 export async function createInvoice(invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById){
     try{
+        if(
+            !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
+            !moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !isInvoiceStatusValid.includes(status.toUpperCase()) ||
+            isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
+            !buyerId || !salesId || !paymentId ||
+            !note || typeof note !== "string" || note.trim() === "" ||
+            !salesOrderId || !createdById
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {invoiceNumber, issueDate:moment(issueDate).format("YYYY-MM-DDTHH:mm:ss"), dueDate:moment(dueDate).format("YYYY-MM-DDTHH:mm:ss"),
             status:status.toUpperCase(), totalAmount:parseFloat(totalAmount),buyerId,salesId,paymentId,note,
             salesOrderId, createdById
@@ -24,6 +38,19 @@ export async function createInvoice(invoiceNumber,issueDate,dueDate,status,total
 
 export async function updateInvoice(invoiceId,invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById ){
     try{
+        if(
+            !invoiceId ||
+            !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
+            !moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !isInvoiceStatusValid.includes(status.toUpperCase()) ||
+            isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
+            !buyerId || !salesId || !paymentId ||
+            !note || typeof note !== "string" || note.trim() === "" ||
+            !salesOrderId || !createdById
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {invoiceNumber, issueDate:moment(issueDate).format("YYYY-MM-DDTHH:mm:ss"), dueDate:moment(dueDate).format("YYYY-MM-DDTHH:mm:ss"),
             status:status.toUpperCase(), totalAmount:parseFloat(totalAmount),buyerId,salesId,paymentId,note,
             salesOrderId, createdById
@@ -45,6 +72,9 @@ export async function updateInvoice(invoiceId,invoiceNumber,issueDate,dueDate,st
 
 export async function deleteInvoice(invoiceId){
     try{
+        if(!invoiceId){
+            throw new Error("Dati Id za Invoice nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/invoices/delete/${invoiceId}`,{
             headers:getHeader()
         });
@@ -57,6 +87,9 @@ export async function deleteInvoice(invoiceId){
 
 export async function getInvoiceById(id){
     try{
+        if(!invoiceId){
+            throw new Error("Dati Id za Invoice nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/${id}`,{
             headers:getHeader()
         });
@@ -81,6 +114,9 @@ export async function getAllInvoices(){
 
 export async function getByInvoiceStatus(status){
     try{
+        if(!isInvoiceStatusValid.includes(status.toUpperCase())){
+            throw new Error("Nepostojeci status");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice-status`,{
             params:{
                 status:status.toUpperCase()
@@ -96,6 +132,9 @@ export async function getByInvoiceStatus(status){
 
 export async function getByBuyerAndStatus(buyerId, status){
     try{
+        if(!buyerId || !isInvoiceStatusValid.includes(status.toUpperCase())){
+            throw new Error("Nepostojeci buyerId i status");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer-status`,{
             params:{
                 buyerId, status:status.toUpperCase()
@@ -111,6 +150,9 @@ export async function getByBuyerAndStatus(buyerId, status){
 
 export async function getByTotalAmount(totalAmount){
     try{
+        if(isNaN(totalAmount) || parseFloat(totalAmount) <= 0){
+            throw new Error("Ukupan iznos mora biti pozitivan");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/total-amount`,{
             params:{
                 totalAmount:parseFloat(totalAmount)
@@ -126,6 +168,9 @@ export async function getByTotalAmount(totalAmount){
 
 export async function getByBuyerId(buyerId){
     try{
+        if(!buyerId){
+            throw new Error("Dati id za buyer nije pornadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer/${buyerId}`,{
             headers: getHeader()
         });
@@ -138,6 +183,9 @@ export async function getByBuyerId(buyerId){
 
 export async function getBySalesId(salesId){
     try{
+        if(!salesId){
+            throw new Error("Dati id za sales nije pornadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/sales/${salesId}`,{
             headers:getHeader()
         });
@@ -150,6 +198,9 @@ export async function getBySalesId(salesId){
 
 export async function getByPaymentId(paymentId){
     try{
+        if(!paymentId){
+            throw new Error("Dati id za payment nije pornadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/payment/${paymentId}`,{
             headers:getHeader()
         });
@@ -162,6 +213,12 @@ export async function getByPaymentId(paymentId){
 
 export async function getByIssueDateBetween(startDate,endDate){
     try{
+        if(
+            !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+        ){
+            throw new Error("Nevalidan datum.");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/issue-date-between`,{
             params:{
                 startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
@@ -178,6 +235,9 @@ export async function getByIssueDateBetween(startDate,endDate){
 
 export async function getByDueDateBefore(date){
     try{
+        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Datum mora biti validan");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/due-date-before`,{
             params:{
                 date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
@@ -193,6 +253,9 @@ export async function getByDueDateBefore(date){
 
 export async function searchByInvoiceNumberFragment(fragment){
     try{
+        if(!fragment || typeof fragment !== "string" || fragment.trim() === ""){
+            throw new Error("Dati fragment nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/search-fragment/${fragment}`,{
             headers:getHeader()
         });
@@ -205,6 +268,9 @@ export async function searchByInvoiceNumberFragment(fragment){
 
 export async function existsByInvoiceNumber(invoiceNumber){
     try{
+        if(!invoiceNumber || typeof invoiceNumber !== "string" || invoiceNumber.trim() === ""){
+            throw new Error("InvoiceNumber mora biti validan i popunjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/exists`,{
             params:{
                 invoiceNumber
@@ -220,6 +286,9 @@ export async function existsByInvoiceNumber(invoiceNumber){
 
 export async function getInvoicesByBuyerSortedByIssueDate(buyerId){
     try{
+        if(!buyerId){
+            throw new Error("Dati id za buyer nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/sorted-buyer/${buyerId}`,{
             headers:getHeader()
         });

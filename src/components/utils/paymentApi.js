@@ -1,8 +1,21 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+const isPaymentMethodValid = ["BANK_TRANSFER","CASH","CARD","PAYPAL"]; 
+const isPaymentStatusValid = ["PENDING","COMPLETED","FAILED"];  
+
 export async function createPayment(amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId){
     try{
+        if(
+            isNaN(amount) || parseFloat(amount) <=0 ||
+            !moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !isPaymentMethodValid.includes(method.toUpperCase()) ||
+            !isPaymentStatusValid.includes(status.toUpperCase()) ||
+            !referenceNumber || typeof referenceNumber !== "string" || referenceNumber.trim()==="" ||
+            !buyerId  || !relatedSalesId
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {amount:parseFloat(amount), paymentDate:moment(paymentDate).format("YYYY-MM-DDTHH:mm:ss"),
             method:method.toUpperCase(), status:status.toUpperCase(), referenceNumber, buyerId, relatedSalesId
         };
@@ -22,6 +35,17 @@ export async function createPayment(amount, paymentDate, method, status,referenc
 
 export async function updatePayment(id,amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId ){
     try{
+        if(
+            !id ||
+            isNaN(amount) || parseFloat(amount) <=0 ||
+            !moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !isPaymentMethodValid.includes(method.toUpperCase()) ||
+            !isPaymentStatusValid.includes(status.toUpperCase()) ||
+            !referenceNumber || typeof referenceNumber !== "string" || referenceNumber.trim()==="" ||
+            !buyerId  || !relatedSalesId
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {amount:parseFloat(amount), paymentDate:moment(paymentDate).format("YYYY-MM-DDTHH:mm:ss"),
             method:method.toUpperCase(), status:status.toUpperCase(), referenceNumber, buyerId, relatedSalesId};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/payments/update/${id}`,requestBody,{
@@ -41,6 +65,9 @@ export async function updatePayment(id,amount, paymentDate, method, status,refer
 
 export async function deletePayment(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za payment nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/payments/delete/${id}`,{
             headers:getHeader()
         });
@@ -53,6 +80,9 @@ export async function deletePayment(id){
 
 export async function getPayment(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za payment nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/${id}`,{
             headers:getHeader()
         });
@@ -77,6 +107,9 @@ export async function getAllPayments(){
 
 export async function getPaymentsByBuyer(buyerId){
     try{
+        if(!buyerId){
+            throw new Error("BuyerId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/buyer/${buyerId}`,{
             headers:getHeader()
         });
@@ -89,6 +122,9 @@ export async function getPaymentsByBuyer(buyerId){
 
 export async function getPaymentsByStatus(status){
     try{
+        if(!isPaymentStatusValid.includes(status.toUpperCase())){
+            throw new Error("Status za payment nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/by-status`,{
             params:{
                 status:status.toUpperCase()
@@ -104,6 +140,9 @@ export async function getPaymentsByStatus(status){
 
 export async function getPaymentsByMethod(method){
     try{
+        if(!isPaymentStatusValid.includes(status.toUpperCase())){
+            throw new Error("Metod za payment nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/by-method`,{
             params:{
                 method:method.toUpperCase()

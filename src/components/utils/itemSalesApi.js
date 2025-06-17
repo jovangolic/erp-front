@@ -3,6 +3,13 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 export async function createItemSales(goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice){
     try{
+        if(
+            !goodsId || !salesId || !procurementId || !salesOrderId ||
+            isNaN(quantity) || parseInt(quantity) <= 0 ||
+            isNaN(unitPrice) || parseFloat(unitPrice) <= 0
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {goodsId, salesId, procurementId, salesOrderId, quantity:parseInt(quantity), unitPrice:parseFloat(unitPrice)};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/itemSales/create/new-item-sales`,requestBody,{
             headers:getHeader()
@@ -21,6 +28,14 @@ export async function createItemSales(goodsId, salesId, procurementId, salesOrde
 
 export async function updateItemSales(id, goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice){
     try{
+        if(
+            !id ||
+            !goodsId || !salesId || !procurementId || !salesOrderId ||
+            isNaN(quantity) || parseInt(quantity) <= 0 ||
+            isNaN(unitPrice) || parseFloat(unitPrice) <= 0
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {goodsId, salesId, procurementId, salesOrderId, quantity:parseInt(quantity), unitPrice:parseFloat(unitPrice)};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/itemSales/update/${id}`,requestBody,{
             headers:getHeader()
@@ -39,6 +54,9 @@ export async function updateItemSales(id, goodsId, salesId, procurementId, sales
 
 export async function deleteItemSales(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za itemSales ne postoji");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/itemSales/delete/${id}`,{
             headers:getHeader()
         });
@@ -51,6 +69,9 @@ export async function deleteItemSales(id){
 
 export async function getOneItemSales(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za itemSales ne postoji");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/${id}`,{
             headers:getHeader()
         });
@@ -75,6 +96,9 @@ export async function getAllItemSales(){
 
 export async function getByQuantity(quantity){
     try{
+        if(isNaN(quantity) || parseInt(quantity) <= 0){
+            throw new Error("Količina mora biti pozitivna");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/be-quantity`,{
             params:{
                 quantity:parseInt(quantity)
@@ -90,6 +114,9 @@ export async function getByQuantity(quantity){
 
 export async function getBySalesId(salesId){
     try{
+        if(!salesId){
+            throw new Error("Dati ID za sales nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/by-salesId`,{
             params:{
                 salesId
@@ -105,6 +132,9 @@ export async function getBySalesId(salesId){
 
 export async function getByGoodsId(goodsId){
     try{
+        if(!goodsId){
+            throw new Error("Dati ID za goodsId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/by-goodsId`,{
             params:{
                 goodsId
@@ -120,6 +150,9 @@ export async function getByGoodsId(goodsId){
 
 export async function getByProcurementId(procurementId){
     try{
+        if(!procurementId){
+            throw new Error("Dati ID za procurementId nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/by-procurementId`,{
             params:{
                 procurementId
@@ -135,6 +168,9 @@ export async function getByProcurementId(procurementId){
 
 export async function getByUnitPrice(unitPrice){
     try{
+        if(isNaN(unitPrice) || parseFloat(unitPrice) <= 0){
+            throw new Error("UnitPrice mora biti pozitivan broj");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/by-unitPrice`,{
             params:{
                 unitPrice:parseFloat(unitPrice)
@@ -150,6 +186,9 @@ export async function getByUnitPrice(unitPrice){
 
 export async function getBySalesOrderId(salesOrderId){
     try{
+        if(!salesOrderId){
+            throw new Error("Dati ID  za salesOreder nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/by-salesOrderId`,{
             params:{
                 salesOrderId
@@ -165,6 +204,9 @@ export async function getBySalesOrderId(salesOrderId){
 
 export async function getBySalesOrderNumber(orderNumber){
     try{
+        if(!orderNumber || typeof orderNumber !=="string" || orderNumber.trim() === ""){
+            throw new Error("Dati orderNumber nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/itemSales/item/by-salesOrderNumber`,{
             params:{
                 orderNumber

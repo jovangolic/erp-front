@@ -4,8 +4,12 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/logistics-providers`;
 
 export async function create(name, contactPhone, email,website){
     try{
-        if(!name || name.trim()==="" || contactPhone || contactPhone.trim()==="" || !email || email.trim()==="" || !website || website.trim() ===""){
-            throw new Error("Ime i broj telefona ne smeju biti prazni.");
+        if(
+            !name || typeof name !=="string" || name.trim()==="" ||
+            !contactPhone || typeof contactPhone !=="string" || contactPhone.trim()==="" || 
+            !email || typeof email !=="string" || email.trim()==="" || 
+            !website || typeof website !== "string" || website.trim() ===""){
+            throw new Error("Sva polja moraju biti validna i popunjena.");
         }
         const requestBody = {name, contactPhone, email, website};
         const response = await api.post(url+`/create/new/logistics-provider`,requestBody,{
@@ -20,8 +24,12 @@ export async function create(name, contactPhone, email,website){
 
 export async function update(id, name, contactPhone, email,website){
     try{
-        if(!name || name.trim()==="" || contactPhone || contactPhone.trim()==="" || !email || email.trim()==="" || !website || website.trim() ===""){
-            throw new Error("Ime i broj telefona ne smeju biti prazni.");
+        if(!id ||
+            !name || typeof name !=="string" || name.trim()==="" ||
+            !contactPhone || typeof contactPhone !=="string" || contactPhone.trim()==="" || 
+            !email || typeof email !=="string" || email.trim()==="" || 
+            !website || typeof website !== "string" || website.trim() ===""){
+            throw new Error("Sva polja moraju biti validna i popunjena.");
         }
         const requestBody = {name, contactPhone, email, website};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -36,6 +44,9 @@ export async function update(id, name, contactPhone, email,website){
 
 export async function deleteLogistric(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za LogisticProvider nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -48,6 +59,9 @@ export async function deleteLogistric(id){
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za LogisticProvider nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
@@ -72,6 +86,9 @@ export async function findAll(){
 
 export async function findyName(name){
     try{
+        if(!name || typeof name !=="string" || name.trim() ===""){
+            throw new Error("Dati naziv za LogisticProvider nije pronadjen");
+        }
         const response = await api.get(url+`/by-name`,{
             params:{
                 name:name
@@ -87,6 +104,9 @@ export async function findyName(name){
 
 export async function findByNameContainingIgnoreCase(fragment){
     try{
+        if(!fragment || typeof fragment !=="string" || fragment.trim() ===""){
+            throw new Error("Dati fragment za LogisticProvider nije pronadjen");
+        }
         const response = await api.get(url+`/by-fragment`,{
             params:{
                 fragment:fragment
@@ -117,6 +137,9 @@ export async function searchByNameOrWebsite(query){
 
 export async function findByContactPhone(contactPhone){
     try{
+        if(!contactPhone || typeof contactPhone !=="string" || contactPhone.trim() === ""){
+            throw new Error("Dati konakt telefon nije pronadjen");
+        }
         const response = await api.get(url+`/by-contactPhone`,{
             params:{
                 contactPhone:contactPhone
@@ -132,6 +155,9 @@ export async function findByContactPhone(contactPhone){
 
 export async function findByEmail(email){
     try{
+        if(!email || typeof email !=="string" || email.trim() === ""){
+            throw new Error("Dati email nije pronadjen");
+        }
         const response = await api.get(url+`/by-email`,{
             params:{
                 eamil:email
@@ -145,8 +171,11 @@ export async function findByEmail(email){
     }
 }
 
-export async function findByWebsite(){
+export async function findByWebsite(website){
     try{
+        if(!website || typeof website !== "string" || website.trim() === ""){
+            throw new Error("Dati website firme nije pronadjen");
+        }
         const response = await api.get(url+`/by-website`,{
             params:{
                 website:website

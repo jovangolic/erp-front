@@ -28,7 +28,7 @@ export async function create(productId, quantity){
 
 export async function update(id, productId, quantity){
     try{
-        if(quantity == null || quantity <= 0 || !productId){
+        if( !id ||quantity == null || quantity <= 0 || !productId){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {productId, quantity};
@@ -101,8 +101,8 @@ export async function findByProductId(productId){
 
 export async function findByProduct_Name(name){
     try{
-        if(!name){
-            throw new Error("Naziv proizvoda mora biti prosledjen");
+        if(!name || typeof name!=="string" || name.trim()===""){
+            throw new Error("Naziv proizvoda nije pronadjen");
         }
         const response = await api.get(url+`/by-name`,{
             params:{

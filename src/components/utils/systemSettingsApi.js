@@ -9,7 +9,7 @@ export async function createSystemSetting(key,value,description,category,dataTyp
             !value || typeof value !== "string" || value.trim() === "" ||
             !description || typeof description !== "string" || description.trim() === "" ||
             !category || typeof category !== "string" || category.trim() === "" ||
-            !isSettingDataTypeValid.includes(dataType.toUpperCase()) ||
+            !isSettingDataTypeValid.includes(dataType?.toUpperCase()) ||
             typeof editable !=="boolean" || typeof isVisible !=="boolean" ||
             !defaultValue || typeof defaultValue !== "string" || defaultValue.trim() === "" 
         ){
@@ -38,7 +38,7 @@ export async function updateSystemSetting(id,value,description,category,dataType
             !value || typeof value !== "string" || value.trim() === "" ||
             !description || typeof description !== "string" || description.trim() === "" ||
             !category || typeof category !== "string" || category.trim() === "" ||
-            !isSettingDataTypeValid.includes(dataType.toUpperCase()) ||
+            !isSettingDataTypeValid.includes(dataType?.toUpperCase()) ||
             typeof editable !=="boolean" || typeof isVisible !=="boolean" ||
             !defaultValue || typeof defaultValue !== "string" || defaultValue.trim() === "" 
         ){

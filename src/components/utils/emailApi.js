@@ -55,7 +55,7 @@ export async function createCompanyEmail(firstName,lastName,address,phoneNumber,
             !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
             !address || typeof address !== "string" || address.trim() === "" ||
             !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
-            !isRoleTypeValid.includes(types.toUpperCase())
+            !isRoleTypeValid.includes(types?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }

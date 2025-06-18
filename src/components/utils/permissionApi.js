@@ -5,7 +5,7 @@ const isPermisionTypeValid = ["VIEW_INVENTORY","CREATE_ORDER","CREATE_STORAGE_EM
 export async function cratePermission(permissionType){
     try{
         if(
-            !isPermisionTypeValid.includes(permissionType.toUpperCase())
+            !isPermisionTypeValid.includes(permissionType?.toUpperCase())
         ){
             throw new Error("Tip mora biti validan i popunjen");
         }
@@ -51,7 +51,7 @@ export async function updatePermission(id, permissionType){
     try{
         if(
             !id ||
-            !isPermisionTypeValid.includes(permissionType.toUpperCase())
+            !isPermisionTypeValid.includes(permissionType?.toUpperCase())
         ){
             throw new Error("Tip mora biti validan i popunjen");
         }

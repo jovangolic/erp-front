@@ -19,7 +19,7 @@ export async function updateState(maintenanceMode,registrationEnabled, systemVer
         if(
             typeof maintenanceMode !=="boolean" || typeof registrationEnabled !== "boolean" ||
             !systemVersion || typeof systemVersion !== "string" || systemVersion.trim() === "" ||
-            !isSystemStatusValid.includes(statusMessage.toUpperCase())
+            !isSystemStatusValid.includes(statusMessage?.toUpperCase())
         ){
             throw new Error("Sva polj amoraju biti validna i popunnjena");
         }

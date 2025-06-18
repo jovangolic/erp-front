@@ -8,7 +8,7 @@ function isValidFileActionSet(actionSet) {
         return false;
     }
     for (const action of actionSet) {
-        if (!isFileActionValid.includes(action.toUpperCase())) {
+        if (!isFileActionValid.includes(action?.toUpperCase())) {
             return false;
         }
     }
@@ -18,7 +18,7 @@ function isValidFileActionSet(actionSet) {
 export async function createFileOpt(extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions){
     try{
         if(
-            !isFileExtensionValid.includes(extension.toUpperCase()) ||
+            !isFileExtensionValid.includes(extension?.toUpperCase()) ||
             !mimeType || typeof mimeType !== "string" || mimeType.trim() === "" ||
             maxSizeInBytes == null || maxSizeInBytes <= 0 ||
             typeof uploadEnabled !=="boolean" ||typeof previewEnabled !=="boolean" ||
@@ -46,7 +46,7 @@ export async function updateFileOpt(id,extension,mimeType,maxSizeInBytes,uploadE
     try{
         if(
             !id ||
-            !isFileExtensionValid.includes(extension.toUpperCase()) ||
+            !isFileExtensionValid.includes(extension?.toUpperCase()) ||
             !mimeType || typeof mimeType !== "string" || mimeType.trim() === "" ||
             maxSizeInBytes == null || maxSizeInBytes <= 0 ||
             typeof uploadEnabled !=="boolean" ||typeof previewEnabled !=="boolean" ||
@@ -114,7 +114,7 @@ export async function getFileOptById(id){
 
 export async function getByExtension(extension){
     try{
-        if(!isFileExtensionValid.includes(extension.toUpperCase())){
+        if(!isFileExtensionValid.includes(extension?.toUpperCase())){
             throw new Error("FileExtension nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/by-extension/${extension}`,{

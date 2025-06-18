@@ -24,7 +24,7 @@ export function isValidInboundDelivery({
     !moment(deliveryDate).isValid()) || 
     !supplyId ||
     !status ||
-    !validDeliveryStatus.includes(status.toUpperCase()) ||
+    !validDeliveryStatus.includes(status?.toUpperCase()) ||
     !Array.isArray(itemRequest) ||
     itemRequest.length === 0
   ) {
@@ -62,7 +62,7 @@ export async function create(date){
 
 export async function update(id, date){
     try{
-        if(!isValidInboundDelivery(...date, validateStatus)){
+        if(!id ||!isValidInboundDelivery(...date, validateStatus)){
             throw new Error("Sva polja moraju biti popunjena i validna.");    
         }
         const response = await api.put(url+`/update/${id}`,date,{
@@ -77,6 +77,9 @@ export async function update(id, date){
 
 export async function deleteInboundDelivery(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za inboundDelivery nije pronadjen");
+        }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -89,6 +92,9 @@ export async function deleteInboundDelivery(id){
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za inboundDelivery nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
@@ -113,7 +119,7 @@ export async function findAll(){
 
 export async function findByStatus(status){
     try{
-        if(!validDeliveryStatus.includes(status.toUpperCase())){
+        if(!validDeliveryStatus.includes(status?.toUpperCase())){
             return false;
         }
         const response = await api.get(url+`/status`,{

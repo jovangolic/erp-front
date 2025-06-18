@@ -18,7 +18,7 @@ export function isValidTrackingInfo({
     (!moment(estimatedDelivery, "YYYY-MM-DD", true).isValid() &&
      !moment(estimatedDelivery).isValid()) ||
     !currentStatus ||
-    !validateStatus.includes(currentStatus.toUpperCase()) ||
+    !validateStatus.includes(currentStatus?.toUpperCase()) || 
     !shipmentId
   ) {
     return false;
@@ -101,6 +101,9 @@ export async function findAll(){
 
 export async function findByTrackingNumber(trackingNumber){
     try{
+        if(!trackingNumber ||typeof trackingNumber !=="string" ||trackingNumber.trim()===""){
+            throw new Error("Dati trackingNumber nije pronadjen");
+        }
         const response = await api.get(url+`/trackingNumber`,{
             params:{
                 trackingNumber:trackingNumber
@@ -152,7 +155,7 @@ export async function findByEstimatedDeliveryBetween(start, end){
 
 export async function findByCurrentLocationAndCurrentStatus(location, status){
     try{
-        if(!location || !validateStatus.includes(status.toUpperCase())){
+        if(!location || typeof location !=="string" || location.trim()==="" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Location and status moraju biti popunjeni");
         }
         const response = await api.get(url+`/by-location-status`,{

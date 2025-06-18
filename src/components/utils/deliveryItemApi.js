@@ -229,8 +229,6 @@ export async function findByProduct_Name(name){
     }
 }
 
-
-
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

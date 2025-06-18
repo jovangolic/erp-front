@@ -24,7 +24,7 @@ export function isValidOutboundDelivery({
         !moment(deliveryDate).isValid()) || 
         !buyerId ||
         !status ||
-        !validateStatus.includes(status.toUpperCase()) ||
+        !validateStatus.includes(status?.toUpperCase()) ||
         !Array.isArray(itemRequest) ||
         itemRequest.length === 0
     ) {
@@ -117,7 +117,7 @@ export async function findAll(){
 
 export async function findByStatus(status){
     try{
-        if(!validateStatus.includes(status.toUpperCase())){
+        if(!validateStatus.includes(status?.toUpperCase())){
             return false;
         }
         const response = await api.get(url+`/status`,{

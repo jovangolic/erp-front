@@ -3,8 +3,9 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const validateStatus = ["AVAILABLE","IN_USE","UNDER_MAINTENANCE","OUT_OF_SERVICE","RESERVED"];
 
 export async function createVehicle(registrationNumber,model,status){
-    if(!registrationNumber || registrationNumber.trim() === "" || !model || model.trim() ===""|| 
-    !status || !validateStatus.includes(status.toUpperCase())){
+    if(!registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
+    !model || model.trim() ===""|| typeof model !=="string" || 
+    !status || !validateStatus.includes(status?.toUpperCase())){
         throw new Error("Sva polja moraju biti popunjena");
     }
     try{
@@ -20,8 +21,11 @@ export async function createVehicle(registrationNumber,model,status){
 }
 
 export async function updateVehicle(id,registrationNumber,model,status){
-    if(!registrationNumber || registrationNumber.trim() === "" || !model || model.trim() ===""|| 
-    !status || !validateStatus.includes(status.toUpperCase())){
+    if(
+    !id ||    
+    !registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
+    !model || model.trim() ===""|| typeof model !=="string" || 
+    !status || !validateStatus.includes(status?.toUpperCase())){
         throw new Error("Sva polja moraju biti popunjena");
     }
     try{
@@ -80,7 +84,7 @@ export async function findAll(){
 
 export async function findByModel(model){
     try{
-        if(!model){
+        if(!model || model.trim() ===""|| typeof model !=="string"){
             throw new Error("Dati model nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/find-by-model`,{
@@ -98,7 +102,7 @@ export async function findByModel(model){
 
 export async function findByRegistrationNumber(registrationNumber){
     try{
-        if(!registrationNumber){
+        if(!registrationNumber || registrationNumber.trim() ===""|| typeof registrationNumber !=="string"){
             throw new Error("RegistrationNumber nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/by-registration-number`,{
@@ -116,7 +120,7 @@ export async function findByRegistrationNumber(registrationNumber){
 
 export async function findByStatus(status){
     try{
-        if(!validateStatus.includes(status.toUpperCase())){
+        if(!validateStatus.includes(status?.toUpperCase())){
             throw new Error("Status vozila nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/status`,{
@@ -134,7 +138,7 @@ export async function findByStatus(status){
 
 export async function findByModelAndStatus(model, status){
     try{
-        if(!model || !validateStatus.includes(status.toUpperCase())){
+        if(!model || model.trim() ===""|| typeof model !=="string" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Model i status vozila nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/filter-by-model-and-status`,{
@@ -153,6 +157,9 @@ export async function findByModelAndStatus(model, status){
 
 export async function search(key){
     try{
+        if(!key || key.trim()==="" || typeof key !=="string"){
+            throw new Error("Pretraga po odredjenom kljucu nije dala rezultat");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/search`,{
             params:{
                 key:key
@@ -168,7 +175,7 @@ export async function search(key){
 
 export async function filterVehicles(model, status){
     try{
-        if(!model || !validateStatus.includes(status.toUpperCase())){
+        if(!model || model.trim() ===""|| typeof model !=="string" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Model i status vozila nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/filter`,{
@@ -187,7 +194,7 @@ export async function filterVehicles(model, status){
 
 export async function findByModelContainingIgnoreCase(modelFragment){
     try{
-        if(!modelFragment){
+        if(!modelFragment || modelFragment.trim()==="" || typeof modelFragment !=="string"){
             throw new Error("Pretraga po fragmentu modela nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/modelFragment`,{

@@ -12,7 +12,7 @@ export async function createHelp(title,content,category,isVisible){
         if(
             !title || typeof title !== "string" || title.trim() === ""||
             !content || typeof content !== "string" || content.trim() === ""||
-            !isHelpCategoryValid.includes(category.toUpperCase()) ||
+            !isHelpCategoryValid.includes(category?.toUpperCase()) ||
             typeof isVisible !== "boolean"
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -39,7 +39,7 @@ export async function updateHelp(id,title,content,category,isVisible){
             !id ||
             !title || typeof title !== "string" || title.trim() === ""||
             !content || typeof content !== "string" || content.trim() === ""||
-            !isHelpCategoryValid.includes(category.toUpperCase()) ||
+            !isHelpCategoryValid.includes(category?.toUpperCase()) ||
             typeof isVisible !== "boolean"
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -116,7 +116,7 @@ export async function getVisible(){
 
 export async function getByCategory(category){
     try{
-        if(!isHelpCategoryValid.includes(category.toUpperCase())){
+        if(!isHelpCategoryValid.includes(category?.toUpperCase())){
             throw new Error("Nepostojeca kategorija");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/category/${category}`,{

@@ -14,7 +14,7 @@ const t_status = ["PENDING","ON_THE_WAY","COMPLETED","FAILED"];
 
 export async function create(scheduledDate,vehicleId,driversId,status,outboundDeliveryId){
     try{
-        if(!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status.toUpperCase())
+        if(!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status?.toUpperCase())
         || !outboundDeliveryId){
             throw new Error("Sva polja moraju biti popunjena");
         }
@@ -31,7 +31,7 @@ export async function create(scheduledDate,vehicleId,driversId,status,outboundDe
 
 export async function update(id,scheduledDate,vehicleId,driversId,status,outboundDeliveryId){
     try{
-        if(!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status.toUpperCase())
+        if( !id ||!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status?.toUpperCase())
         || !outboundDeliveryId){
             throw new Error("Sva polja moraju biti popunjena");
         }
@@ -47,7 +47,10 @@ export async function update(id,scheduledDate,vehicleId,driversId,status,outboun
 }
 
 export async function deleteTransportOrder(id){
-    try{    
+    try{   
+        if(!id){
+            throw new Error("Dati ID za transportOrder nije pronadjen");
+        } 
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
@@ -60,6 +63,9 @@ export async function deleteTransportOrder(id){
 
 export async function findOne(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za transportOrder nije pronadjen");
+        }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
@@ -84,6 +90,9 @@ export async function findAll(){
 
 export async function findByVehicle_Model(model){
     try{
+        if(!model || typeof model !=="string" || model.trim() ===""){
+            throw new Error("Dati model vozila nije pronadjen");
+        }
         const response = await api.get(url+`/vehicle-model`,{
             params:{
                 model:model
@@ -99,6 +108,9 @@ export async function findByVehicle_Model(model){
 
 export async function findByDriver_Name(name){
     try{
+        if(!name || typeof name !=="string" || name.trim() ===""){
+            throw new Error("Dato ima vozaca nije pronadjen");
+        }
         const response = await api.get(url+`/driver-name`,{
             params:{
                 name:name
@@ -114,6 +126,9 @@ export async function findByDriver_Name(name){
 
 export async function findByVehicleId(vehicleId){
     try{
+        if(!vehicleId){
+            throw new Error("Dati ID za vozilo nije pronadjeno");
+        }
         const response = await api.get(url+`/vehicle/${vehicleId}`,{
             headers:getHeader()
         });
@@ -126,6 +141,9 @@ export async function findByVehicleId(vehicleId){
 
 export async function findByDriverId(driverId){
     try{
+        if(!driverId){
+            throw new Error("Dati ID za vozaca nije pronadjeno");
+        }
         const response = await api.get(url+`/driver/${driverId}`,{
             headers:getHeader()
         });
@@ -138,6 +156,9 @@ export async function findByDriverId(driverId){
 
 export async function findByStatus(status){
     try{
+        if(t_status.includes(status?.toUpperCase())){
+            throw new Error("Dati status za transferOrder nije pronadjen ili ne postoji");
+        }
         const response = await api.get(url+`/transport-status`,{
             params:{
                 status:(status || "".toLowerCase())
@@ -153,6 +174,9 @@ export async function findByStatus(status){
 
 export async function findByOutboundDelivery_Id(outboundDeliveryId){
     try{
+        if(!outboundDeliveryId){
+            throw new Error("Dati ID za outboundDelivery nije pronadjen");
+        }
         const response = await api.get(url+`/outboundDelivery/${outboundDeliveryId}`,{
             headers:getHeader()
         });
@@ -165,6 +189,9 @@ export async function findByOutboundDelivery_Id(outboundDeliveryId){
 
 export async function findByOutboundDelivery_Status(status){
     try{
+        if(t_status.includes(status?.toUpperCase())){
+            throw new Error("Dati status za outboundDelivery nije pronadjen ili ne postoji");
+        }
         const response = await api.get(url+`/delivery-status`,{
             params:{
                 status:(status || "".toLowerCase())

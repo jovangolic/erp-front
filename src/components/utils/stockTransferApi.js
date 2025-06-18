@@ -4,6 +4,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransfers`;
 
 const validateStatus = ["INITIATED","IN_TRANSIT","COMPLETED","CANCELLED"];
+const validateStorageType =["PRODUCTION","DISTRIBUTION"];
 
 export async function create(transferDate, fromStorageId,toStorageId,status, itemRequest){
     try{
@@ -53,7 +54,7 @@ export async function create(transferDate, fromStorageId,toStorageId,status, ite
 
 export async function update(id,transferDate, fromStorageId,toStorageId,status, itemRequest ){
     try{
-        if(!validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
+        if(!id || !validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
             return;
         }
         const requestBody = {transferDate:moment(transferDate).format("YYYY-MM-DD"),
@@ -151,6 +152,10 @@ export async function findByTransferDate(date){
 
 export async function findByTransferDateBetween(start, end){
     try{
+        if(!moment(start,"YYYY-MM-DD",true).isValid() ||
+            !moment(end,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Opseg datuma je nevalidan");
+        }
         const response = await api.get(url+`/transfer-date-range`,{
             params:{
                 start:moment(start).format("YYYY-MM-DD"),
@@ -167,6 +172,9 @@ export async function findByTransferDateBetween(start, end){
 
 export async function findByFromStorageId(fromStorageId){
     try{
+        if(!fromStorageId){
+            throw new Error("Skaldiste odakle ide roba ne postoji");
+        }
         const response = await api.get(url+`/storage/${fromStorageId}`,{
             headers:getHeader()
         });
@@ -179,6 +187,9 @@ export async function findByFromStorageId(fromStorageId){
 
 export async function findByToStorageId(toStorageId){
     try{
+        if(!toStorageId){
+            throw new Error("Skaldiste gde dolazi roba ne postoji");
+        }
         const response = await api.get(url+`/storage/${toStorageId}`,{
             headers:getHeader()
         });
@@ -191,6 +202,9 @@ export async function findByToStorageId(toStorageId){
 
 export async function findByFromStorage_Name(fromStorageName){
     try{
+        if(!fromStorageName || typeof fromStorageName !== "string" || fromStorageName.trim() ===""){
+            throw new Error("Nepoznat naziv skladista odakle dolazi roba");
+        }
         const response = await api.get(url+`/fromStorageName`,{
             params:{
                 fromStorageName:fromStorageName
@@ -206,6 +220,9 @@ export async function findByFromStorage_Name(fromStorageName){
 
 export async function findByFromStorage_Location(fromLocation){
     try{
+        if(!fromLocation || typeof fromLocation !== "string" || fromLocation.trim() ===""){
+            throw new Error("Nepozna lokacija skladista odakle dolazi roba");
+        }
         const response = await api.get(url+`/fromLocation`,{
             params:{
                 fromLocation:fromLocation
@@ -220,7 +237,10 @@ export async function findByFromStorage_Location(fromLocation){
 }
 
 export async function findByToStorage_Name(toStorageName){
-    try{    
+    try{ 
+        if(!toStorageName || typeof toStorageName !== "string" || toStorageName.trim() ===""){
+            throw new Error("Nepoznat naziv skladista gde dolazi roba");
+        }
         const response = await api.get(url+`/toStorageName`,{
             params:{
                 toStorageName:toStorageName
@@ -236,6 +256,9 @@ export async function findByToStorage_Name(toStorageName){
 
 export async function findByToStorage_Location(toLocation){
     try{
+        if(!toLocation || typeof toLocation !=="string" || toLocation.trim() === ""){
+            throw new Error("LOkacija do skladista ne postojeca");
+        }
         const response = await api.get(url+`/toLocation`,{
             params:{
                 toLocation:toLocation
@@ -251,6 +274,9 @@ export async function findByToStorage_Location(toLocation){
 
 export async function findByFromStorage_Type(fromStorageType){
     try{
+        if(validateStorageType.includes(fromStorageType?.toUpperCase())){
+            throw new Error("Nepoznat tip skladista odakle dolazi roba");
+        }
         const response = await api.get(url+`/fromStorageType`,{
             params:{
                 fromStorageType:fromStorageType
@@ -266,6 +292,9 @@ export async function findByFromStorage_Type(fromStorageType){
 
 export async function findByToStorage_Type(toStorageType){
     try{
+        if(validateStorageType.includes(toStorageType?.toUpperCase())){
+            throw new Error("Nepoznat tip skladista gde dolazi roba");
+        }
         const response = await api.get(url+`/toStorageType`,{
             params:{
                 toStorageType:toStorageType
@@ -302,6 +331,9 @@ export async function findByStatusAndDateRange(status, start, end){
 
 export async function findByFromAndToStorageType(fromType, toType){
     try{
+        if(!validateStorageType.includes(fromType?.toUpperCase()) || !validateStorageType.includes(toType?.toUpperCase())){
+            throw new Error("Nepoznati tipovi od-do skladista");
+        }
         const response = await api.get(url+`/fromType-toType`,{
             params:{
                 fromType:fromType,
@@ -318,6 +350,10 @@ export async function findByFromAndToStorageType(fromType, toType){
 
 export async function searchFromStorageByNameAndLocation(name, location){
     try{
+        if(!name || typeof name !=="string" || name.trim() === "" ||
+            !location  || typeof location !=="string" || location.trim() === ""){
+            throw new Error("Pretraga po nazivu i lokaciji skladista je nepoznata");
+        }
         const response = await api.get(url+`/name-and-location`,{
             params:{
                 name:name,
@@ -367,8 +403,6 @@ function validateStockTransferInput(transferDate, fromStorageId, toStorageId, st
 
     return true;
 }
-
-
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

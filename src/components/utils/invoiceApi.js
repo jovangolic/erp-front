@@ -9,7 +9,7 @@ export async function createInvoice(invoiceNumber,issueDate,dueDate,status,total
             !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
             !moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !isInvoiceStatusValid.includes(status.toUpperCase()) ||
+            !isInvoiceStatusValid.includes(status?.toUpperCase()) ||
             isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
             !buyerId || !salesId || !paymentId ||
             !note || typeof note !== "string" || note.trim() === "" ||
@@ -43,7 +43,7 @@ export async function updateInvoice(invoiceId,invoiceNumber,issueDate,dueDate,st
             !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
             !moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !isInvoiceStatusValid.includes(status.toUpperCase()) ||
+            !isInvoiceStatusValid.includes(status?.toUpperCase()) ||
             isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
             !buyerId || !salesId || !paymentId ||
             !note || typeof note !== "string" || note.trim() === "" ||
@@ -114,7 +114,7 @@ export async function getAllInvoices(){
 
 export async function getByInvoiceStatus(status){
     try{
-        if(!isInvoiceStatusValid.includes(status.toUpperCase())){
+        if(!isInvoiceStatusValid.includes(status?.toUpperCase())){
             throw new Error("Nepostojeci status");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice-status`,{
@@ -132,7 +132,7 @@ export async function getByInvoiceStatus(status){
 
 export async function getByBuyerAndStatus(buyerId, status){
     try{
-        if(!buyerId || !isInvoiceStatusValid.includes(status.toUpperCase())){
+        if(!buyerId || !isInvoiceStatusValid.includes(status?.toUpperCase())){
             throw new Error("Nepostojeci buyerId i status");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer-status`,{

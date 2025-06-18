@@ -10,7 +10,7 @@ export async function createSalesOrder(buyerId, items, orderDate, totalAmount, n
             !moment(orderDate, moment.ISO_8601, true).isValid() ||
             isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
             !note || typeof note !== "string" || note.trim() ===""||
-            !isOrderStatusValid.includes(status.toUpperCase()) ||
+            !isOrderStatusValid.includes(status?.toUpperCase()) ||
             !invoiceId || !orderNumber || typeof orderNumber !=="string" || orderNumber.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -41,7 +41,7 @@ export async function updateSalesOrder(id,buyerId, items, orderDate, totalAmount
             !moment(orderDate, moment.ISO_8601, true).isValid() ||
             isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
             !note || typeof note !== "string" || note.trim() ===""||
-            !isOrderStatusValid.includes(status.toUpperCase()) ||
+            !isOrderStatusValid.includes(status?.toUpperCase()) ||
             !invoiceId || !orderNumber || typeof orderNumber !=="string" || orderNumber.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");

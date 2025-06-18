@@ -7,8 +7,8 @@ const isLanguageNameTypeValid = ["ENGLISH","SRPSKI","ESPAÑOL","FRANÇAIS","ITAL
 export async function create(languageCodeType, languageNameType){
     try{
         if(
-            !isLanguageCodeTypeValid.includes(languageCodeType.toUpperCase()) ||
-            !isLanguageNameTypeValid.includes(languageNameType.toUpperCase())
+            !isLanguageCodeTypeValid.includes(languageCodeType?.toUpperCase()) ||
+            !isLanguageNameTypeValid.includes(languageNameType?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -27,8 +27,8 @@ export async function update(id, languageCodeType, languageNameType){
     try{
         if(
             !id ||
-            !isLanguageCodeTypeValid.includes(languageCodeType.toUpperCase()) ||
-            !isLanguageNameTypeValid.includes(languageNameType.toUpperCase())
+            !isLanguageCodeTypeValid.includes(languageCodeType?.toUpperCase()) ||
+            !isLanguageNameTypeValid.includes(languageNameType?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -87,7 +87,7 @@ export async function getALL(){
 
 export async function findByCodeType(code){
     try{
-        if(!isLanguageCodeTypeValid.includes(code.toUpperCase())){
+        if(!isLanguageCodeTypeValid.includes(code?.toUpperCase())){
             throw new Error("Dati code jezika nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/by-code/${code}`,{
@@ -102,7 +102,7 @@ export async function findByCodeType(code){
 
 export async function findByNameType(nameType){
     try{
-        if(!isLanguageNameTypeValid.includes(nameType.toUpperCase())){
+        if(!isLanguageNameTypeValid.includes(nameType?.toUpperCase())){
             throw new Error("Dati naziv/tip jezika nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/by-name/${nameType}`,{

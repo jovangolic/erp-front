@@ -9,9 +9,9 @@ export async function createRawMaterial(name, unitMeasure, supplierType, storage
     try{
         if(
             !nama || typeof name !=="string" || name.trim()==="" ||
-            !isSupplierTypeValidated.includes(supplierType.toUpperCase()) ||
-            !isStorageTypeValidated.includes(storageType.toUpperCase()) ||
-            !isGoodsTypeValidated.includes(goodsType.toUpperCase()) ||
+            !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
+            !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
+            !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
             !storageId || !supplyId || isNaN(currentQuantity) || parseInt(currentQuantity) <= 0 ||
             !productId || !Array.isArray(barCodes) || barCodes.length === 0
         ){
@@ -39,9 +39,9 @@ export async function updateRawMaterial(id, name, unitMeasure, supplierType, sto
         if(
             !id ||
             !nama || typeof name !=="string" || name.trim()==="" ||
-            !isSupplierTypeValidated.includes(supplierType.toUpperCase()) ||
-            !isStorageTypeValidated.includes(storageType.toUpperCase()) ||
-            !isGoodsTypeValidated.includes(goodsType.toUpperCase()) ||
+            !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
+            !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
+            !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
             !storageId || !supplyId || isNaN(currentQuantity) || parseInt(currentQuantity) <= 0 ||
             !productId || !Array.isArray(barCodes) || barCodes.length === 0
         ){

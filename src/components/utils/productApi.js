@@ -9,9 +9,9 @@ export async function createProduct(name, unitMeasure,supplierType,storageType,g
         if(
             !nama || typeof name !=="string" || name.trim()==="" ||
             !unitMeasure || typeof unitMeasure !=="string" ||unitMeasure.trim() === ""||
-            !isSupplierTypeValidated.includes(supplierType.toUpperCase()) ||
-            !isStorageTypeValidated.includes(storageType.toUpperCase()) ||
-            !isGoodsTypeValidated.includes(goodsType.toUpperCase()) ||
+            !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
+            !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
+            !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
             !storageId || isNaN(currentQuantity) || parseInt(currentQuantity) <= 0 ||
             !Array.isArray(barCodes) || barCodes.length === 0
         ){
@@ -40,9 +40,9 @@ export async function updateProduct(id,name, unitMeasure,supplierType,storageTyp
             !id ||
             !nama || typeof name !=="string" || name.trim()==="" ||
             !unitMeasure || typeof unitMeasure !=="string" ||unitMeasure.trim() === ""||
-            !isSupplierTypeValidated.includes(supplierType.toUpperCase()) ||
-            !isStorageTypeValidated.includes(storageType.toUpperCase()) ||
-            !isGoodsTypeValidated.includes(goodsType.toUpperCase()) ||
+            !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
+            !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
+            !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
             !storageId || isNaN(currentQuantity) || parseInt(currentQuantity) <= 0 ||
             !Array.isArray(barCodes) || barCodes.length === 0
         ){
@@ -178,7 +178,7 @@ export async function findByStorageId(storageId){
 
 export async function findBySupplierType(supplierType){
     try{
-        if(!isSupplierTypeValidated.includes(supplierType.toUpperCase())){
+        if(!isSupplierTypeValidated.includes(supplierType?.toUpperCase())){
             throw new Error("SupplierType nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-supplier-type`,{
@@ -196,7 +196,7 @@ export async function findBySupplierType(supplierType){
 
 export async function findByStorageType(storageType){
     try{
-        if(!isStorageTypeValidated.includes(storageType.toUpperCase())){
+        if(!isStorageTypeValidated.includes(storageType?.toUpperCase())){
             throw new Error("Tip skladista nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-storage-type`,{
@@ -214,7 +214,7 @@ export async function findByStorageType(storageType){
 
 export async function findByGoodsType(goodsType){
     try{
-        if(!isGoodsTypeValidated.includes(goodsType.toUpperCase())){
+        if(!isGoodsTypeValidated.includes(goodsType?.toUpperCase())){
             throw new Error("Tip robe nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-goods-type`,{

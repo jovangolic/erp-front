@@ -8,7 +8,7 @@ const isReportValidate = ["INVENTORY","USERS","","ACTIVITY_LOG","ORDERS"];
 
 export const generateReport = async (reportType) => {
   try {
-    if (!reportType || !isReportValidate.includes(reportType)) {
+    if (!reportType || !isReportValidate.includes(reportType?.toUpperCase())) {
       throw new Error("Polja moraju biti popunjena i tip mora biti validan");
     }
     const requestBody = {
@@ -54,7 +54,7 @@ export async function getReportById(id){
 
 export async function getByType(type){
   try{
-    if(!isReportValidate.includes(type.toUpperCase())){
+    if(!isReportValidate.includes(type?.toUpperCase())){
         throw new Error("Tip izvestaja nije pronadjen");
     }
     const requestBody = {type: (type || "").toUpperCase()};

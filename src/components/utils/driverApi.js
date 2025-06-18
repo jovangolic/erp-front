@@ -23,6 +23,7 @@ export async function createDriver(name, phone){
 
 export async function updateDriver(id, name, phone){
     if (
+        !id ||
         !name || typeof name !== "string" || name.trim() === "" ||
         !phone || typeof phone !== "string" || phone.trim() === ""
     ) {

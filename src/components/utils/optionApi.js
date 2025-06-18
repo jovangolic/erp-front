@@ -7,7 +7,7 @@ export async function createOption(label,value,category,active){
         if(
             !label || typeof label !=="string" || label.trim()==="" ||
             !value || typeof value !=="string" || value.trim()==="" ||
-            !isOptionCategoryValid.includes(category.toUpperCase()) ||
+            !isOptionCategoryValid.includes(category?.toUpperCase()) ||
             typeof active !=="boolean"
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -26,7 +26,7 @@ export async function createOption(label,value,category,active){
             throw new Error(`Greška prilikom kreiranja option: ${error.message}`);
         }
     }
-}
+} 
 
 export async function updateOption(id,label,value,category,active){
     try{
@@ -34,7 +34,7 @@ export async function updateOption(id,label,value,category,active){
             !id ||
             !label || typeof label !=="string" || label.trim()==="" ||
             !value || typeof value !=="string" || value.trim()==="" ||
-            !isOptionCategoryValid.includes(category.toUpperCase()) ||
+            !isOptionCategoryValid.includes(category?.toUpperCase()) ||
             typeof active !=="boolean"
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -99,7 +99,7 @@ export async function getAll(){
 
 export async function getByCategory(category){
     try{
-        if(!isOptionCategoryValid.includes(category.toUpperCase())){
+        if(!isOptionCategoryValid.includes(category?.toUpperCase())){
             throw new Error("Data kategorija nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/category/${category}`,{

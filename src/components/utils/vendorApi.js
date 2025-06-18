@@ -3,7 +3,10 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 export async function createVendor(name, email, phoneNumber, address) {
     try{
-        if(!name || name.trim() ==="" || !email || email.trim()==="", !phoneNumber || !address || address.trim() ===""){
+        if(!name || name.trim() ==="" || typeof name !== "string" ||
+        !email || email.trim()==="" || typeof email !=="string" || 
+        !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
+        !address || address.trim() ==="" || typeof address !=="string"){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {name:name, email:email, phoneNumber:phoneNumber, address:address};
@@ -24,7 +27,11 @@ export async function createVendor(name, email, phoneNumber, address) {
 
 export async function updateVendor(id, name, email,phoneNumber, address){
     try{
-        if(!name || name.trim() ==="" || !email || email.trim()==="", !phoneNumber || !address || address.trim() ===""){
+        if(
+        !id || !name || name.trim() ==="" || typeof name !== "string" ||
+        !email || email.trim()==="" || typeof email !=="string" || 
+        !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
+        !address || address.trim() ==="" || typeof address !=="string"){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {id:id, name:name, email:email, phoneNumber:phoneNumber, address:address};
@@ -60,7 +67,7 @@ export async function deleteVendor(id){
 
 export async function getVendorByName(name){
     try{
-        if(!name){
+        if(!name || name.trim() ==="" || typeof name !== "string"){
             throw new Error("Naziv prodavca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vendors/vendor/by-name`,{
@@ -78,7 +85,7 @@ export async function getVendorByName(name){
 
 export async function getVendorByAddress(address){
     try{
-        if(!address){
+        if(!address || address.trim() ==="" || typeof address !== "string"){
             throw new Error("Adresa nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vendors/vendor/by-address`,{
@@ -96,7 +103,7 @@ export async function getVendorByAddress(address){
 
 export async function getVendorByEmail(email){
     try{
-        if(!email){
+        if(!email || email.trim() ==="" || typeof email !== "string"){
             throw new Error("Email nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vendors/vendor/by-email`,{

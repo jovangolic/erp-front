@@ -61,7 +61,7 @@ export async function findByUnitMeasure(unitMeasure){
 
 export async function findBySupplierType(supplierType){
     try{
-        if(!isSupplierTypeValid.includes(supplierType.toUpperCase())){
+        if(!isSupplierTypeValid.includes(supplierType?.toUpperCase())){
             throw new Error("Dati supplierType nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-supplierType`,{
@@ -79,7 +79,7 @@ export async function findBySupplierType(supplierType){
 
 export async function findByStorageType(storageType){
     try{
-        if(!isStorageTypeValid.includes(storageType.toUpperCase())){
+        if(!isStorageTypeValid.includes(storageType?.toUpperCase())){
             throw new Error("Dati tip skladista nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-storageType`,{
@@ -97,7 +97,7 @@ export async function findByStorageType(storageType){
 
 export async function findByGoodsType(goodsType){
     try{
-        if(!isGoodsTypeValid.includes(goodsType.toUpperCase())){
+        if(!isGoodsTypeValid.includes(goodsType?.toUpperCase())){
             throw new Error("Dati tip robe nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-goodsType`,{
@@ -149,7 +149,7 @@ export async function findBySupplyId(supplyId){
 export async function findByBarCodeAndGoodsType(barCode, goodsType){
     try{
         if(!barCode || typeof barCode !== "string" || barCode.trim() === "" ||
-            !isGoodsTypeValid.includes(goodsType.toUpperCase())){
+            !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
                 throw new Error("Dati barCode i tip robe nije pronadjen");
             }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-barCode-and-goodsType`,{

@@ -7,7 +7,7 @@ export async function createEditOpt(name,value,type,editable,visible){
         if(
             !name || typeof name !=="string" || name.trim() === "" ||
             !value || typeof value !=="string" || value.trim() === "" ||
-            !isEditOptTypeValid.includes(type.toUpperCase()) ||
+            !isEditOptTypeValid.includes(type?.toUpperCase()) ||
             typeof editable !=="boolean" || typeof visible !== "boolean"
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -34,7 +34,7 @@ export async function updateEditOpt(id,name,value,type,editable,visible){
             !id ||
             !name || typeof name !=="string" || name.trim() === "" ||
             !value || typeof value !=="string" || value.trim() === "" ||
-            !isEditOptTypeValid.includes(type.toUpperCase()) ||
+            !isEditOptTypeValid.includes(type?.toUpperCase()) ||
             typeof editable !=="boolean" || typeof visible !== "boolean"
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -101,7 +101,7 @@ export async function getAll(){
 export async function getByType(type){
     try{
         if(
-            !isEditOptTypeValid.includes(type.toUpperCase())
+            !isEditOptTypeValid.includes(type?.toUpperCase())
         ){
             throw new Error("Dati tip ne postoji");
         }

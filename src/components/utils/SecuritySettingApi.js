@@ -2,6 +2,9 @@ import { api, getHeader } from "./AppFunction";
 
 export async function getByName(name) {
     try {
+        if(!name || typeof name !=="string" || name.trim() === ""){
+            throw new Error("Pretraga po nazivu je nepoznata");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/${name}`, {
             headers: getHeader()
         });

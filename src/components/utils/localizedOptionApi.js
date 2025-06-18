@@ -61,6 +61,9 @@ export async function getAll(){
 
 export async function getTranslationsForOption(optionId){
     try{
+        if(!optionId){
+            throw new Error("Dati ID za option nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOption/option/${optionId}/translations`,{
             headers:getHeader()
         });

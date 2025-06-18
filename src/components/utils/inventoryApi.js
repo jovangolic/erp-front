@@ -9,7 +9,7 @@ export async function createInventory(storageEmployeeId, storageForemanId, date,
             !storageEmployeeId || !storageForemanId ||
             !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
             !Array.isArray(inventoryItems) || inventoryItems.length === 0||
-            !isInventoryValid.includes(status.toUpperCase())
+            !isInventoryValid.includes(status?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -36,7 +36,7 @@ export async function updateInventory(id,storageEmployeeId, storageForemanId, da
             !storageEmployeeId || !storageForemanId ||
             !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
             !Array.isArray(inventoryItems) || inventoryItems.length === 0||
-            !isInventoryValid.includes(status.toUpperCase())
+            !isInventoryValid.includes(status?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -73,7 +73,7 @@ export async function deleteInventory(id){
 
 export async function findInventoryByStatus(status){
     try{
-        if(!isInventoryValid.includes(status.toUpperCase())){
+        if(!isInventoryValid.includes(status?.toUpperCase())){
             throw new Error("Dati status ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/inventories/find-by-status`,{

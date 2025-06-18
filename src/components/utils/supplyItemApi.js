@@ -27,7 +27,7 @@ export async function createSupplyItem(procurementId, vendorId, cost){
 
 export async function updateSupplyItem(id, procurementId, vendorId, cost){
     try{
-        if(!procurementId || vendorId || cost == null || cost <= 0){
+        if( !id ||!procurementId || vendorId || cost == null || cost <= 0){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {

@@ -9,8 +9,8 @@ export async function createPayment(amount, paymentDate, method, status,referenc
         if(
             isNaN(amount) || parseFloat(amount) <=0 ||
             !moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !isPaymentMethodValid.includes(method.toUpperCase()) ||
-            !isPaymentStatusValid.includes(status.toUpperCase()) ||
+            !isPaymentMethodValid.includes(method?.toUpperCase()) ||
+            !isPaymentStatusValid.includes(status?.toUpperCase()) ||
             !referenceNumber || typeof referenceNumber !== "string" || referenceNumber.trim()==="" ||
             !buyerId  || !relatedSalesId
         ){
@@ -39,8 +39,8 @@ export async function updatePayment(id,amount, paymentDate, method, status,refer
             !id ||
             isNaN(amount) || parseFloat(amount) <=0 ||
             !moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !isPaymentMethodValid.includes(method.toUpperCase()) ||
-            !isPaymentStatusValid.includes(status.toUpperCase()) ||
+            !isPaymentMethodValid.includes(method?.toUpperCase()) ||
+            !isPaymentStatusValid.includes(status?.toUpperCase()) ||
             !referenceNumber || typeof referenceNumber !== "string" || referenceNumber.trim()==="" ||
             !buyerId  || !relatedSalesId
         ){
@@ -122,7 +122,7 @@ export async function getPaymentsByBuyer(buyerId){
 
 export async function getPaymentsByStatus(status){
     try{
-        if(!isPaymentStatusValid.includes(status.toUpperCase())){
+        if(!isPaymentStatusValid.includes(status?.toUpperCase())){
             throw new Error("Status za payment nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/by-status`,{
@@ -140,7 +140,7 @@ export async function getPaymentsByStatus(status){
 
 export async function getPaymentsByMethod(method){
     try{
-        if(!isPaymentStatusValid.includes(status.toUpperCase())){
+        if(!isPaymentStatusValid.includes(method?.toUpperCase())){
             throw new Error("Metod za payment nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/by-method`,{

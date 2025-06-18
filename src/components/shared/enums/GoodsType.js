@@ -1,0 +1,7 @@
+export const GoodsType = Object.freeze({
+    "RAW_MATERIAL": RAW_MATERIAL,
+    "SEMI_FINISHED_PRODUCT": SEMI_FINISHED_PRODUCT,
+    "FINISHED_PRODUCT": FINISHED_PRODUCT,
+    "WRITE_OFS": WRITE_OFS
+    
+});

@@ -242,6 +242,9 @@ export async function updateUser(id,firstName,lastName,email,username,password,p
 
 export async function getUsersByRole(roleName){
     try{
+        if(!roleName || typeof roleName !=="string" || roleName.trim() ===""){
+            throw new Error("Rolename nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/users/role/${roleName}`,{
             headers:getHeader()
         });
@@ -264,6 +267,49 @@ export async function getUserByUsername(username){
     }
     catch(error){
         handleApiError(error, "Greska prilikom pretrage zaposlenog prema korisnickom-imenu");
+    }
+}
+
+export async function createEmployeeByAdmin(firstName,lastName,email,phoneNumber,address,roleIds){
+    try{
+        if(
+            !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
+            !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
+            !email || typeof email !== "string" || email.trim() === "" ||
+            !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
+            !address || typeof address !== "string" || address.trim() === "" ||
+            !(roleIds instanceof Set) || roleIds.size === 0
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
+        const requestBody = {firstName,lastName,email,phoneNumber,address,roleIds};
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/users/admin/create-employee`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom kreiranja zaposlenog");
+    }
+}
+
+export async function updateEmployeeDetails(id, phoneNumber,address, roleIds){
+    try{
+        if(
+            !id || !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" ||
+            !address || typeof address !== "string" || address.trim() === ""||
+            !(roleIds instanceof Set) || roleIds.size === 0
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
+        const requestBody = {phoneNumber,address,roleIds};
+        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/users/employee-details/${id}`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska priliko azuriranja detalja za zaposlenog");
     }
 }
 

@@ -19,7 +19,7 @@ export async function create(transferDate, fromStorageId,toStorageId,status, ite
         return;
     }
     // 3. Provera statusa
-    if (!status || typeof status !== "string") {
+    if (!status || typeof status !== "string" || !validateStatus.includes(status?.toUpperCase())) {
         alert("Status transfera nije validan.");
         return;
     }

@@ -95,6 +95,9 @@ export async function getRoleById(roleId){
 
 export async function assignUserToRole(roleId, userId){
     try{
+        if(!roleId || !userId){
+            throw new Error("Dati roleId i userId nisu pronadjeni");
+        }
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/roles/${roleId}/assign/${userId}`,null,{
             headers:getHeader()
         });

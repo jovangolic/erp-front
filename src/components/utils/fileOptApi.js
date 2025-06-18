@@ -1,6 +1,31 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
+
+const isFileExtensionValid = ["PDF","JPG","PNG","DOCX","XLSX"];
+const isFileActionValid = ["SAVE","SAVE_AS","SAVE_ALL","EXIT"];
+//proverava validnost seta koji sadrzi enum objekte
+function isValidFileActionSet(actionSet) {
+    if (!(actionSet instanceof Set) || actionSet.size === 0) {
+        return false;
+    }
+    for (const action of actionSet) {
+        if (!isFileActionValid.includes(action.toUpperCase())) {
+            return false;
+        }
+    }
+    return true;
+}
+
 export async function createFileOpt(extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions){
     try{
+        if(
+            !isFileExtensionValid.includes(extension.toUpperCase()) ||
+            !mimeType || typeof mimeType !== "string" || mimeType.trim() === "" ||
+            maxSizeInBytes == null || maxSizeInBytes <= 0 ||
+            typeof uploadEnabled !=="boolean" ||typeof previewEnabled !=="boolean" ||
+            !isValidFileActionSet(availableActions)
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena")
+        }
         const requestBody = {extension: (extension || "").toUpperCase(),mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/file-opt/create/`,requestBody,{
             headers:getHeader()
@@ -19,6 +44,16 @@ export async function createFileOpt(extension,mimeType,maxSizeInBytes,uploadEnab
 
 export async function updateFileOpt(id,extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions){
     try{
+        if(
+            !id ||
+            !isFileExtensionValid.includes(extension.toUpperCase()) ||
+            !mimeType || typeof mimeType !== "string" || mimeType.trim() === "" ||
+            maxSizeInBytes == null || maxSizeInBytes <= 0 ||
+            typeof uploadEnabled !=="boolean" ||typeof previewEnabled !=="boolean" ||
+            !isValidFileActionSet(availableActions)
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena")
+        }
         const requestBody = {extension: (extension || "").toUpperCase(),mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/file-opt/update/${id}`,requestBody,{
             headers:getHeader()
@@ -37,6 +72,9 @@ export async function updateFileOpt(id,extension,mimeType,maxSizeInBytes,uploadE
 
 export async function deleteFileOpt(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za fileOpt nijr pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/file-opt/delete/${id}`,{
             headers:getHeader()
         });
@@ -61,6 +99,9 @@ export async function getAllFileOpts(){
 
 export async function getFileOptById(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za fileOpt nijr pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/get-one/${id}`,{
             headers:getHeader()
         });
@@ -73,6 +114,9 @@ export async function getFileOptById(id){
 
 export async function getByExtension(extension){
     try{
+        if(!isFileExtensionValid.includes(extension.toUpperCase())){
+            throw new Error("FileExtension nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/by-extension/${extension}`,{
             headers:getHeader()
         });
@@ -85,6 +129,9 @@ export async function getByExtension(extension){
 
 export async function getByAction(action){
     try{
+        if(!isValidFileActionSet(availableActions)){
+            throw new Error("Dati FileAction nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/by-availableActions/${action}`,{
             headers:getHeader()
         });

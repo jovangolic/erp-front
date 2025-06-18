@@ -1,8 +1,15 @@
+import { act, use } from "react";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
 export async function log(action, userId, details){
     try{
+        if(
+            !action || typeof action !== "string" || action.trim() === ""||
+            !userId || !details || typeof details !== "string" || details.trim() === ""
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {userId,action,details};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}audit-logs/log`,requestBody,{
             headers:getHeader()
@@ -16,6 +23,9 @@ export async function log(action, userId, details){
 
 export async function getById(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za AuditLog ne postoji");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/${id}`,{
             headers:getHeader()
         });
@@ -28,6 +38,12 @@ export async function getById(id){
 
 export async function getLogsBetweenDates(startDate, endDate){
     try{
+        if(
+            !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+        ){
+            throw new Error("Dati datumi log-a nisu u opsegu");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/between-dates`,{
             params:{
                 startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
@@ -44,6 +60,9 @@ export async function getLogsBetweenDates(startDate, endDate){
 
 export async function getLogsByAction(action){
     try{
+        if(!action || typeof action !== "string" || act.trim() === ""){
+            throw new Error("Dati log po akciji ne postoji");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/get-by-action`,{
             params:{
                 action
@@ -59,6 +78,9 @@ export async function getLogsByAction(action){
 
 export async function getLogsByUserId(userId){
     try{
+        if(!userId){
+            throw new Error("Dati userId ne postoji");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/user/${userId}`,{
             headers:getHeader()
         });

@@ -101,7 +101,7 @@ export async function getAllBuyers(){
 export async function existsByPib(pib){
     try{
         if(!pib || typeof pib !== "string" || pib.trim() === ""){
-            throw new Error("Dati PIB ne postoji");
+            throw new Error("PIB je nevalidan ili prazan");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/exists-by-pib`,{
             params:{

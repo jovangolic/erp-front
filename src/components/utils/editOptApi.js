@@ -1,7 +1,17 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
+const isEditOptTypeValid = ["NOTIFICATION_METHOD","REPORT_FORMAT","USER_PERMISSION","DASHBOARD_WIDGET"];
+    
 export async function createEditOpt(name,value,type,editable,visible){
     try{
+        if(
+            !name || typeof name !=="string" || name.trim() === "" ||
+            !value || typeof value !=="string" || value.trim() === "" ||
+            !isEditOptTypeValid.includes(type.toUpperCase()) ||
+            typeof editable !=="boolean" || typeof visible !== "boolean"
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {name,value,type: (type || "").toUpperCase(),editable,visible};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/create`,requestBody,{
             headers:getHeader()
@@ -20,6 +30,15 @@ export async function createEditOpt(name,value,type,editable,visible){
 
 export async function updateEditOpt(id,name,value,type,editable,visible){
     try{
+        if(
+            !id ||
+            !name || typeof name !=="string" || name.trim() === "" ||
+            !value || typeof value !=="string" || value.trim() === "" ||
+            !isEditOptTypeValid.includes(type.toUpperCase()) ||
+            typeof editable !=="boolean" || typeof visible !== "boolean"
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena");
+        }
         const requestBody = {name,value,type: (type || "").toUpperCase(),editable,visible};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/update/${id}`,requestBody,{
             headers:getHeader()
@@ -38,6 +57,9 @@ export async function updateEditOpt(id,name,value,type,editable,visible){
 
 export async function deleteEditOpt(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za editOpt nije pronadjen");
+        }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/delete/${id}`,{
 
             headers:getHeader()
@@ -51,6 +73,9 @@ export async function deleteEditOpt(id){
 
 export async function getById(id){
     try{
+        if(!id){
+            throw new Error("Dati ID za editOpt nije pronadjen");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/get-one/${id}`,{
             headers:getHeader()
         });
@@ -75,6 +100,11 @@ export async function getAll(){
 
 export async function getByType(type){
     try{
+        if(
+            !isEditOptTypeValid.includes(type.toUpperCase())
+        ){
+            throw new Error("Dati tip ne postoji");
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/by-type/${type}`,{
             headers:getHeader()
         });
@@ -84,9 +114,6 @@ export async function getByType(type){
         handleApiError(error,"Greska prilikom dobavljanja po tipu");
     }
 }
-
-
-
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

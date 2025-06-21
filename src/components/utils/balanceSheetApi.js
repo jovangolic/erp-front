@@ -9,6 +9,8 @@ function handleApiError(error, customMessage) {
 }
 
 const url =`${import.meta.env.VITE_API_BASE_URL}/balanceSheets`;
+const isFiscalYearStatusValid = ["OPEN", "CLOSED","ARCHIVED"];
+const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
 
 export async function createBalanceSheet(date,totalAssets,totalLiabilities,totalEquity,fiscalYearId){
     try{
@@ -199,5 +201,78 @@ export async function findByFiscalYear_Id(id){
     }
     catch(error){
         handleApiError(error,"Greska prilikom trazenja po fiscalYear ID-iju");
+    }
+}
+
+export async function findByFiscalYear_Year(year) {
+    try {
+        const parsedYear = parseInt(year);
+        if (isNaN(parsedYear) || parsedYear <= 0) {
+            throw new Error("Data godina nije pronadjena");
+        }
+        const response = await api.get(url + `/fiscalYear-year`, {
+            params: { year: parsedYear },
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        handleApiError(error, "Greska prilikom trazenja po godini");
+    }
+}
+
+export async function findByFiscalYear_YearStatus(yearStatus){
+    try{
+        if(!isFiscalYearStatusValid.includes(yearStatus?.toUpperCase())){
+            throw new Error("Date godisnji-status nije pronadjen");
+        }
+        const response = await api.get(url+`/fiscalYeay-yearStatus`,{
+            params:{
+                yearStatus:(yearStatus || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom pretrage po godisnjem statusus");
+    }
+}
+
+export async function findByFiscalYear_QuarterStatus(quarterStatus){
+    try{
+        if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase())){
+            throw new Error("Dati kvartal za godinu nije pronadjen");
+        }
+        const response = await api.get(url+`/fiscalYear-quarterStatus`,{
+            params:{
+                quarterStatus:(quarterStatus || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom pretrage po kvartalnom statusu");
+    }
+}
+
+export async function findByStatusAndDateRange(status, start, end){
+    try{
+        if(!isFiscalYearStatusValid.includes(status?.toUpperCase()) ||
+            !moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Dati godisnji status i opseg datuma nosu pronadjeni");
+        }
+        const response = await api.get(url+`/by-statu-dateRange`,{
+            params:{
+                status:(status || "").toUpperCase(),
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom pretrage prema godisnjem statusu, pocetnom datumu i krajnjem datumu");
     }
 }

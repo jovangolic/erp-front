@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createSales(buyerId, itemSales, createdAt, totalPrice, salesDescription) {
+export async function createSales({buyerId, itemSales, createdAt, totalPrice, salesDescription}) {
     try {
         if(
             !buyerId || !Array.isArray(itemSales) || itemSales.length === 0 ||
@@ -33,7 +33,7 @@ export async function createSales(buyerId, itemSales, createdAt, totalPrice, sal
     }
 }
 
-export async function updateSales(id, buyerId, itemSales, createdAt, totalPrice, salesDescription) {
+export async function updateSales({id, buyerId, itemSales, createdAt, totalPrice, salesDescription}) {
     try {
         if(
             !id ||
@@ -81,7 +81,7 @@ export async function deleteSales(id){
     }
 }
 
-export async function getByCreatedAtBetween(startDate, endDate){
+export async function getByCreatedAtBetween({startDate, endDate}){
     try{
         if(
             !moment(startDate,moment.ISO_8601, true).isValid() ||

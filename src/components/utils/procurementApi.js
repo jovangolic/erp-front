@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createProcurement(date, totalCost, itemSalesIds, supplyItemIds){
+export async function createProcurement({date, totalCost, itemSalesIds, supplyItemIds}){
     try{
         if(
             !moment(date, "YYYY-MM-DDTHH:mm:ss", true).isValid() ||
@@ -27,7 +27,7 @@ export async function createProcurement(date, totalCost, itemSalesIds, supplyIte
     }
 }
 
-export async function updateProcurement(id, date, totalCost, itemSalesIds, supplyItemIds){
+export async function updateProcurement({id, date, totalCost, itemSalesIds, supplyItemIds}){
     try{
         if(
             !id ||
@@ -114,7 +114,7 @@ export async function getByTotalCost(totalCost){
     }
 }
 
-export async function getByDateBetween(startDate, endDate){
+export async function getByDateBetween({startDate, endDate}){
     try{
         if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss", true).isValid()){
             throw new Error("Datum mora biti ispravan");
@@ -133,7 +133,7 @@ export async function getByDateBetween(startDate, endDate){
     }
 }
 
-export async function getByTotalCostBetween(min, max){
+export async function getByTotalCostBetween({min, max}){
     try{
         if(isNaN(min) || parseFloat(min) < 0 || isNaN(max) || parseFloat(max) <= 0){
             throw new Error("Min i max moraju biti pozitivni");

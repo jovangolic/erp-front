@@ -15,7 +15,7 @@ function isValidFileActionSet(actionSet) {
     return true;
 }
 
-export async function createFileOpt(extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions){
+export async function createFileOpt({extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions}){
     try{
         if(
             !isFileExtensionValid.includes(extension?.toUpperCase()) ||
@@ -42,7 +42,7 @@ export async function createFileOpt(extension,mimeType,maxSizeInBytes,uploadEnab
     }
 }
 
-export async function updateFileOpt(id,extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions){
+export async function updateFileOpt({id,extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions}){
     try{
         if(
             !id ||

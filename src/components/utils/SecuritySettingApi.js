@@ -14,7 +14,7 @@ export async function getByName(name) {
     }
 }
 
-export async function updateSetting(id, settingName, value) {
+export async function updateSetting({id, settingName, value}) {
     try {
         const requestBody = { id, settingName, value };
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/securitySettings`, requestBody, {

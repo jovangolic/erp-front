@@ -10,7 +10,7 @@ function handleApiError(error, customMessage) {
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransferItems`;
 
-export async function create(productId, quantity){
+export async function create({productId, quantity}){
     try{
         if(quantity == null || quantity <= 0 || !productId){
             throw new Error("Sva polja moraju biti popunjena");
@@ -26,7 +26,7 @@ export async function create(productId, quantity){
     }
 }
 
-export async function update(id, productId, quantity){
+export async function update({id, productId, quantity}){
     try{
         if( !id ||quantity == null || quantity <= 0 || !productId){
             throw new Error("Sva polja moraju biti popunjena");

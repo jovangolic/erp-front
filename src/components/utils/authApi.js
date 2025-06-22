@@ -8,7 +8,7 @@ function handleApiError(error, customMessage) {
 }
 
 /*funkicja za logovanje, kao parametar se prosledjuje login objekat */
-export async function loginUser(identifier,password){
+export async function loginUser({identifier,password}){
     try{
         if(!identifier || typeof identifier !== "string" || identifier.trim() === "" ||
             !password || typeof password !== "string"  || password.trim() === ""){
@@ -32,7 +32,7 @@ export async function loginUser(identifier,password){
 }
 
 /*Za rucnu registraciju korisnika tacnije da se korisnik sam registruje */
-export async function registerUser(firstName,lastName,email,username,password,phoneNumber,address,roleIds){
+export async function registerUser({firstName,lastName,email,username,password,phoneNumber,address,roleIds}){
     try{
         if(
             !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
@@ -63,7 +63,7 @@ export async function registerUser(firstName,lastName,email,username,password,ph
 }
 
 /*Funkcija za kreiranje zaposlenog od strane admina */
-export async function createUserByAdmin(firstName,lastName,email,username,password,phoneNumber,address,roleIds){
+export async function createUserByAdmin({firstName,lastName,email,username,password,phoneNumber,address,roleIds}){
     try{
         if(
             !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
@@ -94,7 +94,7 @@ export async function createUserByAdmin(firstName,lastName,email,username,passwo
 }
 
 /* funckija za resetPasswordTest (za testiranje, privremeno)*/
-export async function resetPasswordTest(email, newPassword) {
+export async function resetPasswordTest({email, newPassword}) {
     try {
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/auth/reset-password-test`, null, {
             params: { email, newPassword },

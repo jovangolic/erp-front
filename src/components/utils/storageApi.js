@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const validateStorageType = ["PRODUCTION","DISTRIBUTION"];
 
-export async function createStorage(name, location, capacity, shelves, type, goods) {
+export async function createStorage({name, location, capacity, shelves, type, goods}) {
     try {
         if(!name || typeof name !=="string" || name.trim()==="" || !location || typeof location !=="string" || location.trim()===""
             ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 ||
@@ -33,7 +33,7 @@ export async function createStorage(name, location, capacity, shelves, type, goo
     }
 }
 
-export async function updateStorage(storageId, name,location, capacity, type, goods,shelves){
+export async function updateStorage({storageId, name,location, capacity, type, goods,shelves}){
     try{
         if(!id || !name || typeof name !=="string" || name.trim()==="" || !location || typeof location !=="string" || location.trim()===""
             ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 ||
@@ -168,7 +168,7 @@ export async function getByStorageCapacity(capacity){
     }
 }
 
-export async function getStorageByNameAndLocation(name, location){
+export async function getStorageByNameAndLocation({name, location}){
     try{
         if(!location || typeof location!=="string" || location.trim()==="" ||
            !name || typeof name!=="string" || name.trim()==="" ){
@@ -188,7 +188,7 @@ export async function getStorageByNameAndLocation(name, location){
     }
 }
 
-export async function getByTypeAndCapacityGreaterThan(type, capacity){
+export async function getByTypeAndCapacityGreaterThan({type, capacity}){
     try{
         if(isNaN(capacity) || parseFloat(capacity) <= 0 || validateStorageType.includes(type?.toUpperCase())){
             throw new Error("Tip skladista ne postoji i kapacitet mora biti pozitivan broj");

@@ -12,7 +12,7 @@ const url =`${import.meta.env.VITE_API_BASE_URL}/ledgerEntries`;
 const isLedgerEntryTypeValid = ["DEBIT", "CREDIT"];
 const isAccountTypeValid = ["ASSET", "LIABILITY", "EQUITY", "INCOME", "EXPENSE"];
 
-export async function createLedgerEntry(entryDate,amount,description,accountId,type){
+export async function createLedgerEntry({entryDate,amount,description,accountId,type}){
     try{
         const parseAmount = parseFloat(amount);
         if(
@@ -34,7 +34,7 @@ export async function createLedgerEntry(entryDate,amount,description,accountId,t
     }
 }
 
-export async function updateLedgerEntry(id,entryDate,amount,description,accountId,type){
+export async function updateLedgerEntry({id,entryDate,amount,description,accountId,type}){
     try{
         const parseAmount = parseFloat(amount);
         if(
@@ -115,7 +115,7 @@ export async function findByType(type){
     }
 }
 
-export async function findByAmountBetween(min, max){
+export async function findByAmountBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
@@ -155,7 +155,7 @@ export async function findByDescriptionContainingIgnoreCase(keyword){
     }
 }
 
-export async function findByEntryDateBetween(start, end){
+export async function findByEntryDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
@@ -330,7 +330,7 @@ export async function findByEntryDateAfter(date){
     }
 }
 
-export async function findByEntryDateAfterAndType(date, type){
+export async function findByEntryDateAfterAndType({date, type}){
     try{
         if(!isLedgerEntryTypeValid.includes(type?.toUpperCase()) ||
             !moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
@@ -350,7 +350,7 @@ export async function findByEntryDateAfterAndType(date, type){
     }
 }
 
-export async function findByEntryDateBetweenAndAccount_Id(start, end,accountId){
+export async function findByEntryDateBetweenAndAccount_Id({start, end,accountId}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !accountId){

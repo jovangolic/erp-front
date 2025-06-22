@@ -47,7 +47,7 @@ export async function deletePermission(id){
     }
 }
 
-export async function updatePermission(id, permissionType){
+export async function updatePermission({id, permissionType}){
     try{
         if(
             !id ||

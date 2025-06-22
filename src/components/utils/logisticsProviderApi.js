@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/logistics-providers`;
 
-export async function create(name, contactPhone, email,website){
+export async function create({name, contactPhone, email,website}){
     try{
         if(
             !name || typeof name !=="string" || name.trim()==="" ||
@@ -22,7 +22,7 @@ export async function create(name, contactPhone, email,website){
     }
 }
 
-export async function update(id, name, contactPhone, email,website){
+export async function update({id, name, contactPhone, email,website}){
     try{
         if(!id ||
             !name || typeof name !=="string" || name.trim()==="" ||

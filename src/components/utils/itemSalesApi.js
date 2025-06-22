@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 
-export async function createItemSales(goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice){
+export async function createItemSales({goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice}){
     try{
         if(
             !goodsId || !salesId || !procurementId || !salesOrderId ||
@@ -26,7 +26,7 @@ export async function createItemSales(goodsId, salesId, procurementId, salesOrde
     }
 }
 
-export async function updateItemSales(id, goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice){
+export async function updateItemSales({id, goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice}){
     try{
         if(
             !id ||

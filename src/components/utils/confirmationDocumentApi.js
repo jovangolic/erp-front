@@ -1,14 +1,14 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export const createConfirmationDocument = async (filePath, userId, shiftId) => {
+export const createConfirmationDocument = async ({filePath, userId, shiftId}) => {
   const requestBody = {
     filePath: filePath, // ili neka generisana putanja ako već postoji
     createdBy: { id: userId },
     shift: { id: shiftId }
   };
 
-  return await api.post('${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/create/new-confirm-document', requestBody);
+  return await api.post(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/create/new-confirm-document`, requestBody);
 };
 
 export const getConfirmationDocumentById = async (id) => {
@@ -31,7 +31,7 @@ export const deleteConfirmationDocument = async (id) => {
   return await api.delete(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/delete/${id}`);
 };
 
-export const uploadDocument = async (file, userId, shiftId) => {
+export const uploadDocument = async ({file, userId, shiftId}) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("userId", userId);
@@ -73,7 +73,7 @@ export const generateAndSaveDocument = async (goodsDispatchDTO) => {
   }
 };
 
-export async function updateConfirmationDocument(id, filePath, createdAt, userId, shiftId){
+export async function updateConfirmationDocument({id, filePath, createdAt, userId, shiftId}){
   try{
     const requestBody = {filePath, createdAt: moment(createdAt).format("YYYY-MM-DDTHH:mm:ss"),userId,shiftId};
     const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/confirmationDocuments/update/${id}`,requestBody,{

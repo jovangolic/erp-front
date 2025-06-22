@@ -12,7 +12,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/fiscalYears`;
 const isFiscalYearStatusValid = ["OPEN", "CLOSED","ARCHIVED"];
 const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
 
-export async function createFiscalYear(year, startDate, endDate, yearStatus, quarterStatus, quarters) {
+export async function createFiscalYear({year, startDate, endDate, yearStatus, quarterStatus, quarters}) {
     try {
         // Validacija osnovnih polja
         if (
@@ -51,7 +51,7 @@ export async function createFiscalYear(year, startDate, endDate, yearStatus, qua
     }
 }
 
-export async function updateFiscalYear(id,year, startDate, endDate, yearStatus, quarterStatus, quarters){
+export async function updateFiscalYear({id,year, startDate, endDate, yearStatus, quarterStatus, quarters}){
     try{
         if (
             !id ||
@@ -133,7 +133,7 @@ export async function findAll(){
     }
 }
 
-export async function findBetweenStartAndEndDates(start, end){
+export async function findBetweenStartAndEndDates({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati opseg godina je ne-validan");
@@ -169,7 +169,7 @@ export async function findByYear(year){
     }
 }
 
-export async function findByYearStatusAndYear(status, year){
+export async function findByYearStatusAndYear({status, year}){
     try{
         const parsedYear = parseInt(year);
         if(isNaN(parsedYear) || parsedYear <= 0 || !isFiscalYearStatusValid.includes(status?.toUpperCase())){

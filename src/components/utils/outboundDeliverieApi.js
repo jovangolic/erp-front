@@ -58,7 +58,7 @@ export async function create(data){
     }
 }
 
-export async function update(id, data){
+export async function update({id, data}){
     try{
         if(!id || !isValidOutboundDelivery({ ...data, validateStatus })){
             throw new Error("Sva polja moraju biti popunjena i validna."); 
@@ -133,7 +133,7 @@ export async function findByStatus(status){
     }
 }
 
-export async function findByDeliveryDateBetween(from, to) {
+export async function findByDeliveryDateBetween({from, to}) {
   try {
     const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
     const isToValid = moment(to, "YYYY-MM-DD", true).isValid();

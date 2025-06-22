@@ -57,7 +57,7 @@ export async function createShipment(data) {
     }
 }
 
-export async function update(id,date){
+export async function update({id,date}){
     try{
         if (!id || !isValidShipmentData({ ...data, validateStatus })) {
             throw new Error("Sva polja moraju biti popunjena i validna.");
@@ -147,7 +147,7 @@ export async function findByStatus(status){
     }
 }
 
-export async function findByShipmentDateBetween(from, to) {
+export async function findByShipmentDateBetween({from, to}) {
     try{
         const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
         const isToValid = moment(to, "YYYY-MM-DD", true).isValid();
@@ -303,7 +303,7 @@ export async function findByOriginStorage_Type(type){
     }
 }
 
-export async function findByOriginStorageIdAndStatus(storageId, status){
+export async function findByOriginStorageIdAndStatus({storageId, status}){
     try{
         if(!storageId || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("StorageId I status nisu pronadjeni");

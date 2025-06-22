@@ -11,7 +11,7 @@ function handleApiError(error, customMessage) {
 const url =`${import.meta.env.VITE_API_BASE_URL}/fiscalQuarters`;
 const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
 
-export async function createFiscalQarter(quarterStatus,startDate,endDate){
+export async function createFiscalQarter({quarterStatus,startDate,endDate}){
     try{
         if(
             !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) ||
@@ -30,7 +30,7 @@ export async function createFiscalQarter(quarterStatus,startDate,endDate){
     }
 }
 
-export async function updateFiscalQuarter(id,quarterStatus,startDate,endDate){
+export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate}){
     try{
         if(
             !id ||
@@ -122,7 +122,7 @@ export async function findByQuarterStatus(status){
     }
 }
 
-export async function findByStartDateBetween(start, end){
+export async function findByStartDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati opseg datuma je pogresan ili ne-validan");
@@ -141,7 +141,7 @@ export async function findByStartDateBetween(start, end){
     }
 }
 
-export async function findByFiscalYearIdAndQuarterStatus(fiscalYearId,status){
+export async function findByFiscalYearIdAndQuarterStatus({fiscalYearId,status}){
     try{
         if(!fiscalYearId || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
             throw new Error("Dati ID za fiskalnu godinu i stastus nisu pronadjeni");

@@ -3,7 +3,7 @@ import moment from "moment";
 
 const isInvoiceStatusValid = ["DRAFT","ISSUED","PAID","CANCELLED","OVERDUE"];  
 
-export async function createInvoice(invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById){
+export async function createInvoice({invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById}){
     try{
         if(
             !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
@@ -36,7 +36,7 @@ export async function createInvoice(invoiceNumber,issueDate,dueDate,status,total
     }
 }
 
-export async function updateInvoice(invoiceId,invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById ){
+export async function updateInvoice({invoiceId,invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById} ){
     try{
         if(
             !invoiceId ||
@@ -130,7 +130,7 @@ export async function getByInvoiceStatus(status){
     }
 }
 
-export async function getByBuyerAndStatus(buyerId, status){
+export async function getByBuyerAndStatus({buyerId, status}){
     try{
         if(!buyerId || !isInvoiceStatusValid.includes(status?.toUpperCase())){
             throw new Error("Nepostojeci buyerId i status");
@@ -211,7 +211,7 @@ export async function getByPaymentId(paymentId){
     }
 }
 
-export async function getByIssueDateBetween(startDate,endDate){
+export async function getByIssueDateBetween({startDate,endDate}){
     try{
         if(
             !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||

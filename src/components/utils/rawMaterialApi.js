@@ -5,7 +5,7 @@ const isSupplierTypeValidated = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUP
 const isStorageTypeValidated = ["PRODUCTION","DISTRIBUTION"];
 const isGoodsTypeValidated = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODUCT","WRITE_OFS"];  
 	
-export async function createRawMaterial(name, unitMeasure, supplierType, storageType, goodsType, storageId, supplyId, currentQuantity, productId, barCodes){
+export async function createRawMaterial({name, unitMeasure, supplierType, storageType, goodsType, storageId, supplyId, currentQuantity, productId, barCodes}){
     try{
         if(
             !nama || typeof name !=="string" || name.trim()==="" ||
@@ -34,7 +34,7 @@ export async function createRawMaterial(name, unitMeasure, supplierType, storage
     }
 }
 
-export async function updateRawMaterial(id, name, unitMeasure, supplierType, storageType, goodsType, storageId, supplyId, currentQuantity, productId, barCodes){
+export async function updateRawMaterial({id, name, unitMeasure, supplierType, storageType, goodsType, storageId, supplyId, currentQuantity, productId, barCodes}){
     try{
         if(
             !id ||

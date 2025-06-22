@@ -68,7 +68,7 @@ export async function getByType(type){
   }
 }
 
-export async function getReportsBetweenDates(from, to){
+export async function getReportsBetweenDates({from, to}){
   try{
     if(!moment(startDate, moment.ISO_8601, true).isValid() ||
         !moment(endDate, moment.ISO_8601, true).isValid()){

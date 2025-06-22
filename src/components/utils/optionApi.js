@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isOptionCategoryValid = ["GENDER","ROLE","STATUS","LANGUAGE","THEME"]; 
 
-export async function createOption(label,value,category,active){
+export async function createOption({label,value,category,active}){
     try{
         if(
             !label || typeof label !=="string" || label.trim()==="" ||
@@ -28,7 +28,7 @@ export async function createOption(label,value,category,active){
     }
 } 
 
-export async function updateOption(id,label,value,category,active){
+export async function updateOption({id,label,value,category,active}){
     try{
         if(
             !id ||

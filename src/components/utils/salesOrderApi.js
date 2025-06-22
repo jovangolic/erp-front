@@ -33,7 +33,7 @@ export async function createSalesOrder(buyerId, items, orderDate, totalAmount, n
     }
 }
 
-export async function updateSalesOrder(id,buyerId, items, orderDate, totalAmount, note, status, invoiceId, orderNumber ){
+export async function updateSalesOrder({id,buyerId, items, orderDate, totalAmount, note, status, invoiceId, orderNumber} ){
     try{
         if(
             !id ||

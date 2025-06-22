@@ -1,7 +1,7 @@
 import { api, getHeader, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createSupplyItem(procurementId, vendorId, cost){
+export async function createSupplyItem({procurementId, vendorId, cost}){
     try{
         if(!procurementId || vendorId || cost == null || cost <= 0){
             throw new Error("Sva polja moraju biti popunjena");
@@ -25,7 +25,7 @@ export async function createSupplyItem(procurementId, vendorId, cost){
     }
 }
 
-export async function updateSupplyItem(id, procurementId, vendorId, cost){
+export async function updateSupplyItem({id, procurementId, vendorId, cost}){
     try{
         if( !id ||!procurementId || vendorId || cost == null || cost <= 0){
             throw new Error("Sva polja moraju biti popunjena");
@@ -122,7 +122,7 @@ export async function getBySupplierId(supplierId){
     }
 }
 
-export async function getByCostBetween(min, max){
+export async function getByCostBetween({min, max}){
     try{
         const parsedMin = parseFloat(min);
         const parsedMax = parseFloat(max);
@@ -143,7 +143,7 @@ export async function getByCostBetween(min, max){
     }
 }
 
-export async function getByProcurementDateBetween(startDate, endDate){
+export async function getByProcurementDateBetween({startDate, endDate}){
     try {
         if (
             !moment(startDate, moment.ISO_8601, true).isValid() ||
@@ -164,7 +164,7 @@ export async function getByProcurementDateBetween(startDate, endDate){
     }
 }
 
-export async function getByProcurementDateAndCostBetween(startDate,endDate, min, max){
+export async function getByProcurementDateAndCostBetween({startDate,endDate, min, max}){
     try{
         const parsedMin = parseFloat(min);
         const parsedMax = parseFloat(max);
@@ -190,7 +190,7 @@ export async function getByProcurementDateAndCostBetween(startDate,endDate, min,
     }
 }
 
-export async function getByProcurementAndVendor(procurementId, vendorId){
+export async function getByProcurementAndVendor({procurementId, vendorId}){
     try{
         if(!procurementId || vendorId){
             throw new Error("ProcurementId i vendorId nisu pronadjeni");
@@ -209,7 +209,7 @@ export async function getByProcurementAndVendor(procurementId, vendorId){
     }
 }
 
-export async function getByVendorAndProcurementAndCost(supplierId, procurementId, minCost){
+export async function getByVendorAndProcurementAndCost({supplierId, procurementId, minCost}){
     try {
         if(!procurementId || vendorId || isNaN(minCost) || minCost < 0){
             throw new Error("procurementId, vendorId i minCost nisu pronadjeni");
@@ -229,7 +229,7 @@ export async function getByVendorAndProcurementAndCost(supplierId, procurementId
     }
 }
 
-export async function getByDateAndCost(startDate, endDate, min, max) {
+export async function getByDateAndCost({startDate, endDate, min, max}) {
     try {
         const parsedMin = parseFloat(min);
         const parsedMax = parseFloat(max);
@@ -256,7 +256,7 @@ export async function getByDateAndCost(startDate, endDate, min, max) {
     }
 }
 
-export async function getBySupplierNameAndProcurementDateAndMaxCost(supplierName, startDate, endDate, max){
+export async function getBySupplierNameAndProcurementDateAndMaxCost({supplierName, startDate, endDate, max}){
     try {
         if (
             !supplierName || typeof supplierName !== "string" || supplierName.trim() === "" ||

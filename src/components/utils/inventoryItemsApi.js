@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-export async function createInventoryItems(inventoryId,productId, quantity, condition){
+export async function createInventoryItems({inventoryId,productId, quantity, condition}){
     try{
         if(
             !inventoryId || !productId || isNaN(quantity) || parseFloat(quantity) < 0 ||
@@ -24,7 +24,7 @@ export async function createInventoryItems(inventoryId,productId, quantity, cond
     }
 }
 
-export async function updateInventoryItems(id,inventoryId,productId, quantity, condition ) {
+export async function updateInventoryItems({id,inventoryId,productId, quantity, condition }) {
     try{
         if(
             !id ||

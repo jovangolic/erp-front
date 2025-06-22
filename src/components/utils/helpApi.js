@@ -7,7 +7,7 @@ const isHelpCategoryValid = ["USER","BUYER","PRODUCT","ORDER","INVENTORY","SHIFT
     "INBOUND_DELIVERY","DELIVERY_ITEM","COMPANY_EMAIL","DASHBOARD","OPTION","EMAI_SETTING"
 ]; 
 
-export async function createHelp(title,content,category,isVisible){
+export async function createHelp({title,content,category,isVisible}){
     try{
         if(
             !title || typeof title !== "string" || title.trim() === ""||
@@ -33,7 +33,7 @@ export async function createHelp(title,content,category,isVisible){
     }
 }
 
-export async function updateHelp(id,title,content,category,isVisible){
+export async function updateHelp({id,title,content,category,isVisible}){
     try{
         if(
             !id ||

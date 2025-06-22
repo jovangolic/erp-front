@@ -11,7 +11,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/accounts`;
 
 const isAccountTypeValid = ["ASSET", "LIABILITY", "EQUITY", "INCOME", "EXPENSE"];
 
-export async function createAccount(accountNumber,accountName,type,balance){
+export async function createAccount({accountNumber,accountName,type,balance}){
     try{
         if(
             !accountNumber || typeof accountNumber !=="string" || accountNumber.trim()==="" ||
@@ -32,7 +32,7 @@ export async function createAccount(accountNumber,accountName,type,balance){
     }
 }
 
-export async function updateAccount(id,accountNumber,accountName,type,balance ){
+export async function updateAccount({id,accountNumber,accountName,type,balance}){
     try{
         if(
             !id ||
@@ -133,7 +133,7 @@ export async function findByBalance(balance){
     }
 }
 
-export async function findByBalanceBetween(min, max){
+export async function findByBalanceBetween({min, max}){
     try{
         if(isNaN(parseFloat(min)) || parseFloat(min) < 0 ||
             isNaN(parseFloat(max)) || parseFloat(max) <= 0){
@@ -243,7 +243,7 @@ export async function findByAccountNumber(accountNumber){
     }
 }
 
-export async function findByAccountNameAndAccountNumber(accountName, accountNumber){
+export async function findByAccountNameAndAccountNumber({accountName, accountNumber}){
     try{
         if(
             !accountNumber || typeof accountNumber !=="string" || accountNumber.trim()==="" ||

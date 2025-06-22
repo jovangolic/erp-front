@@ -11,7 +11,7 @@ function handleApiError(error, customMessage) {
 const url =`${import.meta.env.VITE_API_BASE_URL}/incomeStatements`;
 const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
 
-export async function createIncomeStatement(periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId){
+export async function createIncomeStatement({periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId}){
     try{
         const parseTotalRevenue = parseFloat(totalRevenue);
         const parseTotalExpenses = parseFloat(totalExpenses);
@@ -35,13 +35,13 @@ export async function createIncomeStatement(periodStart,periodEnd,totalRevenue,t
     }
 }
 
-export async function updateIncomeStatement(id,periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId){
+export async function updateIncomeStatement({id,periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId}){
     try{
         const parseTotalRevenue = parseFloat(totalRevenue);
         const parseTotalExpenses = parseFloat(totalExpenses);
         const parseNetProfit = parseFloat(netProfit);
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !moment(periodStart,"YYYY-MM-DD",true).isValid() || !moment(periodEnd,"YYYY-MM-DD",true).isValid() ||
             isNaN(parseTotalRevenue) || parseTotalRevenue <= 0 ||
             isNaN(parseTotalExpenses) || parseTotalExpenses <= 0 ||
@@ -186,7 +186,7 @@ export async function findByFiscalYear_QuarterStatus(quarterStatus){
     }
 }
 
-export async function findByPeriodStartBetween(start, end){
+export async function findByPeriodStartBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati pocetak i kraj datuma nije pronadjen");
@@ -205,7 +205,7 @@ export async function findByPeriodStartBetween(start, end){
     }
 }
 
-export async function findByPeriodEndBetween(start, end){
+export async function findByPeriodEndBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati pocetak i kraj datuma nije pronadjen");
@@ -224,7 +224,7 @@ export async function findByPeriodEndBetween(start, end){
     }
 }
 
-export async function findWithinPeriod(start, end){
+export async function findWithinPeriod({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati pocetak i kraj datuma nije pronadjen");

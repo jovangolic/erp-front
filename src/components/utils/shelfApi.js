@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-export async function createShelf(rowCount, cols, storageId, goods){
+export async function createShelf({rowCount, cols, storageId, goods}){
     try{
         if(
             isNaN(rowCount) || parseInt(rowCount) <= 0 ||
@@ -25,7 +25,7 @@ export async function createShelf(rowCount, cols, storageId, goods){
     }
 }
 
-export async function updateShelf(id, rowCount, cols, storageId, goods){
+export async function updateShelf({id, rowCount, cols, storageId, goods}){
     try{
         if(
             !id ||
@@ -93,7 +93,7 @@ export async function findAll(){
     }
 }
 
-export async function existsByRowCountAndStorageId(storageId, rowCount){
+export async function existsByRowCountAndStorageId({storageId, rowCount}){
     try{
         if(isNaN(rowCount) || parseInt(rowCount) <= 0 || !storageId){
             throw new Error("Greska, nepostojeci red polica i id skladista");
@@ -108,7 +108,7 @@ export async function existsByRowCountAndStorageId(storageId, rowCount){
     }
 }
 
-export async function existsByColsAndStorageId(storageId, cols){
+export async function existsByColsAndStorageId({storageId, cols}){
     try{
         if(isNaN(cols) || parseInt(cols) <= 0 || !storageId){
             throw new Error("Greska, nepostojeca kolona polica i id skladista");
@@ -123,7 +123,7 @@ export async function existsByColsAndStorageId(storageId, cols){
     }
 }
 
-export async function existsByRowCountAndColumnAndStorageId(storageId, rowCount, cols){
+export async function existsByRowCountAndColumnAndStorageId({storageId, rowCount, cols}){
     try{
         if(isNaN(rowCount) || parseInt(rowCount) <= 0 ||
             isNaN(cols) || parseInt(cols) <= 0 || !storageId){
@@ -154,7 +154,7 @@ export async function findByStorageId(storageId){
     }
 }   
 
-export async function findByRowCountAndStorageId(storageId, rowCount){
+export async function findByRowCountAndStorageId({storageId, rowCount}){
     try{
         if(isNaN(rowCount) || parseInt(rowCount) <= 0 || !storageId){
             throw new Error("Greks prilikom trazenja reda polica i ID skladista");
@@ -169,7 +169,7 @@ export async function findByRowCountAndStorageId(storageId, rowCount){
     }
 }
 
-export async function findByColumnAndStorageId(storageId, cols){
+export async function findByColumnAndStorageId({storageId, cols}){
     try{
         if(isNaN(cols) || parseInt(cols) <= 0 || !storageId){
             throw new Error("Greks prilikom trazenja kolone polica i ID skladista");
@@ -184,7 +184,7 @@ export async function findByColumnAndStorageId(storageId, cols){
     }
 }
 
-export async function findByRowCountAndColsAndStorageId(storageId, rowCount, cols){
+export async function findByRowCountAndColsAndStorageId({storageId, rowCount, cols}){
     try{
         if(isNaN(rowCount) || parseInt(rowCount) <= 0 ||
             isNaN(cols) || parseInt(cols) <= 0 || !storageId){

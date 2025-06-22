@@ -4,7 +4,7 @@ import moment from "moment";
 const isPaymentMethodValid = ["BANK_TRANSFER","CASH","CARD","PAYPAL"]; 
 const isPaymentStatusValid = ["PENDING","COMPLETED","FAILED"];  
 
-export async function createPayment(amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId){
+export async function createPayment({amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId}){
     try{
         if(
             isNaN(amount) || parseFloat(amount) <=0 ||
@@ -33,7 +33,7 @@ export async function createPayment(amount, paymentDate, method, status,referenc
     }
 }
 
-export async function updatePayment(id,amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId ){
+export async function updatePayment({id,amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId} ){
     try{
         if(
             !id ||

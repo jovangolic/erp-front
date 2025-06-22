@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/drivers`;
 
-export async function createDriver(name, phone){
+export async function createDriver({name, phone}){
     if (
         !name || typeof name !== "string" || name.trim() === "" ||
         !phone || typeof phone !== "string" || phone.trim() === ""
@@ -21,7 +21,7 @@ export async function createDriver(name, phone){
     }
 }
 
-export async function updateDriver(id, name, phone){
+export async function updateDriver({id, name, phone}){
     if (
         !id ||
         !name || typeof name !== "string" || name.trim() === "" ||

@@ -42,7 +42,7 @@ export async function create(date){
     }
 }
 
-export async function update(id,date){
+export async function update({id,date}){
     try{
        if(!isValidTrackingInfo({...date,validateStatus})){
             throw new Error("Sva polja moraju biti popunjena i validna.");
@@ -132,7 +132,7 @@ export async function findByShipmentId(shipmentId){
     }
 }
 
-export async function findByEstimatedDeliveryBetween(start, end){
+export async function findByEstimatedDeliveryBetween({start, end}){
     try{
         const isStartValid = moment(start, "YYYY-MM-DD", true).isValid();
         const isEndValid = moment(end, "YYYY-MM-DD", true).isValid();
@@ -153,7 +153,7 @@ export async function findByEstimatedDeliveryBetween(start, end){
     }
 }
 
-export async function findByCurrentLocationAndCurrentStatus(location, status){
+export async function findByCurrentLocationAndCurrentStatus({location, status}){
     try{
         if(!location || typeof location !=="string" || location.trim()==="" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Location and status moraju biti popunjeni");
@@ -203,7 +203,7 @@ export async function findAllByOrderByEstimatedDeliveryAsc(){
     }
 }
 
-export async function findByCreatedAtBetween(from, to){
+export async function findByCreatedAtBetween({from, to}){
     try{
         const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
         const isToValid = moment(to, "YYYY-MM-DD", true).isValid();
@@ -224,7 +224,7 @@ export async function findByCreatedAtBetween(from, to){
     }
 }
 
-export async function findByUpdatedAtBetween(from, to){
+export async function findByUpdatedAtBetween({from, to}){
     try{
         const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
         const isToValid = moment(to, "YYYY-MM-DD", true).isValid();

@@ -12,7 +12,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/transportOrders`;
 
 const t_status = ["PENDING","ON_THE_WAY","COMPLETED","FAILED"];
 
-export async function create(scheduledDate,vehicleId,driversId,status,outboundDeliveryId){
+export async function create({scheduledDate,vehicleId,driversId,status,outboundDeliveryId}){
     try{
         if(!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status?.toUpperCase())
         || !outboundDeliveryId){
@@ -29,7 +29,7 @@ export async function create(scheduledDate,vehicleId,driversId,status,outboundDe
     }
 }
 
-export async function update(id,scheduledDate,vehicleId,driversId,status,outboundDeliveryId){
+export async function update({id,scheduledDate,vehicleId,driversId,status,outboundDeliveryId}){
     try{
         if( !id ||!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status?.toUpperCase())
         || !outboundDeliveryId){
@@ -205,7 +205,7 @@ export async function findByOutboundDelivery_Status(status){
     }
 }
 
-export async function findByScheduledDateBetween(from, to){
+export async function findByScheduledDateBetween({from, to}){
     try{
         if (!from || !to || !moment(from, "YYYY-MM-DD", true).isValid() || !moment(to, "YYYY-MM-DD", true).isValid()) {
             throw new Error("Opseg datuma nije ispravan");

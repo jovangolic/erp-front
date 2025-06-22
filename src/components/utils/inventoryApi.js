@@ -3,7 +3,7 @@ import moment from "moment";
 
 const isInventoryValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED"];
 
-export async function createInventory(storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status){
+export async function createInventory({storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status}){
     try{
         if(
             !storageEmployeeId || !storageForemanId ||
@@ -29,10 +29,10 @@ export async function createInventory(storageEmployeeId, storageForemanId, date,
     }
 }
 
-export async function updateInventory(id,storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status ){
+export async function updateInventory({id,storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status} ){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !storageEmployeeId || !storageForemanId ||
             !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
             !Array.isArray(inventoryItems) || inventoryItems.length === 0||
@@ -170,7 +170,7 @@ export async function findByDate(date){
     }
 }
 
-export async function findByDateRange(startDate, endDate){
+export async function findByDateRange({startDate, endDate}){
     try{
         if(!moment(startDate,"YYYY-MM-DD",true).isValid() ||
            !moment(endDate,"YYYY-MM-DD",true).isValid()){
@@ -190,7 +190,7 @@ export async function findByDateRange(startDate, endDate){
     }
 }
 
-export async function changeStatus(inventoryId, newStatusStr){
+export async function changeStatus({inventoryId, newStatusStr}){
     try{
         if(!inventoryId || !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
             throw new Error("Nepoznat inventoryId i newStatusStr");

@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const validateStatus = ["AVAILABLE","IN_USE","UNDER_MAINTENANCE","OUT_OF_SERVICE","RESERVED"];
 
-export async function createVehicle(registrationNumber,model,status){
+export async function createVehicle({registrationNumber,model,status}){
     if(!registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
     !model || model.trim() ===""|| typeof model !=="string" || 
     !status || !validateStatus.includes(status?.toUpperCase())){
@@ -20,7 +20,7 @@ export async function createVehicle(registrationNumber,model,status){
     }
 }
 
-export async function updateVehicle(id,registrationNumber,model,status){
+export async function updateVehicle({id,registrationNumber,model,status}){
     if(
     !id ||    
     !registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
@@ -136,7 +136,7 @@ export async function findByStatus(status){
     }
 }
 
-export async function findByModelAndStatus(model, status){
+export async function findByModelAndStatus({model, status}){
     try{
         if(!model || model.trim() ===""|| typeof model !=="string" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Model i status vozila nisu pronadjeni");
@@ -173,7 +173,7 @@ export async function search(key){
     }
 }
 
-export async function filterVehicles(model, status){
+export async function filterVehicles({model, status}){
     try{
         if(!model || model.trim() ===""|| typeof model !=="string" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Model i status vozila nisu pronadjeni");

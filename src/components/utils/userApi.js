@@ -44,7 +44,7 @@ export async function createSuperAdmin(
   }
 }
 
-export async function createUserByAdmin(firstName,lastName,email,username,password,phoneNumber, address,roleIds){
+export async function createUserByAdmin({firstName,lastName,email,username,password,phoneNumber, address,roleIds}){
     try{
         if (
       !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
@@ -97,7 +97,7 @@ export async function getAllUsers(){
     }
 }
 
-export async function createAdmin(firstName,lastName,email,username,password,phoneNumber, address,roleIds){
+export async function createAdmin({firstName,lastName,email,username,password,phoneNumber, address,roleIds}){
     try{
         if (
       !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
@@ -198,7 +198,7 @@ export async function getUserById(id){
     }
 }
 
-export async function updateUser(id,firstName,lastName,email,username,password,phoneNumber, address,roleIds ){
+export async function updateUser({id,firstName,lastName,email,username,password,phoneNumber, address,roleIds }){
     try{
         if (
       !id ||      
@@ -270,7 +270,7 @@ export async function getUserByUsername(username){
     }
 }
 
-export async function createEmployeeByAdmin(firstName,lastName,email,phoneNumber,address,roleIds){
+export async function createEmployeeByAdmin({firstName,lastName,email,phoneNumber,address,roleIds}){
     try{
         if(
             !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
@@ -293,7 +293,7 @@ export async function createEmployeeByAdmin(firstName,lastName,email,phoneNumber
     }
 }
 
-export async function updateEmployeeDetails(id, phoneNumber,address, roleIds){
+export async function updateEmployeeDetails({id, phoneNumber,address, roleIds}){
     try{
         if(
             !id || !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" ||

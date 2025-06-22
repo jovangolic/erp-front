@@ -3,7 +3,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/delivery-items`;
 
-export async function createinboundDeliveryId(productId,quantity,inboundDeliveryId,outboundDeliveryId){
+export async function createinboundDeliveryId({productId,quantity,inboundDeliveryId,outboundDeliveryId}){
     if(!productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
         throw new Error("Sva polja moraju biti popunjena");
     }
@@ -19,7 +19,7 @@ export async function createinboundDeliveryId(productId,quantity,inboundDelivery
     }
 }
 
-export async function update(id,productId,quantity,inboundDeliveryId,outboundDeliveryId){
+export async function update({id,productId,quantity,inboundDeliveryId,outboundDeliveryId}){
     try{    
         if(!id || !productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
             throw new Error("Sva polja moraju biti popunjena");
@@ -131,7 +131,7 @@ export async function findByQuantityLessThan(quantity){
     }
 }
 
-export async function findByInboundDelivery_DeliveryDateBetween(start, end){
+export async function findByInboundDelivery_DeliveryDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Opseg inboundDelivery datuma nije dobar");
@@ -150,7 +150,7 @@ export async function findByInboundDelivery_DeliveryDateBetween(start, end){
     }
 }
 
-export async function findByOutboundDelivery_DeliveryDateBetween(start,end){
+export async function findByOutboundDelivery_DeliveryDateBetween({start,end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Opseg outboundDelivery datuma nije dobar");

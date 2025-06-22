@@ -14,7 +14,7 @@ export async function getCurrentState(){
     }
 }
 
-export async function updateState(maintenanceMode,registrationEnabled, systemVersion, statusMessage){
+export async function updateState({maintenanceMode,registrationEnabled, systemVersion, statusMessage}){
     try{
         if(
             typeof maintenanceMode !=="boolean" || typeof registrationEnabled !== "boolean" ||

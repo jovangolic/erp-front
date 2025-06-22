@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-export async function createShiftReport(description, createdById, relatedShiftId, filePath) {
+export async function createShiftReport({description, createdById, relatedShiftId, filePath}) {
     try {
         // Obavezna polja
         if (
@@ -34,7 +34,7 @@ export async function createShiftReport(description, createdById, relatedShiftId
     }
 }
 
-export async function updateShiftReport(id, description, createdById, relatedShiftId, filePath) {
+export async function updateShiftReport({id, description, createdById, relatedShiftId, filePath}) {
     try {
         if (
             !id ||

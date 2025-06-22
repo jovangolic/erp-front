@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isRoleTypeValid = ["NOTIFICATION_METHOD","REPORT_FORMAT","USER_PERMISSION","DASHBOARD_WIDGET"];
 
-export async function createCompanyEmail(firstName,lastName,address, phoneNumber, types){
+export async function createCompanyEmail({firstName,lastName,address, phoneNumber, types}){
     try{
         if(
             !firstName || typeof firtsName !== "string" || firstName.trim() === "" ||
@@ -50,7 +50,7 @@ export async function createAllCompanyEmails(users) {
     }
 }
 
-export async function generateCompanyEmail(firstName, lastName){
+export async function generateCompanyEmail({firstName, lastName}){
     try{
         const requestBody = {firstName, lastName};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/companyEmail/generate-company-email`,requestBody,{
@@ -63,7 +63,7 @@ export async function generateCompanyEmail(firstName, lastName){
     }
 }
 
-export async function generateCompanyEmail(firstName, lastName){
+export async function generateCompanyEmail({firstName, lastName}){
     try{
         if(
             !firstName || typeof firstName !== "string" || firstName.trim() === "" ||

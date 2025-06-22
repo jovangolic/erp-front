@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 
-export async function createVendor(name, email, phoneNumber, address) {
+export async function createVendor({name, email, phoneNumber, address}) {
     try{
         if(!name || name.trim() ==="" || typeof name !== "string" ||
         !email || email.trim()==="" || typeof email !=="string" || 
@@ -25,7 +25,7 @@ export async function createVendor(name, email, phoneNumber, address) {
     }
 }
 
-export async function updateVendor(id, name, email,phoneNumber, address){
+export async function updateVendor({id, name, email,phoneNumber, address}){
     try{
         if(
         !id || !name || name.trim() ==="" || typeof name !== "string" ||

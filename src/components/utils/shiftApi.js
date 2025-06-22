@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createShift(startTime, endTime, shiftSupervisorId){
+export async function createShift({startTime, endTime, shiftSupervisorId}){
     try{
         if(
             !moment(startTime, moment.ISO_8601, true).isValid() ||
@@ -29,7 +29,7 @@ export async function createShift(startTime, endTime, shiftSupervisorId){
     }
 }
 
-export async function updateShift(id,startTime, endTime, shiftSupervisorId){
+export async function updateShift({id,startTime, endTime, shiftSupervisorId}){
     try{
         if(
             !id ||

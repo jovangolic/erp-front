@@ -116,7 +116,7 @@ export async function findByDate(date){
     }
 }
 
-export async function findByDateBetween(start, end){
+export async function findByDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()) {
             throw new Error("Dati opseg datuma nije pronadjen");
@@ -256,7 +256,7 @@ export async function findByFiscalYear_QuarterStatus(quarterStatus){
     }
 }
 
-export async function findByStatusAndDateRange(status, start, end){
+export async function findByStatusAndDateRange({status, start, end}){
     try{
         if(!isFiscalYearStatusValid.includes(status?.toUpperCase()) ||
             !moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){

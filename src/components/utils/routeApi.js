@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/routes`;
 
-export async function create(origin,destination,distanceKm){
+export async function create({origin,destination,distanceKm}){
     if(
         !origin || typeof origin !== "string" || origin.trim()==="" ||
         !destination || typeof destination !== "string" || destination.trim() === "" ||
@@ -22,7 +22,7 @@ export async function create(origin,destination,distanceKm){
     }
 }
 
-export async function update(id, origin,destination,distanceKm){
+export async function update({id, origin,destination,distanceKm}){
     try{
         if(
         !id ||
@@ -121,7 +121,7 @@ export async function findByDestination(destination){
     }
 }
 
-export async function findByOriginAndDestination(origin, destination){
+export async function findByOriginAndDestination({origin, destination}){
     try{
         if(!origin || typeof origin !== "string" || origin.trim()==="" ||
         !destination || typeof destination !== "string" || destination.trim() === ""){

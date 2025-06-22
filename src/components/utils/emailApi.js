@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isRoleTypeValid = ["SUPER_ADMIN", "ADMIN", "STORAGE_FOREMAN", "STORAGE_EMPLOYEE", "STORAGE_MANAGER"];
 
-export async function sendEmail(to, subject, text){
+export async function sendEmail({to, subject, text}){
     try{
         if(
             !to || typeof to !== "string" || to.trim() === ""||
@@ -27,7 +27,7 @@ export async function sendEmail(to, subject, text){
     }
 }
 
-export async function sendEmailToMultiple(recipients,string, body){
+export async function sendEmailToMultiple({recipients,string, body}){
     try{
         if(
             !Array.isArray(recipients) || recipients.length === 0 ||
@@ -48,7 +48,7 @@ export async function sendEmailToMultiple(recipients,string, body){
     }
 }
 
-export async function createCompanyEmail(firstName,lastName,address,phoneNumber,types){
+export async function createCompanyEmail({firstName,lastName,address,phoneNumber,types}){
     try{
         if(
             !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
@@ -98,7 +98,7 @@ export async function createAllCompanyEmails(users) {
     }
 }
 
-export async function generateCompanyEmail(firstName, lastName){
+export async function generateCompanyEmail({firstName, lastName}){
     try{
         if(
             !firstName || typeof firstName !== "string" || firstName.trim() === "" ||

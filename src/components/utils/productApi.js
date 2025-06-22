@@ -4,7 +4,7 @@ const isSupplierTypeValidated = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUP
 const isStorageTypeValidated = ["PRODUCTION","DISTRIBUTION"];
 const isGoodsTypeValidated = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODUCT","WRITE_OFS"]; 
 
-export async function createProduct(name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes){
+export async function createProduct({name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes}){
     try{
         if(
             !nama || typeof name !=="string" || name.trim()==="" ||
@@ -34,7 +34,7 @@ export async function createProduct(name, unitMeasure,supplierType,storageType,g
     }
 }
 
-export async function updateProduct(id,name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes){
+export async function updateProduct({id,name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes}){
     try{
         if(
             !id ||

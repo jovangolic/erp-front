@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createBarCode(code, goodsId){
+export async function createBarCode({code, goodsId}){
     try{
         if(
             !code || typeof code !== "string" || code.trim() === "" || !goodsId
@@ -24,7 +24,7 @@ export async function createBarCode(code, goodsId){
     }
 }
 
-export async function updateBarCode(id,code, goodsId ){
+export async function updateBarCode({id,code, goodsId }){
     try{
         if(
             !id ||
@@ -144,7 +144,7 @@ export async function getByScannedBy(scannedBy){
     }
 }
 
-export async function getByScannedAtBetween(from, to){
+export async function getByScannedAtBetween({from, to}){
     try{
         if(!moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg skeniranog datuma nije validan");

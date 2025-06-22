@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isEditOptTypeValid = ["NOTIFICATION_METHOD","REPORT_FORMAT","USER_PERMISSION","DASHBOARD_WIDGET"];
     
-export async function createEditOpt(name,value,type,editable,visible){
+export async function createEditOpt({name,value,type,editable,visible}){
     try{
         if(
             !name || typeof name !=="string" || name.trim() === "" ||
@@ -28,7 +28,7 @@ export async function createEditOpt(name,value,type,editable,visible){
     }
 }
 
-export async function updateEditOpt(id,name,value,type,editable,visible){
+export async function updateEditOpt({id,name,value,type,editable,visible}){
     try{
         if(
             !id ||

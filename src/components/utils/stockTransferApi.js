@@ -6,7 +6,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransfers`;
 const validateStatus = ["INITIATED","IN_TRANSIT","COMPLETED","CANCELLED"];
 const validateStorageType =["PRODUCTION","DISTRIBUTION"];
 
-export async function create(transferDate, fromStorageId,toStorageId,status, itemRequest){
+export async function create({transferDate, fromStorageId,toStorageId,status, itemRequest}){
     try{
         // 1. Provera datuma
     if (!transferDate || !moment(transferDate, "YYYY-MM-DD", true).isValid()) {
@@ -52,7 +52,7 @@ export async function create(transferDate, fromStorageId,toStorageId,status, ite
     }
 }
 
-export async function update(id,transferDate, fromStorageId,toStorageId,status, itemRequest ){
+export async function update({id,transferDate, fromStorageId,toStorageId,status, itemRequest} ){
     try{
         if(!id || !validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
             return;
@@ -150,7 +150,7 @@ export async function findByTransferDate(date){
     }
 }
 
-export async function findByTransferDateBetween(start, end){
+export async function findByTransferDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() ||
             !moment(end,"YYYY-MM-DD",true).isValid()){
@@ -308,7 +308,7 @@ export async function findByToStorage_Type(toStorageType){
     }
 }
 
-export async function findByStatusAndDateRange(status, start, end){
+export async function findByStatusAndDateRange({status, start, end}){
     try{ 
         if (!status || typeof status !== "string") {
             alert("Status transfera nije validan.");
@@ -329,7 +329,7 @@ export async function findByStatusAndDateRange(status, start, end){
     }
 }
 
-export async function findByFromAndToStorageType(fromType, toType){
+export async function findByFromAndToStorageType({fromType, toType}){
     try{
         if(!validateStorageType.includes(fromType?.toUpperCase()) || !validateStorageType.includes(toType?.toUpperCase())){
             throw new Error("Nepoznati tipovi od-do skladista");
@@ -348,7 +348,7 @@ export async function findByFromAndToStorageType(fromType, toType){
     }
 }
 
-export async function searchFromStorageByNameAndLocation(name, location){
+export async function searchFromStorageByNameAndLocation({name, location}){
     try{
         if(!name || typeof name !=="string" || name.trim() === "" ||
             !location  || typeof location !=="string" || location.trim() === ""){

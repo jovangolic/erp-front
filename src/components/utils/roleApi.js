@@ -3,7 +3,7 @@ import moment from "moment";
 
 const isRoleTypeValid = ["SUPER_ADMIN", "ADMIN", "STORAGE_FOREMAN", "STORAGE_EMPLOYEE", "STORAGE_MANAGER"];
 
-export async function createRole(name, users, roleTypes, permissionIds){
+export async function createRole({name, users, roleTypes, permissionIds}){
     try{
         if(!name || typeof name !== "string" || name.trim() ==="" ||
             !Array.isArray(users) || users.length === 0 ||
@@ -27,7 +27,7 @@ export async function createRole(name, users, roleTypes, permissionIds){
     }
 }
 
-export async function updateRole(roleId, name, users, roleTypes, permissionIds){
+export async function updateRole({roleId, name, users, roleTypes, permissionIds}){
     try{
         if(
             !roleId ||
@@ -93,7 +93,7 @@ export async function getRoleById(roleId){
     }
 }
 
-export async function assignUserToRole(roleId, userId){
+export async function assignUserToRole({roleId, userId}){
     try{
         if(!roleId || !userId){
             throw new Error("Dati roleId i userId nisu pronadjeni");

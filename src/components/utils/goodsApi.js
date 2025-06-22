@@ -146,7 +146,7 @@ export async function findBySupplyId(supplyId){
     }
 }
 
-export async function findByBarCodeAndGoodsType(barCode, goodsType){
+export async function findByBarCodeAndGoodsType({barCode, goodsType}){
     try{
         if(!barCode || typeof barCode !== "string" || barCode.trim() === "" ||
             !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
@@ -165,7 +165,7 @@ export async function findByBarCodeAndGoodsType(barCode, goodsType){
     }
 }
 
-export async function findByBarCodeAndStorageId(barCode, storageId){
+export async function findByBarCodeAndStorageId({barCode, storageId}){
     try{
         if(!barCode || typeof barCode !== "string" || barCode.trim() === "" || storageId){
             throw new Error("Dati barCode i ID skladista nisu pronadjeni");

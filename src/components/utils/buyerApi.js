@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-export async function createBuyer(companyName,pib, address,contactPerson, email, phoneNumber){
+export async function createBuyer({companyName,pib, address,contactPerson, email, phoneNumber}){
     try{
         if(
             !companyName || typeof companyName !=="string" || companyName.trim() === "" ||
@@ -28,7 +28,7 @@ export async function createBuyer(companyName,pib, address,contactPerson, email,
     }
 }
 
-export async function updateBuyer(pib, companyName, address, contactPerson, email, phoneNumber) {
+export async function updateBuyer({pib, companyName, address, contactPerson, email, phoneNumber}) {
     try {
         if(
             !companyName || typeof companyName !=="string" || companyName.trim() === "" ||

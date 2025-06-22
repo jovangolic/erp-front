@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-export async function create(optionId,languageId,localizedLabel){
+export async function create({optionId,languageId,localizedLabel}){
     try{
         if(!optionId || !languageId || !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
             throw new Error("Sv apolja moraju biti validna i popunjena");
@@ -16,7 +16,7 @@ export async function create(optionId,languageId,localizedLabel){
     }
 }
 
-export async function update(id, optionId,languageId,localizedLabel){
+export async function update({id, optionId,languageId,localizedLabel}){
     try{
         if(!id || !optionId || !languageId || !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -111,7 +111,6 @@ export async function addTranslationForOption(optionId, { languageId, localizedL
             localizedLabel
             // optionId NE IDE u body jer se nalazi u URL-u
         };
-
         const response = await api.post(
             `${import.meta.env.VITE_API_BASE_URL}/localizedOption/option/${optionId}/translations`,
             requestBody,
@@ -119,14 +118,13 @@ export async function addTranslationForOption(optionId, { languageId, localizedL
                 headers: getHeader()
             }
         );
-
         return response.data;
     } catch (error) {
         handleApiError(error, "Greška prilikom dodavanja prevoda");
     }
 }
 
-export async function getTranslation(optionId,languageId){
+export async function getTranslation({optionId,languageId}){
     try{
         if(!optionId || languageId){
             throw new Error("Dati id za optionid i languageId nisu pronadjeni");

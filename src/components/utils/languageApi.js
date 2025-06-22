@@ -4,7 +4,7 @@ const isLanguageCodeTypeValid = ["EN","RS","ES","FR","RU","DE"];
 
 const isLanguageNameTypeValid = ["ENGLISH","SRPSKI","ESPAÑOL","FRANÇAIS","ITALIANO","DEUTSCH","РУССКИЙ"];
 
-export async function create(languageCodeType, languageNameType){
+export async function create({languageCodeType, languageNameType}){
     try{
         if(
             !isLanguageCodeTypeValid.includes(languageCodeType?.toUpperCase()) ||
@@ -23,7 +23,7 @@ export async function create(languageCodeType, languageNameType){
     }
 }
 
-export async function update(id, languageCodeType, languageNameType){
+export async function update({id, languageCodeType, languageNameType}){
     try{
         if(
             !id ||

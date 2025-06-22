@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isSettingDataTypeValid = ["STRING","INTEGER","BOOLEAN","DOUBLE","DATE","TIME","DATETIME"];
 
-export async function createSystemSetting(key,value,description,category,dataType,editable,isVisible,defaultValue){
+export async function createSystemSetting({key,value,description,category,dataType,editable,isVisible,defaultValue}){
     try{
         if(
             !key || typeof key !== "string" || key.trim() === "" ||
@@ -31,7 +31,7 @@ export async function createSystemSetting(key,value,description,category,dataTyp
     }
 }
 
-export async function updateSystemSetting(id,value,description,category,dataType,editable,isVisible,defaultValue){
+export async function updateSystemSetting({id,value,description,category,dataType,editable,isVisible,defaultValue}){
     try{
         if(
             !id ||

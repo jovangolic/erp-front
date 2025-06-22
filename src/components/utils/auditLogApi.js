@@ -2,7 +2,7 @@ import { act, use } from "react";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function log(action, userId, details){
+export async function log({action, userId, details}){
     try{
         if(
             !action || typeof action !== "string" || action.trim() === ""||
@@ -36,7 +36,7 @@ export async function getById(id){
     }
 }
 
-export async function getLogsBetweenDates(startDate, endDate){
+export async function getLogsBetweenDates({startDate, endDate}){
     try{
         if(
             !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||

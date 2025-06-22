@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createSupply(storageId, goodsIds, quantity, updates) {
+export async function createSupply({storageId, goodsIds, quantity, updates}) {
     try {
         // Validacija pre slanja
         if (
@@ -33,7 +33,7 @@ export async function createSupply(storageId, goodsIds, quantity, updates) {
     }
 }
 
-export async function updateSupply(id, storageId, goodsIds, quantity, updates) {
+export async function updateSupply({id, storageId, goodsIds, quantity, updates}) {
     try {
         if (
             !id ||

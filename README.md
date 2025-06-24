@@ -1,12 +1,24 @@
-# React + Vite
+#Frontend – React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend of the SLAM ERP system application is developed in a modern JavaScript environment using React in combination with Vita for fast build and hot-reloading during development. The goal is to create an intuitive and responsive user interface that enables easy management of storage, logistics and finances.
 
-Currently, two official plugins are available:
+The application is organized by components, with a structure that includes:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+    components/ – for reusable components like buttons, input fields, tables, etc.
 
-## Expanding the ESLint configuration
+    pages/ – for all pages such as Dashboard, Inventory, Invoices, Users, etc.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+    utils/ – part where all API calls related to backend controllers are located
+
+    shared/enums/ – all enums that are synchronized with the backend, for consistency
+
+# API integration and validation
+
+The frontend uses Axios to communicate with backend REST API services. Each entity (eg items, users, invoices) has its own defined API methods for creating, updating, deleting and searching. Data validation and display of error messages have been implemented to make each interaction with the system clear to the user.
+
+# Current status
+
+The frontend part is currently in an early stage of development (20%), but the key parts of the system are already defined and functional. The focus is on backend integration, user authentication, and the development of a basic user interface for managing warehouse operations.
+
+
+

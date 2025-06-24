@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/routes`;
 
-export async function create({origin,destination,distanceKm}){
+export async function createRoute({origin,destination,distanceKm}){
     if(
         !origin || typeof origin !== "string" || origin.trim()==="" ||
         !destination || typeof destination !== "string" || destination.trim() === "" ||
@@ -22,10 +22,10 @@ export async function create({origin,destination,distanceKm}){
     }
 }
 
-export async function update({id, origin,destination,distanceKm}){
+export async function updateRoute({id, origin,destination,distanceKm}){
     try{
         if(
-        !id ||
+        id == null || isNaN(id) ||
         !origin || typeof origin !== "string" || origin.trim()==="" ||
         !destination || typeof destination !== "string" || destination.trim() === "" ||
         isNaN(distanceKm) || parseFloat(distanceKm) <= 0
@@ -45,7 +45,7 @@ export async function update({id, origin,destination,distanceKm}){
 
 export async function deleteRoute(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -60,7 +60,7 @@ export async function deleteRoute(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{

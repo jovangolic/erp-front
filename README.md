@@ -1,4 +1,4 @@
-#Frontend – React + Vite
+# Frontend – React + Vite
 
 The frontend of the SLAM ERP system application is developed in a modern JavaScript environment using React in combination with Vita for fast build and hot-reloading during development. The goal is to create an intuitive and responsive user interface that enables easy management of storage, logistics and finances.
 

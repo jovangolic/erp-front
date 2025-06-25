@@ -23,7 +23,7 @@ export async function createDriver({name, phone}){
 
 export async function updateDriver({id, name, phone}){
     if (
-        !id ||
+        id == null || isNaN(id) ||
         !name || typeof name !== "string" || name.trim() === "" ||
         !phone || typeof phone !== "string" || phone.trim() === ""
     ) {
@@ -43,7 +43,7 @@ export async function updateDriver({id, name, phone}){
 
 export async function deleteDriver(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID vozaca nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -58,7 +58,7 @@ export async function deleteDriver(id){
 
 export async function findOneById(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID vozaca nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{

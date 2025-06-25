@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { findAll, deleteRoute } from "../utils/routeApi";
+import { deleteDriver, findAllDrivers } from "../utils/driverApi";
 
-const RouteList = async () => {
+const DriverList = async() => {
 
     const[errorMessage, setErrorMessage] = useState("");
-    const[routes, setRoutes] = useState([]);
+    const[drivers,setDrivers] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchAllRoute = async () => {
+        const fetchDrivers = async() => {
             try{
-                const data = await findAll();
-                setRoutes(data);
-                setIsLoading(false)
+                const  data = await findAllDrivers();
+                setDrivers(data);
+                setIsLoading(false);
             }
             catch(error){
                 setErrorMessage(error.message);
                 setIsLoading(false);
             }
         };
-        fetchAllRoute()
+        fetchDrivers()
     },[]);
 
-    const handleDelete = async (id) => {
+    const handleDelete = async(id) => {
         try{
-            await deleteRoute(id);
-            setRoutes(routes.filter((r) => r.id !== id));
+            await deleteDriver(id);
+            setDrivers(drivers.filter((d) => d.id !== d));
         }
         catch(error){
             setErrorMessage("Greška prilikom brisanja: " + error.message);
@@ -49,27 +48,25 @@ const RouteList = async () => {
                 <table className="table table-striped table-bordered w-75">
                     <thead className="thead-dark">
                         <tr>
-                        <th>Origin</th>
-                        <th>Destination</th>
-                        <th>Distance (km)</th>
+                        <th>Name</th>
+                        <th>Phone</th>
                         <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {routes.length === 0 ? (
+                        {drivers.length === 0 ? (
                         <tr>
-                            <td colSpan="4" className="text-center">No routes found.</td>
+                            <td colSpan="4" className="text-center">No drivers found.</td>
                         </tr>
                         ) : (
-                        routes.map(route => (
-                            <tr key={route.id}>
-                                <td>{route.origin}</td>
-                                <td>{route.destination}</td>
-                                <td>{route.distanceKm}</td>
+                        drivers.map(driver => (
+                            <tr key={driver.id}>
+                                <td>{driver.name}</td>
+                                <td>{driver.phone}</td>
                                 <td>
                                     <button
                                     className="btn btn-danger btn-sm"
-                                    onClick={() => handleDelete(route.id)}
+                                    onClick={() => handleDelete(driver.id)}
                                     >
                                         Delete
                                     </button>
@@ -83,4 +80,4 @@ const RouteList = async () => {
     );
 };
 
-export default RouteList;
+export default DriverList;

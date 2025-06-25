@@ -38,7 +38,7 @@ const ViewRoute = () => {
     }
 
     if (route == null) {
-        return <div className="text-center mt-5">Učitavanje...</div>;
+        return <div className="text-center mt-5">Loading...</div>;
     }
 
     return (

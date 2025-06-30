@@ -2,10 +2,12 @@ import { act, use } from "react";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+const isAuditActionTypeVali = ["LOGIN_EMAIL","SEND_EMAIL","READ_EMAIL","DELETE_EMAIL","CREATE_USER","UPDATE_USER","DELETE_USER","VIEW_PASSWORD_COLLECTOR","EXPORT_EMAILS","FAILED_LOGIN"];
+
 export async function log({action, userId, details}){
     try{
         if(
-            !action || typeof action !== "string" || action.trim() === ""||
+            !isAuditActionTypeVali.includes(action?.toUpperCase()) ||
             !userId || !details || typeof details !== "string" || details.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -23,7 +25,7 @@ export async function log({action, userId, details}){
 
 export async function getById(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za AuditLog ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/${id}`,{
@@ -60,8 +62,8 @@ export async function getLogsBetweenDates({startDate, endDate}){
 
 export async function getLogsByAction(action){
     try{
-        if(!action || typeof action !== "string" || act.trim() === ""){
-            throw new Error("Dati log po akciji ne postoji");
+        if(!isAuditActionTypeVali.includes(action?.toUpperCase())){
+            throw new Error("Dati log po tipu akcije ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/get-by-action`,{
             params:{
@@ -78,7 +80,7 @@ export async function getLogsByAction(action){
 
 export async function getLogsByUserId(userId){
     try{
-        if(!userId){
+        if(userId == null || isNaN(userId)){
             throw new Error("Dati userId ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/user/${userId}`,{
@@ -100,6 +102,34 @@ export async function getAllLogs(){
     }
     catch(error){
         handleApiError(error, "Greska prilikom dobavljanja svih");
+    }
+}
+
+export async function searchLogs(userId, action, start, end, ipAddress, userAgent){
+    try{
+        if(
+            userId == null || isNaN(userId) || !isAuditActionTypeVali.includes(action?.toUpperCase()) ||
+            !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !ipAddress || typeof ipAddress !== "string" || ipAddress.trim() === "" ||
+            !userAgent || typeof userAgent !== "string" || userAgent.trim() === ""
+        ){
+            throw new Error("Dati podaci za pretragu nisu validni (userId,action,start,end,ipAddress,userAgent)");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/search`,{
+            params:{
+                userId:userId,
+                action:(action || "").toUpperCase(),
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss"),
+                ipAddress:ipAddress,
+                userAgent:userAgent
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom pretrage");
     }
 }
 

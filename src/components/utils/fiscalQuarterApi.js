@@ -10,10 +10,12 @@ function handleApiError(error, customMessage) {
 
 const url =`${import.meta.env.VITE_API_BASE_URL}/fiscalQuarters`;
 const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
+const isFiscalYearStatusValid = ["OPEN", "CLOSED", "ARCHIVED"];
 
-export async function createFiscalQarter({quarterStatus,startDate,endDate}){
+export async function createFiscalQarter({quarterStatus,startDate,endDate,fiscalYearId}){
     try{
-        if(
+        if( 
+            fiscalYearId == null || isNaN(parseInt(fiscalYearId)) ||
             !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) ||
             !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()
         ){
@@ -30,10 +32,10 @@ export async function createFiscalQarter({quarterStatus,startDate,endDate}){
     }
 }
 
-export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate}){
+export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate,fiscalYearId}){
     try{
         if(
-            !id ||
+            !id || fiscalYearId == null || isNaN(parseInt(fiscalYearId)) ||
             !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) ||
             !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()
         ){
@@ -92,7 +94,7 @@ export async function findAll(){
     }
 }
 
-export async function findByFiscalYear(fiscalYearId) {
+export async function findByFiscalYear_Id(fiscalYearId) {
     try {
         if (!fiscalYearId || isNaN(parseInt(fiscalYearId))) {
             throw new Error("Neispravan ID fiskalne godine");
@@ -206,6 +208,59 @@ export async function findByFiscalYear_Year(year){
     }
     catch(error){
         handleApiError(error,"Greska prilikom pretrage po fiskalnoj godini");
+    }
+}
+
+export async function findByFiscalYear_YearStatus(yearStatus){
+    try{
+        if(!isFiscalYearStatusValid.includes(yearStatus?.toUpperCase())){
+            throw new Error("Dati godisnji status nije pronadjen");
+        }
+        const response = await api.get(url+`/fiscalYear-year-status`,{
+            params:{yearStatus:(yearStatus || "").toUpperCase()},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja prema godini statusa");
+    }
+}
+
+export async function findByEndDate(endDate){
+    try{
+        if(!moment(endDate,"YYY-MM-DD",true).isValid()){
+            throw new Error("Dati datum za kraj nije pronadjen");
+        }
+        const response = await api.get(url+`/by-end-date`,{
+            params:{endDate:moment(endDate).format("YYYY-MM-DD")},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja prema kraju datuma");
+    }
+}
+
+export async function findByFiscalYear_StartDateBetween({start, end}){
+    try{
+        if(
+            !moment(start,"YYY-MM-DD",true).isValid() || !moment(end,"YYY-MM-DD",true).isValid()
+        ){
+            throw new Error("Dati opseg datuma za start i end nije pronadjen");
+        }
+        const response = await api.get(url+`/fiscalYear-start-date-range`,{
+            params:{
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom pretrage prema opsegu pocetnog datuma za fiskalnu godinu");
     }
 }
 

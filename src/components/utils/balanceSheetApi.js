@@ -36,7 +36,7 @@ export async function createBalanceSheet(date,totalAssets,totalLiabilities,total
 
 export async function updateBalanceSheet(id, date,totalAssets,totalLiabilities,totalEquity,fiscalYearId){
     try{
-        if(
+        if( id == null || isNaN(id) ||
             !moment(date,"YYYY-MM-DD",true).isValid() ||
             isNaN(parseFloat(totalAssets)) || parseFloat(totalAssets) <= 0 ||
             isNaN(parseFloat(totalLiabilities)) || parseFloat(totalLiabilities) <= 0 ||
@@ -274,5 +274,79 @@ export async function findByStatusAndDateRange({status, start, end}){
     }
     catch(error){
         handleApiError(error,"Greska prilikom pretrage prema godisnjem statusu, pocetnom datumu i krajnjem datumu");
+    }
+}
+
+export async function findByTotalAssetsGreaterThan(totalAssets){
+    try{
+        const parseTotalAsset = parseFloat(totalAssets)
+        if(isNaN(parseTotalAsset || parseTotalAsset < 0)){
+            throw new Error("totalAssets mora biti pozitvan broj");
+        }
+        const response = await api.get(url+`/totalAssets-greater-than`,{
+            params:{totalAssets: parseTotalAsset,
+                headers:getHeader()
+            }
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom dobavljanja totalAssets veceg od");
+    }
+}
+
+export async function findByTotalAssetsLessThan(totalAssets){
+    try{
+        const parseTotalAsset = parseFloat(totalAssets)
+        if(isNaN(parseTotalAsset || parseTotalAsset < 0)){
+            throw new Error("totalAssets mora biti pozitvan broj");
+        }
+        const response = await api.get(url+`/totalAssets-less-than`,{
+            params:{totalAssets: parseTotalAsset,
+                headers:getHeader()
+            }
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom dobavljanja totalAssets manjeg od");
+    }
+}
+
+export async function findByTotalEquityGreaterThan(totalEquity){
+    try{
+        const parseTotalEquity = parseFloat(totalEquity);
+        if(isNaN(parseTotalEquity) || parseTotalEquity < 0){
+            throw new Error("totalEquity mora biti pozitivan broj");
+        }
+        const response = await api.get(url+`/totalEquity-greater-than`,{
+            params:{
+                totalEquity:parseTotalEquity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Gresk aprilikom trazenja totalEquity veceg od");
+    }
+}
+
+export async function findByTotalAssetsLessThan(totalEquity){
+    try{
+        const parseTotalEquity = parseFloat(totalEquity);
+        if(isNaN(parseTotalEquity) || parseTotalEquity < 0){
+            throw new Error("totalEquity mora biti pozitivan broj");
+        }
+        const response = await api.get(url+`/totalEquity-less-than`,{
+            params:{
+                totalEquity:parseTotalEquity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Gresk aprilikom trazenja totalEquity manjeg od");
     }
 }

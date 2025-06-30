@@ -1,10 +1,11 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-export async function createBarCode({code, goodsId}){
+export async function createBarCode({code,scannedById, goodsId}){
     try{
         if(
-            !code || typeof code !== "string" || code.trim() === "" || !goodsId
+            !code || typeof code !== "string" || code.trim() === "" || 
+            goodsId == null || isNaN(goodsId) || scannedById == null || isNaN(scannedById)
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -27,8 +28,9 @@ export async function createBarCode({code, goodsId}){
 export async function updateBarCode({id,code, goodsId }){
     try{
         if(
-            !id ||
-            !code || typeof code !== "string" || code.trim() === "" || !goodsId
+            id == null || isNaN(id) ||
+            !code || typeof code !== "string" || code.trim() === "" || 
+            goodsId == null || isNaN(goodsId) || scannedById == null || isNaN(scannedById)
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -50,7 +52,7 @@ export async function updateBarCode({id,code, goodsId }){
 
 export async function deleteBarCode(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za barCode nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/barCodes/delete/${id}`,{
@@ -65,7 +67,7 @@ export async function deleteBarCode(id){
 
 export async function getOneBarCode(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za barCode nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-one/${id}`,{
@@ -108,39 +110,70 @@ export async function getByCode(code){
     }
 }
 
-export async function getByGoods(goodsId){
+export async function getByGoodsId(goodsId){
     try{
-        if(!goodsId){
-            throw new Error("Dati ID za goods nije pronadjen");
+        if(goodsId == null || isNaN(goodsId)){
+            throw new Error("ID za robu ne sme biti null");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-goodsId`,{
-            params:{
-                goodsId
-            },
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/goods/${goodsId}`,{
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja preko id-ja robe");
+        handleApiError(error,"Greska prilikom trazenja po ID robe");
     }
 }
 
-export async function getByScannedBy(scannedBy){
+export async function findByGoods_Name(goodsName){
     try{
-        if(!scannedBy || typeof scannedBy !== "string" || scannedBy.trim() == ""){
-            throw new Error("ScannedBy nije pronadjen");
+        if(!goodsName || typeof goodsName !== "string" || goodsName.trim() === ""){
+            throw new Error("Dati naziv robe nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-scannedBy`,{
-            params:{
-                scannedBy
-            },
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/by-goodsName`,{
+            params:{goodsName:goodsName},
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom potraqge ko je skenirao");
+        handleApiError(error,"Greska prilikom trazenja po nazivu robe");
+    }
+}
+
+export async function findByScannedBy_FirstNameContainingIgnoreCaseAndScannedBy_LastNameContainingIgnoreCase(userFirstName, userLastName){
+    try{
+        if(!userFirstName || typeof userFirstName !== "string" || userFirstName.trim=== "" ||
+           !userLastName || typeof userLastName !== "string" || userLastName.trim() === "" 
+        ){
+            throw new Error("Dato ime i prezime osobe koja je vrsila skeniranje nije pronadjeno");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/scannedBy-first-last-name`,{
+            params:{
+                userFirstName:userFirstName,
+                userLastName: userLastName
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja imena i prezimena osobe koje je vrsila skeniranje");
+    }
+}
+
+export async function findByScannedBy_Id(scannedById){
+    try{
+        if(scannedById == null || isNaN(scannedById)){
+            throw new Error("Dati ID za osobu koja je vrsila skeniranje nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/scannedBy/${scannedById}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja ID osobe koja je vrsila skeniranje");
     }
 }
 

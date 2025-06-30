@@ -22,3 +22,15 @@ The frontend part is currently in an early stage of development (20%), but the k
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+© 2025 SLAM ERP – All rights reserved.

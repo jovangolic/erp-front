@@ -297,3 +297,59 @@ export async function search({ debit, credit, accountId, fromDate, toDate }) {
         handleApiError(error, "Greska prilikom pretrazivanja zahteva");
     }
 }
+
+export async function findByJournalEntry_EntryDate(entryDate){
+    try{
+        if(
+            !moment(entryDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+        ){
+            throw new Error("Dati datum unosa nije pronadjen");
+        }
+        const response = await api.get(url+`/by-entry-date`,{
+            params:{entryDate:moment(entryDate).format("YYYY-MM-DDTHH:mm:ss")},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po datumu unosa");
+    }
+}
+
+export async function findByJournalEntry_EntryDateBetween({entryDateStart, entryDateEnd}){
+    try{
+        if(
+            !moment(entryDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(entryDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+        ){
+            throw new Error("Dati opseg unosa datuma nije pronadjen");
+        }
+        const response = await api.get(url+`/by-date-range`,{
+            params:{
+                entryDateStart:moment(entryDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                entryDateEnd:moment(entryDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po opsegu datuma");
+    }
+}
+
+export async function findByJournalEntry_Description(description){
+    try{
+        if(!description || typeof description !== "string" || description.trim() === ""){
+            throw new Error("Datu opis nije pronadjen");
+        }
+        const response = await api.get(url+`/by-description`,{
+            params:{description:description},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja opisa");
+    }
+}

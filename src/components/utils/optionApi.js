@@ -112,6 +112,22 @@ export async function getByCategory(category){
     }
 }
 
+export async function findByCategoryAndActiveTrue(category){
+    try{
+        if(!isOptionCategoryValid.includes(category?.toUpperCase())){
+            throw new Error("Data kategorija nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/category-is-active`,{
+            params:{category:(category || "").toUpperCase()},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po kategoriji i aktivnosti");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

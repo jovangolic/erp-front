@@ -1,8 +1,10 @@
+ import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isSupplierTypeValidated = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUPPLIER","ONION_SUPPLIER","BLUEBERRY_SUPPLIER"];
 const isStorageTypeValidated = ["PRODUCTION","DISTRIBUTION"];
 const isGoodsTypeValidated = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODUCT","WRITE_OFS"]; 
+const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 
 export async function createProduct({name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes}){
     try{
@@ -227,6 +229,167 @@ export async function findByGoodsType(goodsType){
     }
     catch(error){
         handleApiError(error, "Greska prilikom trazenja proizvoda po tipu robe");
+    }
+}
+
+export async function findByUnitMeasure(unitMeasure){
+    try{
+        if(!isUnitMeasureValid.includes(unitMeasure?.toUpperCase())){
+            throw new Error("Data jedinica mere nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/by-unitMeasure`,{
+            params:{unitMeasure:(unitMeasure || "").toUpperCase()},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po jedinici mere");
+    }
+}
+
+export async function findByShelfRowColAndStorage(row, col, storageId){
+    try{
+        const parseRow = parseInt(row, 10);
+        const parseCol = parseInt(col, 10);
+        const parseStorageId = parseInt(storageId, 10);
+        if(
+            [parseRow, parseCol, parseStorageId].some(n => isNaN(n) || n <= 0)
+        ){
+            throw new Error("Dati red,kolona i ID za skladiste nisu prnadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/storage/${storageId}/shelf`,{
+            params:{
+                row:parseRow, col:parseCol, storageId:parseStorageId
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po redu i koloni police i ID-ju za to skladiste");
+    }
+}
+
+export async function findByShelfRow(row){
+    try{
+        const parseRow = parseInt(row,10);
+        if(isNaN(parseRow) || parseRow <= 0){
+            throw new Error("Dati red za policu nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/shelf/row`,{
+            params:{row:parseRow},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po redu u polici");
+    }
+}
+
+export async function findByShelfColumn(col){
+    try{
+        const parseCol = parseInt(col,10);
+        if(isNaN(parseCol) || parseCol <= 0){
+            throw new Error("Data kolona za policu nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/shelf/col`,{
+            params:{col:parseCol},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po koloni za policu");
+    }
+}
+
+export async function findBySupplyMinQuantity(quantity){
+    try{
+        const parseQuantity = parseFloat(quantity);
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
+            throw new Error("Data minimalna kolicina za Supply nije pornadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/supply-min-quantity`,{
+            params:{quantity:parseQuantity},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikon trazenja po minimalnoj kolicini za Supply");
+    }
+}
+
+export async function findBySupplyUpdateRange(from, to){
+    try{
+        if(
+            !moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+        ){
+            throw new Error("Dati opseg datuma za Supply nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/supply/updated`,{
+            params:{
+                from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
+                to:moment(to).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja Supply-a po opsegu datuma");
+    }
+}
+
+export async function findBySupplyStorageId(storageId){
+    try{
+        if(storageId == null || isNaN(storageId)){
+            throw new Error("Dati ID za skaldiste nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/storage/${storageId}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja ID-ija skladista za Supply");
+    }
+}
+
+export async function countByShelfRowCount(rowCount){
+    try{
+        const parseRowCount = parseInt(rowCount,10);
+        if(isNaN(parseRowCount) || parseRowCount <= 0){
+            throw new Error("Dati broj redova za policu nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/count/shelf/rows`,{
+            params:{rowCount:parseRowCount},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po broju redova za policu");
+    }
+}
+
+export async function countByShelfCols(cols){
+    try{
+        const parseCols = parseInt(cols,10);
+        if(isNaN(parseCols) || parseCols <= 0){
+            throw new Error("Dati broj kolona za policu nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/count/shelf/cols`,{
+            params:{cols:parseCols},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po broju kolona za policu");
     }
 }
 

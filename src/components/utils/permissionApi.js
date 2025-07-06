@@ -81,6 +81,22 @@ export async function getPermissionById(id){
     }
 }
 
+export async function findByPermissionType(type){
+    try{
+        if(!isPermisionTypeValid.includes(type?.toUpperCase())){
+            throw new Error("Dati tip za odobrenje nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/permission/by-permission-type`,{
+            params:{type:(type || "").toUpperCase()},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po tipu odobrenja");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

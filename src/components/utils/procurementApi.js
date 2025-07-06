@@ -151,6 +151,40 @@ export async function getByTotalCostBetween({min, max}){
     }
 }
 
+export async function getByTotalCostGreaterThan(totalCost){
+    try{
+        const parseTotalCost = parseFloat(totalCost);
+        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+            throw new Error("Data ukupna cena veca od nije prtonadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/total-cost-greater-than`,{
+            params:{totalCost:parseTotalCost},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po ukupnoj ceni vecoj od");
+    }
+}
+
+export async function getByTotalCostLessThan(totalCost){
+ try{
+        const parseTotalCost = parseFloat(totalCost);
+        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+            throw new Error("Data ukupna cena manja od nije prtonadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/total-cost-less-than`,{
+            params:{totalCost:parseTotalCost},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja po ukupnoj ceni manjoj od");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

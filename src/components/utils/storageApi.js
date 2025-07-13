@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-const validateStorageType = ["PRODUCTION","DISTRIBUTION"];
+const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
 
 export async function createStorage({name, location, capacity, shelves, type, goods}) {
     try {

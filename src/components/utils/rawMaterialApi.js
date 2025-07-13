@@ -2,7 +2,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment, { max } from "moment";
 
 const isSupplierTypeValidated = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUPPLIER","ONION_SUPPLIER","BLUEBERRY_SUPPLIER"];
-const isStorageTypeValidated = ["PRODUCTION","DISTRIBUTION"];
+const isStorageTypeValidated = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
 const isGoodsTypeValidated = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODUCT","WRITE_OFS"];  
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 	

@@ -4,7 +4,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/itemSales`;
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const isSupplierTypeValid = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUPPLIER","ONION_SUPPLIER","BLUEBERRY_SUPPLIER","POTATO_SUPPLIER"];
-const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION"];
+const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
 const isGoodsTypeValid = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRODUCT", "WRITE_OFS"];
 const isOrderStatusValid = ["CREATED", "PAID", "SHIPPED", "CANCELLED", "PENDING"];
 

@@ -4,7 +4,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransfers`;
 
 const validateStatus = ["INITIATED","IN_TRANSIT","COMPLETED","CANCELLED"];
-const validateStorageType =["PRODUCTION","DISTRIBUTION"];
+const validateStorageType =["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
 
 export async function create({transferDate, fromStorageId,toStorageId,status, itemRequest}){
     try{
@@ -367,6 +367,8 @@ export async function searchFromStorageByNameAndLocation({name, location}){
         handleApiError(error,"Greska pre pretrazi po nazivu i lokaciji skladista");
     }
 }
+
+
 
 
 function validateStockTransferInput(transferDate, fromStorageId, toStorageId, status, itemRequest) {

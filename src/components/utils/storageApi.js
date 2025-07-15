@@ -795,18 +795,6 @@ export async function findInterimStorage(){
     }
 }
 
-export async function findAvailableStorage(){
-    try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/available-storages`,{
-            headers:getHeader()
-        });
-        return response.data;
-    }
-    catch(error){
-        handleApiError(error,"Trenutno nismo pronasli skladista gde je tip Slobodno-skladiste");
-    }
-}
-
 
 
 if (typeof data === 'object') {

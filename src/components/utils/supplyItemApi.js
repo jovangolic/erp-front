@@ -284,6 +284,495 @@ export async function getBySupplierNameAndProcurementDateAndMaxCost({supplierNam
     }
 }
 
+export async function findBySupplier_NameContainingIgnoreCase(supplierName){
+    try{
+        if(!supplierName || typeof supplierName !== "string" || supplierName.trim() === ""){
+            throw new Error("Dati naziv dobavljaca nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-name`,{
+            params:{
+                supplierName:supplierName
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv dobavljaca");
+    }
+}
+
+export async function findBySupplier_PhoneNumberLikeIgnoreCase(phoneNumber){
+    try{
+        if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
+            throw new Error("Dati broj-telefona dobavljaca nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-phone-number`,{
+            params:{
+                phoneNumber:phoneNumber
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona za dobavljaca");
+    }
+}
+
+export async function findBySupplier_EmailLikeIgnoreCase(email){
+    try{
+        if(!email || typeof email !== "string" || email.trim() === ""){
+            throw new Error("Dati email dobavljaca nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-email`,{
+            params:{
+                email:email
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli email za dobavljaca");
+    }
+}
+
+export async function findBySupplier_Address(address){
+    try{
+        if(!address || typeof address !== "string" || address.trim() === ""){
+            throw new Error("Data adresa dobavljaca nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-address`,{
+            params:{
+                address:address
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli adresu za dobavljaca");
+    }
+}
+
+export async function findBySupplierNameContainingAndCostBetween({supplierName, minCost, maxCost}){
+    try{
+        const parseMinCost = parseFloat(minCost);
+        const parseMaxCost = parseFloat(maxCost);
+        if(!supplierName || typeof supplierName !== "string" || supplierName.trim() === "" ||
+            parseMaxCost <= 0 || isNaN(parseMaxCost) || parseMinCost <= 0 || isNaN(parseMinCost)){
+            throw new Error("Dati naziv dobavljaca i opseg cena nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-name-cost-range`,{
+            params:{
+                supplierName:supplierName,
+                minCost:parseMinCost,
+                maxCost:parseMaxCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv dobavljaca i opseg cena");
+    }
+}
+
+export async function findBySupplierNameAndProcurementDateBetween({supplierName, start, end}){
+    try{
+        if(!supplierName || typeof supplierName !== "string" || supplierName.trim() === "" ||
+            !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Dati naziv za dobavljaca i opseg datuma za nabavku, nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-name-procurement-date-range`,{
+            params:{
+                supplierName:supplierName,
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv dobavljaca i opseg datuma za nabavku");
+    }
+}
+
+export async function findByAddressAndMinCost({address, minCost}){
+    try{
+        const parseMinCost = parseFloat(minCost);
+        if(!address || typeof address !== "string" || address.trim() === "" ||
+            parseMinCost <= 0 || isNaN(parseMinCost)){
+            throw new Error("Data adresa dobavljaca i minimalna cena nisu pronadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/address-min-cost`,{
+            params:{
+                address:address,
+                minCost:parseMinCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli adresu dobavljaca i minimalnu cenu");
+    }
+}
+
+export async function findByPhoneNumberAndCost({phoneNumber, cost}){
+    try{
+        const parseCost = parseFloat(cost);
+        if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
+            isNaN(parseCost) || parseCost <= 0){
+            throw new Error("Dati broj-telefona dobavljaca i cena nisu pronadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/phone-number-cost`,{
+            params:{
+                phoneNumber:phoneNumber,
+                cost:parseCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona dobavljaca i cenu");
+    }
+}
+
+export async function findByProcurementSupplyItemCount(count){
+    try{
+        const parseCount = parseInt(count,10);
+        if(isNaN(parseCount) || parseCount <= 0){
+            throw new Error("Dati broj nabavki za supply-item nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/procurement-supply-item-count`,{
+            params:{
+                count:parseCount
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj nabavki za supply-item");
+    }
+}
+
+export async function findByCost(cost){
+    try{
+        const parseCost = parseFloat(cost);
+        if(parseCost <= 0 || isNaN(parseCost)){
+            throw new Error("Data cena za supply-item nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/by-cost`,{
+            params:{
+                cost:parseCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli cenu za supply-item");
+    }
+}
+
+export async function findByCostGreaterThan(cost){
+    try{
+        const parseCost = parseFloat(cost);
+        if(parseCost <= 0 || isNaN(parseCost)){
+            throw new Error("Data cena veca od za supply-item nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/cost-greater-than`,{
+            params:{
+                cost:parseCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli cenu vecu od za supply-item");
+    }
+}
+
+export async function findByCostLessThan(cost){
+    try{
+        const parseCost = parseFloat(cost);
+        if(parseCost <= 0 || isNaN(parseCost)){
+            throw new Error("Data cena manja od za supply-item nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/cost-less-than`,{
+            params:{
+                cost:parseCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli cenu manju od za supply-item");
+    }
+}
+
+export async function findByProcurementTotalCostGreaterThan(minCost){
+    try{
+        const parseMinCost = parseFloat(minCost);
+        if(isNaN(parseMinCost) || parseMinCost <= 0){
+            throw new Error("Data cena veca od za nabavku nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/procurement/total-cost-greater-than`,{
+            params:{
+                minCost:parseMinCost
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli cenu vecu od za nabavku");
+    }
+}
+
+export async function findByProcurementDate(date){
+    try{
+        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Dati datum nabavke nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/procurement-date`,{
+            params:{
+                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datum nabavke");
+    }
+}
+
+export async function findBySupplyAndSalesCountMismatch(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supply-sales-count-mismatch`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli dobavljaca i prodaju koji se ne podudaraju");
+    }
+}
+
+export async function findByProcurementWithSupplyCostOver(minTotal){
+    try{
+        const parseMinTotal = parseFloat(minTotal);
+        if(isNaN(parseMinTotal) || parseMinTotal <= 0){
+            throw new Error("Data cena koja prelazi cenu nabavke nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/procurement-with-supply-cost-over`,{
+            params:{
+                minTotal:parseMinTotal
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli nabavku koja prelazi datu cenu nabavke");
+    }
+}
+
+export async function findBySupplierWithMoreThanNItems(minCount){
+    try{
+        const parseMinCount = parseFloat(minCount);
+        if(parseMinCount <= 0 || isNaN(parseMinCount)){
+            throw new Error("Dati broj stavki za nabavljaca nisu pronadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/supplier-wuth-more-than-n-times`,{
+            params:{
+                minCount:parseMinCount
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli nabavljaca koji ima vise od n stavki");
+    }
+}
+
+export async function sumCostGroupedByProcurement(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/sum-cost-group-by-procurement"`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupno grupisanu cenu za nabavku");
+    }
+}
+
+export async function countBySupplier(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/count-by-supplier`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan broj dobavljaca");
+    }
+}
+
+export async function avgCostByProcurement(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/avg-cost-by-procurement`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli prosecnu cenu nabavke");
+    }
+}
+
+export async function procurementPerEntityStats(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/procurement-per-entity-stats`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli nabavku po statistici unosa");
+    }
+}
+
+export async function findCostSumGroupedByProcurement(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/cost-sum-grouped-by-procurement`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupnu cenu grupisanu po nabavci");
+    }
+}
+
+export async function findCostSumGroupedByProcurementWithMinTotal(minTotal){
+    try{
+        const parseMinTotal = parseFloat(minTotal);
+        if(isNaN(parseMinTotal) || parseMinTotal <= 0){
+            throw new Error("Dati unos za ukupnu cenu grupisanu po nabavci nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/cost-sum-by-procurement-with-min-total`,{
+            params:{
+                minTotal:parseMinTotal
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupnu cenu grupisanu po nabavci sa manjom od");
+    }
+}
+
+export async function procurementStats(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/procurement-stats`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli statistiku za nabavku");
+    }
+}
+
+export async function countAllSupplyItems(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/count-all-supply-items`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan broj supply-items");
+    }
+}
+
+export async function countByProcurementId(procurementId){
+    try{
+        if(procurementId == null || isNaN(procurementId)){
+            throw new Error("Dati ID za nabavku nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/count-by-procurement/${procurementId}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan broj nabavki po ID-iju");
+    }
+}
+
+export async function sumAllCosts(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/sum-all-costs`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan zbir cena");
+    }
+}
+
+export async function averageCost(){
+   try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/average-cost`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli prosecnu cenu");
+    } 
+}
+
+export async function minCost(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/min-cost`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli najmanju cenu");
+    }
+}
+
+export async function maxCost(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/suppliesItems/search/max-cost`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli najvecu cenu");
+    }
+}
+
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

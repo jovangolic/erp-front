@@ -1,6 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isSettingDataTypeValid = ["STRING","INTEGER","BOOLEAN","DOUBLE","DATE","TIME","DATETIME"];
+const isSustemSettingCategoryValid = ["GENERAL","SECURITY","NOTIFICATIONS","UI", "PERFORMANCE","EMAIL","INTEGRATIONS","FEATURE_FLAGS","USER_MANAGEMENT"];
 
 export async function createSystemSetting({key,value,description,category,dataType,editable,isVisible,defaultValue}){
     try{
@@ -34,7 +35,7 @@ export async function createSystemSetting({key,value,description,category,dataTy
 export async function updateSystemSetting({id,value,description,category,dataType,editable,isVisible,defaultValue}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !value || typeof value !== "string" || value.trim() === "" ||
             !description || typeof description !== "string" || description.trim() === "" ||
             !category || typeof category !== "string" || category.trim() === "" ||
@@ -62,7 +63,7 @@ export async function updateSystemSetting({id,value,description,category,dataTyp
 
 export async function getOneById(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za systemSetting nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/settings/get-one/${id}`,{
@@ -77,7 +78,7 @@ export async function getOneById(id){
 
 export async function deleteSystemSetting(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za systemSetting nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/settings/delete/${id}`,{
@@ -117,20 +118,7 @@ export async function getAll(){
     }
 }
 
-export async function getByCategory(category){
-    try{
-        if(!category || typeof category !== "string" || category.trim() === ""){
-            throw new Error("Data kategorija nije pronadjena");
-        }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/settings/category/${category}`,{
-            headers:getHeader()
-        });
-        return response.data;
-    }
-    catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja prema kategoriji");
-    }
-}
+
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

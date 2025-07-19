@@ -296,3 +296,51 @@ export async function findByTypeAndPeriod({type, startDate, endDate}){
         handleApiError(error,"Greska prilikom trazenja po taxRate tipu, pocetku i kraju datuma");
     }
 }
+
+export async function findByVat(){
+    try{
+        const response = await api.get(url+`/search/by-type-vat`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli tip za TaxRate koji je 'VAT'");
+    }
+}
+
+export async function findByIncome_Tax(){
+    try{
+        const response = await api.get(url+`/searh/by-type-income-tax`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli tip za TaxRate koji je 'INCOME_TAX'");
+    }
+}
+
+export async function findBySales_Tax(){
+    try{
+        const response = await api.get(url+`/searh/by-type-income-tax`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli tip za TaxRate koji je 'SALES_TAX'");
+    }
+}
+
+export async function findByCustom(){
+    try{
+        const response = await api.get(url+`/search/by-type-custom`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli tip za TaxRate koji je 'CUSTOM'");
+    }
+}

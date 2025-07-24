@@ -58,7 +58,7 @@ export async function updateBuyer({pib, companyName, address, contactPerson, ema
 
 export async function deleteBuyer(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za kupca nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/buyers/delete/${id}`,{
@@ -73,7 +73,7 @@ export async function deleteBuyer(id){
 
 export async function getBuyerById(id) {
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID za kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/buyer/${id}`,{
@@ -145,6 +145,158 @@ export async function getBuyerByPib(pib){
     }
     catch(error){
         handleApiError(error,"Greska prilikom pretrage po pib-u");
+    }
+}
+
+export async function findByAddressContainingIgnoreCase(address){
+    try{
+        if(!address || typeof address !== "string" || address.trim() === ""){
+            throw new Error("Data adresa kupca nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-address`,{
+            params:{
+                address:address
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutni nismo pronasli adresu za kupca");
+    }
+}
+
+export async function findByContactPerson(contactPerson){
+    try{
+        if(!contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === ""){
+            throw new Error("Dati kontakt-osoba za kupca nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-contact-person`,{
+            params:{
+                contactPerson:contactPerson
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutni nismo pronasli kontakt-osobu za kupca");
+    }
+}
+
+export async function findByContactPersonContainingIgnoreCase(contactPersonFragment){
+    try{
+        if(!contactPersonFragment || typeof contactPersonFragment !== "string" || contactPersonFragment.trim() === ""){
+            throw new Error("Dati kontakt-osoba po fragmentu za kupca nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/by-contact-person-fragment`,{
+            params:{
+                contactPersonFragment:contactPersonFragment
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutni nismo pronasli kontakt-osobu po fragmentu za kupca");
+    }
+}
+
+export async function findByPhoneNumberContaining(phoneFragment){
+    try{
+        if(!phoneFragment || typeof phoneFragment !== "string" || phoneFragment.trim() === ""){
+            throw new Error("Dati kontakt-telefon po fragmentu za kupca nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/by-phone-fragment`,{
+            params:{
+                phoneFragment:phoneFragment
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutni nismo pronasli kontakt-telefon po fragmentu za kupca");
+    }
+}
+
+export async function findByCompanyNameContainingIgnoreCaseAndAddressContainingIgnoreCase({companyName, address}){
+    try{
+        if(!companyName || typeof companyName !== "string" || companyName.trim() === "" ||
+            !address || typeof address !== "string" || address.trim() === ""){
+            throw new Error("Dati naziv kompanije i njena adresa, nisu pronadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/company-name-and-address`,{
+            params:{
+                companyName:companyName,
+                address:address
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutni nismo pronasli naziv kompanije i njenu adresu");
+    }
+}
+
+export async function findBuyersWithSalesOrders(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/buyer-with-sales-orders`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kupce sa prodajnim narudzbinama");
+    }
+}
+
+export async function findBuyersWithoutSalesOrders(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/buyer-without-sales-orders`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kupce bez prodajnih narudzbina");
+    }
+}
+
+export async function existsByEmail(email){
+    try{    
+        if(!email || typeof email !== "string" || email.trim() === ""){
+            throw new Error("Dati email nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/exists-by-email`,{
+            params:{email:email},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli posoyjeci email za kupca");
+    }
+}
+
+export async function searchBuyers({companyName, email}){
+    try{
+        if(!companyName || typeof companyName !== "string" || companyName.trim() === "" ||
+            !email || typeof email !== "string" || email.trim() === ""){
+            throw new Error("Dati naziv kompanije i email za kupca nisu pronadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search-buyers`,{
+            params:{
+                companyName:companyName,
+                email:email
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kupca po parametrima za pretragu: naziv kompanije i email");
     }
 }
 

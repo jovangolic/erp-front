@@ -795,6 +795,71 @@ export async function findInterimStorage(){
     }
 }
 
+export async function getAvailableCapacity(id){
+    try{
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID za skladiste nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/${id}/available-capacity`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli slobodno skladiste sa datim ID-ijem");
+    }
+}
+
+export async function allocateCapacity({id, amount}){
+    try{
+        const parseAmount = parseFloat(amount);
+        if(id == null || isNaN(id) || isNaN(parseAmount) || parseAmount <= 0){
+            throw new Error("Dati ID skladiste i njegova kolicina, nisu pornadjeni");
+        }
+        const requestBody = {amount};
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/storages/${id}/allocate`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli skladiste za alociranje kapaciteta");
+    }
+}
+
+export async function releaseCapacity(id, amount){
+    try{
+        const parseAmount = parseFloat(amount);
+        if(id == null || isNaN(id) || isNaN(parseAmount) || parseAmount <= 0){
+            throw new Error("Dati ID skladiste i njegova kolicina, nisu pornadjeni");
+        }
+        const requestBody = {amount};
+        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/${id}/release-capacity`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli skladiste za oslobadjanje kapaciteta");
+    }
+}
+
+export async function hasCapacity(storageId, amount){
+    try{
+        const parseAmount = parseFloat(amount);
+        if(storageId == null || isNaN(storageId) || isNaN(parseAmount) || parseAmount <= 0){
+            throw new Error("Dati ID skladiste i njegova kolicina, nisu pornadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/${storageId}/has-capacity`,{
+            params:{amount:parseAmount},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli da li skladiste ima odredjeni kapacitet");
+    }
+}
 
 
 if (typeof data === 'object') {

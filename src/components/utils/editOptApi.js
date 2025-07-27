@@ -115,6 +115,38 @@ export async function getByType(type){
     }
 }
 
+export async function findByName(name){
+    try{
+        if(!name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Dati naziv za edit-opt nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/by-name`,{
+            params:{name:name},
+            headers:getHeader()
+        });
+        return response.datal
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli edit-opt po nazivu");
+    }
+}
+
+export async function findByValue(value){
+    try{
+        if(!value || typeof value !== "string" || value.trim() === ""){
+            throw new Error("Data vrednost za edit-opt nije pronadjena");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/by-value`,{
+            params:{value:value},
+            headers:getHeader()
+        });
+        return response.datal
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli edit-opt po vrednosti");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

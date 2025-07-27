@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment, { min } from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 function handleApiError(error, customMessage) {
@@ -348,5 +348,112 @@ export async function findByTotalAssetsLessThan(totalEquity){
     }
     catch(error){
         handleApiError(error,"Gresk aprilikom trazenja totalEquity manjeg od");
+    }
+}
+
+export async function searchBalanceSheets({startDate, endDate,fiscalYearId,minAssets,minEquity,minLiabilities,onlySolvent}){
+    try{
+        const parseMinAssets = parseFloat(minAssets);
+        const parseMinEquity = parseFloat(minEquity);
+        const parseMiLiabilities = parseFloat(minLiabilities);
+        if(isNaN(parseMinAssets) || parseMinAssets <= 0 || isNaN(parseMinEquity) || parseMinEquity <= 0 || 
+            isNaN(parseMiLiabilities) || parseMiLiabilities <= 0 || typeof onlySolvent !== "boolean" ||
+            isNaN(Number(fiscalYearId)) || fiscalYearId == null ||
+            !moment(startDate,"YYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Dati parametri za pretragu, nisu pronasli ocekivani rezultat");
+        }
+        if (moment(startDate).isAfter(moment(endDate))) {
+            throw new Error("Datum početka ne može biti posle datuma završetka");
+        }
+        const requestBody = {startDate,endDate, fiscalYearId,minAssets, minEquity, minLiabilities, onlySolvent};
+        const response = await api.post(url+`/search`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datu pertragu za balance-sheet po odredjenim parametrima");
+    }
+}
+
+export async function findByTotalLiabilitiesLessThan(totalLiabilities){
+    try{
+        const parseTotalLiabilities = parseFloat(totalLiabilities);
+        if(isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0){
+            throw new Error("Dati ukupan trosak manji od, nije pronadjen");
+        }
+        const response = await api.get(url+`/by-total-liabilities-less-than`,{
+            params:{totalLiabilities:parseTotalLiabilities},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan trosak manji od");
+    }
+}
+
+export async function findByTotalLiabilitiesGreaterThan(totalLiabilities){
+    try{
+        const parseTotalLiabilities = parseFloat(totalLiabilities);
+        if(isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0){
+            throw new Error("Dati ukupan trosak veci od, nije pronadjen");
+        }
+        const response = await api.get(url+`/by-total-liabilities-greater-than`,{
+            params:{totalLiabilities:parseTotalLiabilities},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan trosak veci od");
+    }
+}
+
+export async function searchBalanceSheets({startDate, endDate, fiscalYearId, minAssets}){
+    try{
+        const parseMinAssets = parseFloat(minAssets);
+        if( isNaN(fiscalYearId) || fiscalYearId == null ||
+            !moment(startDate,"YYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
+            isNaN(parseMinAssets) || parseMinAssets <= 0){
+            throw new Error("Dati parametri za pretragu BalanceSheet-a, ne pronalazi ocekivani rezultat");
+        }
+        const response = await api.get(url+`/filter-balance-sheet`,{
+            params:{
+                startDate:moment(startDate).format("YYYY-MM-DD"),
+                endDate:moment(endDate).format("YYYY-MM-DD"),
+                fiscalYearId: fiscalYearId,
+                minAssets :parseMinAssets
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo uspeli da pronadjeno dati rezultat za BalanceSheet, koristeci parametre za pretragu");
+    }
+}
+
+export async function findSolventBalanceSheets(){
+    try{
+        const response = await api.get(url+`/find-solvent-balance-sheet`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli solventnost BalanceSheet-a");
+    }
+}
+
+export async function findFirstByOrderByDateDesc(){
+    try{
+        const response = await api.get(url+`/find-first-by-order-date-desc`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datum po opadajucem redosledu");
     }
 }

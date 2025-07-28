@@ -492,8 +492,11 @@ export async function findByInventory_Status(status){
     }
 }
 
-export async function existsByInventory_Aligned(){
+export async function existsByInventory_Aligned(bool){
     try{
+        if(typeof bool !== "boolean"){
+            throw new Error("Uskladjeni inventar ne postoji");
+        }
         const response = await api.get(url+`/exists-by-inventory-aligned`,{
             headers:getHeader()
         });

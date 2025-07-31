@@ -201,3 +201,137 @@ export async function deleteAllByIds(ids) {
         handleApiError(error, "Greška prilikom brisanja više unosa");
     }
 }
+
+export async function findByBuyer_CompanyName(companyName){
+    try{
+        if(!companyName || typeof companyName !== "string" || companyName.trim() === ""){
+            throw new Error("Dati naziv kompanije kupca nije pronadjen");
+        }
+        const response = await api.get(url+`/search/buyer-company-name`,{
+            param:{companyName:companyName},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv kompanije za kupca");
+    }
+}
+
+export async function findByBuyer_Address(address){
+    try{
+        if(!address || typeof address !== "string" || address.trim() === ""){
+            throw new Error("Data adresa kupca nije pronadjena");
+        }
+        const response = await api.get(url+`/search/buyer-address`,{
+            param:{address:address},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli adresu za kupca");
+    }
+}
+
+export async function findByBuyer_ContactPerson(contactPerson){
+    try{
+        if(!contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === ""){
+            throw new Error("Data kontakt-osoba za kupca nije pronadjena");
+        }
+        const response = await api.get(url+`/search/buyer-contact-person`,{
+            param:{contactPerson:contactPerson},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kontakt-osobu za kupca");
+    }
+}
+
+export async function findByBuyer_EmailLikeIgnoreCase(email){
+    try{
+        if(!email || typeof email !== "string" || email.trim() === ""){
+            throw new Error("Dati email za kupca nije pronadjen");
+        }
+        const response = await api.get(url+`/search/buyer-email`,{
+            param:{email:email},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli email za kupca");
+    }
+}
+
+export async function findByBuyer_PhoneNumberLikeIgnoreCase(phoneNumber){
+    try{
+        if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
+            throw new Error("Dati broj-telefona za kupca nije pronadjen");
+        }
+        const response = await api.get(url+`/search/buyer-phone-number`,{
+            param:{phoneNumber:phoneNumber},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona za kupca");
+    }
+}
+
+export async function findByDeliveryDate(deliveryDate){
+    try{
+        if(!moment(deliveryDate, "YYYY-MM-DD",true).isValid()){
+            throw new Error("Dati datum dostave nije pronadjen");
+        }
+        const response = await api.get(url+`/delivery-date`,{
+            params:{
+                deliveryDate:moment(deliveryDate).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli dati datum dostave");
+    }
+}
+
+export async function findByDeliveryDateAfter(deliveryDate){
+    try{
+        if(!moment(deliveryDate, "YYYY-MM-DD",true).isValid()){
+            throw new Error("Dati datum dostave posle, nije pronadjen");
+        }
+        const response = await api.get(url+`/delivery-date-after`,{
+            params:{
+                deliveryDate:moment(deliveryDate).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datum posle za dostavu");
+    }
+}
+
+export async function findByDeliveryDateBefore(deliveryDate){
+    try{
+        if(!moment(deliveryDate, "YYYY-MM-DD",true).isValid()){
+            throw new Error("Dati datum dostave pre, nije pronadjen");
+        }
+        const response = await api.get(url+`/delivery-date-before`,{
+            params:{
+                deliveryDate:moment(deliveryDate).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datum pre za dostavu");
+    }
+}

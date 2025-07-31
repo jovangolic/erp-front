@@ -494,6 +494,24 @@ export async function findByRelatedSales_Buyer_Id(buyerId){
     }
 }
 
+export async function findByDate(date){
+    try{
+        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Dati datum za nabavku nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment-date`,{
+            params: {
+                date:moment(dste).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datum za nabavku");
+    }
+}
+
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

@@ -5,5 +5,8 @@ export const StorageType = Object.freeze({
     "OPEN": OPEN,
     "CLOSED": CLOSED,
     "INTERIM": INTERIM,
-    "AVAILABLE": AVAILABLE
+    "AVAILABLE": AVAILABLE,
+    "SILO": SILO,
+    "YARD": YARD,
+    "COLD_STORAGE": COLD_STORAGE
 });

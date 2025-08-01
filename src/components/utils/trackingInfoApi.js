@@ -3,7 +3,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/trackingInfos`;
 const validateStatus = ["PENDING","SHIPPED","IN_TRANSIT","DELIVERED","DELAYED","CANCELLED"];
-const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
+const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 
 export function isValidTrackingInfo({
   trackingNumber,

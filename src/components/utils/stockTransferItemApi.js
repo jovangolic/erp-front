@@ -3,8 +3,8 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const isSupplierTypeValid = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUPPLIER","ONION_SUPPLIER","BLUEBERRY_SUPPLIER","POTATO_SUPPLIER"];
-const isGoodsTypeValid = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRODUCT", "WRITE_OFS"];
-const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
+const isGoodsTypeValid = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRODUCT", "WRITE_OFS","CONSTRUCTION_MATERIAL","BULK_GOODS","PALLETIZED_GOODS"];
+const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 const isTransferStatusValid = ["INITIATED", "IN_TRANSIT", "COMPLETED", "CANCELLED"];
 
 function handleApiError(error, customMessage) {

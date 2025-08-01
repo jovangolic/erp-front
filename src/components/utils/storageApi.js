@@ -1,7 +1,7 @@
 import { min } from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
+const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 
 export async function createStorage({name, location, capacity, shelves, type, goods}) {
     try {

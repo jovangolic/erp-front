@@ -4,7 +4,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransfers`;
 
 const validateStatus = ["INITIATED","IN_TRANSIT","COMPLETED","CANCELLED"];
-const validateStorageType =["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
+const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 
 export async function create({transferDate, fromStorageId,toStorageId,status, itemRequest}){
     try{

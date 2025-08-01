@@ -1,6 +1,6 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
+const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 
 export async function createShelf({rowCount, cols, storageId, goods}){
     try{

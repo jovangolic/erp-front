@@ -9,7 +9,7 @@ function handleApiError(error, customMessage) {
 }
 
 const validateStatus = ["ACTIVE","UNDER_MAINTENANCE","DECOMMISSIONED","RESERVED","TEMPORARY","FULL"];
-const validateStorageType =["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE"];
+const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 const url = `${import.meta.env.VITE_API_BASE_URL}/workCenters`;
 
 export async function createWorkCenter({name,location,capacity, localStorageId}){

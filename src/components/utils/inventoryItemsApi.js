@@ -2,7 +2,7 @@ import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = '${import.meta.env.VITE_API_BASE_URL}/inventoryItems';
-const isInventoryStatusValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED"];
+const isInventoryStatusValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED","PENDING_APPROVAL","APPROVED"];
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const isSupplierTypeValid = ["CABAGE_SUPPLIER","CARROT_SUPPLIER","TOMATO_SUPPLIER","ONION_SUPPLIER","BLUEBERRY_SUPPLIER","POTATO_SUPPLIER"];
 const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];

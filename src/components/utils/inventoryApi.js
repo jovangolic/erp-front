@@ -1,7 +1,7 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
-const isInventoryValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED"];
+const isInventoryValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED","PENDING_APPROVAL","APPROVED"];
 const url = `${import.meta.env.VITE_API_BASE_URL}/inventories/`;
 
 export async function createInventory({storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status}){

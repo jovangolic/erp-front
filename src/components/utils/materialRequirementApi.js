@@ -539,4 +539,211 @@ export async function findByStatus(status){
     }
 }
 
+export async function findByRequiredQuantity(requiredQuantity){
+    try{
+        const parseRequiredQuantity = parseFloat(requiredQuantity);
+        if(isNaN(parseRequiredQuantity) || parseRequiredQuantity <= 0){
+            throw new Error("Trazena kolicina za material-requirement, nije pronadjena");
+        }
+        const response = await api.get(url+`/material-required-quantity`,{
+            params:{
+                requiredQuantity:parseRequiredQuantity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli trazenu kolicinu za material-requirement");
+    }
+}
 
+export async function findByRequiredQuantityLessThan(requiredQuantity){
+    try{
+        const parseRequiredQuantity = parseFloat(requiredQuantity);
+        if(isNaN(parseRequiredQuantity) || parseRequiredQuantity <= 0){
+            throw new Error("Trazena kolicina za material-requirement manja od, nije pronadjena");
+        }
+        const response = await api.get(url+`/material-required-quantity-less-than`,{
+            params:{
+                requiredQuantity:parseRequiredQuantity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli trazenu kolicinu manju od, za material-requirement");
+    }
+}
+
+export async function findByRequiredQuantityGreaterThan(requiredQuantity){
+    try{
+        const parseRequiredQuantity = parseFloat(requiredQuantity);
+        if(isNaN(parseRequiredQuantity) || parseRequiredQuantity <= 0){
+            throw new Error("Trazena kolicina za material-requirement veca od, nije pronadjena");
+        }
+        const response = await api.get(url+`/material-required-quantity-greater-than`,{
+            params:{
+                requiredQuantity:parseRequiredQuantity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli trazenu kolicinu vecu od, za material-requirement");
+    }
+}
+
+export async function findByAvailableQuantity(availableQuantity){
+    try{
+        const parseAvailableQuantity = parseFloat(availableQuantity);
+        if(isNaN(parseAvailableQuantity) || parseAvailableQuantity <= 0){
+            throw new Error("Dostupna kolicina za material-requirement, nije pronadjena");
+        }
+        const response = await api.get(url+`/available-quantity`,{
+            params:{
+                availableQuantity:parseAvailableQuantity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli dostupnu kolicinu za material-requirement");
+    }
+}
+
+export async function findByAvailableQuantityLessThan(availableQuantity){
+    try{
+        const parseAvailableQuantity = parseFloat(availableQuantity);
+        if(isNaN(parseAvailableQuantity) || parseAvailableQuantity <= 0){
+            throw new Error("Dostupna kolicina za material-requirement manja od, nije pronadjena");
+        }
+        const response = await api.get(url+`/available-quantity-less-than`,{
+            params:{
+                availableQuantity:parseAvailableQuantity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli dostupnu kolicinu manju od, za material-requirement");
+    }
+}
+
+export async function findByAvailableQuantityGreaterThan(availableQuantity){
+    try{
+        const parseAvailableQuantity = parseFloat(availableQuantity);
+        if(isNaN(parseAvailableQuantity) || parseAvailableQuantity <= 0){
+            throw new Error("Dostupna kolicina za material-requirement veca od, nije pronadjena");
+        }
+        const response = await api.get(url+`/available-quantity-greater-than`,{
+            params:{
+                availableQuantity:parseAvailableQuantity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli dostupnu kolicinu vecu od, za material-requirement");
+    }
+}
+
+export async function findByRequirementDate(requirementDate){
+    try{
+        if(!moment(requirementDate,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Obavezan datum za material-requirement, nije pronadjen");
+        }
+        const response = await api.get(url+`/requirement-date`,{
+            params:{
+                requirementDate:moment(requirementDate).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli obavezan datum za material-requirement");
+    }
+}
+
+export async function findByRequirementDateBetween({start,end}){
+    try{
+        if(!moment(start,"YYYY-MM-DD",true).isValid() || 
+           !moment(end,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Opseg datuma za material-requirement, nije pronadjen");
+           }
+        const response = await api.get(url+`/requirement-date-range`,{
+            params:{
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opseg datuma za material-requirement");
+    }
+}
+
+export async function findByRequirementDateGreaterThanEqual(requirementDate){
+    try{
+        if(!moment(requirementDate,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Obavezan datum, veci ili jednak za material-requirement, nije pronadjen");
+        }
+        const response = await api.get(url+`/requirement-date-greater-than-equal`,{
+            params:{
+                requirementDate:moment(requirementDate).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli datuk koji je jedan ili veci, za material-requirement");
+    }
+}
+
+export async function findByProductionOrder_OrderNumberContainingIgnoreCaseAndMaterial_CodeContainingIgnoreCase({orderNumber,materialCode}){
+    try{
+        if(!orderNumber || typeof orderNumber !== "string" || orderNumber.trim() === "" ||
+           !materialCode || typeof materialCode !== "string" || materialCode.trim() === ""){
+            throw new Error("Broj naredbe i kod materijala za proizvodnju, nije pronadjen");
+           }
+        const response = await api.get(url+`/production-order/order-number-and-material-code`,{
+            params:{
+                orderNumber:orderNumber,
+                materialCode:materialCode
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj naredbe i kod materijala za production-order");
+    }
+}
+
+export async function findWhereShortageIsGreaterThan(minShortage){
+    try{
+        const parseMinShortage = parseFloat(minShortage);
+        if(isNaN(parseMinShortage) || parseMinShortage <= 0){
+            throw new Error("Dati manjak veci od, nije pronadjen");
+        }
+        const response = await api.get(url+`/search-by-minShortage`,{
+            params:{
+                minShortage:parseMinShortage
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli stanje, gde je manjak veci od");
+    }
+}

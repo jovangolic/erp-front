@@ -49,7 +49,7 @@ export async function updateShiftPlanning({id,workCenterId,userId,date,shiftType
 export async function deleteShiftPlanning(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id za planiranje-smena, nije pronadjen");
+            throw new Error("Dati id "+id+" za planiranje-smena, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -64,7 +64,7 @@ export async function deleteShiftPlanning(id){
 export async function findOne(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id za planiranje-smena, nije pronadjen");
+            throw new Error("Dati id "+id+" za planiranje-smena, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -72,7 +72,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jedne smene");
+        handleApiError(error,"Greska prilikom trazenja jedne smene po "+id+" id-iju");
     }
 }
 
@@ -91,7 +91,7 @@ export async function findAll(){
 export async function findByWorkCenter_NameContainingIgnoreCase(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Dati naziv radnog centra za smenu, nije pronadjen");
+            throw new Error("Dati naziv "+name+" radnog centra za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-name"`,{
             params:{name:name},
@@ -100,7 +100,7 @@ export async function findByWorkCenter_NameContainingIgnoreCase(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv radnog centra za smenu");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" radnog centra za smenu");
     }
 }
 
@@ -108,7 +108,7 @@ export async function findByWorkCenter_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet radnog centra za smenu, nije pronadjen");
+            throw new Error("Dati kapacitet "+parseCapacity+" radnog centra za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity`,{
             params:{
@@ -119,7 +119,7 @@ export async function findByWorkCenter_Capacity(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra, za smenu");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+capacity+" radnog centra, za smenu");
     }
 }
 
@@ -127,7 +127,7 @@ export async function findByWorkCenter_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet radnog centra veci od, za smenu, nije pronadjen");
+            throw new Error("Dati kapacitet radnog centra veci od "+parseCapacity+", za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-greater-than`,{
             params:{
@@ -138,7 +138,7 @@ export async function findByWorkCenter_CapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra veceg od, za smenu");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra veceg od "+capacity+", za smenu");
     }
 }
 
@@ -146,7 +146,7 @@ export async function findByWorkCenter_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet radnog centra manji od, za smenu, nije pronadjen");
+            throw new Error("Dati kapacitet radnog centra manji od "+parseCapacity+", za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-less-than`,{
             params:{
@@ -157,14 +157,14 @@ export async function findByWorkCenter_CapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra manjeg od, za smenu");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra manjeg od "+capacity+", za smenu");
     }
 }
 
 export async function findByWorkCenter_LocationContainingIgnoreCase(location){
     try{
         if(!location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Data lokacija radnog centra za smenu, nije pronadjena");
+            throw new Error("Data lokacija "+location+" radnog centra za smenu, nije pronadjena");
         }
         const response = await api.get(url+`/work-center-location`,{
             params:{
@@ -175,14 +175,14 @@ export async function findByWorkCenter_LocationContainingIgnoreCase(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju radnog centra za smenu");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" radnog centra za smenu");
     }
 }
 
 export async function findByEmployee_Id(id){
     try{
         if(isNaN(id) || id == null){
-            throw new Error("Dati ID zaposlenog, nije pronadjen");
+            throw new Error("Dati ID "+id+" zaposlenog, nije pronadjen");
         }
         const response = await api.get(url+`/employee/${id}`,{
             headers:getHeader()
@@ -190,14 +190,14 @@ export async function findByEmployee_Id(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id zaposlenog za trenutnu smenu");
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" zaposlenog za trenutnu smenu");
     }
 }
 
 export async function findByEmployee_Email(email){
     try{
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati email zaposlenog, nije pronadjen");
+            throw new Error("Dati email "+email+" zaposlenog, nije pronadjen");
         }
         const response = await api.get(url+`/employee-email`,{
             params:{
@@ -208,14 +208,14 @@ export async function findByEmployee_Email(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli email zapolsenog za planiranje smene");
+        handleApiError(error,"Trenutno nismo pronasli email "+email+" zapolsenog za planiranje smene");
     }
 }
 
 export async function findByEmployee_UsernameContainingIgnoreCase(username){
     try{
         if(!username || typeof username !== "string" || username.trim() === ""){
-            throw new Error("Dato korisnicko ime zaposlenog, nije pronadjeno");
+            throw new Error("Dato korisnicko ime "+username+" zaposlenog, nije pronadjeno");
         }
         const response = await api.get(url+`/employee-username`,{
             params:{
@@ -226,14 +226,14 @@ export async function findByEmployee_UsernameContainingIgnoreCase(username){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli korisnicko ime zapolsenog za planiranje smene");
+        handleApiError(error,"Trenutno nismo pronasli korisnicko ime "+username+" zapolsenog za planiranje smene");
     }
 }
 
 export async function findByEmployee_PhoneNumber(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj-tlefona zaposlenog, nije pronadjen");
+            throw new Error("Dati broj-telefona "+phoneNumber+" zaposlenog, nije pronadjen");
         }
         const response = await api.get(url+`/employee-phone-number`,{
             params:{
@@ -244,14 +244,14 @@ export async function findByEmployee_PhoneNumber(phoneNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj-telefona zaposlenog za planiranje smene");
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona "+phoneNumber+" zaposlenog za planiranje smene");
     }
 }
 
 export async function findByDate(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum za planiranje smene nije pronadjen");
+            throw new Error("Datum "+date+" za planiranje smene nije pronadjen");
         }
         const response = await api.get(url+`/by-date`,{
             params:{
@@ -262,14 +262,14 @@ export async function findByDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum za planiranje smene");
+        handleApiError(error,"Trenutno nismo pronasli datum "+date+" za planiranje smene");
     }
 }
 
 export async function findByDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum opsega za planiranje smene, nije pronadjen");
+            throw new Error("Datum opsega "+start+" - "+end+" za planiranje smene, nije pronadjen");
         }
         const response = await api.get(url+`/date-range`,{
             params:{
@@ -281,7 +281,7 @@ export async function findByDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trewnutno nismo pronasli opseg datuma za planiranje smene");
+        handleApiError(error,"Trewnutno nismo pronasli opseg "+start+" - "+end+" datuma za planiranje smene");
     }
 }
 
@@ -360,7 +360,7 @@ export async function findByAssigned(assigned){
 export async function findByEmployee_IdAndAssignedTrue(employeeIds){
     try{
         if(isNaN(employeeIds) || employeeIds == null){
-            throw new Error("ID zapolsenog nije pronadjen");
+            throw new Error("ID  "+employeeIds+"zapolsenog nije pronadjen");
         }
         const response = await api.get(url+`/employee/${employeeIds}/assigned`,{
             headers:getHeader()
@@ -368,7 +368,7 @@ export async function findByEmployee_IdAndAssignedTrue(employeeIds){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id zaposlenog gde je dodeljena smena tacna");
+        handleApiError(error,"Trenutno nismo pronasli id "+employeeIds+" zaposlenog gde je dodeljena smena tacna");
     }
 }
 

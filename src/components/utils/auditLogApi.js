@@ -26,7 +26,7 @@ export async function log({action, userId, details}){
 export async function getById(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za AuditLog ne postoji");
+            throw new Error("Dati ID "+id+" za AuditLog ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/${id}`,{
             headers:getHeader()
@@ -34,7 +34,7 @@ export async function getById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog");
+        handleApiError(error, "Greska prilikom dobavljanja jednog po "+id+" id-iju");
     }
 }
 
@@ -44,7 +44,7 @@ export async function getLogsBetweenDates({startDate, endDate}){
             !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         ){
-            throw new Error("Dati datumi log-a nisu u opsegu");
+            throw new Error("Dati datumi log-a "+startDate+" - "+endDate+" nisu u opsegu");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/between-dates`,{
             params:{
@@ -63,7 +63,7 @@ export async function getLogsBetweenDates({startDate, endDate}){
 export async function getLogsByAction(action){
     try{
         if(!isAuditActionTypeVali.includes(action?.toUpperCase())){
-            throw new Error("Dati log po tipu akcije ne postoji");
+            throw new Error("Dati log po tipu "+act+" akcije ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/get-by-action`,{
             params:{
@@ -74,14 +74,14 @@ export async function getLogsByAction(action){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja po actions");
+        handleApiError(error, "Greska prilikom dobavljanja po tipu "+act+" actions");
     }
 }
 
 export async function getLogsByUserId(userId){
     try{
         if(userId == null || isNaN(userId)){
-            throw new Error("Dati userId ne postoji");
+            throw new Error("Dati userId "+userId+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/user/${userId}`,{
             headers:getHeader()
@@ -89,7 +89,7 @@ export async function getLogsByUserId(userId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greksa prilikom dobavljanja po korisniku");
+        handleApiError(error,"Greksa prilikom dobavljanja po "+userId+" id-iju korisniku");
     }
 }
 

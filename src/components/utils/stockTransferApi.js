@@ -73,7 +73,7 @@ export async function update({id,transferDate, fromStorageId,toStorageId,status,
 export async function deleteStockTransfer (id) {
     try{
         if(!id){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -88,7 +88,7 @@ export async function deleteStockTransfer (id) {
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -96,7 +96,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog");
+        handleApiError(error, "Greska prilikom dobavljanja jednog "+id+" po id-iju");
     }
 }
 
@@ -127,7 +127,7 @@ export async function findByStatus(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po statusu");
+        handleApiError(error,"Greska prilikom trazenja po statusu "+status);
     }
 }
 
@@ -146,7 +146,7 @@ export async function findByTransferDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema transfer datumu");
+        handleApiError(error,"Greska prema transfer datumu "+date);
     }
 }
 
@@ -154,7 +154,7 @@ export async function findByTransferDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() ||
             !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Opseg datuma je nevalidan");
+            throw new Error("Opseg datuma "+start+" - "+end+" je nevalidan");
         }
         const response = await api.get(url+`/transfer-date-range`,{
             params:{
@@ -166,14 +166,14 @@ export async function findByTransferDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska izmedju transfer datuma");
+        handleApiError(error, "Greska izmedju transfer "+start+" - "+end+" datuma");
     }
 }
 
 export async function findByFromStorageId(fromStorageId){
     try{
         if(!fromStorageId){
-            throw new Error("Skaldiste odakle ide roba ne postoji");
+            throw new Error("Skaldiste "+fromStorageId+" odakle ide roba ne postoji");
         }
         const response = await api.get(url+`/storage/${fromStorageId}`,{
             headers:getHeader()
@@ -181,14 +181,14 @@ export async function findByFromStorageId(fromStorageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prema dobavljanju iz skladista ka");
+        handleApiError(error, "Greska prema dobavljanju iz "+fromStorageId+" skladista ka");
     }
 }
 
 export async function findByToStorageId(toStorageId){
     try{
         if(!toStorageId){
-            throw new Error("Skaldiste gde dolazi roba ne postoji");
+            throw new Error("Skaldiste "+toStorageId+" gde dolazi roba ne postoji");
         }
         const response = await api.get(url+`/storage/${toStorageId}`,{
             headers:getHeader()
@@ -196,14 +196,14 @@ export async function findByToStorageId(toStorageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema dobavljanju u skladiste");
+        handleApiError(error,"Greska prema dobavljanju u "+toStorageId+" skladiste");
     }
 }
 
 export async function findByFromStorage_Name(fromStorageName){
     try{
         if(!fromStorageName || typeof fromStorageName !== "string" || fromStorageName.trim() ===""){
-            throw new Error("Nepoznat naziv skladista odakle dolazi roba");
+            throw new Error("Nepoznat naziv "+fromStorageName+" skladista odakle dolazi roba");
         }
         const response = await api.get(url+`/fromStorageName`,{
             params:{
@@ -214,14 +214,14 @@ export async function findByFromStorage_Name(fromStorageName){
         return response.data;
     }   
     catch(error){
-        handleApiError(error, "Greska prema pretrazi od naziva skladista");
+        handleApiError(error, "Greska prema pretrazi od naziva "+fromStorageName+" skladista");
     }
 }
 
 export async function findByFromStorage_Location(fromLocation){
     try{
         if(!fromLocation || typeof fromLocation !== "string" || fromLocation.trim() ===""){
-            throw new Error("Nepozna lokacija skladista odakle dolazi roba");
+            throw new Error("Nepozna lokacija "+fromLocation+" skladista odakle dolazi roba");
         }
         const response = await api.get(url+`/fromLocation`,{
             params:{
@@ -232,14 +232,14 @@ export async function findByFromStorage_Location(fromLocation){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Greska prema dobavlajnju od lokacije skladista");
+        handleApiError(error,"Greska prema dobavlajnju od lokacije "+fromLocation+" skladista");
     }
 }
 
 export async function findByToStorage_Name(toStorageName){
     try{ 
         if(!toStorageName || typeof toStorageName !== "string" || toStorageName.trim() ===""){
-            throw new Error("Nepoznat naziv skladista gde dolazi roba");
+            throw new Error("Nepoznat naziv "+toStorageName+" skladista gde dolazi roba");
         }
         const response = await api.get(url+`/toStorageName`,{
             params:{
@@ -250,14 +250,14 @@ export async function findByToStorage_Name(toStorageName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema dobavljanju do naziv askladista");
+        handleApiError(error,"Greska prema dobavljanju do naziv "+toStorageName+" askladista");
     }
 }
 
 export async function findByToStorage_Location(toLocation){
     try{
         if(!toLocation || typeof toLocation !=="string" || toLocation.trim() === ""){
-            throw new Error("LOkacija do skladista ne postojeca");
+            throw new Error("Lokacija "+toLocation+" do skladista ne postojeca");
         }
         const response = await api.get(url+`/toLocation`,{
             params:{
@@ -268,14 +268,14 @@ export async function findByToStorage_Location(toLocation){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema dobavljanju do lokacije");
+        handleApiError(error,"Greska prema dobavljanju do lokacije "+toLocation);
     }
 }
 
 export async function findByFromStorage_Type(fromStorageType){
     try{
         if(validateStorageType.includes(fromStorageType?.toUpperCase())){
-            throw new Error("Nepoznat tip skladista odakle dolazi roba");
+            throw new Error("Nepoznat tip "+fromStorageType+" skladista odakle dolazi roba");
         }
         const response = await api.get(url+`/fromStorageType`,{
             params:{
@@ -286,14 +286,14 @@ export async function findByFromStorage_Type(fromStorageType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema dobavljanju od tipa skladista");
+        handleApiError(error,"Greska prema dobavljanju od tipa "+fromStorageType+" skladista");
     }
 }
 
 export async function findByToStorage_Type(toStorageType){
     try{
         if(validateStorageType.includes(toStorageType?.toUpperCase())){
-            throw new Error("Nepoznat tip skladista gde dolazi roba");
+            throw new Error("Nepoznat tip "+toStorageType+" skladista gde dolazi roba");
         }
         const response = await api.get(url+`/toStorageType`,{
             params:{
@@ -304,7 +304,7 @@ export async function findByToStorage_Type(toStorageType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema dobavljanju ka tipu skladista");
+        handleApiError(error,"Greska prema dobavljanju ka tipu "+toStorageType+" skladista");
     }
 }
 
@@ -325,14 +325,14 @@ export async function findByStatusAndDateRange({status, start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema pretrazi po statusu i opsegu datuma");
+        handleApiError(error,"Greska prema pretrazi po statusu "+status+" i opsegu "+start+" - "+end+" datuma");
     }
 }
 
 export async function findByFromAndToStorageType({fromType, toType}){
     try{
         if(!validateStorageType.includes(fromType?.toUpperCase()) || !validateStorageType.includes(toType?.toUpperCase())){
-            throw new Error("Nepoznati tipovi od-do skladista");
+            throw new Error("Nepoznati tipovi "+fromType+" od-do "+toType+" skladista");
         }
         const response = await api.get(url+`/fromType-toType`,{
             params:{
@@ -344,7 +344,7 @@ export async function findByFromAndToStorageType({fromType, toType}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema dobavljanju od do tipa skladista");
+        handleApiError(error,"Greska prema dobavljanju od "+fromType+" do "+toType+" tipa skladista");
     }
 }
 
@@ -352,7 +352,7 @@ export async function searchFromStorageByNameAndLocation({name, location}){
     try{
         if(!name || typeof name !=="string" || name.trim() === "" ||
             !location  || typeof location !=="string" || location.trim() === ""){
-            throw new Error("Pretraga po nazivu i lokaciji skladista je nepoznata");
+            throw new Error("Pretraga po nazivu "+name+" i lokaciji "+location+" skladista je nepoznata");
         }
         const response = await api.get(url+`/name-and-location`,{
             params:{
@@ -364,7 +364,7 @@ export async function searchFromStorageByNameAndLocation({name, location}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska pre pretrazi po nazivu i lokaciji skladista");
+        handleApiError(error,"Greska pre pretrazi po nazivu "+name+" i lokaciji "+location+" skladista");
     }
 }
 

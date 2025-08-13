@@ -1,7 +1,7 @@
 import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
-const url = '${import.meta.env.VITE_API_BASE_URL}/inventoryItems';
+const url = `${import.meta.env.VITE_API_BASE_URL}/inventoryItems`;
 const isInventoryStatusValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED","PENDING_APPROVAL","APPROVED"];
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const isSupplierTypeValid = ["RAW_MATERIAL","MANUFACTURER","WHOLESALER","DISTRIBUTOR","SERVICE_PROVIDER","AGRICULTURE","FOOD_PROCESSING","LOGISTICS","PACKAGING","MAINTENANCE"];
@@ -63,7 +63,7 @@ export async function updateInventoryItems({id,inventoryId,productId, quantity, 
 export async function deleteInventoryItems(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id za inventoryItems nije pronadjen");
+            throw new Error("Dati id "+id+" za inventoryItems nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -78,7 +78,7 @@ export async function deleteInventoryItems(id){
 export async function findOneById(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id za inventoryItems nije pronadjen");
+            throw new Error("Dati id "+id+" za inventoryItems nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
@@ -105,7 +105,7 @@ export async function findAll(){
 export async function getByQuantity(quantity){
     try{
         if(isNaN(quantity) || parseFloat(quantity) < 0){
-            throw new Error("Quantity must be at least 0");
+            throw new Error("Data kolicina "+quantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity`,{
             params:{
@@ -116,14 +116,14 @@ export async function getByQuantity(quantity){
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom trazenja po kolicini");
+        handleApiError(error, "Greska prilikom trazenja po kolicini "+quantity);
         }
 }
 
 export async function getByCondition(itemCondition){
     try{
         if(isNaN(itemCondition) || parseInt(itemCondition) < 0){
-            throw new Error("ItemCondition mora biti pozitivan broj");
+            throw new Error("ItemCondition "+itemCondition+" mora biti pozitivan broj");
         }
         const response = await api.get(url+`/by-condition`,{
             params:{
@@ -134,14 +134,14 @@ export async function getByCondition(itemCondition){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po stanju ");
+        handleApiError(error, "Greska prilikom trazenja po stanju "+itemCondition);
     }
 }
 
 export async function getByInventoryId(inventoryId){
     try{
         if(inventoryId == null || isNaN(inventoryId)){
-            throw new Error("Dati ID za Inventory nije pronadjen");
+            throw new Error("Dati ID "+inventoryId+" za Inventory nije pronadjen");
         }
         const response = await api.get(url+`/by-inventory/${inventoryId}`,{
             headers:getHeader()
@@ -149,14 +149,14 @@ export async function getByInventoryId(inventoryId){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po id inventara");
+        handleApiError(error, "Greska prilikom trazenja po id "+inventoryId+" inventara");
     }
 }
 
 export async function getByProductId(productId){
     try{
         if(productId == null || isNaN(productId)){
-            throw new Error("Dati ID za Product nije pronadjen");
+            throw new Error("Dati ID "+productId+" za Product nije pronadjen");
         }
         const response = await api.get(url+`/by-product/${productId}`,{
             headers:getHeader()
@@ -164,14 +164,14 @@ export async function getByProductId(productId){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po id proizvoda");
+        handleApiError(error, "Greska prilikom trazenja po id "+productId+" proizvoda");
     }
 }
 
 export async function getByProductName(productName){
     try{
         if(!productName || typeof productName !== "string" || productName.trim() === ""){
-            throw new Error("Naziv proizvoda nije pronadjen");
+            throw new Error("Naziv "+productName+" proizvoda nije pronadjen");
         }
         const response = await api.get(url+`/by-product-name`,{
             params:{
@@ -182,7 +182,7 @@ export async function getByProductName(productName){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po nazivu proizvoda");
+        handleApiError(error, "Greska prilikom trazenja po nazivu "+productName+" proizvoda");
     }
 }
 
@@ -190,7 +190,7 @@ export async function findItemsWithDifference(threshold) {
     try {
         const parsedThreshold = parseFloat(parseFloat(threshold).toFixed(2));
         if (isNaN(parsedThreshold) || parsedThreshold <= 0) {
-            throw new Error("Threshold mora biti broj veći od 0");
+            throw new Error("Threshold "+threshold+" mora biti broj veći od 0");
         }
         const response = await api.get(url+`/find-by-threshold`, {
             params: {
@@ -209,7 +209,7 @@ export async function findByDifference(difference){
     try{
         const parseDifference = parseFloat(difference)
         if(isNaN(parseDifference) || parseDifference <= 0){
-            throw new Error("Data razlika za inventar-stavki nije pornadjena");
+            throw new Error("Data razlika "+parseDifference+" za inventar-stavki nije pornadjena");
         }
         const response = await api.get(url+`/by-difference`,{
             params:{
@@ -220,7 +220,7 @@ export async function findByDifference(difference){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stavku-inventara po razlici");
+        handleApiError(error,"Trenutno nismo pronasli stavku-inventara po razlici "+difference);
     }
 }
 
@@ -228,7 +228,7 @@ export async function findByDifferenceLessThan(difference){
     try{
         const parseDifference = parseFloat(difference)
         if(isNaN(parseDifference) || parseDifference <= 0){
-            throw new Error("Data razlika manja od za inventar-stavki nije pornadjena");
+            throw new Error("Data razlika manja od "+parseDifference+"za inventar-stavki nije pornadjena");
         }
         const response = await api.get(url+`/by-difference-less-than`,{
             params:{
@@ -239,7 +239,7 @@ export async function findByDifferenceLessThan(difference){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stavku-inventara po razlici manjoj od");
+        handleApiError(error,"Trenutno nismo pronasli stavku-inventara po razlici manjoj od "+difference);
     }
 }
 
@@ -247,7 +247,7 @@ export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina veca od, za stavku inventara nije pronadjena");
+            throw new Error("Data kolicina veca od "+parseQuantity+", za stavku inventara nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity-greater-than`,{
             params:{
@@ -258,7 +258,7 @@ export async function findByQuantityGreaterThan(quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stavku-inventara za kolicinu vecu od");
+        handleApiError(error,"Trenutno nismo pronasli stavku-inventara za kolicinu vecu od "+quantity);
     }
 }
 
@@ -266,7 +266,7 @@ export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina manja od, za stavku inventara nije pronadjena");
+            throw new Error("Data kolicina manja od "+parseQuantity+", za stavku inventara nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity-less-than`,{
             params:{
@@ -277,7 +277,7 @@ export async function findByQuantityLessThan(quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stavku-inventara za kolicinu manju od");
+        handleApiError(error,"Trenutno nismo pronasli stavku-inventara za kolicinu manju od "+quantity);
     }
 }
 
@@ -285,7 +285,7 @@ export async function findByItemConditionGreaterThan(itemCondition){
     try{
         const parseItemCondition = parseFloat(itemCondition);
         if(isNaN(parseItemCondition) || parseItemCondition <= 0){
-            throw new Error("Dato stanje proizvoda na lageru vece od, nije pronadjeno");
+            throw new Error("Dato stanje proizvoda na lageru vece od "+itemCondition+", nije pronadjeno");
         }
         const response = await api.get(url+`/by-item-condition-greater-than`,{
             params:{
@@ -296,7 +296,7 @@ export async function findByItemConditionGreaterThan(itemCondition){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stanje proizvoda na lageru veceg od");
+        handleApiError(error,"Trenutno nismo pronasli stanje proizvoda na lageru veceg od "+itemCondition);
     }
 }
 
@@ -304,7 +304,7 @@ export async function findByItemConditionLessThan(itemCondition){
     try{
         const parseItemCondition = parseFloat(itemCondition);
         if(isNaN(parseItemCondition) || parseItemCondition <= 0){
-            throw new Error("Dato stanje proizvoda na lageru manje od, nije pronadjeno");
+            throw new Error("Dato stanje proizvoda na lageru manje od "+itemCondition+", nije pronadjeno");
         }
         const response = await api.get(url+`/by-item-condition-less-than`,{
             params:{
@@ -315,7 +315,7 @@ export async function findByItemConditionLessThan(itemCondition){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stanje proizvoda na lageru manjeg od");
+        handleApiError(error,"Trenutno nismo pronasli stanje proizvoda na lageru manjeg od "+itemCondition);
     }
 }
 
@@ -324,7 +324,7 @@ export async function findByItemConditionAndQuantity({itemCondition, quantity}){
         const parseItemCondition = parseFloat(itemCondition);
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseItemCondition) || parseItemCondition <= 0 || isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Dato stanje proizvoda i njegova kolicina nisu pronadjeni");
+            throw new Error("Dato stanje "+parseItemCondition+" proizvoda i njegova kolicina "+parseQuantity+" nisu pronadjeni");
         }
         const response = await api.get(url+`/item-condition-and-quantity`,{
             params:{
@@ -336,14 +336,14 @@ export async function findByItemConditionAndQuantity({itemCondition, quantity}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli stanje proizvoda i njegovu kolicinu");
+        handleApiError(error,"Trenutno nismo pronasli stanje "+itemCondition+" proizvoda i njegovu kolicinu "+quantity);
     }
 }
 
 export async function findInventoryItemsForCalculation(inventoryId){
     try{
         if(isNaN(inventoryId) || inventoryId == null){
-            throw new Error("Dati id za inventar nije pronadjen");
+            throw new Error("Dati id "+inventoryId+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/search-calculation/inventory/${inventoryId}`,{
             headers:getHeader()
@@ -351,14 +351,14 @@ export async function findInventoryItemsForCalculation(inventoryId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli izracunatu stavku inventara");
+        handleApiError(error,"Trenutno nismo pronasli izracunatu stavku inventara po "+inventoryId+" id-iju");
     }
 }
 
 export async function findItemsForShortageAllowed(inventoryId){
     try{
         if(isNaN(inventoryId) || inventoryId == null){
-            throw new Error("Dati id za inventar nije pronadjen");
+            throw new Error("Dati id "+inventoryId+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/items-for-storage-allowed/${inventoryId}`,{
             headers:getHeader()
@@ -373,7 +373,7 @@ export async function findItemsForShortageAllowed(inventoryId){
 export async function findByInventory_StorageEmployee_Id(storageEmployeeId){
     try{
         if(isNaN(storageEmployeeId) || storageEmployeeId == null){
-            throw new Error("Dati id za magacionera nije pronadjen");
+            throw new Error("Dati id "+storageEmployeeId+" za magacionera nije pronadjen");
         }
         const response = await api.get(url+`/inventory/storage-employee/${storageEmployeeId}`,{
             headers:getHeader()
@@ -381,14 +381,14 @@ export async function findByInventory_StorageEmployee_Id(storageEmployeeId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli inventar koji pripada id-iju magacionera");
+        handleApiError(error,"Trenutno nismo pronasli inventar koji pripada "+storageEmployeeId+" id-iju magacionera");
     }
 }
 
 export async function findByInventory_StorageForeman_Id(storageForemanId){
     try{
         if(isNaN(storageForemanId) || storageForemanId == null){
-            throw new Error("Dati id za smenovodju nije pronadjen");
+            throw new Error("Dati i "+storageForemanId+" za smenovodju nije pronadjen");
         }
         const response = await api.get(url+`/inventory/storage-foreman/${storageForemanId}`,{
             headers:getHeader()
@@ -396,14 +396,14 @@ export async function findByInventory_StorageForeman_Id(storageForemanId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli inventar koji pripada id-iju smenovodje");
+        handleApiError(error,"Trenutno nismo pronasli inventar koji pripada "+storageForemanId+" id-iju smenovodje");
     }
 }
 
 export async function findByInventoryDate(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum za inventar nije pronadjen");
+            throw new Error("Dati datum "+date+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-date`,{
             params:{
@@ -414,7 +414,7 @@ export async function findByInventoryDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum za inventar");
+        handleApiError(error,"Trenutno nismo pronasli datum "+date+" za inventar");
     }
 }
 
@@ -422,7 +422,7 @@ export async function findByInventoryDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() ||
             !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati opseg datuma za inventar nije pronadjen");
+            throw new Error("Dati opseg datuma "+start+" - "+end+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-date-range`,{
             params:{
@@ -434,14 +434,14 @@ export async function findByInventoryDateBetween({start, end}){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg datuma za inventar");
+        handleApiError(error,"Trenutno nismo pronasli opseg datuma "+start+" - "+end+" za inventar");
     }
 }
 
 export async function findByInventoryDateAfter(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum posle, za inventar nije pronadjen");
+            throw new Error("Dati datum posle "+date+", za inventar nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-date-after`,{
             params:{
@@ -452,14 +452,14 @@ export async function findByInventoryDateAfter(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli inventar za datum posle");
+        handleApiError(error,"Trenutno nismo pronasli inventar za datum posle "+date);
     }
 }
 
 export async function findByInventoryDateBefore(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum pre, za inventar nije pronadjen");
+            throw new Error("Dati datum pre "+date+", za inventar nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-date-before`,{
             params:{
@@ -470,14 +470,14 @@ export async function findByInventoryDateBefore(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli inventar za datum pre");
+        handleApiError(error,"Trenutno nismo pronasli inventar za datum pre "+date);
     }
 }
 
 export async function findByInventory_Status(status){
     try{
         if(!isInventoryStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status za inventar nije pronadjen");
+            throw new Error("Dati status "+status+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-status`,{
             params:{
@@ -488,7 +488,7 @@ export async function findByInventory_Status(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status za inventar");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" za inventar");
     }
 }
 
@@ -522,7 +522,7 @@ export async function findByInventoryAlignedFalse(){
 export async function findByInventoryStatusAndInventoryStorageEmployeeId({status, storageEmployeeId}){
     try{
         if(!isInventoryStatusValid.includes(status?.toUpperCase()) || isNaN(storageEmployeeId) || storageEmployeeId == null){
-            throw new Error("Dati status inventara i id magacionera nije pronadjen");
+            throw new Error("Dati status "+status+" inventara i id "+storageEmployeeId+" magacionera nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-status-storage-employee/${storageEmployeeId}`,{
             params:{
@@ -533,14 +533,14 @@ export async function findByInventoryStatusAndInventoryStorageEmployeeId({status
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status inventara i id datog magacionera");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" inventara i id "+storageEmployeeId+" datog magacionera");
     }
 }
 
 export async function findByInventoryStatusAndInventoryStorageForemanId({status, storageForemanId}){
     try{
         if(!isInventoryStatusValid.includes(status?.toUpperCase()) || isNaN(storageForemanId) || storageForemanId == null){
-            throw new Error("Dati status inventara i id smenovodje nije pronadjen");
+            throw new Error("Dati status "+status+" inventara i id "+storageForemanId+" smenovodje nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-status-storage-foreman/${storageForemanId}`,{
             params:{
@@ -551,14 +551,14 @@ export async function findByInventoryStatusAndInventoryStorageForemanId({status,
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status inventara i id datog smenovodje");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" inventara i id "+storageForemanId+" datog smenovodje");
     }
 }
 
 export async function existsByInventoryAlignedFalseAndInventoryStorageEmployeeId(employeeId){
     try{
         if(employeeId == null || isNaN(employeeId)){
-            throw new Error("Dati id magacionera nije pronadjen");
+            throw new Error("Dati id "+employeeId+" magacionera nije pronadjen");
         }
         const response = await api.get(url+`/exists-inventory-aligned-false/${employeeId}`,{
             headers:getHeader()
@@ -566,7 +566,7 @@ export async function existsByInventoryAlignedFalseAndInventoryStorageEmployeeId
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli uskladjenost inventara da je netacno i id magacionera");
+        handleApiError(error,"Trenutno nismo pronasli uskladjenost inventara da je netacno i id "+employeeId+" magacionera");
     }
 }
 
@@ -585,7 +585,7 @@ export async function findItemsWithNonZeroDifference(){
 export async function findByInventoryStatusAndInventoryAlignedFalse(status){
     try{
         if(!isInventoryStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status inventara nije pronadjen");
+            throw new Error("Dati status "+status+" inventara nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-status-and-aligned-false`,{
             params:{
@@ -596,14 +596,14 @@ export async function findByInventoryStatusAndInventoryAlignedFalse(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status inventara i uskladjenos = netacno");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" inventara i uskladjenos = netacno");
     }
 }
 
 export async function findByInventoryDateAndInventoryStorageForemanId({date, foremanId}){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid() || isNaN(foremanId) || foremanId == null){
-            throw new Error("Dati datum inventara i id smenovodje nije pronadjen");
+            throw new Error("Dati datum "+date+" inventara i id "+foremanId+" smenovodje nije pronadjen");
         }
         const response = await api.get(url+`/search/inventory-date-and-storage-foreman/${storageForemanId}`,{
             params:{
@@ -614,7 +614,7 @@ export async function findByInventoryDateAndInventoryStorageForemanId({date, for
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum inventara i id smenovodje");
+        handleApiError(error,"Trenutno nismo pronasli datum "+date+" inventara i id "+foremanId+" smenovodje");
     }
 }
 
@@ -634,7 +634,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data trenutna kolicina proizvoda nije pronadjena");
+            throw new Error("Data trenutna kolicina "+parseCurrentQuantity+" proizvoda nije pronadjena");
         }
         const response = await api.get(url+`/search/product-current-quantity`,{
             params:{
@@ -645,7 +645,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pornasli trenutnu kolicinu datog proizvoda");
+        handleApiError(error,"Trenutno nismo pornasli trenutnu kolicinu "+currentQuantity+" datog proizvoda");
     }
 }
 
@@ -653,7 +653,7 @@ export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data trenutna kolicina proizvoda veca od nije pronadjena");
+            throw new Error("Data trenutna kolicina proizvoda veca od "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/search/product-current-quantity-greater-than`,{
             params:{
@@ -664,7 +664,7 @@ export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pornasli trenutnu kolicinu veceg od, za dati proizvod");
+        handleApiError(error,"Trenutno nismo pornasli trenutnu kolicinu veceg od "+currentQuantity+", za dati proizvod");
     }
 }
 
@@ -672,7 +672,7 @@ export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data trenutna kolicina proizvoda manja od nije pronadjena");
+            throw new Error("Data trenutna kolicina proizvoda manja od "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/search/product-current-quantity-less-than`,{
             params:{
@@ -683,14 +683,14 @@ export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pornasli trenutnu kolicinu manju od, za dati proizvod");
+        handleApiError(error,"Trenutno nismo pornasli trenutnu kolicinu manju od "+currentQuantity+", za dati proizvod");
     }
 }
 
 export async function findByProduct_UnitMeasure(unitMeasure){
     try{
         if(!isUnitMeasureValid.includes(unitMeasure?.toUpperCase())){
-            throw new Error("Data jedinica mere za proizvod nije pronadjena");
+            throw new Error("Data jedinica mere "+unitMeasure+" za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/search/product-unit-measure`,{
             params:{
@@ -701,14 +701,14 @@ export async function findByProduct_UnitMeasure(unitMeasure){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli jedinicu mere za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli jedinicu mere "+unitMeasure+" za dati proizvod");
     }
 }
 
 export async function findByProduct_SupplierType(supplierType){
     try{
         if(!isSupplierTypeValid.includes(supplierType?.toUpperCase())){
-            throw new Error("Dati tip dobavljaca za proizvod nije pronadjen");
+            throw new Error("Dati tip "+supplierType+" dobavljaca za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-supplier-type`,{
             params:{
@@ -719,14 +719,14 @@ export async function findByProduct_SupplierType(supplierType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip dobavljaca za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli tip "+supplierType+" dobavljaca za dati proizvod");
     }
 }
 
 export async function findByProduct_StorageType(storageType){
     try{
         if(!isStorageTypeValid.includes(storageType?.toUpperCase())){
-            throw new Error("Dati tip skladista za proizvod nije pronadjen");
+            throw new Error("Dati tip "+storageType+" skladista za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-storage-type`,{
             params:{
@@ -737,14 +737,14 @@ export async function findByProduct_StorageType(storageType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip skladista za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli tip "+storageType+" skladista za dati proizvod");
     }
 }
 
 export async function findByProduct_GoodsType(type){
     try{
         if(!isGoodsTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip robe za proizvod nije pronadjen");
+            throw new Error("Dati tip "+type+" robe za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-goods-type`,{
             params:{
@@ -755,14 +755,14 @@ export async function findByProduct_GoodsType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip robe za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" robe za dati proizvod");
     }
 }
 
 export async function findByProduct_StorageId(storageId){
     try{
         if(isNaN(storageId) || storageId == null){
-            throw new Error("Dati ID skladista za proizvod nije pronadjen");
+            throw new Error("Dati ID "+storageId+" skladista za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product/storage/${storageId}`,{
             headers:getHeader()
@@ -770,14 +770,14 @@ export async function findByProduct_StorageId(storageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id skladista za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli id "+storageId+" skladista za dati proizvod");
     }
 }
 
 export async function findByProduct_StorageNameContainingIgnoreCase(storageName){
     try{
         if(!storageName || typeof storageName !== "string" || storageName.trim() === ""){
-            throw new Error("Dati naziv skladista za proizvod nije pronadjen");
+            throw new Error("Dati naziv "+storageName+" skladista za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-storage-name`,{
             params:{
@@ -788,14 +788,14 @@ export async function findByProduct_StorageNameContainingIgnoreCase(storageName)
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv skladista za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+storageName+" skladista za dati proizvod");
     }
 }
 
 export async function findByProduct_StorageLocationContainingIgnoreCase(storageLocation){
     try{
         if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
-            throw new Error("Data lokacija skladista za proizvod nije pronadjena");
+            throw new Error("Data lokacija "+storageLocation+" skladista za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/findByProduct_StorageLocationContainingIgnoreCase`,{
             params:{
@@ -806,7 +806,7 @@ export async function findByProduct_StorageLocationContainingIgnoreCase(storageL
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju skladista za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+storageLocation+" skladista za dati proizvod");
     }
 }
 
@@ -814,7 +814,7 @@ export async function findByProduct_StorageCapacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet skladista za proizvod nije pronadjen");
+            throw new Error("Dati kapacitet "+parseCapacity+" skladista za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-storage-capacity`,{
             params:{
@@ -825,7 +825,7 @@ export async function findByProduct_StorageCapacity(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet skaldista za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+capacity+" skaldista za dati proizvod");
     }
 }
 
@@ -833,7 +833,7 @@ export async function findByProduct_StorageCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet skladista veci od, za proizvod nije pronadjen");
+            throw new Error("Dati kapacitet skladista veci od "+parseCapacity+", za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-storage-capacity-greater-than`,{
             params:{
@@ -844,7 +844,7 @@ export async function findByProduct_StorageCapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet skaldista veci od, za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet skaldista veci od "+capacity+", za dati proizvod");
     }
 }
 
@@ -852,7 +852,7 @@ export async function findByProduct_StorageCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet skladista manji od, za proizvod nije pronadjen");
+            throw new Error("Dati kapacitet skladista manji od "+parseCapacity+", za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-storage-capacity-less-than`,{
             params:{
@@ -863,14 +863,14 @@ export async function findByProduct_StorageCapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet skaldista manji od, za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet skaldista manji od "+capacity+", za dati proizvod");
     }
 }
 
 export async function findByProduct_Storage_Status(status){
     try{
         if(!isStorageStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status skladista za proizvod nije pronadjen");
+            throw new Error("Dati status "+status+" skladista za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-storage-status`,{
             params:{
@@ -881,7 +881,7 @@ export async function findByProduct_Storage_Status(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status skladista za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" skladista za dati proizvod");
     }
 }
 
@@ -948,7 +948,7 @@ export async function fetchDetailedStorageStats(){
 export async function findByProduct_SupplyId(supplyId){
     try{
         if(isNaN(supplyId) || supplyId == null){
-            throw new Error("Dati id dobavljaca za proizvod nije pronadjen");
+            throw new Error("Dati id "+supplyId+" dobavljaca za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product/supply/${supplyId}`,{
             headers:getHeader()
@@ -956,7 +956,7 @@ export async function findByProduct_SupplyId(supplyId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id dobavljaca za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli id "+supplyId+" dobavljaca za dati proizvod");
     }
 }
 
@@ -964,7 +964,7 @@ export async function findByProduct_SupplyQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina od dobavljaca za proizvod nije pronadjena");
+            throw new Error("Data kolicina "+parseQuantity+" od dobavljaca za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/search/product-supply-quantity`,{
             params:{
@@ -975,7 +975,7 @@ export async function findByProduct_SupplyQuantity(quantity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kolicinu od dobavljaca za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli kolicinu "+quantity+" od dobavljaca za dati proizvod");
     }
 }
 
@@ -983,7 +983,7 @@ export async function findByProduct_SupplyQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina veca od dobavljaca za proizvod nije pronadjena");
+            throw new Error("Data kolicina veca od "+parseQuantity+"dobavljaca za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/search/product-supply-quantity-greater-than`,{
             params:{
@@ -994,15 +994,15 @@ export async function findByProduct_SupplyQuantityGreaterThan(quantity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kolicinu vecu od, dobavljaca za dati proizvod");
-    }
+        handleApiError(error,"Trenutno nismo pronasli kolicinu vecu od "+quantity+", dobavljaca za dati proizvod");
+    } 
 }
 
 export async function findByProduct_SupplyQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina manja od dobavljaca za proizvod nije pronadjena");
+            throw new Error("Data kolicina manja od "+parseQuantity+" dobavljaca za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/search/product-supply-quantity-less-than`,{
             params:{
@@ -1013,14 +1013,14 @@ export async function findByProduct_SupplyQuantityLessThan(quantity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kolicinu manju od, dobavljaca za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli kolicinu manju od "+quantity+", dobavljaca za dati proizvod");
     }
 }
 
 export async function findByProduct_SupplyUpdates(updates){
     try{
         if(!moment(updates,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum dostave dobavljaca za proizvod, nije pronadjen");
+            throw new Error("Dati datum "+updates+" dostave dobavljaca za proizvod, nije pronadjen");
         }
         const response = await api.get(url+`/search/product-supply-updates`,{
             params:{
@@ -1031,7 +1031,7 @@ export async function findByProduct_SupplyUpdates(updates){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum dostave dobavljaca za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli datum "+updates+" dostave dobavljaca za dati proizvod");
     }
 }
 
@@ -1039,7 +1039,7 @@ export async function findByProduct_SupplyUpdatesBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD:THH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opseg datuma dobavljaca za proizvod nije pronadjen");
+            throw new Error("Dati opseg datuma "+start+" - "+end+" dobavljaca za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/search/product-supply-update-range`,{
             params:{
@@ -1051,14 +1051,14 @@ export async function findByProduct_SupplyUpdatesBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg datuma za dobavljaca, za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli opseg datuma "+start+" - "+end+" za dobavljaca, za dati proizvod");
     }
 }
 
 export async function findByProduct_SupplyStorageId(storageId){
     try{
         if(isNaN(storageId) || storageId == null){
-            throw new Error("Dati id skladista dobavljaca za proizvod, nije pronadjen");
+            throw new Error("Dati id "+storageId+" skladista dobavljaca za proizvod, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/supply/${storageId}`,{
             headers:getHeader()
@@ -1066,14 +1066,14 @@ export async function findByProduct_SupplyStorageId(storageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id skladista dobavljaca za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli id "+storageId+" skladista dobavljaca za dati proizvod");
     }
 }
 
 export async function findByProduct_ShelfId(shelfId){
     try{
         if(isNaN(shelfId) || shelfId == null){
-            throw new Error("Dati ID police za proizvod, nije pronadjena");
+            throw new Error("Dati ID "+shelfId+" police za proizvod, nije pronadjena");
         }
         const response = await api.get(url+`/search/product/shelf/${shelfId}`,{
             headers:getHeader()
@@ -1081,7 +1081,7 @@ export async function findByProduct_ShelfId(shelfId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id police za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli id "+shelfId+" police za dati proizvod");
     }
 }
 
@@ -1089,8 +1089,8 @@ export async function findByProduct_ShelfRowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
         if(isNaN(parseRowCount) || parseRowCount <= 0){
-            throw new Error("Dati broj redova police za proizvod nije pronadjen");
-        }
+            throw new Error("Dati broj redova "+parseRowCount+" police za proizvod nije pronadjen");
+        } 
         const response = await api.get(url+`/search/product-shelf-row-count`,{
             params:{
                 rowCount:parseRowCount
@@ -1100,7 +1100,7 @@ export async function findByProduct_ShelfRowCount(rowCount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj redova police za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli broj "+rowCount+" redova police za dati proizvod");
     }
 }
 
@@ -1108,7 +1108,7 @@ export async function findByProduct_ShelfCols(cols){
     try{
         const parseCols = parseInt(cols ,10);
         if(isNaN(parseCols) || parseCols <= 0){
-            throw new Error("Data kolona police za proizvod, nije pronadjena");
+            throw new Error("Data kolona "+parseCols+" police za proizvod, nije pronadjena");
         }
         const response = await api.get(url+`/search/product-shelf-cols`,{
             params:{
@@ -1119,7 +1119,7 @@ export async function findByProduct_ShelfCols(cols){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kolonu police za dati proizvod");
+        handleApiError(error,"Trenutno nismo pronasli kolonu "+cols+" police za dati proizvod");
     }
 }
 

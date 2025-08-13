@@ -53,7 +53,7 @@ export async function updateBarCode({id,code, goodsId }){
 export async function deleteBarCode(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za barCode nije pronadjen");
+            throw new Error("Dati ID "+id+" za barCode nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/barCodes/delete/${id}`,{
             headers:getHeader()
@@ -68,7 +68,7 @@ export async function deleteBarCode(id){
 export async function getOneBarCode(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za barCode nije pronadjen");
+            throw new Error("Dati ID "+id+" za barCode nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-one/${id}`,{
             headers:getHeader()
@@ -76,7 +76,7 @@ export async function getOneBarCode(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog bar-koda");
+        handleApiError(error, "Greska prilikom dobavljanja jednog bar-koda po "+id+" id-iju");
     }
 }
 
@@ -95,7 +95,7 @@ export async function getAllBarCodes(){
 export async function getByCode(code){
     try{
         if(!code || typeof code !== "string" || code.trim() === ""){
-            throw new Error("Dati code nije pronadjen");
+            throw new Error("Dati "+code+" code nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-code`,{
             params:{
@@ -106,14 +106,14 @@ export async function getByCode(code){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pertrage po kodu");
+        handleApiError(error,"Greska prilikom pertrage po kodu "+code);
     }
 }
 
 export async function getByGoodsId(goodsId){
     try{
         if(goodsId == null || isNaN(goodsId)){
-            throw new Error("ID za robu ne sme biti null");
+            throw new Error("ID "+goodsId+" za robu ne sme biti null");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/goods/${goodsId}`,{
             headers:getHeader()
@@ -121,14 +121,14 @@ export async function getByGoodsId(goodsId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ID robe");
+        handleApiError(error,"Greska prilikom trazenja po ID "+goodsId+" robe");
     }
 }
 
 export async function findByGoods_Name(goodsName){
     try{
         if(!goodsName || typeof goodsName !== "string" || goodsName.trim() === ""){
-            throw new Error("Dati naziv robe nije pronadjen");
+            throw new Error("Dati naziv "+goodsName+" robe nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/by-goodsName`,{
             params:{goodsName:goodsName},
@@ -137,7 +137,7 @@ export async function findByGoods_Name(goodsName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po nazivu robe");
+        handleApiError(error,"Greska prilikom trazenja po nazivu "+goodsName+" robe");
     }
 }
 
@@ -146,7 +146,7 @@ export async function findByScannedBy_FirstNameContainingIgnoreCaseAndScannedBy_
         if(!userFirstName || typeof userFirstName !== "string" || userFirstName.trim=== "" ||
            !userLastName || typeof userLastName !== "string" || userLastName.trim() === "" 
         ){
-            throw new Error("Dato ime i prezime osobe koja je vrsila skeniranje nije pronadjeno");
+            throw new Error("Dato ime "+userFirstName+" i prezime "+userLastName+" osobe koja je vrsila skeniranje nije pronadjeno");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/scannedBy-first-last-name`,{
             params:{
@@ -158,14 +158,14 @@ export async function findByScannedBy_FirstNameContainingIgnoreCaseAndScannedBy_
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja imena i prezimena osobe koje je vrsila skeniranje");
+        handleApiError(error,"Greska prilikom trazenja imena "+userFirstName+" i prezimena "+userLastName+" osobe koje je vrsila skeniranje");
     }
 }
 
 export async function findByScannedBy_Id(scannedById){
     try{
         if(scannedById == null || isNaN(scannedById)){
-            throw new Error("Dati ID za osobu koja je vrsila skeniranje nije pronadjen");
+            throw new Error("Dati ID "+scannedById+" za osobu koja je vrsila skeniranje nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/scannedBy/${scannedById}`,{
             headers:getHeader()
@@ -173,14 +173,14 @@ export async function findByScannedBy_Id(scannedById){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja ID osobe koja je vrsila skeniranje");
+        handleApiError(error,"Greska prilikom trazenja ID "+scannedById+" osobe koja je vrsila skeniranje");
     }
 }
 
 export async function getByScannedAtBetween({from, to}){
     try{
         if(!moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Opseg skeniranog datuma nije validan");
+            throw new Error("Opseg skeniranog datuma "+from+" - "+to+" nije validan");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/barCodes/get-by-date-between`,{
             params:{
@@ -192,7 +192,7 @@ export async function getByScannedAtBetween({from, to}){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom skeniranja izmedju datuma");
+        handleApiError(error, "Greska prilikom skeniranja izmedju datuma "+from+" - "+to+" ");
     }
 }
 

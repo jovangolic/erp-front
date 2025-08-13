@@ -59,7 +59,7 @@ export async function updateBalanceSheet(id, date, totalAssets, totalLiabilities
 export async function deleteBalanceSheet(id) {
     try {
         if (!id) {
-            throw new Error("Dati ID za balanceSheet nije pronadjen");
+            throw new Error("Dati ID "+id+" za balanceSheet nije pronadjen");
         }
         const response = await api.delete(url + `/delete/${id}`, {
             headers: getHeader()
@@ -74,7 +74,7 @@ export async function deleteBalanceSheet(id) {
 export async function findOne(id) {
     try {
         if (!id) {
-            throw new Error("Dati ID za balanceSheet nije pronadjen");
+            throw new Error("Dati ID "+id+"za balanceSheet nije pronadjen");
         }
         const response = await api.get(url + `/find-one/${id}`, {
             headers: getHeader()
@@ -101,7 +101,7 @@ export async function findAll() {
 export async function findByDate(date) {
     try {
         if (!moment(date, "YYYY-MM-DD", true).isValid()) {
-            throw new Error("Dati datum nije pronadjen");
+            throw new Error("Dati datum "+date+" nije pronadjen");
         }
         const response = await api.get(url + `/by-date`, {
             params: {
@@ -112,14 +112,14 @@ export async function findByDate(date) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom trazenja po datumu");
+        handleApiError(error, "Greska prilikom trazenja po "+date+" datumu");
     }
 }
 
 export async function findByDateBetween({ start, end }) {
     try {
         if (!moment(start, "YYYY-MM-DD", true).isValid() || !moment(end, "YYYY-MM-DD", true).isValid()) {
-            throw new Error("Dati opseg datuma nije pronadjen");
+            throw new Error("Dati opseg "+start+" - "+end+" datuma nije pronadjen");
         }
         const response = await api.get(url + `/date-between`, {
             params: {
@@ -131,14 +131,14 @@ export async function findByDateBetween({ start, end }) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom trazenja po opsegu datuma ");
+        handleApiError(error, "Greska prilikom trazenja po opsegu "+start+" - "+end+" datuma ");
     }
 }
 
 export async function findByTotalLiabilities(totalLiabilities) {
     try {
         if (isNaN(parseFloat(totalLiabilities)) || parseFloat(totalLiabilities) <= 0) {
-            throw new Error("Dati totalLiabilities nije pornadjen");
+            throw new Error("Dati "+totalLiabilities+" totalLiabilities nije pronadjen");
         }
         const response = await api.get(url + `/totalLiabilities`, {
             params: {
@@ -149,14 +149,14 @@ export async function findByTotalLiabilities(totalLiabilities) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom pretrage po totalLiabilities");
+        handleApiError(error, "Greska prilikom pretrage po totalLiabilities "+totalLiabilities);
     }
 }
 
 export async function findByTotalEquity(totalEquity) {
     try {
         if (isNaN(parseFloat(totalEquity)) || parseFloat(totalEquity) <= 0) {
-            throw new Error("Dati totalEquity nije pronadjen");
+            throw new Error("Dati "+totalEquity+" totalEquity nije pronadjen");
         }
         const response = await api.get(url + `/totalEquity`, {
             params: {
@@ -167,14 +167,14 @@ export async function findByTotalEquity(totalEquity) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom trazenja po totalEquity");
+        handleApiError(error, "Greska prilikom trazenja po "+totalEquity+" totalEquity");
     }
 }
 
 export async function findByTotalAssets(totalAssets) {
     try {
         if (isNaN(parseFloat(totalAssets)) || parseFloat(totalAssets) <= 0) {
-            throw new Error("Dati totalAssets nije pronadjen");
+            throw new Error("Dati "+totalAssets+" totalAssets nije pronadjen");
         }
         const response = await api.get(url + `/totalAssets`, {
             params: {
@@ -185,14 +185,14 @@ export async function findByTotalAssets(totalAssets) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom trazenja prema totalAssets-u");
+        handleApiError(error, "Greska prilikom trazenja prema totalAssets-u "+totalAssets);
     }
 }
 
 export async function findByFiscalYear_Id(id) {
     try {
         if (!id) {
-            throw new Error("Dati ID za fiscalYear nije pronadjen");
+            throw new Error("Dati ID "+id+" za fiscalYear nije pronadjen");
         }
         const response = await api.get(url + `/fiscalYear/${id}`, {
             headers: getHeader()
@@ -200,7 +200,7 @@ export async function findByFiscalYear_Id(id) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom trazenja po fiscalYear ID-iju");
+        handleApiError(error, "Greska prilikom trazenja po fiscalYear ID-iju "+id);
     }
 }
 
@@ -208,7 +208,7 @@ export async function findByFiscalYear_Year(year) {
     try {
         const parsedYear = parseInt(year);
         if (isNaN(parsedYear) || parsedYear <= 0) {
-            throw new Error("Data godina nije pronadjena");
+            throw new Error("Data "+year+" godina nije pronadjena");
         }
         const response = await api.get(url + `/fiscalYear-year`, {
             params: { year: parsedYear },
@@ -216,14 +216,14 @@ export async function findByFiscalYear_Year(year) {
         });
         return response.data;
     } catch (error) {
-        handleApiError(error, "Greska prilikom trazenja po godini");
+        handleApiError(error, "Greska prilikom trazenja po godini "+year);
     }
 }
 
 export async function findByFiscalYear_YearStatus(yearStatus) {
     try {
         if (!isFiscalYearStatusValid.includes(yearStatus?.toUpperCase())) {
-            throw new Error("Date godisnji-status nije pronadjen");
+            throw new Error("Dati "+yearStatus+" godisnji-status nije pronadjen");
         }
         const response = await api.get(url + `/fiscalYeay-yearStatus`, {
             params: {
@@ -234,14 +234,14 @@ export async function findByFiscalYear_YearStatus(yearStatus) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom pretrage po godisnjem statusus");
+        handleApiError(error, "Greska prilikom pretrage po "+yearStatus+" godisnjem statusus");
     }
 }
 
 export async function findByFiscalYear_QuarterStatus(quarterStatus) {
     try {
         if (!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase())) {
-            throw new Error("Dati kvartal za godinu nije pronadjen");
+            throw new Error("Dati "+quarterStatus+" kvartal za godinu nije pronadjen");
         }
         const response = await api.get(url + `/fiscalYear-quarterStatus`, {
             params: {
@@ -252,7 +252,7 @@ export async function findByFiscalYear_QuarterStatus(quarterStatus) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom pretrage po kvartalnom statusu");
+        handleApiError(error, "Greska prilikom pretrage po "+quarterStatus+" kvartalnom statusu");
     }
 }
 
@@ -260,7 +260,7 @@ export async function findByStatusAndDateRange({ status, start, end }) {
     try {
         if (!isFiscalYearStatusValid.includes(status?.toUpperCase()) ||
             !moment(start, "YYYY-MM-DD", true).isValid() || !moment(end, "YYYY-MM-DD", true).isValid()) {
-            throw new Error("Dati godisnji status i opseg datuma nosu pronadjeni");
+            throw new Error("Dati godisnji status "+status+" i opseg datuma "+start+" - "+end+" nisu pronadjeni");
         }
         const response = await api.get(url + `/by-statu-dateRange`, {
             params: {
@@ -273,7 +273,7 @@ export async function findByStatusAndDateRange({ status, start, end }) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom pretrage prema godisnjem statusu, pocetnom datumu i krajnjem datumu");
+        handleApiError(error, "Greska prilikom pretrage prema godisnjem statusu "+status+", pocetnom "+start+" datumu i krajnjem "+end+" datumu");
     }
 }
 
@@ -281,7 +281,7 @@ export async function findByTotalAssetsGreaterThan(totalAssets) {
     try {
         const parseTotalAsset = parseFloat(totalAssets)
         if (isNaN(parseTotalAsset || parseTotalAsset < 0)) {
-            throw new Error("totalAssets mora biti pozitvan broj");
+            throw new Error("Ukupna imovina (totalAssets) "+totalAssets+" mora biti pozitvan broj");
         }
         const response = await api.get(url + `/totalAssets-greater-than`, {
             params: {
@@ -292,7 +292,7 @@ export async function findByTotalAssetsGreaterThan(totalAssets) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom dobavljanja totalAssets veceg od");
+        handleApiError(error, "Greska prilikom dobavljanja totalAssets veceg od "+totalAssets);
     }
 }
 
@@ -300,7 +300,7 @@ export async function findByTotalAssetsLessThan(totalAssets) {
     try {
         const parseTotalAsset = parseFloat(totalAssets)
         if (isNaN(parseTotalAsset || parseTotalAsset < 0)) {
-            throw new Error("totalAssets mora biti pozitvan broj");
+            throw new Error("Ukupna imovina (totalAssets) "+totalAssets+" mora biti pozitvan broj");
         }
         const response = await api.get(url + `/totalAssets-less-than`, {
             params: {
@@ -311,7 +311,7 @@ export async function findByTotalAssetsLessThan(totalAssets) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Greska prilikom dobavljanja totalAssets manjeg od");
+        handleApiError(error, "Greska prilikom dobavljanja totalAssets manjeg od "+totalAssets);
     }
 }
 
@@ -319,7 +319,7 @@ export async function findByTotalEquityGreaterThan(totalEquity) {
     try {
         const parseTotalEquity = parseFloat(totalEquity);
         if (isNaN(parseTotalEquity) || parseTotalEquity < 0) {
-            throw new Error("totalEquity mora biti pozitivan broj");
+            throw new Error("totalEquity "+totalEquity+" mora biti pozitivan broj");
         }
         const response = await api.get(url + `/totalEquity-greater-than`, {
             params: {
@@ -330,7 +330,7 @@ export async function findByTotalEquityGreaterThan(totalEquity) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Gresk aprilikom trazenja totalEquity veceg od");
+        handleApiError(error, "Gresk aprilikom trazenja totalEquity veceg od "+totalEquity);
     }
 }
 
@@ -338,7 +338,7 @@ export async function findByTotalAssetsLessThan(totalEquity) {
     try {
         const parseTotalEquity = parseFloat(totalEquity);
         if (isNaN(parseTotalEquity) || parseTotalEquity < 0) {
-            throw new Error("totalEquity mora biti pozitivan broj");
+            throw new Error("totalEquity "+totalEquity+" mora biti pozitivan broj");
         }
         const response = await api.get(url + `/totalEquity-less-than`, {
             params: {
@@ -349,7 +349,7 @@ export async function findByTotalAssetsLessThan(totalEquity) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Gresk aprilikom trazenja totalEquity manjeg od");
+        handleApiError(error, "Gresk aprilikom trazenja totalEquity manjeg od "+totalEquity);
     }
 }
 
@@ -382,7 +382,7 @@ export async function findByTotalLiabilitiesLessThan(totalLiabilities) {
     try {
         const parseTotalLiabilities = parseFloat(totalLiabilities);
         if (isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0) {
-            throw new Error("Dati ukupan trosak manji od, nije pronadjen");
+            throw new Error("Dati ukupan trosak manji od "+totalLiabilities+", nije pronadjen");
         }
         const response = await api.get(url + `/by-total-liabilities-less-than`, {
             params: { totalLiabilities: parseTotalLiabilities },
@@ -391,7 +391,7 @@ export async function findByTotalLiabilitiesLessThan(totalLiabilities) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Trenutno nismo pronasli ukupan trosak manji od");
+        handleApiError(error, "Trenutno nismo pronasli ukupan trosak manji od "+totalLiabilities);
     }
 }
 
@@ -399,7 +399,7 @@ export async function findByTotalLiabilitiesGreaterThan(totalLiabilities) {
     try {
         const parseTotalLiabilities = parseFloat(totalLiabilities);
         if (isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0) {
-            throw new Error("Dati ukupan trosak veci od, nije pronadjen");
+            throw new Error("Dati ukupan trosak veci od "+totalLiabilities+", nije pronadjen");
         }
         const response = await api.get(url + `/by-total-liabilities-greater-than`, {
             params: { totalLiabilities: parseTotalLiabilities },
@@ -408,7 +408,7 @@ export async function findByTotalLiabilitiesGreaterThan(totalLiabilities) {
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Trenutno nismo pronasli ukupan trosak veci od");
+        handleApiError(error, "Trenutno nismo pronasli ukupan trosak veci od "+totalLiabilities);
     }
 }
 
@@ -432,7 +432,8 @@ export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, mi
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Trenutno nismo uspeli da pronadjeno dati rezultat za BalanceSheet, koristeci parametre za pretragu");
+        handleApiError(error, "Trenutno nismo uspeli da pronadjeno dati rezultat za BalanceSheet, "+startDate+" , "+endDate+" , "+fiscalYearId+
+            " , "+minAssets+", koristeci parametre za pretragu");
     }
 }
 

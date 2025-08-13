@@ -70,7 +70,7 @@ export async function updateStorage({storageId, name,location, capacity, type, g
 export async function deleteStorage(storageId){
     try{
         if(storageId == null || isNaN(storageId)){
-            throw new Error("Dati storageId nije pronadjen");
+            throw new Error("Dati storageId "+storageId+" nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/storages/delete/${storageId}`,{
             headers:getHeader()
@@ -85,20 +85,20 @@ export async function deleteStorage(storageId){
 export async function getByStorageId(storageId){
     try{
         if(storageId == null || isNaN(storageId)){
-            throw new Error("Dati storageId nije pronadjen");
+            throw new Error("Dati storageId "+storageId+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/${storageId}`);
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja skladista");
+        handleApiError(error, "Greska prilikom dobavljanja skladista po "+storageId+" po id-iju");
     }
 }
 
 export async function getByStorageType(storageType){
     try{
         if(!validateStorageType.includes(storageType?.toUpperCase())){
-            throw new Error("Dati tip skladista ne postoji");
+            throw new Error("Dati tip "+storageType+" skladista ne postoji");
         }
         const response = await api.get(
             `${import.meta.env.VITE_API_BASE_URL}/storages/get-by-storage-type`,
@@ -112,14 +112,14 @@ export async function getByStorageType(storageType){
         return response.data;
     }
     catch(error){
-        handleApiError(error , "Greška prilikom traženja po tipu");
+        handleApiError(error , "Greška prilikom traženja po tipu "+storageType);
     }
 }
 
 export async function getByStorageName(name){
     try{
         if(!name || typeof name!=="string" || name.trim()===""){
-            throw new Error("Dati naziv skladista ne postoji");
+            throw new Error("Dati naziv "+name+" skladista ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/by-name`,{
             params:{
@@ -130,14 +130,14 @@ export async function getByStorageName(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška prilikom traženja po nazivu");
+        handleApiError(error, "Greška prilikom traženja po nazivu "+name);
     }
 }
 
 export async function getByStorageLocation(location){
     try{
         if(!location || typeof location!=="string" || location.trim()===""){
-            throw new Error("Lokacija skladista ne postoji");
+            throw new Error("Lokacija "+location+" skladista ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/by-location`,{
             params:{
@@ -148,14 +148,14 @@ export async function getByStorageLocation(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška prilikom traženja po lokaciji");
+        handleApiError(error, "Greška prilikom traženja po lokaciji "+location);
     }
 }
 
 export async function getByStorageCapacity(capacity){
     try{
         if(isNaN(capacity) || parseFloat(capacity) <= 0){
-            throw new Error("Capacity ne sme biti negativan broj");
+            throw new Error("Kapacitet "+capacity+" ne sme biti negativan broj");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/by-capacity`,{
             params:{
@@ -166,7 +166,7 @@ export async function getByStorageCapacity(capacity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error, "Greška prilikom traženja po kapacitetu");
+        handleApiError(error, "Greška prilikom traženja po kapacitetu "+capacity);
     }
 }
 
@@ -174,7 +174,7 @@ export async function getStorageByNameAndLocation({name, location}){
     try{
         if(!location || typeof location!=="string" || location.trim()==="" ||
            !name || typeof name!=="string" || name.trim()==="" ){
-            throw new Error("Lokacija i naziv skladista ne postoje");
+            throw new Error("Lokacija "+location+" i naziv "+name+"skladista ne postoje");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/by-name-and-location`,{
             params:{
@@ -186,14 +186,14 @@ export async function getStorageByNameAndLocation({name, location}){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška prilikom traženja po nazizu i lokaciji");
+        handleApiError(error, "Greška prilikom traženja po nazivu "+name+" i lokaciji "+location);
     }
 }
 
 export async function getByTypeAndCapacityGreaterThan({type, capacity}){
     try{
         if(isNaN(capacity) || parseFloat(capacity) <= 0 || validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Tip skladista ne postoji i kapacitet mora biti pozitivan broj");
+            throw new Error("Tip "+type+" skladista ne postoji i kapacitet "+capacity+" mora biti pozitivan broj");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/by-type-and-capacity`,{
             params:{
@@ -205,7 +205,7 @@ export async function getByTypeAndCapacityGreaterThan({type, capacity}){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška prilikom traženja po tipu i kapacitetu >=");
+        handleApiError(error, "Greška prilikom traženja po tipu "+type+" i kapacitetu vecem od "+capacity);
     }
 }
 
@@ -224,14 +224,14 @@ export async function getStoragesWithMinGoods(minCount){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška prilikom traženja po minimalnoj robi");
+        handleApiError(error, "Greška prilikom traženja po "+minCount+" minimalnoj robi");
     }
 }
 
 export async function getByNameContainingIgnoreCase(name){
     try{
         if(!name || typeof name!=="string" || name.trim()===""){
-            throw new Error("Ne postojeci naziv");
+            throw new Error("Ne postojeci naziv "+name);
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/ignore-case`,{
             params:{
@@ -242,7 +242,7 @@ export async function getByNameContainingIgnoreCase(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška naziv nije dobro napisan");
+        handleApiError(error, "Trenutno nismo pronasli skladiste po "+name+" nazivu");
     }
 }
 
@@ -262,7 +262,7 @@ export async function findByTypeAndCapacityLessThan({type, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0 || !validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista i kapacitet manji od nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista i kapacitet manji od "+parseCapacity+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-type-and-capacity-less-than`,{
             params:{
@@ -274,7 +274,7 @@ export async function findByTypeAndCapacityLessThan({type, capacity}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip skladista gde je kapacitet manji od");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" skladista gde je kapacitet manji od "+capacity);
     }
 }
 
@@ -282,7 +282,7 @@ export async function findByCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(parseCapacity <= 0 || isNaN(parseCapacity)){
-            throw new Error("Dati kapacitet veci od nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseCapacity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/capacity-greater-than`,{
             params:{capacity:parseCapacity},
@@ -291,7 +291,7 @@ export async function findByCapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli skladiste gde je kapacitet veci od");
+        handleApiError(error,"Trenutno nismo pronasli skladiste gde je kapacitet veci od "+capacity);
     }
 }
 
@@ -299,7 +299,7 @@ export async function findByCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(parseCapacity <= 0 || isNaN(parseCapacity)){
-            throw new Error("Dati kapacitet manji od nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseCapacity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/capacity-less-than`,{
             params:{capacity:parseCapacity},
@@ -308,7 +308,7 @@ export async function findByCapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli skladiste gde je kapacitet manji od");
+        handleApiError(error,"Trenutno nismo pronasli skladiste gde je kapacitet manji od "+capacity);
     }
 }
 
@@ -318,7 +318,7 @@ export async function findByNameAndLocationAndCapacity({name, location, capacity
         if(isNaN(parseCapacity) || parseCapacity <= 0 ||
             !name || typeof name !=="string" || name.trim() === "" ||
             !location || typeof location !== "string" || location.trim() === "") {
-            throw new Error("Dati naziv,lokacija i kapacitet dato skaldista nisu pornadjeni");
+            throw new Error("Dati naziv "+name+",lokacija "+location+" i kapacitet "+parseCapacity+" za dato skaldista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-name-location-capacity`,{
             params:{
@@ -331,7 +331,7 @@ export async function findByNameAndLocationAndCapacity({name, location, capacity
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv, lokaciju i kapacitet datog skladista");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+", lokaciju "+location+" i kapacitet "+capacity+" datog skladista");
     }
 }
 
@@ -339,7 +339,7 @@ export async function findByTypeAndLocation({type, location}){
     try{
         if(!location || typeof location !== "string" || location.trim() === "" ||
             !validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista i njegova lokacija nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista i njegova lokacija "+location+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-type-and-location`,{
             params:{
@@ -351,7 +351,7 @@ export async function findByTypeAndLocation({type, location}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip skladista i njegovu lokaciju");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" skladista i njegovu lokaciju "+location);
     }
 }
 
@@ -359,7 +359,7 @@ export async function findByTypeAndName({type, name}){
     try{
         if(!name || typeof name !== "string" || name.trim() === "" ||
             !validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista i njegov naziv nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista i njegov naziv "+name+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-type-and-name`,{
             params:{
@@ -371,7 +371,7 @@ export async function findByTypeAndName({type, name}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip skladista i njegov naziv");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" skladista i njegov naziv "+name);
     }
 }
 
@@ -380,7 +380,7 @@ export async function findByLocationAndCapacity({location, capacity}){
         const parseCapacity = parseFloat(capacity);
         if(!location || typeof location !=="string" || location.trim() === "" ||
             isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Data lokacija i kapacitet skladista nisu pronadjeni");
+            throw new Error("Data lokacija "+location+" i kapacitet "+parseCapacity+" skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-location-and-capacity`,{
             params:{
@@ -392,7 +392,7 @@ export async function findByLocationAndCapacity({location, capacity}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju i kapacitet skladista");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" i kapacitet "+capacity+" skladista");
     }
 }
 
@@ -400,7 +400,7 @@ export async function findByTypeAndCapacity({type, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0 || !validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista i njegov kapacitet nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista i njegov kapacitet "+parseCapacity+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-type-and-capacity`,{
             params:{
@@ -412,7 +412,7 @@ export async function findByTypeAndCapacity({type, capacity}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip skladista i njegov kapacitet");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" skladista i njegov kapacitet "+capacity);
     }
 }
 
@@ -421,7 +421,7 @@ export async function findByTypeAndLocationAndCapacity({type, location, capacity
         const parseCapacity = parseFloat(capacity);
         if(!location || typeof location !== "string" || location.trim() === "" ||
             isNaN(parseCapacity) || parseCapacity <= 0 || !validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip,lokacija i kapacitet skladista nisu pronadjeni");
+            throw new Error("Dati tip "+type+",lokacija "+location+" i kapacitet "+parseCapacity+" skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-type-location-capacity`,{
             params:{
@@ -434,7 +434,7 @@ export async function findByTypeAndLocationAndCapacity({type, location, capacity
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip, lokaciju i kapacitet datog skladista");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+", lokaciju "+location+" i kapacitet "+capacity+" datog skladista");
     }
 }
 
@@ -442,7 +442,7 @@ export async function findByNameContainingIgnoreCaseAndLocationContainingIgnoreC
     try{
         if(!name || typeof name !== "string" || name.trim() === "" ||
             !location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Dati naziv i lokacija skladista nisu pronadjeni");
+            throw new Error("Dati naziv "+name+" i lokacija "+location+" skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-name-and-storage-location`,{
             params:{
@@ -454,7 +454,7 @@ export async function findByNameContainingIgnoreCaseAndLocationContainingIgnoreC
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv i lokaciju datog skladista");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" i lokaciju "+location+" datog skladista");
     }
 }
 
@@ -463,7 +463,7 @@ export async function findByCapacityBetween({min, max}){
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
         if(parseMax <= 0 || isNaN(parseMax) || parseMin <= 0 || isNaN(parseMin)){
-            throw new Error("Dati opseg kapaciteta skladista nisu pronadjeni");
+            throw new Error("Dati opseg "+min+" - "+max+" kapaciteta skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-capacity-range`,{
             params:{
@@ -475,14 +475,14 @@ export async function findByCapacityBetween({min, max}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg kapaciteta skladista");
+        handleApiError(error,"Trenutno nismo pronasli opseg "+min+" - "+max+" kapaciteta skladista");
     }
 }
 
 export async function findByTypeOrderByCapacityDesc(type){
     try{
         if(!validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista po opadajucem kapacitetu nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista po opadajucem kapacitetu nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage-type-capacity-desc`,{
             params:{
@@ -493,14 +493,14 @@ export async function findByTypeOrderByCapacityDesc(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip skladista po opadajucem kapacitetu");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" skladista po opadajucem kapacitetu");
     }
 }
 
 export async function findByLocationOrderByNameAsc(location){
     try{
         if(!location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Data lokacija skladista nije pronadjena");
+            throw new Error("Data lokacija "+location+" skladista nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/location-order-name-asc`,{
             params:{
@@ -511,7 +511,7 @@ export async function findByLocationOrderByNameAsc(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju skladista grupisanu po nazivu");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" skladista grupisanu po nazivu");
     }
 }
 
@@ -531,7 +531,7 @@ export async function findByExactShelfCount(shelfCount){
     try{
         const parseShelfCount = parseInt(shelfCount,10);
         if(isNaN(parseShelfCount) || parseShelfCount <= 0){
-            throw new Error("Dati tacan broj polica nisu pronadjeni");
+            throw new Error("Dati tacan broj "+parseShelfCount+" polica nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/exact-shelf-count`,{
             params:{shelfCount:parseShelfCount},
@@ -540,7 +540,7 @@ export async function findByExactShelfCount(shelfCount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli skladiste sa tacnim brojem polica");
+        handleApiError(error,"Trenutno nismo pronasli skladiste sa tacnim brojem "+shelfCount+" polica");
     }
 }
 
@@ -550,7 +550,7 @@ export async function findByLocationContainingIgnoreCaseAndType({location, type}
             !location || typeof location !== "string" || location.trim() === "" ||
             !validateStorageType.includes(type?.toUpperCase())
         ){
-            throw new Error("Data lokacija i tip skladista nisu pronadjeni");
+            throw new Error("Data lokacija "+location+" i tip "+type+" skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/location-and-type`,{
             params:{
@@ -562,7 +562,7 @@ export async function findByLocationContainingIgnoreCaseAndType({location, type}
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju i tip datog skladista");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" i tip "+type+" datog skladista");
     }
 }
 
@@ -618,7 +618,7 @@ export async function findSuitableStoragesForShipment(minCapacity){
     try{
         const parseMinCapacity = parseFloat(minCapacity);
         if(isNaN(parseMinCapacity) || parseMinCapacity <= 0){
-            throw new Error("Dati minimalni kapacitet za odgovarajuca skladista za dostava nisu pronadjena");
+            throw new Error("Dati minimalni "+parseMinCapacity+" kapacitet za odgovarajuca skladista za dostava nisu pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/suitable-storages-for-shipment`,{
             params:{
@@ -649,7 +649,7 @@ export async function findEmptyStorages(){
 export async function findStorageWithoutGoodsAndMaterialsByType(type){
     try{
         if(!validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista bez robe i materijala nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista bez robe i materijala nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage/without-goods-and-materials-by-type`,{
             params:{
@@ -660,14 +660,14 @@ export async function findStorageWithoutGoodsAndMaterialsByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tipove skladista bez robe i materijala");
+        handleApiError(error,"Trenutno nismo pronasli tipove "+type+" skladista bez robe i materijala");
     }
 }
 
 export async function findStorageWithGoodsAndMaterialsByType(type){
     try{
         if(!validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista sa robom i materijalima nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista sa robom i materijalima nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage/with-goods-and-materials-by-type`,{
             params:{
@@ -678,14 +678,14 @@ export async function findStorageWithGoodsAndMaterialsByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tipove skladista sa robom i materijalima");
+        handleApiError(error,"Trenutno nismo pronasli tipove "+type+" skladista sa robom i materijalima");
     }
 }
 
 export async function findStorageWithGoodsOrMaterialsByType(type){
     try{
         if(!validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip skladista sa robom ili materijalima nisu pronadjeni");
+            throw new Error("Dati tip "+type+" skladista sa robom ili materijalima nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/with-goods-or-materials-by-type`,{
             params:{
@@ -703,7 +703,7 @@ export async function findStorageWithGoodsOrMaterialsByType(type){
 export async function findAllByType(type){
     try{
         if(!validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tipovi skladista nisu pronadjeni");
+            throw new Error("Dati tipovi "+type+" skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/storage/by-type`,{
             params:{
@@ -714,14 +714,14 @@ export async function findAllByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli sve tipove skladista");
+        handleApiError(error,"Trenutno nismo pronasli sve tipove "+type+" skladista");
     }
 }
 
 export async function findEmptyStorageByType(type){
     try{
         if(!validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Dati tip za prazno skladiste nije pronadjen");
+            throw new Error("Dati tip "+type+" za prazno skladiste nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/search/empty-storages/by-type`,{
             params:{
@@ -732,7 +732,7 @@ export async function findEmptyStorageByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip za prazno skladistr");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" za prazno skladistr");
     }
 }
 
@@ -799,7 +799,7 @@ export async function findInterimStorage(){
 export async function getAvailableCapacity(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za skladiste nije pronadjen");
+            throw new Error("Dati ID "+id+" za skladiste nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/${id}/available-capacity`,{
             headers:getHeader()
@@ -807,7 +807,7 @@ export async function getAvailableCapacity(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli slobodno skladiste sa datim ID-ijem");
+        handleApiError(error,"Trenutno nismo pronasli slobodno skladiste sa datim "+id+" ID-ijem");
     }
 }
 
@@ -815,7 +815,7 @@ export async function allocateCapacity({id, amount}){
     try{
         const parseAmount = parseFloat(amount);
         if(id == null || isNaN(id) || isNaN(parseAmount) || parseAmount <= 0){
-            throw new Error("Dati ID skladiste i njegova kolicina, nisu pornadjeni");
+            throw new Error("Dati ID "+id+" skladiste i njegova kolicina "+parseAmount+", nisu pornadjeni");
         }
         const requestBody = {amount};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/storages/${id}/allocate`,requestBody,{
@@ -824,7 +824,7 @@ export async function allocateCapacity({id, amount}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli skladiste za alociranje kapaciteta");
+        handleApiError(error,"Trenutno nismo pronasli skladiste po "+id+" id-iju, za alociranje kapaciteta "+amount);
     }
 }
 
@@ -832,7 +832,7 @@ export async function releaseCapacity(id, amount){
     try{
         const parseAmount = parseFloat(amount);
         if(id == null || isNaN(id) || isNaN(parseAmount) || parseAmount <= 0){
-            throw new Error("Dati ID skladiste i njegova kolicina, nisu pornadjeni");
+            throw new Error("Dati ID "+id+" skladiste i njegova kolicina "+parseAmount+", nisu pornadjeni");
         }
         const requestBody = {amount};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/${id}/release-capacity`,requestBody,{
@@ -849,7 +849,7 @@ export async function hasCapacity(storageId, amount){
     try{
         const parseAmount = parseFloat(amount);
         if(storageId == null || isNaN(storageId) || isNaN(parseAmount) || parseAmount <= 0){
-            throw new Error("Dati ID skladiste i njegova kolicina, nisu pornadjeni");
+            throw new Error("Dati ID "+storageId+" skladiste i njegova kolicina "+parseAmount+", nisu pornadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/storages/storage/${storageId}/has-capacity`,{
             params:{amount:parseAmount},
@@ -858,7 +858,7 @@ export async function hasCapacity(storageId, amount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli da li skladiste ima odredjeni kapacitet");
+        handleApiError(error,"Trenutno nismo pronasli da li skladiste ima odredjeni kapacitet "+amount);
     }
 }
 

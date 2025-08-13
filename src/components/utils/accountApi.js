@@ -57,7 +57,7 @@ export async function updateAccount({id,accountNumber,accountName,type,balance})
 export async function deleteAccount(id){
     try{
         if(!id){
-            throw new Error("Dati ID za account nije pronadjen");
+            throw new Error("Dati ID "+id+" za account nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -72,7 +72,7 @@ export async function deleteAccount(id){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za account nije pronadjen");
+            throw new Error("Dati ID "+id+" za account nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -80,7 +80,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog racuna");
+        handleApiError(error,"Greska prilikom trazenja jednog racuna po "+id+" id-iju");
     }
 }
 
@@ -99,7 +99,7 @@ export async function findAll(){
 export async function findByType(type){
     try{
         if(!isAccountTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip racuna nije pronadjen");
+            throw new Error("Dati tip "+type+" racuna nije pronadjen");
         }
         const response = await api.get(url+`/by-account-type`,{
             params:{
@@ -110,7 +110,7 @@ export async function findByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu racuna");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+type+" racuna");
     }
 }
 
@@ -118,7 +118,7 @@ export async function findByBalance(balance){
     try {
         const parsed = parseFloat(balance);
         if (isNaN(parsed) || parsed <= 0) {
-            throw new Error("Dati balans nije validan");
+            throw new Error("Dati balans "+parsed+" nije validan");
         }
 
         const response = await api.get(url + `/by-balance`, {
@@ -129,7 +129,7 @@ export async function findByBalance(balance){
         });
         return response.data;
     } catch (error) {
-        handleApiError(error, "Greška prilikom traženja po balansu");
+        handleApiError(error, "Greška prilikom traženja po balansu "+balance);
     }
 }
 
@@ -137,7 +137,7 @@ export async function findByBalanceBetween({min, max}){
     try{
         if(isNaN(parseFloat(min)) || parseFloat(min) < 0 ||
             isNaN(parseFloat(max)) || parseFloat(max) <= 0){
-                throw new Error("Dati opseg balansa za min i max nisu pronadjeni");
+                throw new Error("Dati opseg balansa za min "+min+" i max "+max+" nisu pronadjeni");
             } 
         const response = await api.get(url+`/balance-between`,{
             params:{
@@ -149,14 +149,14 @@ export async function findByBalanceBetween({min, max}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja opsega balansa");
+        handleApiError(error,"Greska prilikom trazenja opsega "+min+" - "+max+" balansa");
     }
 }
 
 export async function findByBalanceGreaterThan(amount){
     try{
         if(isNaN(parseFloat(amount)) || parseFloat(amount) <= 0){
-            throw new Error("Dati amount nije pronadjen");
+            throw new Error("Dati amount "+amount+" nije pronadjen");
         }
         const response = await api.get(url+`/balance-greater-than`,{
             params:{
@@ -167,14 +167,14 @@ export async function findByBalanceGreaterThan(amount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja balansa veceg od amount-a");
+        handleApiError(error,"Greska prilikom trazenja balansa veceg od "+amount+" amount-a");
     }
 }
 
 export async function findByBalanceLessThan(amount){
     try{
         if(isNaN(parseFloat(amount)) || parseFloat(amount) <= 0){
-            throw new Error("Dati amount nije pronadjen");
+            throw new Error("Dati amount "+amount+" nije pronadjen");
         }
         const response = await api.get(url+`/balance-less-than`,{
             params:{
@@ -185,14 +185,14 @@ export async function findByBalanceLessThan(amount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja balansa manjeg od amount-a");
+        handleApiError(error,"Greska prilikom trazenja balansa manjeg od "+amount+" amount-a");
     }
 }
 
 export async function findByAccountName(accountName){
     try{
         if(!accountName || typeof accountName !=="string" || accountName.trim() === ""){
-            throw new Error("Dati naziv racuna nije pronadjen");
+            throw new Error("Dati naziv "+accountName+" racuna nije pronadjen");
         }
         const response = await api.get(url+`/by-accountName`,{
             params:{
@@ -203,14 +203,14 @@ export async function findByAccountName(accountName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja naziva racuna");
+        handleApiError(error,"Greska prilikom trazenja naziva "+accountName+" racuna");
     }
 }
 
 export async function findByAccountNameIgnoreCase(accountName){
     try{
         if(!accountName || typeof accountName !=="string" || accountName.trim() === ""){
-            throw new Error("Dati naziv racuna nije pronadjen");
+            throw new Error("Dati naziv "+accountName+" racuna nije pronadjen");
         }
         const response = await api.get(url+`/by-accName-ignoreCase`,{
             params:{
@@ -228,7 +228,7 @@ export async function findByAccountNameIgnoreCase(accountName){
 export async function findByAccountNumber(accountNumber){
     try{
         if(!accountNumber || typeof accountNumber !=="string" || accountNumber.trim() === ""){
-            throw new Error("Dati broj racuna nije pronadjen");
+            throw new Error("Dati broj "+accountNumber+" racuna nije pronadjen");
         }
         const response = await api.get(url+`/by-accountNumber`,{
             params:{
@@ -239,7 +239,7 @@ export async function findByAccountNumber(accountNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja prema broju racuna");
+        handleApiError(error,"Greska prilikom trazenja prema broju "+accountNumber+" racuna");
     }
 }
 
@@ -249,7 +249,7 @@ export async function findByAccountNameAndAccountNumber({accountName, accountNum
             !accountNumber || typeof accountNumber !=="string" || accountNumber.trim()==="" ||
             !accountName || typeof accountName !=="string" || accountName.trim()===""
         ){
-            throw new Error("Dati naziv i broj racuna nisu pronadjeni");
+            throw new Error("Dati naziv "+accountName+" i broj "+accountNumber+" racuna nisu pronadjeni");
         }
         const response = await api.get(url+`/by-accNumber-and-accName`,{
             params:{
@@ -261,6 +261,6 @@ export async function findByAccountNameAndAccountNumber({accountName, accountNum
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po nazivu i broju racuna");
+        handleApiError(error,"Greska prilikom trazenja po nazivu "+accountName+" i broju "+accountNumber+" racuna");
     }
 }

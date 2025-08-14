@@ -63,7 +63,7 @@ export async function updateHelp({id,title,content,category,isVisible}){
 export async function deleteHelp(id){
     try{
         if(!id){
-            throw new Error("Dati ID za help nije pronadjen");
+            throw new Error("Dati ID "+id+" za help nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/help/delete/${id}`,{
             headers:getHeader()
@@ -78,7 +78,7 @@ export async function deleteHelp(id){
 export async function getById(id){
     try{
         if(!id){
-            throw new Error("Dati ID za help nije pronadjen");
+            throw new Error("Dati ID "+id+" za help nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/get-one/${id}`,{
             headers:getHeader()
@@ -86,7 +86,7 @@ export async function getById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja jednog");
+        handleApiError(error, "Greska prilikom trazenja jednog "+id+" po id-iju");
     }
 }
 
@@ -117,7 +117,7 @@ export async function getVisible(){
 export async function getByCategory(category){
     try{
         if(!isHelpCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Nepostojeca kategorija");
+            throw new Error("Nepostojeca kategorija "+category+"");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/category/${category}`,{
             headers:getHeader()
@@ -125,7 +125,7 @@ export async function getByCategory(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja po kategoriji");
+        handleApiError(error, "Greska prilikom dobavljanja po kategoriji "+category);
     }
 }
 

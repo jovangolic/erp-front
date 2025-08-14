@@ -94,7 +94,7 @@ export async function updateFiscalYear({id,year, startDate, endDate, yearStatus,
 export async function deleteFiscalYear(id){
     try{
         if(!id){
-            throw new Error("Dati ID za fiskalnu godinu nije pronadjen");
+            throw new Error("Dati ID "+id+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -109,7 +109,7 @@ export async function deleteFiscalYear(id){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za fiskalnu godinu nije pronadjen");
+            throw new Error("Dati ID "+id+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -117,7 +117,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage");
+        handleApiError(error,"Greska prilikom pretrage po "+id+" id-iju");
     }
 }
 
@@ -136,7 +136,7 @@ export async function findAll(){
 export async function findBetweenStartAndEndDates({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati opseg godina je ne-validan");
+            throw new Error("Dati opseg "+start+" - "+end+" godina je ne-validan");
         }
         const response = await api.get(url+`/date-range`,{
             params:{
@@ -148,7 +148,7 @@ export async function findBetweenStartAndEndDates({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja opsega fiskalnih godina");
+        handleApiError(error,"Greska prilikom trazenja opsega "+start+" - "+end+" fiskalnih godina");
     }
 }
 
@@ -156,7 +156,7 @@ export async function findByYear(year){
     try{
         const parsedYear = parseInt(year);
         if (isNaN(parsedYear) || parsedYear <= 0) {
-            throw new Error("Data godina nije pronadjena");
+            throw new Error("Data godina "+year+" nije pronadjena");
         }
         const response = await api.get(url+`/by-year`,{
             params: { year: parsedYear },
@@ -165,7 +165,7 @@ export async function findByYear(year){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po fiskalnoj godini");
+        handleApiError(error,"Greska prilikom pretrage po fiskalnoj godini "+year);
     }
 }
 
@@ -173,7 +173,7 @@ export async function findByYearStatusAndYear({status, year}){
     try{
         const parsedYear = parseInt(year);
         if(isNaN(parsedYear) || parsedYear <= 0 || !isFiscalYearStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Data fiskalna godina i fiskalni status nisu pronadjeni");
+            throw new Error("Data fiskalna godina "+year+" i fiskalni status "+status+" nisu pronadjeni");
         }
         const response = await api.get(url+`/by-status-and-year`,{
             params:{year:parsedYear, status:(status || "").toUpperCase()},
@@ -182,14 +182,14 @@ export async function findByYearStatusAndYear({status, year}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po fisklanoj godini i fiskalnom statusu");
+        handleApiError(error,"Greska prilikom pretrage po fisklanoj godini "+year+" i fiskalnom statusu "+status);
     }
 }
 
 export async function findFirstByYearStatusOrderByStartDateDesc(status){
     try{
         if(!isFiscalYearStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati fiskalni status nije pronadjen");
+            throw new Error("Dati fiskalni status "+status+" nije pronadjen");
         }
         const response = await api.get(url+`/by-status-order`,{
             params:{
@@ -200,14 +200,14 @@ export async function findFirstByYearStatusOrderByStartDateDesc(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po fiskalnom statusu");
+        handleApiError(error,"Greska prilikom pretrage po fiskalnom statusu "+status);
     }
 }
 
 export async function findByStartDateAfter(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum nije pronadjen");
+            throw new Error("Dati datum "+date+" nije pronadjen");
         }
         const response = await api.get(url+`/startDate-after`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -216,14 +216,14 @@ export async function findByStartDateAfter(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po pocetku datuma");
+        handleApiError(error,"Greska prilikom pretrage po pocetku datuma "+date);
     }
 }
 
 export async function findByEndDateBefore(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati endDateBefore nije pronadjen");
+            throw new Error("Dati datum kraja pre "+date+" nije pronadjen");
         }
         const response = await api.get(url+`/endDate-before`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -232,14 +232,14 @@ export async function findByEndDateBefore(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska priliko pretrage po kraju datuma");
+        handleApiError(error,"Greska prilikom pretrage po kraju datuma pre "+date);
     }
 }
 
 export async function findByYearStatus(yearStatus){
     try{
         if(!isFiscalYearStatusValid.includes(yearStatus?.toUpperCase())){
-            throw new Error("Dati godisnji status za fiskalnu godinu nije pronadjen");
+            throw new Error("Dati godisnji status "+yearStatus+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/by-yearStatus`,{
             params:{yearStatus:(yearStatus || "").toUpperCase()},
@@ -248,14 +248,14 @@ export async function findByYearStatus(yearStatus){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po godisnjem fiskalnom statusu");
+        handleApiError(error,"Greska prilikom pretrage po godisnjem fiskalnom statusu "+yearStatus);
     }
 }
 
 export async function findByQuarterStatus(quarterStatus){
     try{
         if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase())){
-            throw new Error("Dati kvartalni status nije pronadjen");
+            throw new Error("Dati kvartalni status "+quarterStatus+" nije pronadjen");
         }
         const response = await api.get(url+`/by-quarterStatus`,{
             params:{quarterStatus:(quarterStatus || "").toUpperCase()},
@@ -264,14 +264,14 @@ export async function findByQuarterStatus(quarterStatus){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage prema kvartalnom statusu");
+        handleApiError(error,"Greska prilikom pretrage prema kvartalnom statusu "+quarterStatus);
     }
 }
 
 export async function findByQuarterLessThan(quarterStatus){
     try{
         if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase())){
-            throw new Error("Dati kvartalni status nije pronadjen");
+            throw new Error("Dati kvartalni status "+quarterStatus+" nije pronadjen");
         }
         const response = await api.get(url+`/quarterStatus-less-than`,{
             params:{quarterStatus:(quarterStatus || "").toUpperCase()},
@@ -280,7 +280,7 @@ export async function findByQuarterLessThan(quarterStatus){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage kvartalnog statusa manjeg od");
+        handleApiError(error,"Greska prilikom pretrage kvartalnog statusa manjeg od "+quarterStatus);
     }
 }
 
@@ -296,6 +296,6 @@ export async function findByQuarterGreaterThan(quarterStatus){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage kvartalnog statusa mveceg od");
+        handleApiError(error,"Greska prilikom pretrage kvartalnog statusa veceg od "+quarterStatus);
     }
 }

@@ -59,7 +59,7 @@ export async function updateBuyer({pib, companyName, address, contactPerson, ema
 export async function deleteBuyer(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za kupca nije pronadjen");
+            throw new Error("Dati ID "+id+" za kupca nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/buyers/delete/${id}`,{
             headers:getHeader()
@@ -74,7 +74,7 @@ export async function deleteBuyer(id){
 export async function getBuyerById(id) {
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za kupca nije pronadjen");
+            throw new Error("Dati ID "+id+" za kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/buyer/${id}`,{
             headers:getHeader()
@@ -82,7 +82,7 @@ export async function getBuyerById(id) {
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog kupca po id");
+        handleApiError(error, "Greska prilikom dobavljanja jednog kupca po "+id+" id");
     }
 }
 
@@ -101,7 +101,7 @@ export async function getAllBuyers(){
 export async function existsByPib(pib){
     try{
         if(!pib || typeof pib !== "string" || pib.trim() === ""){
-            throw new Error("PIB je nevalidan ili prazan");
+            throw new Error("PIB "+pib+" je nevalidan ili prazan");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/exists-by-pib`,{
             params:{
@@ -112,14 +112,14 @@ export async function existsByPib(pib){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom provere postojanja datog PIB-a");
+        handleApiError(error, "Greska prilikom provere postojanja datog "+pib+" PIB-a");
     }
 }
 
 export async function searchBuyers(keyword){
     try{
         if(!keyword || typeof keyword !== "string" || keyword.trim() === ""){
-            throw new Error("Pretraga po kljucnoj reci je nevalidna");
+            throw new Error("Pretraga po kljucnoj reci "+keyword+" je nevalidna");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search`,{
             params:{
@@ -129,14 +129,14 @@ export async function searchBuyers(keyword){
         });
         return response.data;
     }catch(error){
-        handleApiError(error, "Greska prilikom ptrezivanja kupca po zadatoj reci");
+        handleApiError(error, "Greska prilikom ptrezivanja kupca po zadatoj reci "+keyword);
     }
 }
 
 export async function getBuyerByPib(pib){
     try{
         if(!pib || typeof pib !== "string" || pib.trim() === ""){
-            throw new Error("Dati PIB ne postoji");
+            throw new Error("Dati PIB "+pib+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-pib/${pib}`,{
             headers:getHeader()
@@ -144,14 +144,14 @@ export async function getBuyerByPib(pib){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po pib-u");
+        handleApiError(error,"Greska prilikom pretrage po "+pib+" pib-u");
     }
 }
 
 export async function findByAddressContainingIgnoreCase(address){
     try{
         if(!address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Data adresa kupca nije pronadjena");
+            throw new Error("Data adresa "+address+" kupca nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-address`,{
             params:{
@@ -162,14 +162,14 @@ export async function findByAddressContainingIgnoreCase(address){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutni nismo pronasli adresu za kupca");
+        handleApiError(error,"Trenutni nismo pronasli adresu "+address+" za kupca");
     }
 }
 
 export async function findByContactPerson(contactPerson){
     try{
         if(!contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === ""){
-            throw new Error("Dati kontakt-osoba za kupca nije pronadjena");
+            throw new Error("Data kontakt-osoba "+contactPerson+" za kupca nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/by-contact-person`,{
             params:{
@@ -180,14 +180,14 @@ export async function findByContactPerson(contactPerson){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutni nismo pronasli kontakt-osobu za kupca");
+        handleApiError(error,"Trenutni nismo pronasli kontakt-osobu "+contactPerson+" za kupca");
     }
 }
 
 export async function findByContactPersonContainingIgnoreCase(contactPersonFragment){
     try{
         if(!contactPersonFragment || typeof contactPersonFragment !== "string" || contactPersonFragment.trim() === ""){
-            throw new Error("Dati kontakt-osoba po fragmentu za kupca nije pronadjena");
+            throw new Error("Data kontakt-osoba po fragmentu "+contactPersonFragment+" za kupca nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/by-contact-person-fragment`,{
             params:{
@@ -198,14 +198,14 @@ export async function findByContactPersonContainingIgnoreCase(contactPersonFragm
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutni nismo pronasli kontakt-osobu po fragmentu za kupca");
+        handleApiError(error,"Trenutni nismo pronasli kontakt-osobu po fragmentu "+contactPersonFragment+" za kupca");
     }
 }
 
 export async function findByPhoneNumberContaining(phoneFragment){
     try{
         if(!phoneFragment || typeof phoneFragment !== "string" || phoneFragment.trim() === ""){
-            throw new Error("Dati kontakt-telefon po fragmentu za kupca nije pronadjena");
+            throw new Error("Dati kontakt-telefon po fragmentu "+phoneFragment+" za kupca nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/by-phone-fragment`,{
             params:{
@@ -216,7 +216,7 @@ export async function findByPhoneNumberContaining(phoneFragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutni nismo pronasli kontakt-telefon po fragmentu za kupca");
+        handleApiError(error,"Trenutni nismo pronasli kontakt-telefon po fragmentu "+phoneFragment+" za kupca");
     }
 }
 
@@ -224,7 +224,7 @@ export async function findByCompanyNameContainingIgnoreCaseAndAddressContainingI
     try{
         if(!companyName || typeof companyName !== "string" || companyName.trim() === "" ||
             !address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Dati naziv kompanije i njena adresa, nisu pronadjeni");
+            throw new Error("Dati naziv "+companyName+" kompanije i njena adresa "+address+", nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search/company-name-and-address`,{
             params:{
@@ -236,7 +236,7 @@ export async function findByCompanyNameContainingIgnoreCaseAndAddressContainingI
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutni nismo pronasli naziv kompanije i njenu adresu");
+        handleApiError(error,"Trenutni nismo pronasli naziv "+companyName+" kompanije i njenu adresu "+address);
     }
 }
 
@@ -267,7 +267,7 @@ export async function findBuyersWithoutSalesOrders(){
 export async function existsByEmail(email){
     try{    
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati email nije pronadjen");
+            throw new Error("Dati email "+email+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/exists-by-email`,{
             params:{email:email},
@@ -276,7 +276,7 @@ export async function existsByEmail(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli posoyjeci email za kupca");
+        handleApiError(error,"Trenutno nismo pronasli postojeci email "+email+" za kupca");
     }
 }
 
@@ -284,7 +284,7 @@ export async function searchBuyers({companyName, email}){
     try{
         if(!companyName || typeof companyName !== "string" || companyName.trim() === "" ||
             !email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati naziv kompanije i email za kupca nisu pronadjeni");
+            throw new Error("Dati naziv "+companyName+" kompanije i email "+email+" za kupca nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/buyers/search-buyers`,{
             params:{
@@ -296,7 +296,7 @@ export async function searchBuyers({companyName, email}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kupca po parametrima za pretragu: naziv kompanije i email");
+        handleApiError(error,"Trenutno nismo pronasli kupca po parametrima za pretragu: naziv "+companyName+" kompanije i email "+email);
     }
 }
 

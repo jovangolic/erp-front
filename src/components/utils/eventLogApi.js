@@ -50,7 +50,7 @@ export async function updateEventLog({id,timestamp,description,shipmentId}){
 export async function deleteEventLog(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id za event-log, nije pronadjen");
+            throw new Error("Dati id "+id+" za event-log, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -65,7 +65,7 @@ export async function deleteEventLog(id){
 export async function getEventsForShipment(shipmentId){
     try{
         if(isNaN(shipmentId) || shipmentId == null){
-            throw new Error("Dati id za dostavu, nije pronadjen");
+            throw new Error("Dati id "+shipmentId+"za dostavu, nije pronadjen");
         }
         const response = await api.get(url+`/shipment/${shipmentId}`,{
             headers:getHeader()
@@ -73,14 +73,14 @@ export async function getEventsForShipment(shipmentId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli event-log po id-iju za dostavu");
+        handleApiError(error,"Trenutno nismo pronasli event-log po "+shipmentId+" id-iju za dostavu");
     }
 }
 
 export async function findOne(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id za event-log, nije pronadjen");
+            throw new Error("Dati id "+id+" za event-log, nije pronadjen");
         }
         const response = await api.delete(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -88,7 +88,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog event-log-a");
+        handleApiError(error,"Greska prilikom trazenja jednog event-log-a po "+id+" id-iju");
     }
 }
 
@@ -107,7 +107,7 @@ export async function findAll(){
 export async function findByShipmentId(shipmentId){
     try{
         if(isNaN(shipmentId) || shipmentId == null){
-            throw new Error("Dati id za dostavu nije pronadjen");
+            throw new Error("Dati id "+shipmentId+" za dostavu nije pronadjen");
         }
         const response = await api.get(url+`/find-by-shipment/${shipmentId}`,{
             headers:getHeader()
@@ -115,14 +115,14 @@ export async function findByShipmentId(shipmentId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datu dostavu po njenom id-iju");
+        handleApiError(error,"Trenutno nismo pronasli datu dostavu po njenom "+shipmentId+" id-iju");
     }
 }
 
 export async function findLatestForShipment(shipmentId){
     try{    
         if(isNaN(shipmentId) || shipmentId == null){
-            throw new Error("Dati id za dostavu nije pronadjen");
+            throw new Error("Dati id "+shipmentId+" za dostavu nije pronadjen");
         }
         const response = await api.get(url+`/search/latest-shipment/${shipmentId}`,{
             headers:getHeader()
@@ -130,25 +130,25 @@ export async function findLatestForShipment(shipmentId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli poslednje dostave po id-iju");
+        handleApiError(error,"Trenutno nismo pronasli poslednje dostave po "+shipmentId+" id-iju");
     }
 }
 
 export async function findByTimestampAfter(date){
     try{
-        if(!moment(timestamp,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum posle za event-log, nije pronadjen");
+        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Dati datum posle "+date+" za event-log, nije pronadjen");
         }
         const response = await api.get(url+`/timestamp-after`,{
             params:{
-                timestamp:moment(timestamp).format("YYYY-MM-DDTHH:mm:ss")
+                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli event-log po datumu posle");
+        handleApiError(error,"Trenutno nismo pronasli event-log po datumu posle "+date);
     }
 }
 
@@ -156,7 +156,7 @@ export async function findByTimestampBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opseg datuma za event-log nije pronadjen");
+            throw new Error("Dati opseg datuma "+start+" - "+end+" za event-log nije pronadjen");
         }
         const response = await api.get(url+`/timestamp-between`,{
             params:{
@@ -168,14 +168,14 @@ export async function findByTimestampBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli event-log po opsegu datuma");
+        handleApiError(error,"Trenutno nismo pronasli event-log po opsegu "+start+" - "+end+" datuma");
     }
 }
 
 export async function findByDescriptionContaining(text){
     try{
         if(!text || typeof text !== "string" || text.trim() === ""){
-            throw new Error("Dati opis za event-log, nije pronadjen");
+            throw new Error("Dati opis "+text+" za event-log, nije pronadjen");
         }
         const response = await api.get(url+`/description`,{
             params:{
@@ -186,35 +186,35 @@ export async function findByDescriptionContaining(text){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli event-log po opisu");
+        handleApiError(error,"Trenutno nismo pronasli event-log po opisu "+ text);
     }
 }
 
 export async function findByShipmentIdAndTimestampBetween({shipmentId, from, to}){
     try{
         if(isNaN(shipmentId) || shipmentId == null ||
-            !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati id za dostavu i datumski opseg za event-log, nije pronadjen");
+            !moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Dati id "+shipmentId+" za dostavu i datumski opseg "+from+" - "+to+" za event-log, nije pronadjen");
         }
         const response = await api.get(url+`/search/${shipmentId}/timestamp-between`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
+                to:moment(to).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli event-log po id dostave i datumskom opsegu");
+        handleApiError(error,"Trenutno nismo pronasli event-log po id "+shipmentId+" dostave i datumskom opsegu "+from+" - "+to+"");
     }
 }
 
 export async function findTopByShipmentIdOrderByTimestampDesc(shipmentId){
     try{
         if(isNaN(shipmentId) || shipmentId == null){
-            throw new Error("Dati id za dostavu, nije pronadjen");
+            throw new Error("Dati id "+shipmentId+" za dostavu, nije pronadjen");
         }
         const response = await api.get(url+`/search/shipment-order-by-timestamp-desc/${shipmentId}`,{
             headers:getHeader()
@@ -222,6 +222,6 @@ export async function findTopByShipmentIdOrderByTimestampDesc(shipmentId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli event-log po id dostave, po opadajucem poretku za vreme");
+        handleApiError(error,"Trenutno nismo pronasli event-log po id "+shipmentId+" dostave, po opadajucem poretku za vreme");
     }
 }

@@ -78,7 +78,7 @@ export async function update({id, date}){
 export async function deleteInboundDelivery(id){
     try{
         if(!id){
-            throw new Error("Dati ID za inboundDelivery nije pronadjen");
+            throw new Error("Dati ID "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -93,7 +93,7 @@ export async function deleteInboundDelivery(id){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za inboundDelivery nije pronadjen");
+            throw new Error("Dati ID "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -101,7 +101,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trtazenja jednog inboundDelivery-ja");
+        handleApiError(error,"Greska prilikom trazenja jednog inboundDelivery-ja po "+id+" id-iju");
     }
 }
 
@@ -131,7 +131,7 @@ export async function findByStatus(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trqazenja po statusu");
+        handleApiError(error,"Greska prilikom trazenja po statusu "+status);
     }
 }
 
@@ -154,14 +154,14 @@ export async function findByDeliveryDateBetween({from, to}) {
 
     return response.data;
   } catch (error) {
-    handleApiError(error, "Greska prilikom trazenja prema dostavi datuma opsega");
+    handleApiError(error, "Greska prilikom trazenja prema dostavi datuma opsega "+from+" - "+to);
   }
 }
 
 export async function findBySupplyId(supplyId){
     try{
         if(!supplyId){
-            throw new Error("ID prenosa mora biti prosledjen");
+            throw new Error("ID "+supplyId+" prenosa mora biti prosledjen");
         }
         const response = await api.get(url+`/supply/${supplyId}`,{
             headers:getHeader()
@@ -169,7 +169,7 @@ export async function findBySupplyId(supplyId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema trazenju po supplyId-ju");
+        handleApiError(error,"Greska prema trazenju po "+supplyId+" supplyId-ju");
     }
 }
 

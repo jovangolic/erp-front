@@ -58,7 +58,7 @@ export async function updateEditOpt({id,name,value,type,editable,visible}){
 export async function deleteEditOpt(id){
     try{
         if(!id){
-            throw new Error("Dati ID za editOpt nije pronadjen");
+            throw new Error("Dati ID "+id+" za editOpt nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/delete/${id}`,{
 
@@ -74,7 +74,7 @@ export async function deleteEditOpt(id){
 export async function getById(id){
     try{
         if(!id){
-            throw new Error("Dati ID za editOpt nije pronadjen");
+            throw new Error("Dati ID "+id+" za editOpt nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/get-one/${id}`,{
             headers:getHeader()
@@ -82,7 +82,7 @@ export async function getById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom dobavljanja jednog");
+        handleApiError(error,"Greska prilikom dobavljanja jednog po "+id+" id-iju");
     }
 }
 
@@ -103,7 +103,7 @@ export async function getByType(type){
         if(
             !isEditOptTypeValid.includes(type?.toUpperCase())
         ){
-            throw new Error("Dati tip ne postoji");
+            throw new Error("Dati tip "+type+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/by-type/${type}`,{
             headers:getHeader()
@@ -111,14 +111,14 @@ export async function getByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom dobavljanja po tipu");
+        handleApiError(error,"Greska prilikom dobavljanja po tipu "+type);
     }
 }
 
 export async function findByName(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Dati naziv za edit-opt nije pronadjen");
+            throw new Error("Dati naziv "+name+" za edit-opt nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/by-name`,{
             params:{name:name},
@@ -127,14 +127,14 @@ export async function findByName(name){
         return response.datal
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli edit-opt po nazivu");
+        handleApiError(error,"Trenutno nismo pronasli edit-opt po nazivu "+name);
     }
 }
 
 export async function findByValue(value){
     try{
         if(!value || typeof value !== "string" || value.trim() === ""){
-            throw new Error("Data vrednost za edit-opt nije pronadjena");
+            throw new Error("Data vrednost "+value+" za edit-opt nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/by-value`,{
             params:{value:value},
@@ -143,7 +143,7 @@ export async function findByValue(value){
         return response.datal
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli edit-opt po vrednosti");
+        handleApiError(error,"Trenutno nismo pronasli edit-opt po vrednosti "+value);
     }
 }
 

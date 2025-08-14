@@ -44,7 +44,7 @@ export async function updateDriver({id, name, phone}){
 export async function deleteDriver(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID vozaca nije pronadjen");
+            throw new Error("Dati ID "+id+" vozaca nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -59,7 +59,7 @@ export async function deleteDriver(id){
 export async function findOneById(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID vozaca nije pronadjen");
+            throw new Error("Dati ID "+id+" vozaca nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -67,7 +67,7 @@ export async function findOneById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greksa prilikom dobavljanja jednog vozaca");
+        handleApiError(error, "Greksa prilikom dobavljanja jednog vozaca po "+id+" id-iju");
     }
 }
 
@@ -86,7 +86,7 @@ export async function findAllDrivers(){
 export async function findByName(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === "" ){
-            throw new Error("Dato ime vozaca nije pronadjeno");
+            throw new Error("Dato ime "+name+" vozaca nije pronadjeno");
         }
         const response = await api.get(url+`/by-name`,{
             params:{
@@ -97,14 +97,14 @@ export async function findByName(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja vozaca po imenu");
+        handleApiError(error, "Greska prilikom trazenja vozaca po imenu "+name);
     }
 }
 
 export async function findByPhone(phone){
     try{
         if(!phone || typeof phone !== "string" || phone.trim() === ""){
-            throw new Error("Dati broj-telefona vozaca nije pronadjen");
+            throw new Error("Dati broj-telefona "+phone+" vozaca nije pronadjen");
         }
         const response = await api.get(url+`/by-phone`,{
             params:{
@@ -115,7 +115,7 @@ export async function findByPhone(phone){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po broju telefona vozaca");
+        handleApiError(error, "Greska prilikom trazenja po broju telefona "+phone+"vozaca");
     }
 }
 

@@ -54,7 +54,7 @@ export async function updateCapacityPlanning({id,workCenterId,date,availableCapa
 export async function deleteCapacityPlanning(id){
     try{
         if(isNaN(id) || id == null){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -69,7 +69,7 @@ export async function deleteCapacityPlanning(id){
 export async function findOne(id){
     try{
        if(isNaN(id) || id == null){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         } 
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -77,7 +77,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pronalazenja jednog capacity-planning");
+        handleApiError(error,"Greska prilikom pronalazenja jednog capacity-planning po "+id+" id-iju");
     }
 }
 
@@ -96,7 +96,7 @@ export async function findAll(){
 export async function findByWorkCenter_Id(workCenterId){
     try{
         if(isNaN(workCenterId) || workCenterId == null){
-            throw new Error("Dati id za radni centar, nije pronadjen");
+            throw new Error("Dati id "+workCenterId+" za radni centar, nije pronadjen");
         }
         const response = await api.get(url+`/workCenter/${workCenterId}`,{
             headers:getHeader()
@@ -104,14 +104,14 @@ export async function findByWorkCenter_Id(workCenterId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id za radni-centar");
+        handleApiError(error,"Trenutno nismo pronasli id "+workCenterId+" za radni-centar");
     }
 }
 
 export async function findByWorkCenter_NameContainingIgnoreCase(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Dati naziv radnog centra, nije pronadjen");
+            throw new Error("Dati naziv "+name+" radnog centra, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-name`,{
             params:{
@@ -122,14 +122,14 @@ export async function findByWorkCenter_NameContainingIgnoreCase(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv radnog centra");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" radnog centra");
     }
 }
 
 export async function findByWorkCenter_LocationContainingIgnoreCase(location){
     try{
         if(!location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Data lokacija radnog centra, nije pronadjena");
+            throw new Error("Data lokacija "+location+" radnog centra, nije pronadjena");
         }
         const response = await api.get(url+`/work-center-location`,{
             params:{
@@ -140,7 +140,7 @@ export async function findByWorkCenter_LocationContainingIgnoreCase(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju radnog centra");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" radnog centra");
     }
 }
 
@@ -148,7 +148,7 @@ export async function findByDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || 
             !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati opseg datuma za planiranje kapaciteta nije pronadjen");
+            throw new Error("Dati opseg datuma "+start+" - "+end+" za planiranje kapaciteta nije pronadjen");
         }
         const response = await api.get(url+`/date-range`,{
             params:{
@@ -160,14 +160,14 @@ export async function findByDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg datumna za planiranje kapaciteta");
+        handleApiError(error,"Trenutno nismo pronasli opseg datuma "+start+" - "+end+" za planiranje kapaciteta");
     }
 }
 
 export async function findByDate(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum za kapacitet planiranja, nije pronadjen");
+            throw new Error("Dati datuma "+date+" za kapacitet planiranja, nije pronadjen");
         }
         const response = await api.get(url+`/by-date`,{
             params:{
@@ -178,14 +178,14 @@ export async function findByDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po datumu");
+        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po datumu "+date);
     }
 }
 
 export async function findByDateGreaterThanEqual(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum za kapacitet planiranja, nije pronadjen");
+            throw new Error("Dati datum "+date+" za kapacitet planiranja, nije pronadjen");
         }
         const response = await api.get(url+`/date-greater-than`,{
             params:{
@@ -196,7 +196,7 @@ export async function findByDateGreaterThanEqual(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po datumu");
+        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po datumu "+date);
     }
 }
 
@@ -204,7 +204,7 @@ export async function findByAvailableCapacity(availableCapacity){
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
-            throw new Error("Dati slobodni kapacitet, nije pronadjen");
+            throw new Error("Dati slobodni kapacitet "+parseAvailableCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/by-available-capacity`,{
             params:{
@@ -215,7 +215,7 @@ export async function findByAvailableCapacity(availableCapacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po slobodnom kapactetu");
+        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po dostupnom kapactetu "+availableCapacity);
     }
 }
 
@@ -223,7 +223,7 @@ export async function findByAvailableCapacityGreaterThan(availableCapacity){
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
-            throw new Error("Dati slobodni kapacitet veci od, nije pronadjen");
+            throw new Error("Dati slobodni kapacitet veci od "+parseAvailableCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/available-capacity-greater-than`,{
             params:{
@@ -234,7 +234,7 @@ export async function findByAvailableCapacityGreaterThan(availableCapacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po slobodnom kapactetu vecem od");
+        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po slobodnom kapactetu vecem od "+availableCapacity);
     }
 }
 
@@ -242,7 +242,7 @@ export async function findByAvailableCapacityLessThan(availableCapacity){
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
-            throw new Error("Dati slobodni kapacitet manji od, nije pronadjen");
+            throw new Error("Dati slobodni kapacitet manji od "+parseAvailableCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/available-capacity-less-than`,{
             params:{
@@ -253,7 +253,7 @@ export async function findByAvailableCapacityLessThan(availableCapacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po slobodnom kapactetu manjem od");
+        handleApiError(error,"Trenutno nismo pronasli dati kapacitet planiranja po slobodnom kapactetu manjem od "+availableCapacity);
     }
 }
 
@@ -261,7 +261,7 @@ export async function findByPlannedLoad(plannedLoad){
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
         if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
-            throw new Error("Data planirana kolicina za kapacitet planiranja, nije pronadjena");
+            throw new Error("Data planirana kolicina "+parsePlannedLoad+" za kapacitet planiranja, nije pronadjena");
         }
         const response = await api.get(url+`/by-planned-load`,{
             params:{
@@ -272,7 +272,7 @@ export async function findByPlannedLoad(plannedLoad){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po planiranoj kolicini");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po planiranoj kolicini "+plannedLoad);
     }
 }
 
@@ -280,7 +280,7 @@ export async function findByPlannedLoadGreaterThan(plannedLoad){
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
         if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
-            throw new Error("Data planirana kolicina veca od, za kapacitet planiranja, nije pronadjena");
+            throw new Error("Data planirana kolicina veca od "+parsePlannedLoad+", za kapacitet planiranja, nije pronadjena");
         }
         const response = await api.get(url+`/planned-load-greater-than`,{
             params:{
@@ -291,7 +291,7 @@ export async function findByPlannedLoadGreaterThan(plannedLoad){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po planiranoj kolicini vecoj od");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po planiranoj kolicini vecoj od "+plannedLoad);
     }
 }
 
@@ -299,7 +299,7 @@ export async function findByPlannedLoadLessThan(plannedLoad){
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
         if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
-            throw new Error("Data planirana kolicina manja od, za kapacitet planiranja, nije pronadjena");
+            throw new Error("Data planirana kolicina manja od "+parsePlannedLoad+", za kapacitet planiranja, nije pronadjena");
         }
         const response = await api.get(url+`/planned-load-less-than`,{
             params:{
@@ -310,7 +310,7 @@ export async function findByPlannedLoadLessThan(plannedLoad){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po planiranoj kolicini manjoj od");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po planiranoj kolicini manjoj od "+plannedLoad);
     }
 }
 
@@ -319,7 +319,7 @@ export async function findByPlannedLoadAndAvailableCapacity({plannedLoad, availa
         const parsePlannedLoad = parseFloat(plannedLoad);
         const parseAvailableCapacity = parseFloat(availableCapacity);
         if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0 || isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
-            throw new Error("Data planirana i slobodna kolicina za planiranje kapaciteta, nije pronadjena");
+            throw new Error("Data planirana "+parsePlannedLoad+" i dostupna "+parseAvailableCapacity+" kolicina za planiranje kapaciteta, nije pronadjena");
         }
         const response = await api.get(url+`/planned-load-available-capacity`,{
             params:{
@@ -331,7 +331,7 @@ export async function findByPlannedLoadAndAvailableCapacity({plannedLoad, availa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja za planiranu i slobodnu kolicinu");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja za planiranu "+plannedLoad+" i slobodnu kolicinu "+availableCapacity);
     }
 }
 
@@ -339,7 +339,7 @@ export async function findByRemainingCapacity(remainingCapacity){
     try{
         const parseRemainingCapacity = parseFloat(remainingCapacity);
         if(isNaN(parseRemainingCapacity) || parseRemainingCapacity <= 0){
-            throw new Error("Data preostala kolicina nije pronadjena");
+            throw new Error("Data preostala "+parseRemainingCapacity+" kolicina nije pronadjena");
         }
         const response = await api.get(url+`/remaining-capacity`,{
             params:{
@@ -350,7 +350,7 @@ export async function findByRemainingCapacity(remainingCapacity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po preostaloj kolicini");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet planiranja po preostaloj kolicini "+remainingCapacity);
     }
 }
 
@@ -405,7 +405,7 @@ export async function findWhereLoadExceedsCapacity(){
 export async function findByUtilizationGreaterThan(threshold){
     try{
         if(isNaN(threshold) || threshold == null){
-            throw new Error("Dati prag za upotrebu vecu od, nije pronadjen");
+            throw new Error("Dati prag "+threshold+" za upotrebu vecu od, nije pronadjen");
         }
         const response = await api.get(url+`/utilization-greater-than`,{
             params:{
@@ -416,6 +416,6 @@ export async function findByUtilizationGreaterThan(threshold){
         return response.data;
     } 
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli upotrebu vecu od datog praga");
+        handleApiError(error,"Trenutno nismo pronasli upotrebu vecu od datog praga "+threshold);
     }
 }

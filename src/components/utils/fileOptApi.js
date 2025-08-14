@@ -73,7 +73,7 @@ export async function updateFileOpt({id,extension,mimeType,maxSizeInBytes,upload
 export async function deleteFileOpt(id){
     try{
         if(!id){
-            throw new Error("Dati ID za fileOpt nijr pronadjen");
+            throw new Error("Dati ID "+id+" za fileOpt nijr pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/file-opt/delete/${id}`,{
             headers:getHeader()
@@ -100,7 +100,7 @@ export async function getAllFileOpts(){
 export async function getFileOptById(id){
     try{
         if(!id){
-            throw new Error("Dati ID za fileOpt nijr pronadjen");
+            throw new Error("Dati ID "+id+" za fileOpt nijr pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/get-one/${id}`,{
             headers:getHeader()
@@ -108,14 +108,14 @@ export async function getFileOptById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog");
+        handleApiError(error, "Greska prilikom dobavljanja jednog "+id+" id-iju");
     }
 }
 
 export async function getByExtension(extension){
     try{
         if(!isFileExtensionValid.includes(extension?.toUpperCase())){
-            throw new Error("FileExtension nije pronadjen");
+            throw new Error("FileExtension "+extension+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/by-extension/${extension}`,{
             headers:getHeader()
@@ -123,14 +123,14 @@ export async function getByExtension(extension){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja prema ekstenziji");
+        handleApiError(error, "Greska prilikom dobavljanja prema ekstenziji "+extension);
     }
 }
 
 export async function getByAction(action){
     try{
         if(!isValidFileActionSet(availableActions)){
-            throw new Error("Dati FileAction nije pronadjen");
+            throw new Error("Dati FileAction "+action+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/by-availableActions/${action}`,{
             headers:getHeader()
@@ -138,7 +138,7 @@ export async function getByAction(action){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom dobavljanja prema akciji");
+        handleApiError(error,"Greska prilikom dobavljanja prema akciji "+action);
     }
 }
 

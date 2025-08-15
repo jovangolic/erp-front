@@ -3,14 +3,14 @@ import { api, getHeader } from "./AppFunction";
 export async function getByName(name) {
     try {
         if(!name || typeof name !=="string" || name.trim() === ""){
-            throw new Error("Pretraga po nazivu je nepoznata");
+            throw new Error("Pretraga po nazivu "+name+" je nepoznata");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/${name}`, {
             headers: getHeader()
         });
         return response.data;
     } catch (error) {
-        handleApiError(error, "Greška prilikom dobavljanja po nazivu");
+        handleApiError(error, "Greška prilikom dobavljanja po nazivu "+name);
     }
 }
 

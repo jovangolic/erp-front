@@ -62,7 +62,7 @@ export async function updateShift({id,startTime, endTime, shiftSupervisorId}){
 export async function deleteShift(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID nije nadjen");
+            throw new Error("Dati ID "+id+" nije nadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -77,7 +77,7 @@ export async function deleteShift(id){
 export async function getShiftById(id){
     try{   
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID nije nadjen");
+            throw new Error("Dati ID "+id+" nije nadjen");
         } 
         const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
@@ -85,7 +85,7 @@ export async function getShiftById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom jednog dobavljanja");
+        handleApiError(error, "Greska prilikom trazenja po "+id+" id-iju");
     }
 }
 
@@ -104,7 +104,7 @@ export async function getAllShifts(){
 export async function findByEndTimeBefore(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme kraja smene nije pronadjeno");
+            throw new Error("Dato vreme "+time+" kraja smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/end-time-before`,{
             params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
@@ -113,14 +113,14 @@ export async function findByEndTimeBefore(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo smene koje se zavrsavaju pre izabranog vremena");
+        handleApiError(error,"Nismo uspeli da pronadjemo smene koje se zavrsavaju pre "+time+" izabranog vremena");
     }
 }
 
 export async function findByEndTimeAfter(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme kraja smene nije pronadjeno");
+            throw new Error("Dato vreme "+time+" kraja smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/end-time-after`,{
             params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
@@ -129,14 +129,14 @@ export async function findByEndTimeAfter(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo smene koje se zavrsavaju posle izabranog vremena");
+        handleApiError(error,"Nismo uspeli da pronadjemo smene koje se zavrsavaju posle "+time+" izabranog vremena");
     }
 }
 
 export async function findByStartTimeAfter(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme pocetka smene nije pronadjeno");
+            throw new Error("Dato vreme "+time+" pocetka smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/start-time-after`,{
             params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
@@ -145,14 +145,14 @@ export async function findByStartTimeAfter(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo smene koje pocinju posle izabranog vremena");
+        handleApiError(error,"Nismo uspeli da pronadjemo smene koje pocinju posle "+time+" izabranog vremena");
     }
 }
 
 export async function findByStartTimeBefore(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme pocetka smene nije pronadjeno");
+            throw new Error("Dato vreme "+time+" pocetka smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/start-time-before`,{
             params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
@@ -161,7 +161,7 @@ export async function findByStartTimeBefore(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo smene koje pocinju pre izabranog vremena");
+        handleApiError(error,"Nismo uspeli da pronadjemo smene koje pocinju pre "+time+" izabranog vremena");
     }
 }
 
@@ -171,7 +171,7 @@ export async function findByEndTimeBetween({start, end}){
             !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         ){
-            throw new Error("Dati opseg kraja smene nije pronadjen");
+            throw new Error("Dati opseg "+start+" - "+end+" kraja smene nije pronadjen");
         }
         const response = await api.get(url+`/search/end-time-between`,{
             params:{
@@ -183,7 +183,7 @@ export async function findByEndTimeBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo smene koje se zavrsavaju u unetom vremenskom opsegu");
+        handleApiError(error,"Nismo uspeli da pronadjemo smene koje se zavrsavaju u unetom vremenskom "+start+" - "+end+" opsegu");
     }
 }
 
@@ -218,7 +218,7 @@ export async function findByShiftSupervisorIdAndStartTimeBetween({supervisorId, 
             !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
          ){
-            throw new Error("Dati ID nadzorinka i opseg smena nije pronadjen");
+            throw new Error("Dati ID "+supervisorId+" nadzorinka i opseg "+start+" - "+end+" smena nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/${supervisorId}/start-between`,{
             params:{
@@ -230,14 +230,14 @@ export async function findByShiftSupervisorIdAndStartTimeBetween({supervisorId, 
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo ID za nadzornika i dati opseg smena");
+        handleApiError(error,"Nismo uspeli da pronadjemo I "+supervisorId+" za nadzornika i dati opseg "+start+" - "+end+" smena");
     }
 }
 
 export async function findByShiftSupervisorIdAndEndTimeIsNull(supervisorId){
     try{
         if(isNaN(supervisorId) || supervisorId == null ){
-            throw new Error("Dati ID za nadzornika nije pronadjen");
+            throw new Error("Dati ID "+supervisorId+" za nadzornika nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/${supervisorId}/end-time-null`,{
             headers:getHeader()
@@ -245,7 +245,7 @@ export async function findByShiftSupervisorIdAndEndTimeIsNull(supervisorId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo ID za nadzornika i kada je kraj smene nepostojeci");
+        handleApiError(error,"Nismo uspeli da pronadjemo ID "+supervisorId+" za nadzornika i kada je kraj smene nepostojeci");
     }
 }
 
@@ -254,7 +254,7 @@ export async function countShiftsByStartDate(date){
         if(
             !moment(date,"YYYY-MM-DD",true).isValid()
         ){
-            throw new Error("Dati ukupan broj smena sa pocetnim datumom nije pronadjen");
+            throw new Error("Dati ukupan broj smena sa pocetnim "+date+" datumom nije pronadjen");
         }
         const response = await api.get(url+`/search/count-start-date`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -263,7 +263,7 @@ export async function countShiftsByStartDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo ukupan broj smena sa pocetkom datog datuma");
+        handleApiError(error,"Nismo uspeli da pronadjemo ukupan broj smena sa pocetkom datog "+date+"datuma");
     }
 }
 
@@ -272,7 +272,7 @@ export async function countShiftsByEndDate(date){
         if(
             !moment(date,"YYYY-MM-DD",true).isValid()
         ){
-            throw new Error("Dati ukupan broj smena sa datumom zavrsetka nije pronadjen");
+            throw new Error("Dati ukupan broj smena sa datumom "+date+" zavrsetka nije pronadjen");
         }
         const response = await api.get(url+`/search/count-end-date`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -281,14 +281,14 @@ export async function countShiftsByEndDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo ukupan broj smena koje se zavrsavaju odredjenog datuma");
+        handleApiError(error,"Nismo uspeli da pronadjemo ukupan broj smena koje se zavrsavaju odredjenog "+date+" datuma");
     }
 }
 
 export async function findCurrentShiftBySupervisor(supervisorId){
     try{
         if(supervisorId == null || isNaN(supervisorId)){
-            throw new Error("Dati ID nadzornika za trenutnu smenu nije pronadjen");
+            throw new Error("Dati ID "+supervisorId+" nadzornika za trenutnu smenu nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/${supervisorId}/current`,{
             headers:getHeader()
@@ -296,7 +296,7 @@ export async function findCurrentShiftBySupervisor(supervisorId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da nadjemo ID nadzornika za trenutnu smenu");
+        handleApiError(error,"Nismo uspeli da nadjemo ID "+supervisorId+" nadzornika za trenutnu smenu");
     }
 }
 
@@ -304,7 +304,7 @@ export async function findShiftsLongerThan(hours){
     try{
         const parseHours = parseInt(hours,10);
         if(isNaN(parseHours) || parseHours <= 0 ){
-            throw new Error("Dato vreme za smene koje trazju duze od 8 sati nisu pronadjene");
+            throw new Error("Dato vreme "+hours+" za smene koje trazju duze od 8 sati nisu pronadjene");
         }
         const response = await api.get(url+`/search/shift-longer-than`,{
             params:{hours:parseHours},
@@ -313,7 +313,7 @@ export async function findShiftsLongerThan(hours){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo smene koje traju duze od 8 sati");
+        handleApiError(error,"Nismo uspeli da pronadjemo smene koje traju duze "+hours+" od 8 sati");
     }
 }
 
@@ -323,7 +323,7 @@ export async function findShiftsOverlappingPeriod({start, end}){
             !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         ){
-            throw new Error("Dati opseg preklapanja smena nije pronadjen");
+            throw new Error("Dati opseg "+start+" - "+end+" preklapanja smena nije pronadjen");
         }
         const response = await api.get(url+`/search/overlapping-shifts`,{
             params:{
@@ -335,7 +335,7 @@ export async function findShiftsOverlappingPeriod({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo pronasli smene koje se preklapaju za odredjeni vremenski period");
+        handleApiError(error,"Nismo pronasli smene koje se preklapaju za odredjeni vremenski "+start+" - "+end+" period");
     }
 }
 
@@ -356,7 +356,7 @@ export async function findFutureShifts(now){
         if(
             !moment(now,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         ){
-            throw new Error("Date buduce smene koje pocinju od datog datuma i vremena nisu pronadjene");
+            throw new Error("Date buduce smene koje pocinju od datog "+now+" datuma i vremena nisu pronadjene");
         }
         const response = await api.get(url+`/search/future-shifts`,{
             params:{now:moment(now).format("YYYY-MM-DDTHH:mm:ss")},
@@ -365,7 +365,7 @@ export async function findFutureShifts(now){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo buduce nocne smene koje pocinju od datog datuma i vremena");
+        handleApiError(error,"Nismo uspeli da pronadjemo buduce nocne smene koje pocinju od datog "+now+" datuma i vremena");
     }
 }
 
@@ -384,7 +384,7 @@ export async function findAllFutureShifts(){
 export async function findByShiftSupervisor_EmailLikeIgnoreCase(email){
     try{
         if(!email || typeof email !=="string" || email.trim() === ""){
-            throw new Error("Dati email za nadzornika nije pronadjen");
+            throw new Error("Dati email "+email+" za nadzornika nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/email`,{
             params:{email:email},
@@ -393,14 +393,14 @@ export async function findByShiftSupervisor_EmailLikeIgnoreCase(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo email koji pripada nadzorniku");
+        handleApiError(error,"Nismo uspeli da pronadjemo email "+email+" koji pripada nadzorniku");
     }
 }
 
 export async function findByShiftSupervisorPhoneNumberLikeIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj-telefona za nadzornika nije pronadjen");
+            throw new Error("Dati broj-telefona "+phoneNumber+" za nadzornika nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/phone-number`,{
             params:{phoneNumber:phoneNumber},
@@ -409,7 +409,7 @@ export async function findByShiftSupervisorPhoneNumberLikeIgnoreCase(phoneNumber
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo broj-telefona koji pripada nadzorniku");
+        handleApiError(error,"Nismo uspeli da pronadjemo broj-telefona "+phoneNumber+" koji pripada nadzorniku");
     }
 }
 
@@ -417,7 +417,7 @@ export async function findByShiftSupervisor_FirstNameLikeIgnoreCaseAndLastNameLi
     try{
         if(!firstName || typeof firstName !=="string" || firstName.trim() === "" ||
             !lastName || typeof lastName !=="string" || lastName.trim() === ""){
-            throw new Error("Dato ime i prezime nadzornika nije pronadjeno");
+            throw new Error("Dato ime "+firstName+" i prezime "+lastName+" nadzornika nije pronadjeno");
         }
         const response = await api.get(url+`/search/supervisor/fullName`,{
             params:{firstName:firstName, lastName:lastName},
@@ -426,14 +426,14 @@ export async function findByShiftSupervisor_FirstNameLikeIgnoreCaseAndLastNameLi
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Nismo uspeli da pronadjemo ime i prezime za datog nadzornika");
+        handleApiError(error,"Nismo uspeli da pronadjemo ime "+firstName+" i prezime "+lastName+" za datog nadzornika");
     }
 }
 
 export async function hasActiveShift(supervisorId){
     try{
         if(isNaN(supervisorId) || supervisorId == null){
-            throw new Error("ID nadzornika za proveru aktivne smene nije validan ili nije unet");
+            throw new Error("ID "+supervisorId+" nadzornika za proveru aktivne smene nije validan ili nije unet");
         }
         const response =await api.get(url+`/active/${supervisorId}`,{
             headers:getHeader()
@@ -441,7 +441,7 @@ export async function hasActiveShift(supervisorId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nije moguce proveriti da li nadzornik ima aktivnu smenu");
+        handleApiError(error,"Trenutno nije moguce proveriti da li nadzornik sa id-ijem "+supervisorId+" ima aktivnu smenu");
     }
 }
 

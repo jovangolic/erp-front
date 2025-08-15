@@ -40,7 +40,7 @@ export const downloadReport = async (reportId) => {
 export async function getReportById(id){
   try{
     if(!reportId){
-      throw new Error("Id od report-a nije pronadjen.");
+      throw new Error("Id "+id+" od report-a nije pronadjen.");
     }
     const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/reports/get/${id}`,{
       headers:getHeader()
@@ -48,14 +48,14 @@ export async function getReportById(id){
     return response.data;
   }
   catch(error){
-    handleApiError(error,"Greska prilikom dobaavljanja jednog izvestaja")
+    handleApiError(error,"Greska prilikom dobaavljanja jednog izvestaja po "+id+" id-iju");
   }
 }
 
 export async function getByType(type){
   try{
     if(!isReportValidate.includes(type?.toUpperCase())){
-        throw new Error("Tip izvestaja nije pronadjen");
+        throw new Error("Tip "+type+" izvestaja nije pronadjen");
     }
     const requestBody = {type: (type || "").toUpperCase()};
     const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/reports/type/${type}`,requestBody,{
@@ -64,7 +64,7 @@ export async function getByType(type){
     return response.data;
   }
   catch(error){
-    handleApiError(error, "Greska prilikom dobavljanja po tipu");
+    handleApiError(error, "Greska prilikom dobavljanja po tipu "+type);
   }
 }
 
@@ -72,7 +72,7 @@ export async function getReportsBetweenDates({from, to}){
   try{
     if(!moment(startDate, moment.ISO_8601, true).isValid() ||
         !moment(endDate, moment.ISO_8601, true).isValid()){
-          throw new Error("Dati izvestaj nije pronadjen u opsegu datuma");
+          throw new Error("Dati izvestaj nije pronadjen u opsegu "+from+" - "+to+" datuma");
         }
     const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/reports/date-range`,{
       params : {
@@ -84,7 +84,7 @@ export async function getReportsBetweenDates({from, to}){
     return response.data;
   }
   catch(error){
-    handleApiError(error, "Greska izmedju datuma");
+    handleApiError(error, "Trenutno nismo pronasli izvesta za dati datumski "+from+" - "+to+" opseg");
   }
 }
 

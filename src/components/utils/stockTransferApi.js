@@ -54,7 +54,7 @@ export async function create({transferDate, fromStorageId,toStorageId,status, it
 
 export async function update({id,transferDate, fromStorageId,toStorageId,status, itemRequest} ){
     try{
-        if(!id || !validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
+        if(id == null || isNaN(id) || !validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
             return;
         }
         const requestBody = {transferDate:moment(transferDate).format("YYYY-MM-DD"),
@@ -72,7 +72,7 @@ export async function update({id,transferDate, fromStorageId,toStorageId,status,
 
 export async function deleteStockTransfer (id) {
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -87,7 +87,7 @@ export async function deleteStockTransfer (id) {
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -172,7 +172,7 @@ export async function findByTransferDateBetween({start, end}){
 
 export async function findByFromStorageId(fromStorageId){
     try{
-        if(!fromStorageId){
+        if(fromStorageId == null || isNaN(fromStorageId)){
             throw new Error("Skaldiste "+fromStorageId+" odakle ide roba ne postoji");
         }
         const response = await api.get(url+`/storage/${fromStorageId}`,{
@@ -187,7 +187,7 @@ export async function findByFromStorageId(fromStorageId){
 
 export async function findByToStorageId(toStorageId){
     try{
-        if(!toStorageId){
+        if(toStorageId == null || isNaN(toStorageId)){
             throw new Error("Skaldiste "+toStorageId+" gde dolazi roba ne postoji");
         }
         const response = await api.get(url+`/storage/${toStorageId}`,{
@@ -367,8 +367,6 @@ export async function searchFromStorageByNameAndLocation({name, location}){
         handleApiError(error,"Greska pre pretrazi po nazivu "+name+" i lokaciji "+location+" skladista");
     }
 }
-
-
 
 
 function validateStockTransferInput(transferDate, fromStorageId, toStorageId, status, itemRequest) {

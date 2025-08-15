@@ -61,7 +61,7 @@ export async function createShipment(data) {
 
 export async function update({id,date}){
     try{
-        if (!id || !isValidShipmentData({ ...data, validateStatus })) {
+        if (id == null || isNaN(id) || !isValidShipmentData({ ...data, validateStatus })) {
             throw new Error("Sva polja moraju biti popunjena i validna.");
         }
         const response = await api.put(url+`/update/${id}`,date,{
@@ -76,7 +76,7 @@ export async function update({id,date}){
 
 export async function deleteShipment(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -91,7 +91,7 @@ export async function deleteShipment(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -118,7 +118,7 @@ export async function findAll(){
 
 export async function findByOutboundDeliveryId(outboundId){
     try{
-        if(!outboundId){
+        if(outboundId == null || isNaN(outboundId)){
             throw new Error("Dati outboundId "+outboundId+" nije pronadjen");
         }
         const response = await api.get(url+`/outboundDelivery/${outboundId}`,{
@@ -172,7 +172,7 @@ export async function findByShipmentDateBetween({from, to}) {
 
 export async function findByProviderId(providerId){
     try{
-        if(!providerId){
+        if(providerId == null || isNaN(providerId)){
             throw new Error("ProviderId "+providerId+" nije pornadjen");
         }
         const response = await api.get(url+`/provider/${providerId}`,{
@@ -223,7 +223,7 @@ export async function findByTrackingInfo_CurrentStatus(status){
 
 export async function findByTrackingInfoId(trackingInfoId){
     try{
-        if(!trackingInfoId){
+        if(trackingInfoId == null || isNaN(trackingInfoId)){
             throw new Error("TrackingInfo ID "+trackingInfoId+" nije pronadjen");
         }
         const response = await api.get(url+`/trackingInfo/${trackingInfoId}`,{
@@ -238,7 +238,7 @@ export async function findByTrackingInfoId(trackingInfoId){
 
 export async function findByOriginStorageId(storageId){
     try{
-        if(!storageId){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("StorageId "+storageId+" nije pornadjen");
         }
         const response = await api.get(url+`/storage/${storageId}`,{
@@ -307,7 +307,7 @@ export async function findByOriginStorage_Type(type){
 
 export async function findByOriginStorageIdAndStatus({storageId, status}){
     try{
-        if(!storageId || !validateStatus.includes(status?.toUpperCase())){
+        if(storageId == null || isNaN(storageId) || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("StorageId "+status+" I status "+status+" nisu pronadjeni");
         }
         const response = await api.get(url+`/storage-and-status`,{
@@ -374,7 +374,7 @@ export async function findOverdueDelayedShipments(){
 
 export async function findByTrackingInfo_TrackingNumber(trackingNumber){
     try{
-        if(!trackingNumber || typeof trackingNumber !== "string" || trackingNumber.trim() === ""){
+        if(trackingNumber == null || isNaN(trackingNumber) || typeof trackingNumber !== "string" || trackingNumber.trim() === ""){
             throw new Error("Dati broj "+trackingNumber+" za pracenje nije pronadjen");
         }
         const response = await api.get(url+`/search/tracking-number`,{

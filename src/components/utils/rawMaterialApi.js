@@ -38,7 +38,7 @@ export async function createRawMaterial({name, unitMeasure, supplierType, storag
 export async function updateRawMaterial({id, name, unitMeasure, supplierType, storageType, goodsType, storageId, supplyId, currentQuantity, productId, barCodes}){
     try{
         if(
-            !id ||
+            id = null || isNaN(id) ||
             !nama || typeof name !=="string" || name.trim()==="" ||
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
@@ -67,8 +67,8 @@ export async function updateRawMaterial({id, name, unitMeasure, supplierType, st
 
 export async function deleteRawMaterial(id){
     try{
-        if(!id){
-            throw new Error("Dati rawMaterial ID nije pronadjen");
+        if(id = null || isNaN(id)){
+            throw new Error("Dati rawMaterial ID "+id+" nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/delete/${id}`,{
             headers:getHeader()
@@ -82,8 +82,8 @@ export async function deleteRawMaterial(id){
 
 export async function findOneRawMaterial(id){
     try{
-        if(!id){
-            throw new Error("Dati rawMaterial ID nije pronadjen");
+        if(id = null || isNaN(id)){
+            throw new Error("Dati rawMaterial ID "+id+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/find-one/${id}`,{
             headers:getHeader()
@@ -91,7 +91,7 @@ export async function findOneRawMaterial(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja jednog");
+        handleApiError(error, "Greska prilikom trazenja jedne sirovine po "+id+" po id-iju");
     }
 }
 
@@ -110,7 +110,7 @@ export async function findAllRawMaterials(){
 export async function findByName(name){
     try{
         if(!name || typeof name !=="string" || name.trim() === ""){
-            throw new Error("Naziv sirovene nije pronadjena");
+            throw new Error("Naziv "+name+" sirovene nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/find-by-material-name`,{
             params:{
@@ -121,7 +121,7 @@ export async function findByName(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po nazivu");
+        handleApiError(error, "Greska prilikom trazenja po nazivu "+name);
     }
 }
 
@@ -131,7 +131,7 @@ export async function filterRawMaterials(shelfId, minQty, maxQty, productId){
         const parseMaxQty = parseFloat(maxQty);
         if(shelfId == null || isNaN(shelfId) || productId == null || isNaN(productId) ||
             isNaN(parseMinQty) || parseMinQty < 0 || isNaN(parseMaxQty) || parseMaxQty <= 0){
-            throw new Error("Dati filter parametri ne postoje");
+            throw new Error("Dati filter parametri: "+shelfId+" ,"+parseMinQty+" , "+parseMaxQty+" , "+productId+" ne daju ocekivani rezultat");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/filter`,{
             params:{
@@ -143,7 +143,7 @@ export async function filterRawMaterials(shelfId, minQty, maxQty, productId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom filtriranja po ID-iju za policu i proizvod kao i po min-max kolicini");
+        handleApiError(error,"Greska prilikom filtriranja po ID-iju "+shelfId+" za policu i proizvod "+productId+" kao i po min "+minQty+" - "+maxQty+" max kolicini");
     }
 }
 
@@ -151,7 +151,7 @@ export async function findByCurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data trenutna kolicina nije pronadjena");
+            throw new Error("Data trenutna kolicina "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/current-quantity`,{
             params:{currentQuantity:parseCurrentQuantity},
@@ -160,7 +160,7 @@ export async function findByCurrentQuantity(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po trenutnoj kolicini");
+        handleApiError(error,"Greska prilikom trazenja po trenutnoj kolicini "+currentQuantity);
     }
 }
 
@@ -168,7 +168,7 @@ export async function findByCurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data trenutna kolicina nije pronadjena");
+            throw new Error("Data trenutna kolicina manja od "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/current-quantity-less-than`,{
             params:{currentQuantity:parseCurrentQuantity},
@@ -177,7 +177,7 @@ export async function findByCurrentQuantityLessThan(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po trenutnoj kolicini manjoj od");
+        handleApiError(error,"Greska prilikom trazenja po trenutnoj kolicini manjoj od "+currentQuantity);
     }
 }
 
@@ -185,7 +185,7 @@ export async function findByCurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data trenutna kolicina nije pronadjena");
+            throw new Error("Data trenutna kolicina veca od "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/current-quantity-greater-than`,{
             params:{currentQuantity:parseCurrentQuantity},
@@ -194,7 +194,7 @@ export async function findByCurrentQuantityGreaterThan(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po trenutnoj kolicini vecoj od");
+        handleApiError(error,"Greska prilikom trazenja po trenutnoj kolicini vecoj od "+currentQuantity);
     }
 }
 
@@ -202,7 +202,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data kolicina za proizvod nije pronadjena");
+            throw new Error("Data kolicina "+parseCurrentQuantity+" za proizvod nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/product/current-quantity`,{
             params:{currentQuantity:parseCurrentQuantity},
@@ -211,7 +211,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Grska prilikom trazenja po trenutnoj kolicini proizvoda");
+        handleApiError(error,"Grska prilikom trazenja po trenutnoj kolicini "+currentQuantity+" proizvoda");
     }
 }
 
@@ -219,7 +219,7 @@ export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data kolicina za proizvod nije pronadjena");
+            throw new Error("Data kolicina veca od "+parseCurrentQuantity+" za proizvod nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/product/current-quantity-greater-than`,{
             params:{currentQuantity:parseCurrentQuantity},
@@ -228,7 +228,7 @@ export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Grska prilikom trazenja po trenutnoj kolicini proizvoda vecoj od");
+        handleApiError(error,"Grska prilikom trazenja po trenutnoj kolicini proizvoda vecoj od "+currentQuantity);
     }
 }
 
@@ -236,7 +236,7 @@ export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
-            throw new Error("Data kolicina za proizvod nije pronadjena");
+            throw new Error("Data kolicina manja od "+parseCurrentQuantity+" za proizvod nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/product/current-quantity-less-than`,{
             params:{currentQuantity:parseCurrentQuantity},
@@ -245,14 +245,14 @@ export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Grska prilikom trazenja po trenutnoj kolicini proizvoda manjoj od");
+        handleApiError(error,"Grska prilikom trazenja po trenutnoj kolicini proizvoda manjoj od "+currentQuantity);
     }
 }
 
 export async function findByShelf_Id(shelfId){
     try{
         if(shelfId == null || isNaN(shelfId)){
-            throw new Error("Dati ID za policu nije pronadjen");
+            throw new Error("Dati ID "+shelfId+" za policu nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/shelf/${shelfId}`,{
             headers:getHeader()
@@ -260,7 +260,7 @@ export async function findByShelf_Id(shelfId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ID-iju za policu");
+        handleApiError(error,"Greska prilikom trazenja po "+shelfId+" ID-iju za policu");
     }
 }
 
@@ -268,7 +268,7 @@ export async function countByShelf_RowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
         if(parseRowCount <= 0 || isNaN(parseRowCount)){
-            throw new Error("Dati red za policu nije pronadjen");
+            throw new Error("Dati red "+parseRowCount+" za policu nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/count/shelf/rows`,{
             params:{rowCount:parseRowCount},
@@ -277,7 +277,7 @@ export async function countByShelf_RowCount(rowCount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po redu police za sirovinu");
+        handleApiError(error,"Greska prilikom trazenja po "+rowCount+" redu police za sirovinu");
     }
 }
 
@@ -285,7 +285,7 @@ export async function countByShelf_Cols(cols){
     try{
         const parseCols = parseInt(cols,10);
         if(parseCols <= 0 || isNaN(parseCols)){
-            throw new Error("Data kolona za policu nije pronadjena");
+            throw new Error("Data kolona "+parseCols+" za policu nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/count/shelf/cols`,{
             params:{cols:parseCols},
@@ -294,7 +294,7 @@ export async function countByShelf_Cols(cols){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po koloni police za sirovinu");
+        handleApiError(error,"Greska prilikom trazenja po koloni "+cols+" police za sirovinu");
     }
 }
 
@@ -302,7 +302,7 @@ export async function findByShelfAndExactQuantity(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
-            throw new Error("Dati ID za policu i kolicinu nije pronadjen");
+            throw new Error("Dati ID "+shelfId+" za policu i kolicinu "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/shelf/${shelfId}/quantity-equal`,{
             params:{shelfId:shelfId, quantity:parseQuantity},
@@ -311,7 +311,7 @@ export async function findByShelfAndExactQuantity(shelfId, quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po polici i tacnoj kolicini");
+        handleApiError(error,"Greska prilikom trazenja po "+shelfId+" polici i tacnoj kolicini "+quantity);
     }
 }
 
@@ -319,7 +319,7 @@ export async function findByShelfAndQuantityGreaterThan(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
-            throw new Error("Dati ID za policu i kolicinu nije pronadjen");
+            throw new Error("Dati ID "+shelfId+" za policu i kolicinu vecu od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/shelf/${shelfId}/quantity-greater-than`,{
             params:{shelfId:shelfId, quantity:parseQuantity},
@@ -328,7 +328,7 @@ export async function findByShelfAndQuantityGreaterThan(shelfId, quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po polici i kolicini vecoj od");
+        handleApiError(error,"Greska prilikom trazenja po "+shelfId+" polici i kolicini vecoj od "+quantity);
     }
 }
 
@@ -336,7 +336,7 @@ export async function findByShelfAndQuantityLessThan(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
-            throw new Error("Dati ID za policu i kolicinu nije pronadjen");
+            throw new Error("Dati ID "+shelfId+" za policu i kolicinu manju od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/shelf/${shelfId}/quantity-less-than`,{
             params:{shelfId:shelfId, quantity:parseQuantity},
@@ -345,7 +345,7 @@ export async function findByShelfAndQuantityLessThan(shelfId, quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po polici i kolicini manjoj od");
+        handleApiError(error,"Greska prilikom trazenja po "+shelfId+" polici i kolicini manjoj od "+quantity);
     }
 }
 
@@ -353,7 +353,7 @@ export async function findByShelf_IdAndCurrentQuantityGreaterThan(shelfId, quant
     try{
         const parseQuantity = parseFloat(quantity);
         if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
-            throw new Error("Dati ID za policu i kolicinu nije pronadjen");
+            throw new Error("Dati ID "+shelfId+" za policu i kolicinu vecu od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/shelf/${shelfId}/current-quantity-greater-than`,{
             params:{shelfId:shelfId, quantity:parseQuantity},
@@ -362,7 +362,7 @@ export async function findByShelf_IdAndCurrentQuantityGreaterThan(shelfId, quant
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja ID-iju police i kolicine vece od");
+        handleApiError(error,"Greska prilikom trazenja ID-iju "+shelfId+" police i kolicine vece od "+quantity);
     }
 }
 
@@ -370,7 +370,7 @@ export async function findByShelf_IdAndCurrentQuantityLessThan(shelfId, quantity
     try{
         const parseQuantity = parseFloat(quantity);
         if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
-            throw new Error("Dati ID za policu i kolicinu nije pronadjen");
+            throw new Error("Dati ID "+shelfId+" za policu i kolicinu manju od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/shelf/${shelfId}/current-quantity-less-than`,{
             params:{shelfId:shelfId, quantity:parseQuantity},
@@ -379,14 +379,14 @@ export async function findByShelf_IdAndCurrentQuantityLessThan(shelfId, quantity
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja ID-iju police i kolicine manje od");
+        handleApiError(error,"Greska prilikom trazenja "+shelfId+" ID-iju police i kolicine manje od "+quantity);
     }
 }
 
 export async function findBySupplierType(supplierType){
     try{
         if(!isSupplierTypeValidated.includes(supplierType?.toUpperCase())){
-            throw new Error("Dati tip nabavke nije pronadjen");
+            throw new Error("Dati tip "+supplierType+" nabavke nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/supplierType`,{
             params:{supplierType:(supplierType || "").toUpperCase()},
@@ -395,14 +395,14 @@ export async function findBySupplierType(supplierType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu nabavke");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+supplierType+" nabavke");
     }
 }
 
 export async function findByStorageType(storageType){
     try{
         if(!isStorageTypeValidated.includes(storageType?.toUpperCase())){
-            throw new Error("Dati tip skladista nije pronadjen");
+            throw new Error("Dati tip "+storageType+" skladista nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/storageType`,{
             params:{storageType:(storageType || "").toUpperCase()},
@@ -411,14 +411,14 @@ export async function findByStorageType(storageType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu skladista");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+storageType+" skladista");
     }
 }
 
 export async function findByGoodsType(goodsType){
     try{
         if(!isGoodsTypeValidated.includes(goodsType?.toUpperCase())){
-            throw new Error("Dati tip robe nije pronadjen");
+            throw new Error("Dati tip "+goodsType+" robe nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/goodsType`,{
             params:{goodsType:(goodsType || "").toUpperCase()},
@@ -427,14 +427,14 @@ export async function findByGoodsType(goodsType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu robe");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+goodsType+" robe");
     }
 }
 
 export async function findByUnitMeasure(unitMeasure){
     try{
         if(!isUnitMeasureValid.includes(unitMeasure?.toUpperCase())){
-            throw new Error("Data jedinica mere nije pronadjena");
+            throw new Error("Data jedinica mere "+unitMeasure+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/rawMaterials/unitMeasure`,{
             params:{unitMeasure:(unitMeasure || "").toUpperCase()},
@@ -443,7 +443,7 @@ export async function findByUnitMeasure(unitMeasure){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska priliko trazenja po jedinici mere");
+        handleApiError(error,"Greska priliko trazenja po jedinici mere "+unitMeasure);
     }
 }
 

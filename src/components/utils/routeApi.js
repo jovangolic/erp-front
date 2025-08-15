@@ -46,7 +46,7 @@ export async function updateRoute({id, origin,destination,distanceKm}){
 export async function deleteRoute(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -61,7 +61,7 @@ export async function deleteRoute(id){
 export async function findOne(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -69,7 +69,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja jedne rute");
+        handleApiError(error, "Greska prilikom trazenja jedne rute po "+id+" id-iju");
     }
 }
 
@@ -88,7 +88,7 @@ export async function findAll(){
 export async function findByOrigin(origin){
     try{
         if(!origin || typeof origin !== "string" || origin.trim()===""){
-            throw new Error("Dati origin nije pronadjen");
+            throw new Error("Dati origin "+origin+" nije pronadjen");
         }
         const response = await api.get(url+`/origin`,{
             params:{
@@ -99,14 +99,14 @@ export async function findByOrigin(origin){
         return response.data;
     }   
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage po poreklu");
+        handleApiError(error, "Greska prilikom pretrage po poreklu "+origin);
     }
 }
 
 export async function findByDestination(destination){
     try{
         if(!destination || typeof destination !== "string" || destination.trim()===""){
-            throw new Error("Data destinacija nije pronadjena");
+            throw new Error("Data destinacija "+destination+" nije pronadjena");
         }
         const response = await api.get(url+`/destination`,{
             params:{
@@ -117,7 +117,7 @@ export async function findByDestination(destination){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po destinaciji");
+        handleApiError(error,"Greska prilikom pretrage po destinaciji "+destination);
     }
 }
 
@@ -125,7 +125,7 @@ export async function findByOriginAndDestination({origin, destination}){
     try{
         if(!origin || typeof origin !== "string" || origin.trim()==="" ||
         !destination || typeof destination !== "string" || destination.trim() === ""){
-            throw new Error("Origin i destinacija nisu pronadjeni");
+            throw new Error("Origin "+origin+" i destinacija "+destination+" nisu pronadjeni");
         }
         const response = await api.get(url+`/origin-destination`,{
             params:{
@@ -137,14 +137,14 @@ export async function findByOriginAndDestination({origin, destination}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska priliko pretrage po poreklu i destinaciji");
+        handleApiError(error,"Greska priliko pretrage po poreklu "+origin+" i destinaciji "+destination);
     }
 }
 
 export async function findByDistanceKmGreaterThan(distance) {
     try{
         if(isNaN(distance) || parseFloat(distance) <= 0){
-            throw new Error("Distanca mora biti broj veći od nule.");
+            throw new Error("Distanca veca od "+distance+" nije proinadjena");
         }
         const response = await api.get(url+`/distance-greater`,{
             params:{
@@ -155,14 +155,14 @@ export async function findByDistanceKmGreaterThan(distance) {
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Gredska prilikom pretrage prema distanci vecoj od");
+        handleApiError(error,"Gredska prilikom pretrage prema distanci vecoj od "+distance);
     }
 }
 
 export async function findByDistanceKmLessThan(distance){
     try{
         if(isNaN(distance) || parseFloat(distance) < 0){
-            throw new Error("Distanca mora biti nenegativan broj.");
+            throw new Error("Distanca manja od "+distance+" nije pronadjena");
         }
         const response = await api.get(url+`/distance-less`,{
             params:{
@@ -173,7 +173,7 @@ export async function findByDistanceKmLessThan(distance){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage prema distanci manjoj od");
+        handleApiError(error, "Greska prilikom pretrage prema distanci manjoj od "+distance);
     }
 }
 

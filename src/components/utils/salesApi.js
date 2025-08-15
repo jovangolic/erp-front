@@ -36,7 +36,7 @@ export async function createSales({buyerId, itemSales, createdAt, totalPrice, sa
 export async function updateSales({id, buyerId, itemSales, createdAt, totalPrice, salesDescription}) {
     try {
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !buyerId || !Array.isArray(itemSales) || itemSales.length === 0 ||
             !moment(createSales,moment.ISO_8601, true).isValid() ||
             isNaN(totalPrice) || parseFloat(totalPrice) <= 0 ||
@@ -68,8 +68,8 @@ export async function updateSales({id, buyerId, itemSales, createdAt, totalPrice
 
 export async function deleteSales(id){
     try{
-        if(!id){
-            throw new Error("Dati ID nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/sales/delete/sale/${id}`,{
             headers:getHeader()
@@ -87,7 +87,7 @@ export async function getByCreatedAtBetween({startDate, endDate}){
             !moment(startDate,moment.ISO_8601, true).isValid() ||
             !moment(endDate,moment.ISO_8601, true).isValid()
         ){
-            throw new Error("Opseg datuma mora biti ispravan");
+            throw new Error("Opseg datuma "+startDate+" - "+endDate+" mora biti ispravan");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/between-dates`,{
             params:{
@@ -99,7 +99,7 @@ export async function getByCreatedAtBetween({startDate, endDate}){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazanje izmedju datuma kreiranja");
+        handleApiError(error, "Greska prilikom trazanje izmedju opsega datuma "+startDate+" - "+endDate+" kreiranja");
     }
 }
 
@@ -107,7 +107,7 @@ export async function getByCreatedAtBetween({startDate, endDate}){
 export async function getByTotalPrice(totalPrice){
     try{
         if(isNaN(totalPrice) || parseFloat(totalPrice) <= 0){
-            throw new Error("Ukupna cena mora biti pozitivan broj");
+            throw new Error("Ukupna cena "+totalPrice+" mora biti pozitivan broj");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/sale/total-price`,{
             params:{
@@ -118,14 +118,14 @@ export async function getByTotalPrice(totalPrice){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazanje po ukupnoj ceni");
+        handleApiError(error, "Greska prilikom trazanje po ukupnoj ceni "+totalPrice);
     }
 }
 
 export async function findBySalesId(salesId){
     try{
-        if(!salesId){
-            throw new Error("Dati salesId nije pronadjen");
+        if(salesId == null || isNaN(salesId)){
+            throw new Error("Dati salesId "+salesId+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/sale/${salesId}`,{
             headers:getHeader()
@@ -133,14 +133,14 @@ export async function findBySalesId(salesId){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazanja po id-iju");
+        handleApiError(error, "Greska prilikom trazanja po "+salesId+" id-iju");
     }
 }
 
 export async function getSalesByDate(date){
     try{
         if (typeof date !== "string" || !moment(date, moment.ISO_8601, true).isValid()) {
-            throw new Error("Datum mora biti validan ISO string.");
+            throw new Error("Datum "+date+" mora biti validan ISO string.");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/sale-by-date`,{
             params:{
@@ -151,7 +151,7 @@ export async function getSalesByDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazanje prodaje po datumu");
+        handleApiError(error, "Greska prilikom trazanje prodaje po datumu "+date);
     }
 }
 
@@ -170,7 +170,7 @@ export async function getAllSales(){
 export async function findByBuyer_Id(buyerId){
     try{
         if(buyerId == null || isNaN(buyerId)){
-            throw new Error("Dati ID za kupca nije pronadjen");
+            throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/buyer/${buyerId}`,{
             headers:getHeader()
@@ -178,14 +178,14 @@ export async function findByBuyer_Id(buyerId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ID-iju kupca");
+        handleApiError(error,"Greska prilikom trazenja po "+buyerId+" ID-iju kupca");
     }
 }
 
 export async function findByBuyer_CompanyNameContainingIgnoreCase(buyerCompanyName){
     try{
         if(!buyerCompanyName || typeof buyerCompanyName !== "string" || buyerCompanyName.trim() === ""){
-            throw new Error("Dati naziv kupceve kompanije nije pronadjen");
+            throw new Error("Dati naziv "+buyerCompanyName+" kupceve kompanije nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-company-name`,{
             params:{buyerCompanyName:buyerCompanyName},
@@ -194,14 +194,14 @@ export async function findByBuyer_CompanyNameContainingIgnoreCase(buyerCompanyNa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po nazivu kupceve kompanije");
+        handleApiError(error,"Greska prilikom trazenja po nazivu "+buyerCompanyName+" kupceve kompanije");
     }
 }
 
 export async function findByBuyer_PibContainingIgnoreCase(buyerPib){
     try{
         if(!buyerPib || typeof buyerPib !== "string" || buyerPib.trim() === ""){
-            throw new Error("Dati PIB za kupca nije pronadjen");
+            throw new Error("Dati PIB "+buyerPib+" za kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-pib`,{
             params:{buyerPib:buyerPib},
@@ -210,14 +210,14 @@ export async function findByBuyer_PibContainingIgnoreCase(buyerPib){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po PIB-u kupca");
+        handleApiError(error,"Greska prilikom trazenja po "+buyerPib+" PIB-u kupca");
     }
 }
 
 export async function findByBuyer_AddressContainingIgnoreCase(buyerAddress){
     try{
         if(!buyerAddress || typeof buyerAddress !== "string" || buyerAddress.trim() === ""){
-            throw new Error("Data adresa kupca nije pronadjena");
+            throw new Error("Data adresa "+buyerAddress+" kupca nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-address`,{
             params:{buyerAddress:buyerAddress},
@@ -226,14 +226,14 @@ export async function findByBuyer_AddressContainingIgnoreCase(buyerAddress){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja adrese kupca");
+        handleApiError(error,"Greska prilikom trazenja adrese "+buyerAddress+" kupca");
     }
 }
 
 export async function findByBuyer_ContactPerson(contactPerson){
     try{
         if(!contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === ""){
-            throw new Error("Data kontakt-osoba nije pronadjena");
+            throw new Error("Data kontakt-osoba "+contactPerson+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-contact-person`,{
             params:{contactPerson:contactPerson},
@@ -242,14 +242,14 @@ export async function findByBuyer_ContactPerson(contactPerson){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po kontakt-osobi");
+        handleApiError(error,"Greska prilikom trazenja po kontakt-osobi "+contactPerson);
     }
 }
 
 export async function findByBuyer_EmailContainingIgnoreCase(buyerEmail){
     try{
         if(!buyerEmail || typeof buyerEmail !== "string" || buyerEmail.trim() === ""){
-            throw new Error("Dati email kupca nije pronadjen");
+            throw new Error("Dati email "+buyerEmail+" kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-email`,{
             params:{buyerEmail:buyerEmail},
@@ -258,14 +258,14 @@ export async function findByBuyer_EmailContainingIgnoreCase(buyerEmail){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po emailu kupca");
+        handleApiError(error,"Greska prilikom trazenja po emailu "+buyerEmail+" kupca");
     }
 }
 
 export async function findByBuyer_PhoneNumber(buyerPhoneNumber){
     try{
         if(!buyerPhoneNumber || typeof buyerPhoneNumber !== "string" || buyerPhoneNumber.trim() === ""){
-            throw new Error("Dati broj telefona kupca nije pronadjen");
+            throw new Error("Dati broj telefona "+buyerPhoneNumber+" kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-phone-number`,{
             params:{buyerPhoneNumber:buyerPhoneNumber},
@@ -274,7 +274,7 @@ export async function findByBuyer_PhoneNumber(buyerPhoneNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po broju telefona kupca");
+        handleApiError(error,"Greska prilikom trazenja po broju telefona "+buyerPhoneNumber+" kupca");
     }
 }
 
@@ -282,7 +282,7 @@ export async function findByTotalPriceGreaterThan(totalPrice){
     try{    
         const parseTotalPrice = parseFloat(totalPrice);
         if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
-            throw new Error("Data ukupna cena nije pronadjena");
+            throw new Error("Data ukupna cena veca od "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-total-price-max`,{
             params:{totalPrice:parseTotalPrice},
@@ -291,7 +291,7 @@ export async function findByTotalPriceGreaterThan(totalPrice){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ukupnoj ceni vecoj od");
+        handleApiError(error,"Greska prilikom trazenja po ukupnoj ceni vecoj od "+ totalPrice);
     }
 }
 
@@ -299,7 +299,7 @@ export async function findByTotalPriceLessThan(totalPrice){
     try{    
         const parseTotalPrice = parseFloat(totalPrice);
         if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
-            throw new Error("Data ukupna cena nije pronadjena");
+            throw new Error("Data ukupna cena manja od "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search/by-total-price-min`,{
             params:{totalPrice:parseTotalPrice},
@@ -308,7 +308,7 @@ export async function findByTotalPriceLessThan(totalPrice){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ukupnoj ceni manjoj od");
+        handleApiError(error,"Greska prilikom trazenja po ukupnoj ceni manjoj od "+totalPrice);
     }
 }
 
@@ -326,7 +326,8 @@ export async function searchSales({buyerId, companyName, pib, email, phoneNumber
             !contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === "" ||
             isNaN(parseMinTotalPrice) || parseMinTotalPrice <= 0 || isNaN(parseMaxTotalPrice) || parseMaxTotalPrice <= 0
         ){
-            throw new Error("Dati parametri za pretragu nisu validni");
+            throw new Error("Dati parametri za pretragu: "+buyerId+","+companyName+","+pib+","+email+","+
+                phoneNumber+","+address+","+contactPerson+","+parseMinTotalPrice+","+parseMaxTotalPrice+" nisu validni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/sales/search`,{
             params:{
@@ -344,7 +345,8 @@ export async function searchSales({buyerId, companyName, pib, email, phoneNumber
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po parametrima");
+        handleApiError(error,"Greska prilikom pretrage po parametrima: "+buyerId+","+companyName+","+pib+","+email+","+
+                phoneNumber+","+address+","+contactPerson+","+parseMinTotalPrice+","+parseMaxTotalPrice);
     }
 }
 

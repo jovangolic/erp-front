@@ -39,7 +39,7 @@ export async function createSalesOrder(buyerId, items, orderDate, totalAmount, n
 export async function updateSalesOrder({id,buyerId, items, orderDate, totalAmount, note, status, invoiceId, orderNumber} ){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !buyerId ||!Array.isArray(items) || items.length === 0 ||
             !moment(orderDate, moment.ISO_8601, true).isValid() ||
             isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
@@ -69,8 +69,8 @@ export async function updateSalesOrder({id,buyerId, items, orderDate, totalAmoun
 
 export async function deleteSalesOrder(id){
     try{
-        if(!id){
-            throw new Error("Dati ID nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -84,8 +84,8 @@ export async function deleteSalesOrder(id){
 
 export async function getSalesOrderById(id){
     try{
-        if(!id){
-            throw new Error("Dati ID nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
@@ -93,7 +93,7 @@ export async function getSalesOrderById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pronalazenja jedne prodajne narudzbine");
+        handleApiError(error, "Greska prilikom pronalazenja jedne prodajne narudzbine po "+id+" id-iju");
     }
 }
 
@@ -112,7 +112,7 @@ export async function getAllSalesOrders(){
 export async function findByBuyer_Id(buyerId){
     try{
         if(buyerId == null || isNaN(buyerId)){
-            throw new Error("Dati ID za kupca nije pronadjen");
+            throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/buyer/${buyerId}`,{
             headers:getHeader()
@@ -120,14 +120,14 @@ export async function findByBuyer_Id(buyerId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po kupcevom ID-iju");
+        handleApiError(error,"Greska prilikom trazenja po kupcevom "+buyerId+" ID-iju");
     }
 }
 
 export async function findByBuyer_CompanyNameContainingIgnoreCase(companyName){
     try{
         if(!companyName || typeof companyName !== "string" || companyName.trim() === ""){
-            throw new Error("Dati naziv kompanije kupca nije pronadjen");
+            throw new Error("Dati naziv "+companyName+" kompanije kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/byCompanyName`,{
             params:{companyName:companyName},
@@ -136,14 +136,14 @@ export async function findByBuyer_CompanyNameContainingIgnoreCase(companyName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po nazivu kupceve kompanije");
+        handleApiError(error,"Greska prilikom trazenja po nazivu "+companyName+" kupceve kompanije");
     }
 }
 
 export async function findByBuyer_PibContainingIgnoreCase(pib){
     try{
         if(!pib || typeof pib !== "string" || pib.trim() === ""){
-            throw new Error("Dati PIB  kupca nije pronadjen");
+            throw new Error("Dati PIB "+pib+"  kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/byPib`,{
             params:{pib:pib},
@@ -152,14 +152,14 @@ export async function findByBuyer_PibContainingIgnoreCase(pib){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po nazivu kupcevog PIB broja");
+        handleApiError(error,"Greska prilikom trazenja po nazivu kupcevog "+pib+" PIB broja");
     }
 }
 
 export async function findByBuyer_Address(address){
     try{
         if(!address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Data adresa kupca nije pronadjen");
+            throw new Error("Data adresa "+address+" kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/byAddress`,{
             params:{address:address},
@@ -168,14 +168,14 @@ export async function findByBuyer_Address(address){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po adresi kupceve firme");
+        handleApiError(error,"Greska prilikom trazenja po adresi "+address+" kupceve firme");
     }
 }
 
 export async function findByBuyer_ContactPerson(contactPerson){
     try{
         if(!contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === ""){
-            throw new Error("Dati kontakt kupca nije pronadjen");
+            throw new Error("Dati kontakt kupca "+contactPerson+"  nije pronadjen");
         }
         const response = await api.get(url+`/search/byContactPerson`,{
             params:{contactPerson:contactPerson},
@@ -184,14 +184,14 @@ export async function findByBuyer_ContactPerson(contactPerson){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po kontakt osobi");
+        handleApiError(error,"Greska prilikom trazenja po kontakt osobi "+contactPerson);
     }
 }
 
 export async function findByBuyer_EmailContainingIgnoreCase(email){
     try{
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati email kupca nije pronadjen");
+            throw new Error("Dati email "+email+" kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/byEmail`,{
             params:{email:email},
@@ -200,14 +200,14 @@ export async function findByBuyer_EmailContainingIgnoreCase(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po emailu za kupca");
+        handleApiError(error,"Greska prilikom trazenja po emailu "+email+" za kupca");
     }
 }
 
 export async function findByBuyer_PhoneNumberContainingIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj telefona kupca nije pronadjen");
+            throw new Error("Dati broj telefona "+phoneNumber+" kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/byPhoneNumber`,{
             params:{phoneNumber:phoneNumber},
@@ -216,14 +216,14 @@ export async function findByBuyer_PhoneNumberContainingIgnoreCase(phoneNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po broku telefona za kupca");
+        handleApiError(error,"Greska prilikom trazenja po broju telefona "+phoneNumber+" za kupca");
     }
 }
 
 export async function findByInvoice_InvoiceNumberContainingIgnoreCase(invoiceNumber){
     try{
         if(!invoiceNumber || typeof invoiceNumber !== "string" || invoiceNumber.trim() === ""){
-            throw new Error("Dati broj fakture nije pronadjen");
+            throw new Error("Dati broj fakture "+invoiceNumber+" nije pronadjen");
         }
         const response = await api.get(url+`/search/byInvoiceNumber`,{
             params:{invoiceNumber:invoiceNumber},
@@ -232,7 +232,7 @@ export async function findByInvoice_InvoiceNumberContainingIgnoreCase(invoiceNum
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po broju fakture");
+        handleApiError(error,"Greska prilikom trazenja po broju fakture "+invoiceNumber);
     }
 }
 
@@ -240,7 +240,7 @@ export async function findByInvoice_TotalAmount(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
         if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
-                throw new Error("Data ukupna kolicina za fakturu nije pronadjena");
+                throw new Error("Data ukupna kolicina "+parseTotalAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/byTotalAmount`,{
             params:{totalAmount:parseTotalAmount},
@@ -249,7 +249,7 @@ export async function findByInvoice_TotalAmount(totalAmount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Grska prilikom trazenja po ukupnoj kolicini za fakturu");
+        handleApiError(error,"Grska prilikom trazenja po ukupnoj kolicini "+totalAmount+" za fakturu");
     }
 }
 
@@ -257,7 +257,7 @@ export async function findByInvoice_TotalAmountGreaterThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
         if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
-                throw new Error("Data ukupna kolicina veca od za fakturu nije pronadjena");
+                throw new Error("Data ukupna kolicina veca od "+parseTotalAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/totalAmount/greater-than`,{
             params:{totalAmount:parseTotalAmount},
@@ -266,7 +266,7 @@ export async function findByInvoice_TotalAmountGreaterThan(totalAmount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Grska prilikom trazenja po ukupnoj kolicini vecoj od za fakturu ");
+        handleApiError(error,"Grska prilikom trazenja po ukupnoj kolicini vecoj od "+totalAmount+" za fakturu ");
     }
 }
 
@@ -274,7 +274,7 @@ export async function findByInvoice_TotalAmountLessThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
         if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
-                throw new Error("Data ukupna kolicina manja od za fakturu nije pronadjena");
+                throw new Error("Data ukupna kolicina manja od "+parseTotalAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/totalAmount/less-than`,{
             params:{totalAmount:parseTotalAmount},
@@ -283,7 +283,7 @@ export async function findByInvoice_TotalAmountLessThan(totalAmount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Grska prilikom trazenja po ukupnoj kolicini manoj od za fakturu ");
+        handleApiError(error,"Grska prilikom trazenja po ukupnoj kolicini manoj od "+totalAmount+" za fakturu ");
     }
 }
 
@@ -292,7 +292,7 @@ export async function findByInvoice_TotalAmountBetween(min, max){
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
         if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
-            throw new Error("Dati opseg za ukupnu kolicinu nije pronadjen");
+            throw new Error("Dati opseg "+parseMin+" - "+parseMax+" za ukupnu kolicinu nije pronadjen");
         }
         const response = await api.get(url+`/search/totalAmount/between`,{
             params:{
@@ -304,14 +304,14 @@ export async function findByInvoice_TotalAmountBetween(min, max){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po opsegu ukupne kolicine");
+        handleApiError(error,"Greska prilikom trazenja po opsegu "+min+" - "+max+" ukupne kolicine");
     }
 }
 
 export async function findByInvoice_IssueDate(issueDate){
     try{
         if(!moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum izdavanja fakture nije pronadjen");
+            throw new Error("Dati datum "+issueDate+" izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issueDate`,{
             params:{issueDate:moment(issueDate).format("YYYY-MM-DDTHH:mm:ss")},
@@ -320,14 +320,14 @@ export async function findByInvoice_IssueDate(issueDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu izdavanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu "+issueDate+" izdavanja fakture");
     }
 }
 
 export async function findByInvoice_IssueDateAfter(date){
     try{
         if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum posle izdavanja fakture nije pronadjen");
+            throw new Error("Dati datum posle "+date+" izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issue-date-after`,{
             params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
@@ -336,14 +336,14 @@ export async function findByInvoice_IssueDateAfter(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu posle izdavanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu posle "+date+" izdavanja fakture");
     }
 }
 
 export async function findByInvoice_IssueDateBefore(date){
     try{
         if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum pre izdavanja fakture nije pronadjen");
+            throw new Error("Dati datum pre "+date+" izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issue-date-before`,{
             params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
@@ -352,7 +352,7 @@ export async function findByInvoice_IssueDateBefore(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu pre izdavanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu pre "+date+" izdavanja fakture");
     }
 }
 
@@ -360,7 +360,7 @@ export async function findByInvoice_IssueDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opseg datum izdavanja fakture nije pronadjen");
+            throw new Error("Dati opseg "+start+" - "+end+" datum izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issue-date-range`,{
             params:{start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
@@ -371,14 +371,14 @@ export async function findByInvoice_IssueDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po opsegu datuma izdavanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po opsegu "+start+" - "+end+" datuma izdavanja fakture");
     }
 }
 
 export async function findByInvoice_DueDate(dueDate){
     try{
         if(!moment(dueDate,"YYYY-MMM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum dospeca fakture nije pronadjen");
+            throw new Error("Dati datum dospeca "+dueDate+" fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date`,{
             params:{dueDate:moment(dueDate).format("YYYY-MMM-DDTHH:mm:ss")},
@@ -387,14 +387,14 @@ export async function findByInvoice_DueDate(dueDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu dospeca fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu dospeca "+dueDate+" fakture");
     }
 }
 
 export async function findByInvoice_DueDateAfter(date){
     try{
         if(!moment(date,"YYYY-MMM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum posle dospeca fakture nije pronadjen");
+            throw new Error("Dati datum posle "+dueDate+" dospeca fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date-after`,{
             params:{date:moment(date).format("YYYY-MMM-DDTHH:mm:ss")},
@@ -403,14 +403,14 @@ export async function findByInvoice_DueDateAfter(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu posle dospeca fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu posle "+dueDate+" dospeca fakture");
     }
 }
 
 export async function findByInvoice_DueDateBefore(date){
     try{
         if(!moment(date,"YYYY-MMM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum pre dospeca fakture nije pronadjen");
+            throw new Error("Dati datum pre "+dueDate+" dospeca fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date-before`,{
             params:{date:moment(date).format("YYYY-MMM-DDTHH:mm:ss")},
@@ -419,7 +419,7 @@ export async function findByInvoice_DueDateBefore(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu pre dospeca fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu pre "+dueDate+" dospeca fakture");
     }
 }
 
@@ -429,7 +429,7 @@ export async function findByInvoice_DueDateBetween({start, end}){
             !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYY-MM-DDTHH:mm:ss",true).isValid()
         ){
-            throw new Error("Dati datum opsega dospeca fakture nije pronadjen");
+            throw new Error("Dati datum opsega "+start+" - "+end+" dospeca fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date-range"`,{
             params:{
@@ -441,14 +441,14 @@ export async function findByInvoice_DueDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po opsegu datuma dospeca fakture");
+        handleApiError(error,"Greska prilikom trazenja po opsegu "+start+" - "+end+" datuma dospeca fakture");
     }
 }
 
 export async function findByInvoice_NoteContainingIgnoreCase(note){
     try{
         if(!note || typeof note !=="string" || normalizeUnits.trim() === ""){
-            throw new Error("Data nota fakture nije pronadjena");
+            throw new Error("Data beleska "+note+" fakture nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice-note`,{
             params:{note:note},
@@ -457,14 +457,14 @@ export async function findByInvoice_NoteContainingIgnoreCase(note){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po noti fakture");
+        handleApiError(error,"Greska prilikom trazenja po belesci "+note+" fakture");
     }
 }
 
 export async function findByInvoice_Buyer_Id(buyerId){
     try{
         if(isNaN(buyerId) || buyerId == null){
-            throw new Error("Dati ID kupca za fakturu nije pronadjen");
+            throw new Error("Dati ID "+buyerId+" kupca za fakturu nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/buyer/${buyerId}`,{
             headers:getHeader()
@@ -472,14 +472,14 @@ export async function findByInvoice_Buyer_Id(buyerId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja ID-ja po fakturi kupca");
+        handleApiError(error,"Greska prilikom trazenja  ID-ja "+buyerId+" po fakturi kupca");
     }
 }
 
 export async function findByInvoice_RelatedSales_Id(relatedSalesId){
     try{
         if(isNaN(relatedSalesId) || relatedSalesId == null){
-            throw new Error("Dati ID za prodaju fakture nije pronadjen");
+            throw new Error("Dati ID "+relatedSalesId+" za prodaju fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/relatedSales/${relatedSalesId}`,{
             headers:getHeader()
@@ -487,14 +487,14 @@ export async function findByInvoice_RelatedSales_Id(relatedSalesId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ID-iju prodaje za fakturu");
+        handleApiError(error,"Greska prilikom trazenja po ID-iju "+relatedSalesId+" prodaje za fakturu");
     }
 }
 
 export async function findByInvoice_Payment_Id(paymentId){
     try{
         if(isNaN(paymentId) || paymentId == null){
-            throw new Error("Dati ID za placanje fakture nije pronadjen");
+            throw new Error("Dati ID "+paymentId+" za placanje fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment/${paymentId}`,{
             headers:getHeader()
@@ -502,7 +502,7 @@ export async function findByInvoice_Payment_Id(paymentId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ID-ju za placanje fakture");
+        handleApiError(error,"Greska prilikom trazenja po ID-ju "+paymentId+" za placanje fakture");
     }
 }
 
@@ -510,7 +510,7 @@ export async function findByInvoice_Payment_Amount(amount){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0){
-            throw new Error("Data kolicina placanja za fakturu nije pronadjena");
+            throw new Error("Data kolicina placanja "+parseAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice/payment/amount`,{
             params:{amount:parseAmount},
@@ -519,7 +519,7 @@ export async function findByInvoice_Payment_Amount(amount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazaenja po kolicini placanja za fakturu");
+        handleApiError(error,"Greska prilikom trazaenja po kolicini "+amount+" placanja za fakturu");
     }
 }
 
@@ -527,7 +527,7 @@ export async function findByInvoice_Payment_AmountGreaterThan(amount){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0){
-            throw new Error("Data kolicina placanja veca od za fakturu nije pronadjena");
+            throw new Error("Data kolicina placanja veca od "+parseAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice/payment/amount-greater-than`,{
             params:{amount:parseAmount},
@@ -536,7 +536,7 @@ export async function findByInvoice_Payment_AmountGreaterThan(amount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazaenja po kolicini placanja vecoj od za fakturu");
+        handleApiError(error,"Greska prilikom trazaenja po kolicini placanja vecoj od "+amount+" za fakturu");
     }
 }
 
@@ -544,7 +544,7 @@ export async function findByInvoice_Payment_AmountLessThan(amount){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0){
-            throw new Error("Data kolicina placanja manjoj od za fakturu nije pronadjena");
+            throw new Error("Data kolicina placanja manjoj od "+parseAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice/payment/amount-less-than`,{
             params:{amount:parseAmount},
@@ -553,14 +553,14 @@ export async function findByInvoice_Payment_AmountLessThan(amount){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazaenja po kolicini placanja manjoj od za fakturu");
+        handleApiError(error,"Greska prilikom trazaenja po kolicini placanja manjoj od "+amount+" za fakturu");
     }
 }
 
 export async function findByInvoice_Payment_Method(method){
     try{
         if(!isPaymentMethodValid.includes(method?.toUpperCase())){
-            throw new Error("Dati metod placanja fakture nije pronadjen");
+            throw new Error("Dati metod "+method+" placanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment-method`,{
             params:{method:(method || "").toUpperCase()},
@@ -569,14 +569,14 @@ export async function findByInvoice_Payment_Method(method){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po metodi placanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po metodi "+method+" placanja fakture");
     }
 }
 
 export async function findByInvoice_Payment_Status(status){
     try{
         if(!isPaymentStatusValid.includes(method?.toUpperCase())){
-            throw new Error("Dati status placanja fakture nije pronadjen");
+            throw new Error("Dati status "+status+" placanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment-status`,{
             params:{status:(status || "").toUpperCase()},
@@ -585,14 +585,14 @@ export async function findByInvoice_Payment_Status(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po statusu placanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po statusu "+status+" placanja fakture");
     }
 }
 
 export async function findByInvoice_Payment_ReferenceNumberLikeIgnoreCase(referenceNumber){
     try{    
         if(!referenceNumber || typeof referenceNumber !== "string" || referenceNumber.trim() === ""){
-            throw new Error("Dati referentni broj placanja fakture nije pronadjen");
+            throw new Error("Dati referentni broj "+referenceNumber+" placanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment-reference-number`,{
             params:{referenceNumber:referenceNumber},
@@ -601,14 +601,14 @@ export async function findByInvoice_Payment_ReferenceNumberLikeIgnoreCase(refere
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po referntnom broju placanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po referntnom broju "+referenceNumber+" placanja fakture");
     }
 }
 
 export async function findByInvoice_Payment_PaymentDate(paymentDate){
     try{
         if(!moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum placanja fakture nije p[ronadjen");
+            throw new Error("Dati datum "+paymentDate+" placanja fakture nije p[ronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment-date`,{
             params:{paymentDate:moment(paymentDate).format("YYYY-MM-DDTHH:mm:ss")},
@@ -617,7 +617,7 @@ export async function findByInvoice_Payment_PaymentDate(paymentDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po datumu placanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po datumu "+paymentDate+" placanja fakture");
     }
 }
 
@@ -627,7 +627,7 @@ export async function findByInvoice_Payment_PaymentDateBetween({startDate, endDa
             !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         ){
-            throw new Error("Dati opseg datuma placanja fakture nije pronadjen");
+            throw new Error("Dati opseg "+startDate+" - "+endDate+" datuma placanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment-date-range`,{
             params:{
@@ -639,14 +639,14 @@ export async function findByInvoice_Payment_PaymentDateBetween({startDate, endDa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po opsegu datuma placanja fakture");
+        handleApiError(error,"Greska prilikom trazenja po opsegu "+startDate+" - "+endDate+" datuma placanja fakture");
     }
 }
 
 export async function findByInvoice_CreatedBy_Id(userId){
     try{
         if(isNaN(userId) || userId == null){
-            throw new Error("Dati ID za lice koje je kreiralo fakturu nije pronadjeno");
+            throw new Error("Dati ID "+userId+" za lice koje je kreiralo fakturu nije pronadjeno");
         }
         const response = await api.get(url+`/search/invoice/createdBy/${userId}`,{
             headers:getHeader()
@@ -654,14 +654,14 @@ export async function findByInvoice_CreatedBy_Id(userId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po licu koji je kreirao fakturu");
+        handleApiError(error,"Greska prilikom trazenja po id "+userId+" licu koji je kreirao fakturu");
     }
 }
 
 export async function findByInvoice_CreatedBy_EmailLikeIgnoreCase(email){
     try{
         if(!email || typeof email !=="string" || email.trim() === ""){
-            throw new Error("Dati email zaposleog za kreiranje fakture nije pronadjen");
+            throw new Error("Dati email "+email+" zaposleog za kreiranje fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/createdBy-email`,{
             params:{email:email},
@@ -670,14 +670,14 @@ export async function findByInvoice_CreatedBy_EmailLikeIgnoreCase(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja zaposlenog po email-u koji je kreirao fakturu");
+        handleApiError(error,"Greska prilikom trazenja zaposlenog po "+email+" email-u koji je kreirao fakturu");
     }
 }
 
 export async function findByInvoice_CreatedBy_Address(address){
     try{
         if(!address || typeof address !=="string" || address.trim() === ""){
-            throw new Error("Data adresa zaposleog za kreiranje fakture nije pronadjen");
+            throw new Error("Data adresa "+address+" zaposleog za kreiranje fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/createdBy-address`,{
             params:{address:address},
@@ -686,14 +686,14 @@ export async function findByInvoice_CreatedBy_Address(address){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja zaposlenog po adresi koji je kreirao fakturu");
+        handleApiError(error,"Greska prilikom trazenja zaposlenog po adresi "+address+" koji je kreirao fakturu");
     }
 }
 
 export async function findByInvoice_CreatedBy_PhoneNumberLikeIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj-telefona zaposleog za kreiranje fakture nije pronadjen");
+            throw new Error("Dati broj-telefona "+phoneNumber+" zaposleog za kreiranje fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/createdBy-phone-number`,{
             params:{phoneNumber:phoneNumber},
@@ -702,7 +702,7 @@ export async function findByInvoice_CreatedBy_PhoneNumberLikeIgnoreCase(phoneNum
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja zaposlenog po broju-telefona koji je kreirao fakturu");
+        handleApiError(error,"Greska prilikom trazenja zaposlenog po broju-telefona "+phoneNumber+" koji je kreirao fakturu");
     }
 }
 
@@ -710,7 +710,7 @@ export async function findByInvoice_CreatedBy_FirstNameLikeIgnoreCaseAndLastName
     try{
         if(!firstName || typeof firstName !=="string" || firstName.trim() === "" || 
             !lastName || typeof lastName !=="string" || lastName.trim() === ""){
-            throw new Error("Dato ime i prezime zaposleog za kreiranje fakture nije pronadjen");
+            throw new Error("Dato ime "+firstName+" i prezime "+lastName+" zaposleog za kreiranje fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/createdBy-fullName`,{
             params:{firstName:firstName, lastName:lastName},
@@ -719,7 +719,7 @@ export async function findByInvoice_CreatedBy_FirstNameLikeIgnoreCaseAndLastName
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja zaposlenog po imenu i prezimenu koji je kreirao fakturu");
+        handleApiError(error,"Greska prilikom trazenja zaposlenog po imenu "+firstName+" i prezimenu "+lastName+" koji je kreirao fakturu");
     }
 }
 

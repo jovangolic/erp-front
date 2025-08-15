@@ -60,7 +60,7 @@ export async function create(data){
 
 export async function update({id, data}){
     try{
-        if(!id || !isValidOutboundDelivery({ ...data, validateStatus })){
+        if(id == null || isNaN(id) || !isValidOutboundDelivery({ ...data, validateStatus })){
             throw new Error("Sva polja moraju biti popunjena i validna."); 
         }
         const response = await api.put(url+`/update/${id}`,data,{
@@ -75,8 +75,8 @@ export async function update({id, data}){
 
 export async function deleteOutboundDelivery(id){
     try{
-        if(!id){
-            throw new Error("Dati id nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -90,8 +90,8 @@ export async function deleteOutboundDelivery(id){
 
 export async function findOne(id){
     try{
-        if(!id){
-            throw new Error("Dati ID nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -129,7 +129,7 @@ export async function findByStatus(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trqazenja po statusu");
+        handleApiError(error,"Greska prilikom traazenja po statusu "+status);
     }
 }
 
@@ -151,14 +151,14 @@ export async function findByDeliveryDateBetween({from, to}) {
     return response.data;
   } 
     catch (error) {
-    handleApiError(error, "Greska prilikom trazenja prema dostavi datuma opsega");
+    handleApiError(error, "Greska prilikom trazenja prema dostavi datuma opsega "+from+" - "+to);
   }
 }
 
 export async function findByBuyerId(buyerId){
     try{
         if(!buyerId){
-            throw new Error("ID prenosa mora biti prosledjen");
+            throw new Error("ID "+buyerId+" prenosa mora biti prosledjen");
         }
         const response = await api.get(url+`/buyer/${buyerId}`,{
             headers:getHeader()
@@ -166,7 +166,7 @@ export async function findByBuyerId(buyerId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prema trazenju po buyerId-ju");
+        handleApiError(error,"Greska prema trazenju po buyerId-ju "+buyerId);
     }
 }
 
@@ -205,7 +205,7 @@ export async function deleteAllByIds(ids) {
 export async function findByBuyer_CompanyName(companyName){
     try{
         if(!companyName || typeof companyName !== "string" || companyName.trim() === ""){
-            throw new Error("Dati naziv kompanije kupca nije pronadjen");
+            throw new Error("Dati naziv "+companyName+" kompanije kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/buyer-company-name`,{
             param:{companyName:companyName},
@@ -214,14 +214,14 @@ export async function findByBuyer_CompanyName(companyName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv kompanije za kupca");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+companyName+"kompanije za kupca");
     }
 }
 
 export async function findByBuyer_Address(address){
     try{
         if(!address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Data adresa kupca nije pronadjena");
+            throw new Error("Data adresa "+address+" kupca nije pronadjena");
         }
         const response = await api.get(url+`/search/buyer-address`,{
             param:{address:address},
@@ -230,14 +230,14 @@ export async function findByBuyer_Address(address){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli adresu za kupca");
+        handleApiError(error,"Trenutno nismo pronasli adresu "+address+" za kupca");
     }
 }
 
 export async function findByBuyer_ContactPerson(contactPerson){
     try{
         if(!contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === ""){
-            throw new Error("Data kontakt-osoba za kupca nije pronadjena");
+            throw new Error("Data kontakt-osoba "+contactPerson+" za kupca nije pronadjena");
         }
         const response = await api.get(url+`/search/buyer-contact-person`,{
             param:{contactPerson:contactPerson},
@@ -246,14 +246,14 @@ export async function findByBuyer_ContactPerson(contactPerson){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kontakt-osobu za kupca");
+        handleApiError(error,"Trenutno nismo pronasli kontakt-osobu "+contactPerson+" za kupca");
     }
 }
 
 export async function findByBuyer_EmailLikeIgnoreCase(email){
     try{
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati email za kupca nije pronadjen");
+            throw new Error("Dati email "+email+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/buyer-email`,{
             param:{email:email},
@@ -262,14 +262,14 @@ export async function findByBuyer_EmailLikeIgnoreCase(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli email za kupca");
+        handleApiError(error,"Trenutno nismo pronasli email "+email+" za kupca");
     }
 }
 
 export async function findByBuyer_PhoneNumberLikeIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj-telefona za kupca nije pronadjen");
+            throw new Error("Dati broj-telefona "+phoneNumber+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/search/buyer-phone-number`,{
             param:{phoneNumber:phoneNumber},
@@ -278,14 +278,14 @@ export async function findByBuyer_PhoneNumberLikeIgnoreCase(phoneNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj-telefona za kupca");
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona "+phoneNumber+" za kupca");
     }
 }
 
 export async function findByDeliveryDate(deliveryDate){
     try{
         if(!moment(deliveryDate, "YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum dostave nije pronadjen");
+            throw new Error("Dati datum "+deliveryDate+" dostave nije pronadjen");
         }
         const response = await api.get(url+`/delivery-date`,{
             params:{
@@ -296,14 +296,14 @@ export async function findByDeliveryDate(deliveryDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dati datum dostave");
+        handleApiError(error,"Trenutno nismo pronasli dati "+deliveryDate+" datum dostave");
     }
 }
 
 export async function findByDeliveryDateAfter(deliveryDate){
     try{
         if(!moment(deliveryDate, "YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum dostave posle, nije pronadjen");
+            throw new Error("Dati datum dostave posle "+deliveryDate+", nije pronadjen");
         }
         const response = await api.get(url+`/delivery-date-after`,{
             params:{
@@ -314,14 +314,14 @@ export async function findByDeliveryDateAfter(deliveryDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum posle za dostavu");
+        handleApiError(error,"Trenutno nismo pronasli datum posle "+deliveryDate+" za dostavu");
     }
 }
 
 export async function findByDeliveryDateBefore(deliveryDate){
     try{
         if(!moment(deliveryDate, "YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum dostave pre, nije pronadjen");
+            throw new Error("Dati datum dostave pre "+deliveryDate+", nije pronadjen");
         }
         const response = await api.get(url+`/delivery-date-before`,{
             params:{
@@ -332,6 +332,6 @@ export async function findByDeliveryDateBefore(deliveryDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum pre za dostavu");
+        handleApiError(error,"Trenutno nismo pronasli datum pre "+deliveryDate+" za dostavu");
     }
 }

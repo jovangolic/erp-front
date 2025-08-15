@@ -45,7 +45,7 @@ export async function update({id, name, contactPhone, email,website}){
 export async function deleteLogistric(id){
     try{
         if(!id){
-            throw new Error("Dati ID za LogisticProvider nije pronadjen");
+            throw new Error("Dati ID "+id+" za LogisticProvider nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -60,7 +60,7 @@ export async function deleteLogistric(id){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za LogisticProvider nije pronadjen");
+            throw new Error("Dati ID "+id+" za LogisticProvider nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -68,7 +68,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog");
+        handleApiError(error, "Greska prilikom dobavljanja jednog logistickog-provajdero po "+id+" id-iju");
     }
 }
 
@@ -87,7 +87,7 @@ export async function findAll(){
 export async function findyName(name){
     try{
         if(!name || typeof name !=="string" || name.trim() ===""){
-            throw new Error("Dati naziv za LogisticProvider nije pronadjen");
+            throw new Error("Dati naziv "+name+" za LogisticProvider nije pronadjen");
         }
         const response = await api.get(url+`/by-name`,{
             params:{
@@ -98,14 +98,14 @@ export async function findyName(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage po nazivu");
+        handleApiError(error, "Greska prilikom pretrage po nazivu "+name);
     }
 }
 
 export async function findByNameContainingIgnoreCase(fragment){
     try{
         if(!fragment || typeof fragment !=="string" || fragment.trim() ===""){
-            throw new Error("Dati fragment za LogisticProvider nije pronadjen");
+            throw new Error("Dati fragment "+fragment+" za LogisticProvider nije pronadjen");
         }
         const response = await api.get(url+`/by-fragment`,{
             params:{
@@ -116,12 +116,15 @@ export async function findByNameContainingIgnoreCase(fragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Gresksa prilikom trazenja po fragmentu");
+        handleApiError(error, "Gresksa prilikom trazenja po fragmentu "+fragment);
     }
 }
 
 export async function searchByNameOrWebsite(query){
     try{
+        if(!query || typeof query !== "string" || query.trim() === ""){
+            throw new Error("Dati upit "+query+" za pretragu veb-sajta logistickog provajdera, nije pronadjen");
+        }
         const response = await api.get(url+`/search`,{
             params:{
                 query:query
@@ -131,14 +134,14 @@ export async function searchByNameOrWebsite(query){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage po upitu");
+        handleApiError(error, "Greska prilikom pretrage po upitu "+query);
     }
 }
 
 export async function findByContactPhone(contactPhone){
     try{
         if(!contactPhone || typeof contactPhone !=="string" || contactPhone.trim() === ""){
-            throw new Error("Dati konakt telefon nije pronadjen");
+            throw new Error("Dati konakt telefon "+contactPhone+" nije pronadjen");
         }
         const response = await api.get(url+`/by-contactPhone`,{
             params:{
@@ -149,14 +152,14 @@ export async function findByContactPhone(contactPhone){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage po broju telefona");
+        handleApiError(error, "Greska prilikom pretrage po broju telefona "+contactPhone);
     }
 }
 
 export async function findByEmail(email){
     try{
         if(!email || typeof email !=="string" || email.trim() === ""){
-            throw new Error("Dati email nije pronadjen");
+            throw new Error("Dati email "+email+" nije pronadjen");
         }
         const response = await api.get(url+`/by-email`,{
             params:{
@@ -167,14 +170,14 @@ export async function findByEmail(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska pilikom pretrage po email-u");
+        handleApiError(error, "Greska pilikom pretrage po email-u "+email);
     }
 }
 
 export async function findByWebsite(website){
     try{
         if(!website || typeof website !== "string" || website.trim() === ""){
-            throw new Error("Dati website firme nije pronadjen");
+            throw new Error("Dati website "+website+" firme nije pronadjen");
         }
         const response = await api.get(url+`/by-website`,{
             params:{
@@ -185,7 +188,7 @@ export async function findByWebsite(website){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage po website-u");
+        handleApiError(error, "Greska prilikom pretrage po website-u "+website);
     }
 }
 

@@ -71,7 +71,7 @@ export async function updateJournalEntry({id,entryDate, description, itemRequest
 export async function deleteJournalEntry(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za JournalEntry nije pronadjen");
+            throw new Error("Dati ID "+id+" za JournalEntry nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -86,7 +86,7 @@ export async function deleteJournalEntry(id){
 export async function findOne(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za JournalEntry nije pronadjen");
+            throw new Error("Dati ID "+id+" za JournalEntry nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -94,7 +94,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog JournalEntry-ja");
+        handleApiError(error,"Greska prilikom trazenja jednog JournalEntry-ja po "+id+" id-iju");
     }
 }
 
@@ -113,7 +113,7 @@ export async function findAll(){
 export async function findByDescription(description){
     try{
         if(!description ||typeof description !=="string" || description.trim() === ""){
-            throw new Error("Dati opis za JournalEntry nije pronadjen");
+            throw new Error("Dati opis "+description+" za JournalEntry nije pronadjen");
         }
         const response = await api.get(url+`/by-description`,{
             params:{description:description},
@@ -122,7 +122,7 @@ export async function findByDescription(description){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja prema opisu");
+        handleApiError(error,"Greska prilikom trazenja prema opisu "+description);
     }
 }
 
@@ -132,7 +132,7 @@ export async function findByEntryDateBetween({start, end}){
         const formattedEnd = moment(end).format("YYYY-MM-DDTHH:mm:ss");
         if(!moment(formattedStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(formattedEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati pocetak i kraj datuma nisu validni");
+            throw new Error("Dati opseg "+start+" - "+end+" dateuma nije pronadjen");
         }
         const response = await api.get(url+`/entry-date-between`,{
             params:{start:formattedStart,end:formattedEnd},
@@ -141,7 +141,7 @@ export async function findByEntryDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska pilikom trazenja izmendju pocetka i kraja datuma");
+        handleApiError(error,"Greska pilikom trazenja izmendju opsega "+start+" - "+end+" datuma");
     }
 }
 
@@ -149,7 +149,7 @@ export async function findByEntryDateOn(date){
     try{
         const formattedDate = moment(date).format("YYYY-MM-DD");
         if(!moment(formattedDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum za entryDateOn nije pronadjen");
+            throw new Error("Dati datum "+date+" za entryDateOn nije pronadjen");
         }
         const response = await api.get(url+`/entry-dateOn`,{
             params:{date:formattedDate},
@@ -158,7 +158,7 @@ export async function findByEntryDateOn(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po entryDateOn-u");
+        handleApiError(error,"Greska prilikom pretrage po datumu unosa "+date);
     }
 }
 
@@ -166,7 +166,7 @@ export async function findByEntryDateBefore(dateTime){
     try{
         const formattedDateTime = moment(dateTime).format("YYYY-MM-DDTHH:mm:ss")
         if(!moment(formattedDateTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum i vreme za entryDateBefore nije pronadjen");
+            throw new Error("Dati datum unosa pre "+dateTime+" nije pronadjen");
         }
         const response = await api.get(url+`/entry-date-before`,{
             params:{dateTime:formattedDateTime},
@@ -175,7 +175,7 @@ export async function findByEntryDateBefore(dateTime){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage prema entryDateBefore");
+        handleApiError(error,"Greska prilikom pretrage prema datumu unosa pre "+dateTime);
     }
 }
 
@@ -183,7 +183,7 @@ export async function findByEntryDateAfter(dateTime){
     try{
         const formattedDateTime = moment(dateTime).format("YYYY-MM-DDTHH:mm:ss")
         if(!moment(formattedDateTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum i vreme za entryDateAfter nije pronadjen");
+            throw new Error("Dati datum unosa posle "+dateTime+" nije pronadjen");
         }
         const response = await api.get(url+`/entry-date-after`,{
             params:{dateTime:formattedDateTime},
@@ -192,7 +192,7 @@ export async function findByEntryDateAfter(dateTime){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage prema entryDateAfter");
+        handleApiError(error,"Greska prilikom pretrage prema datumu unosa posle "+dateTime);
     }
 }
 
@@ -200,7 +200,7 @@ export async function findByYear(year){
     try{
         const parseYear = parseInt(year);
         if(isNaN(parseYear) || parseYear <= 0){
-            throw new Error("Data godina nije pronadjena");
+            throw new Error("Data godina "+year+" nije pronadjena");
         }
         const response = await api.get(url+`/by-year`,{
             params:{year:parseYear},
@@ -209,7 +209,7 @@ export async function findByYear(year){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrtage prema datoj godini");
+        handleApiError(error,"Greska prilikom pretrtage prema datoj godini "+year);
     }
 }
 
@@ -220,7 +220,7 @@ export async function findByDescriptionAndEntryDateBetween({description,start, e
         if(!description || typeof description !== "string" || description.trim() === "" ||
             !moment(formattedStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(formattedEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opis i opseg datuma nisu pronadjeni");
+            throw new Error("Dati opis "+description+" i opseg datuma "+start+" - "+end+" nisu pronadjeni");
         }
         const response = await api.get(url+`/by-description-and-date`,{
             params:{
@@ -233,6 +233,6 @@ export async function findByDescriptionAndEntryDateBetween({description,start, e
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska pilikom trazenja prema opisu, pocetnom i krajnje datumu za EntryDate");
+        handleApiError(error,"Greska pilikom trazenja prema opisu "+description+", i opsegu datuma unosa "+start+" - "+end+".");
     }
 }

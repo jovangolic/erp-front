@@ -34,8 +34,8 @@ export async function getAll(){
 
 export async function deletePermission(id){
     try{
-        if(!id){
-            throw new Error("Dati ID za permisson nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" za permisson nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/permission/delete/${id}`,{
             headers:getHeader()
@@ -50,7 +50,7 @@ export async function deletePermission(id){
 export async function updatePermission({id, permissionType}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !isPermisionTypeValid.includes(permissionType?.toUpperCase())
         ){
             throw new Error("Tip mora biti validan i popunjen");
@@ -68,8 +68,8 @@ export async function updatePermission({id, permissionType}){
 
 export async function getPermissionById(id){
     try{
-        if(!id){
-            throw new Error("Dati ID za permision nije pronadjen");
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" za permision nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/permission/get/${id}`,{
             headers:getHeader()
@@ -77,14 +77,14 @@ export async function getPermissionById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog");
+        handleApiError(error, "Greska prilikom dobavljanja jednog permission po "+id+" id-iju");
     }
 }
 
 export async function findByPermissionType(type){
     try{
         if(!isPermisionTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip za odobrenje nije pronadjen");
+            throw new Error("Dati tip "+type+" za odobrenje nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/permission/by-permission-type`,{
             params:{type:(type || "").toUpperCase()},
@@ -93,7 +93,7 @@ export async function findByPermissionType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu odobrenja");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+type+" odobrenja");
     }
 }
 

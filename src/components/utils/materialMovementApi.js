@@ -57,7 +57,7 @@ export async function updateMaterialMovement({id,materialId,movementDate,type,qu
 export async function deleteMaterialMovement(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id nije pronadjen");
+            throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -72,7 +72,7 @@ export async function deleteMaterialMovement(id){
 export async function findOne(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id nije pronadjen");
+            throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -80,7 +80,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog material-movement");
+        handleApiError(error,"Greska prilikom trazenja jednog material-movement po "+id+" id-iju");
     }
 }
 
@@ -99,7 +99,7 @@ export async function findAll(){
 export async function findByType(type){
     try{
         if(!isMovementTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip za material-movement, nije pronadjen");
+            throw new Error("Dati tip "+type+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/by-movement-type`,{
             params:{
@@ -110,7 +110,7 @@ export async function findByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovom tipu");
+        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovom tipu "+type);
     }
 }
 
@@ -118,7 +118,7 @@ export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina za material-movement nije pronadjen");
+            throw new Error("Data kolicina "+parseQuantity+" za material-movement nije pronadjen");
         }
         const response = await api.get(url+`/by-quantity`,{
             params:{
@@ -129,7 +129,7 @@ export async function findByQuantity(quantity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovoj kolicini");
+        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovoj kolicini "+quantity);
     }
 }
 
@@ -137,7 +137,7 @@ export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina za material-movement veca od, nije pronadjen");
+            throw new Error("Data kolicina za material-movement veca od "+parseQuantity+", nije pronadjen");
         }
         const response = await api.get(url+`/quantity-greater-than`,{
             params:{
@@ -148,7 +148,7 @@ export async function findByQuantityGreaterThan(quantity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovoj kolicini vecoj od");
+        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovoj kolicini vecoj od "+quantity);
     }
 }
 
@@ -156,7 +156,7 @@ export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Data kolicina za material-movement manja od, nije pronadjen");
+            throw new Error("Data kolicina za material-movement manja od "+parseQuantity+", nije pronadjen");
         }
         const response = await api.get(url+`/quantity-less-than`,{
             params:{
@@ -167,14 +167,14 @@ export async function findByQuantityLessThan(quantity){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovoj kolicini manjoj od");
+        handleApiError(error,"Trenutno nismo pronasli material-movement po njegovoj kolicini manjoj od "+quantity);
     }
 }
 
 export async function findByFromStorage_Id(fromStorageId){
     try{
         if(isNaN(fromStorageId) || fromStorageId == null){
-            throw new Error("Dati id za from-storage, nije pronadjen");
+            throw new Error("Dati id "+fromStorageId+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/fromStorage/${fromStorageId}`,{
             headers:getHeader()
@@ -182,14 +182,14 @@ export async function findByFromStorage_Id(fromStorageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli material-movement koji dolazi od skladista");
+        handleApiError(error,"Trenutno nismo pronasli material-movement koji dolazi od "+fromStorageId+" skladista");
     }
 }
 
 export async function findByToStorage_Id(toStorageId){
     try{
         if(isNaN(toStorageId) || toStorageId == null){
-            throw new Error("Dati id za to-storage, nije pronadjen");
+            throw new Error("Dati id "+toStorageId+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/toStorage/${toStorageId}`,{
             headers:getHeader()
@@ -197,14 +197,14 @@ export async function findByToStorage_Id(toStorageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli material-movement koji dolazi do skladista");
+        handleApiError(error,"Trenutno nismo pronasli material-movement koji dolazi do skladista "+toStorageId);
     }
 }
 
 export async function findByFromStorage_NameContainingIgnoreCase(fromStorageName){
     try{
         if(!fromStorageName || typeof fromStorageName !== "string" || fromStorageName.trim() === ""){
-            throw new Error("Dati naziv za from-storage, nije pronadjen");
+            throw new Error("Dati naziv "+fromStorageName+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/from-storage-name`,{
             params:{
@@ -215,14 +215,14 @@ export async function findByFromStorage_NameContainingIgnoreCase(fromStorageName
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv from-storage, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+fromStorageName+" from-storage, za material-movement");
     }
 }
 
 export async function findByToStorage_NameContainingIgnoreCase(toStorageName){
     try{
         if(!toStorageName || typeof toStorageName !== "string" || toStorageName.trim() === ""){
-            throw new Error("Dati naziv za to-storage, nije pronadjen");
+            throw new Error("Dati naziv "+toStorageName+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/to-storage-name`,{
             params:{
@@ -233,14 +233,14 @@ export async function findByToStorage_NameContainingIgnoreCase(toStorageName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv to-storage, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+toStorageName+" to-storage, za material-movement");
     }
 }
 
 export async function findByFromStorage_LocationContainingIgnoreCase(fromStorageLocation){
     try{
         if(!fromStorageLocation || typeof fromStorageLocation !== "string" || fromStorageLocation.trim() === ""){
-            throw new Error("Data lokacija za from-storage, nije pronadjena");
+            throw new Error("Data lokacija "+fromStorageLocation+" za from-storage, nije pronadjena");
         }
         const response = await api.get(url+`/from-storage-location`,{
             params:{
@@ -251,14 +251,14 @@ export async function findByFromStorage_LocationContainingIgnoreCase(fromStorage
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju from-storage, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+fromStorageLocation+" from-storage, za material-movement");
     }
 }
 
 export async function findByToStorage_LocationContainingIgnoreCase(toStorageLocation){
     try{
         if(!toStorageLocation || typeof toStorageLocation !== "string" || toStorageLocation.trim() === ""){
-            throw new Error("Data lokacija za to-storage, nije pronadjena");
+            throw new Error("Data lokacija "+toStorageLocation+" za to-storage, nije pronadjena");
         }
         const response = await api.get(url+`/to-storage-location`,{
             params:{
@@ -269,7 +269,7 @@ export async function findByToStorage_LocationContainingIgnoreCase(toStorageLoca
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju to-storage, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+toStorageLocation+"to-storage, za material-movement");
     }
 }
 
@@ -277,7 +277,7 @@ export async function findByFromStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet za from-storage, nije pronadjen");
+            throw new Error("Dati kapacitet "+parseCapacity+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/from-storage-capacity`,{
             params:{capacity:parseCapacity},
@@ -286,7 +286,7 @@ export async function findByFromStorage_Capacity(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet from-storage za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+capacity+" from-storage za material-movement");
     }
 }
 
@@ -294,7 +294,7 @@ export async function findByToStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet za to-storage, nije pronadjen");
+            throw new Error("Dati kapacitet "+parseCapacity+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/to-storage-capacity`,{
             params:{capacity:parseCapacity},
@@ -303,14 +303,14 @@ export async function findByToStorage_Capacity(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet to-storage za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+capacity+" to-storage za material-movement");
     }
 }
 
 export async function findByMovementDate(movementDate){
     try{
         if(!moment(movementDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum kretanja za material-movement, nije pronadjen");
+            throw new Error("Dati datum kretanja "+movementDate+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/by-movement-date`,{
             params:{
@@ -321,7 +321,7 @@ export async function findByMovementDate(movementDate){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum kretanja za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli datum "+movementDate+" kretanja za material-movement");
     }
 }
 
@@ -329,7 +329,7 @@ export async function findByMovementDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || 
             !moment(end,"YYYY-MM-DD",true).isValid()){
-                throw new Error("Dati datumski opseg za material-movement, nije pronadjen");
+                throw new Error("Dati datumski opseg "+start+" - "+end+" za material-movement, nije pronadjen");
             }
         const response = await api.get(url+`/between-dates`,{
             params:{
@@ -341,14 +341,14 @@ export async function findByMovementDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datumski opseg za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli datumski opseg "+start+" - "+end+" za material-movement");
     }
 }
 
 export async function findByMovementDateGreaterThanEqual(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum veci od za material-movement, nije pronadjen");
+            throw new Error("Dati datum veci od "+date+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/date-greater-than-equal`,{
             params:{
@@ -359,14 +359,14 @@ export async function findByMovementDateGreaterThanEqual(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum veci od, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli datum veci od "+date+" za material-movement");
     }
 }
 
 export async function findByMovementDateAfterOrEqual(movementDate){
     try{
         if(!moment(movementDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum posle za material-movement, nije pronadjen");
+            throw new Error("Dati datum posle "+movementDate+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/by-movement-date-after-equal`,{
             params:{
@@ -377,14 +377,14 @@ export async function findByMovementDateAfterOrEqual(movementDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum posle za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli datum posle "+movementDate+" za material-movement");
     }
 }
 
 export async function countAvailableCapacityFromStorage(fromStorageId){
     try{
         if(isNaN(fromStorageId) || fromStorageId == null){
-            throw new Error("Dati id za from-storage, nije pronadjen");
+            throw new Error("Dati id "+fromStorageId+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/from-storage/${fromStorageId}/available-capacity`,{
             headers:getHeader()
@@ -392,7 +392,7 @@ export async function countAvailableCapacityFromStorage(fromStorageId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dostupan kapacitet za from-storage");
+        handleApiError(error,"Trenutno nismo pronasli dostupan kapacitet za from-storage po "+fromStorageId+" id-iju");
     }
 }
 
@@ -400,7 +400,7 @@ export async function allocateCapacityFromStorage({fromStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(fromStorageId) || fromStorageId == null){
-            throw new Error("Dati id za from-storage i njegova kolicina za alociranje, nisu pronadjeni");
+            throw new Error("Dati id "+fromStorageId+" za from-storage i njegova kolicina "+parseAmount+" za alociranje, nisu pronadjeni");
         }
         const response = await api.get(url+`/from-storage/${fromStorageId}/allocate`,{
             params:{amount: parseAmount},
@@ -409,7 +409,7 @@ export async function allocateCapacityFromStorage({fromStorageId, amount}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datu kolicinu za alociranje kapaciteta from-storage");
+        handleApiError(error,"Trenutno nismo pronasli datu kolicinu "+amount+" za alociranje kapaciteta from-storage");
     }
 }
 
@@ -417,7 +417,7 @@ export async function releaseCapacityFromStorage({fromStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(fromStorageId) || fromStorageId == null){
-            throw new Error("Dati id i kolicina za oslobadjanje, nisu pronadjeni");
+            throw new Error("Dati id "+fromStorageId+" i kolicina za oslobadjanje "+parseAmount+", nisu pronadjeni");
         }
         const response = await api.get(url+`/from-storage/${fromStorageId}/release`,{
             params:{amount: parseAmount},
@@ -426,14 +426,14 @@ export async function releaseCapacityFromStorage({fromStorageId, amount}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kolicinu za oslobadjanje kapaciteta from-storage");
+        handleApiError(error,"Trenutno nismo pronasli kolicinu "+amount+" za oslobadjanje kapaciteta from-storage");
     }
 }
 
 export async function countAvailableCapacityToStorage(toStorageId){
     try{
         if(isNaN(toStorageId) || toStorageId == null){
-            throw new Error("Dati id za to-storage, nije pronadjen");
+            throw new Error("Dati id "+toStorageId+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/to-storage/${toStorageId}/available-capacity`,{
             headers:getHeader()
@@ -441,7 +441,7 @@ export async function countAvailableCapacityToStorage(toStorageId){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli dostupan kapacitet za to-storage");
+        handleApiError(error,"Trenutno nismo pronasli dostupan kapacitet za to-storage po "+toStorageId+" id-iju");
     }
 }
 
@@ -449,7 +449,7 @@ export async function allocateCapacityToStorage({toStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(toStorageId) || toStorageId == null){
-            throw new Error("Dati id za to-storage i njegova kolicina za alociranje, nisu pronadjeni");
+            throw new Error("Dati id "+toStorageId+" za to-storage i njegova kolicina "+parseAmount+" za alociranje, nisu pronadjeni");
         }
         const response = await api.get(url+`/to-storage/${toStorageId}/allocate`,{
             params:{amount: parseAmount},
@@ -458,7 +458,7 @@ export async function allocateCapacityToStorage({toStorageId, amount}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datu kolicinu za alociranje kapaciteta to-storage");
+        handleApiError(error,"Trenutno nismo pronasli datu kolicinu "+amount+" za alociranje kapaciteta to-storage");
     }
 }
 
@@ -466,7 +466,7 @@ export async function releaseCapacityToStorage({toStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
         if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(toStorageId) || toStorageId == null){
-            throw new Error("Dati id i kolicina za oslobadjanje, nisu pronadjeni");
+            throw new Error("Dati id "+toStorageId+" i kolicina "+parseAmount+" za oslobadjanje, nisu pronadjeni");
         }
         const response = await api.get(url+`/to-storage/${toStorageId}/release`,{
             params:{amount: parseAmount},
@@ -475,7 +475,7 @@ export async function releaseCapacityToStorage({toStorageId, amount}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kolicinu za oslobadjanje kapaciteta to-storage");
+        handleApiError(error,"Trenutno nismo pronasli kolicinu "+amount+" za oslobadjanje kapaciteta to-storage");
     }
 }
 
@@ -483,7 +483,7 @@ export async function findByFromStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet veci od za from-storage, nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseCapacity+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/from-storage-capacity-greater-than`,{
             params:{
@@ -494,7 +494,7 @@ export async function findByFromStorage_CapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet veci od from-storage,za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet veci od "+capacity+" from-storage,za material-movement");
     }
 }
 
@@ -502,7 +502,7 @@ export async function findByToStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet veci od za to-storage, nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseCapacity+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/to-storage-capacity-greater-than`,{
             params:{
@@ -513,7 +513,7 @@ export async function findByToStorage_CapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet veci od to-storage,za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet veci od "+capacity+" to-storage,za material-movement");
     }
 }
 
@@ -521,7 +521,7 @@ export async function findByFromStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet manji od za from-storage, nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseCapacity+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/from-storage-capacity-less-than`,{
             params:{
@@ -532,7 +532,7 @@ export async function findByFromStorage_CapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet manji od from-storage,za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet manji od "+capacity+" from-storage,za material-movement");
     }
 }
 
@@ -540,7 +540,7 @@ export async function findByToStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet manji od za to-storage, nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseCapacity+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/to-storage-capacity-less-than`,{
             params:{
@@ -551,14 +551,14 @@ export async function findByToStorage_CapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet manji od to-storage,za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet manji od "+capacity+" to-storage,za material-movement");
     }
 }
 
 export async function findByFromStorage_Type(type){
     try{
         if(!isStorageTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip za from-storage, nije pronadjen");
+            throw new Error("Dati tip "+type+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/from-storage-type`,{
             params:{
@@ -569,14 +569,14 @@ export async function findByFromStorage_Type(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip from-storage, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" from-storage, za material-movement");
     }
 }
 
 export async function findByToStorage_Type(type){
     try{
         if(!isStorageTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip za to-storage, nije pronadjen");
+            throw new Error("Dati tip "+type+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/to-storage-type`,{
             params:{
@@ -587,14 +587,14 @@ export async function findByToStorage_Type(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip to-storage, za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" to-storage, za material-movement");
     }
 }
 
 export async function findByFromStorage_Status(status){
     try{
         if(!isStorageStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status from-storage nije pronadjen");
+            throw new Error("Dati status "+status+" from-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/from-storage-status`,{
             params:{
@@ -605,14 +605,14 @@ export async function findByFromStorage_Status(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status from-storage za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" from-storage za material-movement");
     }
 }
 
 export async function findByToStorage_Status(status){
     try{
         if(!isStorageStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status to-storage nije pronadjen");
+            throw new Error("Dati status "+status+" to-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/to-storage-status`,{
             params:{
@@ -623,6 +623,6 @@ export async function findByToStorage_Status(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status to-storage za material-movement");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" to-storage za material-movement");
     }
 }

@@ -56,7 +56,7 @@ export async function updateMaterialRequest({id,requestingWorkCenterId,materialI
 export async function deleteMaterialRequest(id){
     try{
         if(isNaN(id) || id == null){
-            throw new Error("Dati id za material-request nije pronadjen");
+            throw new Error("Dati id "+id+" za material-request nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -71,7 +71,7 @@ export async function deleteMaterialRequest(id){
 export async function findOne(id){
     try{
         if(isNaN(id) || id == null){
-            throw new Error("Dati id za material-request nije pronadjen");
+            throw new Error("Dati id "+id+" za material-request nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -79,7 +79,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog material-request");
+        handleApiError(error,"Greska prilikom trazenja jednog material-request po "+id+" id-iju");
     }
 }
 
@@ -98,7 +98,7 @@ export async function findAll(){
 export async function findByRequestingWorkCenter_NameContainingIgnoreCase(workCenterName){
     try{
         if(!workCenterName || typeof workCenterName !== "string" || workCenterName.trim() === ""){
-            throw new Error("Dati naziv radnog centra za material-request, nije pronadjen");
+            throw new Error("Dati naziv "+workCenterName+" radnog centra za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-name`,{
             params:{
@@ -109,14 +109,14 @@ export async function findByRequestingWorkCenter_NameContainingIgnoreCase(workCe
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv radnog centra za material-request");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+workCenterName+" radnog centra za material-request");
     }
 }
 
 export async function findByRequestingWorkCenter_LocationContainingIgnoreCase(workCenterLocation){
     try{
         if(!workCenterLocation || typeof workCenterLocation !== "string" || workCenterLocation.trim() === ""){
-            throw new Error("Data lokacija radnog centra za material-request, nije pronadjena");
+            throw new Error("Data lokacija "+workCenterLocation+" radnog centra za material-request, nije pronadjena");
         }
         const response = await api.get(url+`/work-center-location`,{
             params:{
@@ -127,7 +127,7 @@ export async function findByRequestingWorkCenter_LocationContainingIgnoreCase(wo
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju radnog centra za material-request");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+workCenterLocation+" radnog centra za material-request");
     }
 }
 
@@ -135,7 +135,7 @@ export async function findByRequestingWorkCenter_Capacity(workCenterCapacity){
     try{
         const parseWorkCenterCapacity = parseFloat(workCenterCapacity);
         if(isNaN(parseWorkCenterCapacity) || parseWorkCenterCapacity <= 0){
-            throw new Error("Dati kapacitet radnog centra za material-request, nije pronadjen");
+            throw new Error("Dati kapacitet "+parseWorkCenterCapacity+" radnog centra za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity`,{
             params:{workCenterCapacity:parseWorkCenterCapacity},
@@ -144,7 +144,7 @@ export async function findByRequestingWorkCenter_Capacity(workCenterCapacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra za material-request");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+workCenterCapacity+" radnog centra za material-request");
     }
 }
 
@@ -152,7 +152,7 @@ export async function findByRequestingWorkCenter_CapacityGreaterThan(workCenterC
     try{
         const parseWorkCenterCapacity = parseFloat(workCenterCapacity);
         if(isNaN(parseWorkCenterCapacity) || parseWorkCenterCapacity <= 0){
-            throw new Error("Dati kapacitet radnog centra za material-request veci od, nije pronadjen");
+            throw new Error("Dati kapacitet radnog centra za material-request veci od "+parseWorkCenterCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-greater-than`,{
             params:{workCenterCapacity:parseWorkCenterCapacity},
@@ -161,7 +161,7 @@ export async function findByRequestingWorkCenter_CapacityGreaterThan(workCenterC
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra veci od, za material-request");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra veci od "+workCenterCapacity+", za material-request");
     }
 }
 
@@ -169,7 +169,7 @@ export async function findByRequestingWorkCenter_CapacityLessThan(workCenterCapa
     try{
         const parseWorkCenterCapacity = parseFloat(workCenterCapacity);
         if(isNaN(parseWorkCenterCapacity) || parseWorkCenterCapacity <= 0){
-            throw new Error("Dati kapacitet radnog centra za material-request manji od, nije pronadjen");
+            throw new Error("Dati kapacitet radnog centra za material-request manji od "+parseWorkCenterCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-less-than`,{
             params:{workCenterCapacity:parseWorkCenterCapacity},
@@ -178,7 +178,7 @@ export async function findByRequestingWorkCenter_CapacityLessThan(workCenterCapa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra manji od, za material-request");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet radnog centra manji od "+workCenterCapacity+", za material-request");
     }
 }
 
@@ -186,7 +186,7 @@ export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Dati kapacitet za material-request, nije pronadjen");
+            throw new Error("Dati kapacitet "+parseQuantity+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/by-quantity`,{
             params:{
@@ -197,7 +197,7 @@ export async function findByQuantity(quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet za material-request");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+quantity+" za material-request");
     }
 }
 
@@ -205,7 +205,7 @@ export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Dati kapacitet veci od za material-request, nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseQuantity+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-greater-than"`,{
             params:{
@@ -216,7 +216,7 @@ export async function findByQuantityGreaterThan(quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet veci od, za material-request");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet veci od "+quantity+", za material-request");
     }
 }
 
@@ -224,7 +224,7 @@ export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
         if(isNaN(parseQuantity) || parseQuantity <= 0){
-            throw new Error("Dati kapacitet manji od za material-request, nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseQuantity+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-less-than"`,{
             params:{
@@ -235,14 +235,14 @@ export async function findByQuantityLessThan(quantity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet manji od, za material-request");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet manji od "+quantity+", za material-request");
     }
 }
 
 export async function findByMaterial_Id(materialId){
     try{
         if(isNaN(materialId) || materialId == null){
-            throw new Error("Dati id materijala za material-request, nije pronadjen");
+            throw new Error("Dati id "+materialId+" materijala za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/material/${materialId}`,{
             headers:getHeader()
@@ -250,14 +250,14 @@ export async function findByMaterial_Id(materialId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronaslii id materiala za material-request");
+        handleApiError(error,"Trenutno nismo pronaslii id "+materialId+" materiala za material-request");
     }
 }
 
 export async function findByMaterial_CodeContainingIgnoreCase(code){
     try{
         if(!code || typeof code !== "string" || code.trim() === ""){
-            throw new Error("Dati kod za materijal, nije pronadjen");
+            throw new Error("Dati kod "+code+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material-by-code`,{
             params:{code:code},
@@ -266,14 +266,14 @@ export async function findByMaterial_CodeContainingIgnoreCase(code){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kod za materijal");
+        handleApiError(error,"Trenutno nismo pronasli kod "+code+" za materijal");
     }
 }
 
 export async function findByMaterial_NameContainingIgnoreCase(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Dati naziv za materijal, nije pronadjen");
+            throw new Error("Dati naziv "+name+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material-by-name`,{
             params:{name:name},
@@ -282,14 +282,14 @@ export async function findByMaterial_NameContainingIgnoreCase(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv za materijal");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" za materijal");
     }
 }
 
 export async function findByMaterial_Unit(unit){
     try{
         if(!isUnitOfMeasureValid.includes(unit?.toUpperCase())){
-            throw new Error("Data jedinica mere za materijal nije pronadjena");
+            throw new Error("Data jedinica mere "+unit+" za materijal nije pronadjena");
         }
         const response = await api.get(url+`/material-unit`,{
             params:{
@@ -300,7 +300,7 @@ export async function findByMaterial_Unit(unit){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli jedinicu mere za materijal");
+        handleApiError(error,"Trenutno nismo pronasli jedinicu mere "+unit+" za materijal");
     }
 }
 
@@ -308,7 +308,7 @@ export async function findByMaterial_CurrentStock(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
         if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
-            throw new Error("Trenutna zaliha materijala, nije pronadjena");
+            throw new Error("Trenutna zaliha materijala "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`/material-current-stock`,{
             params:{currentStock:parseCurrentStock},
@@ -317,7 +317,7 @@ export async function findByMaterial_CurrentStock(currentStock){
         return responses.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli trenutnu zalihu za materijal");
+        handleApiError(error,"Trenutno nismo pronasli trenutnu zalihu "+currentStock+" za materijal");
     }
 }
 
@@ -325,7 +325,7 @@ export async function findByMaterial_CurrentStockLessThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
         if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
-            throw new Error("Trenutna zaliha materijala manja od, nije pronadjena");
+            throw new Error("Trenutna zaliha materijala manja od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`//material-current-stock-less-than`,{
             params:{currentStock:parseCurrentStock},
@@ -334,7 +334,7 @@ export async function findByMaterial_CurrentStockLessThan(currentStock){
         return responses.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli trenutnu zalihu za materijal manji od");
+        handleApiError(error,"Trenutno nismo pronasli trenutnu zalihu za materijal manji od "+currentStock);
     }
 }
 
@@ -342,7 +342,7 @@ export async function findByMaterial_CurrentStockGreaterThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
         if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
-            throw new Error("Trenutna zaliha materijala veca od, nije pronadjena");
+            throw new Error("Trenutna zaliha materijala veca od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`//material-current-stock-greater-than`,{
             params:{currentStock:parseCurrentStock},
@@ -351,7 +351,7 @@ export async function findByMaterial_CurrentStockGreaterThan(currentStock){
         return responses.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli trenutnu zalihu za materijal veci od");
+        handleApiError(error,"Trenutno nismo pronasli trenutnu zalihu za materijal veci od "+currentStock);
     }
 }
 
@@ -359,7 +359,7 @@ export async function findByMaterial_ReorderLevel(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
         if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
-            throw new Error("Dati reorder-level za materijal, nije pronadjen");
+            throw new Error("Dati reorder-level "+parseReorderLevel+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level`,{
             params:{
@@ -370,7 +370,7 @@ export async function findByMaterial_ReorderLevel(reorderLevel){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli reorder-level za materijal");
+        handleApiError(error,"Trenutno nismo pronasli reorder-level "+reorderLevel+" za materijal");
     }
 }
 
@@ -378,7 +378,7 @@ export async function findByMaterial_ReorderLevelGreaterThan(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
         if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
-            throw new Error("Dati reorder-level za materijal veci od, nije pronadjen");
+            throw new Error("Dati reorder-level za materijal veci od "+parseReorderLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level-greater-than`,{
             params:{
@@ -389,7 +389,7 @@ export async function findByMaterial_ReorderLevelGreaterThan(reorderLevel){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli reorder-level za materijal veci od");
+        handleApiError(error,"Trenutno nismo pronasli reorder-level za materijal veci od "+reorderLevel);
     }
 }
 
@@ -397,7 +397,7 @@ export async function findByMaterial_ReorderLevelLessThan(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
         if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
-            throw new Error("Dati reorder-level za materijal manji od, nije pronadjen");
+            throw new Error("Dati reorder-level za materijal manji od "+parseReorderLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level-less-than`,{
             params:{
@@ -408,14 +408,14 @@ export async function findByMaterial_ReorderLevelLessThan(reorderLevel){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli reorder-level za materijal manji od");
+        handleApiError(error,"Trenutno nismo pronasli reorder-level za materijal manji od "+reorderLevel);
     }
 }
 
 export async function findByMaterial_Storage_Id(storageId){
     try{
         if(isNaN(storageId) || storageId == null){
-            throw new Error("Dati id skladista za materijal, nije pronadjen");
+            throw new Error("Dati id "+storageId+" skladista za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material/storage/${storageId}`,{
             headers:getHeader()
@@ -423,14 +423,14 @@ export async function findByMaterial_Storage_Id(storageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id skladista za materijal");
+        handleApiError(error,"Trenutno nismo pronasli id "+storageId+" skladista za materijal");
     }
 }
 
 export async function findByRequestDate(requestDate){
     try{
         if(!moment(requestDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum zahteva za material-request, nije pronadjen");
+            throw new Error("Dati datum "+requestDate+" zahteva za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/request-date`,{
             params:{
@@ -441,14 +441,14 @@ export async function findByRequestDate(requestDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum zahteva za material-request");
+        handleApiError(error,"Trenutno nismo pronasli datum zahteva "+requestDate+" za material-request");
     }
 }
 
 export async function findByRequestDateBefore(requestDate){
     try{
         if(!moment(requestDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum zahteva posle, za material-request, nije pronadjen");
+            throw new Error("Dati datum zahteva posle "+requestDate+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/request-date-before`,{
             params:{
@@ -459,14 +459,14 @@ export async function findByRequestDateBefore(requestDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum zahteva posle za material-request");
+        handleApiError(error,"Trenutno nismo pronasli datum zahteva posle "+requestDate+" za material-request");
     }
 }
 
 export async function findByRequestDateAfter(requestDate){
     try{
         if(!moment(requestDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum zahteva pre, za material-request, nije pronadjen");
+            throw new Error("Dati datum zahteva pre "+requestDate+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/request-date-after`,{
             params:{
@@ -477,7 +477,7 @@ export async function findByRequestDateAfter(requestDate){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum zahteva pre za material-request");
+        handleApiError(error,"Trenutno nismo pronasli datum zahteva pre "+requestDate+" za material-request");
     }
 }
 
@@ -485,7 +485,7 @@ export async function findByRequestDateBetween({startDate, endDate}){
     try{
         if(!moment(startDate,"YYYY-MM-DD",true).isValid() || 
             !moment(endDate,"YYYY-MM-DD",true).isValid()){
-                throw new Error("Dati opseg datuma za material-request, nije pronadjen");
+                throw new Error("Dati opseg datuma "+startDate+" - "+endDate+" za material-request, nije pronadjen");
             }
         const response = await api.get(url+`/request-date-between`,{
             params:{
@@ -497,14 +497,14 @@ export async function findByRequestDateBetween({startDate, endDate}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg datuma za material-request");
+        handleApiError(error,"Trenutno nismo pronasli opseg "+startDate+" - "+endDate+" datuma za material-request");
     }
 }
 
 export async function findByNeededBy(neededBy){
     try{
         if(!moment(neededBy,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum potrebe za material-request, nije pronadjen");
+            throw new Error("Dati datum potrebe "+neededBy+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-by`,{
             params:{
@@ -515,14 +515,14 @@ export async function findByNeededBy(neededBy){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum potrebe za material-request");
+        handleApiError(error,"Trenutno nismo pronasli datum potrebe "+neededBy+" za material-request");
     }
 }
 
 export async function findByNeededByBefore(neededBy){
     try{
         if(!moment(neededBy,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum potrebe, pre, za material-request, nije pronadjen");
+            throw new Error("Dati datum potrebe, pre "+neededBy+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-before`,{
             params:{
@@ -533,14 +533,14 @@ export async function findByNeededByBefore(neededBy){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum potrebe, pre, za material-request");
+        handleApiError(error,"Trenutno nismo pronasli datum potrebe, pre "+neededBy+", za material-request");
     }
 }
 
 export async function findByNeededByAfter(neededBy){
     try{
         if(!moment(neededBy,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum potrebe, posle, za material-request, nije pronadjen");
+            throw new Error("Dati datum potrebe, posle "+neededBy+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-after`,{
             params:{
@@ -551,7 +551,7 @@ export async function findByNeededByAfter(neededBy){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum potrebe, posle, za material-request");
+        handleApiError(error,"Trenutno nismo pronasli datum potrebe, posle "+neededBy+", za material-request");
     }
 }
 
@@ -559,7 +559,7 @@ export async function findByNeededByBetween({startDate, endDate}){
     try{
         if(!moment(startDate,"YYYY-MM-DD",true).isValid() || 
         !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum opsega potrebe za material-request, nije pronadjen");
+            throw new Error("Datum opsega potrebe "+startDate+" - "+endDate+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-between`,{
             params:{
@@ -571,6 +571,6 @@ export async function findByNeededByBetween({startDate, endDate}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg datuma potrebe za material-request");
+        handleApiError(error,"Trenutno nismo pronasli opseg datuma "+startDate+" - "+endDate+" potrebe za material-request");
     }
 }

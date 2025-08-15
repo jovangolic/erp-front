@@ -388,7 +388,7 @@ export async function searchOrders({productName, workCenterName,startDateFrom, s
         if(!productName || typeof productName !== "string" || productName.trim() === "" ||
             isNaN(workCenterName) || workCenterName == null || !moment(startDateFrom,"YYYY-MM-DD",true).isValid() ||
             !moment(startDateTo,"YYYY-MM-DD",true).isValid() || !isProductionOrderStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati parametri, nisu pronasli trazeni rezultat");
+            throw new Error("Dati parametri: "+productName+" , "+workCenterName+" , "+startDateFrom+" , "+startDateTo+" , "+status+" , nisu pronasli trazeni rezultat");
         }
         const response = await api.get(url+`/search-orders`,{
             params:{
@@ -403,7 +403,7 @@ export async function searchOrders({productName, workCenterName,startDateFrom, s
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli rezultat za date parametre pretrage");
+        handleApiError(error,"Trenutno nismo pronasli rezultat za date parametre pretrage: "+productName+" , "+workCenterName+" , "+startDateFrom+" , "+startDateTo+" , "+status);
     }
 }
 

@@ -58,7 +58,7 @@ export async function updateOption({id,label,value,category,active}){
 export async function deleteOption(id){
     try{
         if(!id){
-            throw new Error("Dati ID za option nije pronadjen");
+            throw new Error("Dati ID "+id+" za option nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/option/delete/${id}`,{
             headers:getHeader()
@@ -73,7 +73,7 @@ export async function deleteOption(id){
 export async function getOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za option nije pronadjen");
+            throw new Error("Dati ID "+id+" za option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/get-one/${id}`,{
             headers:getHeader()
@@ -81,7 +81,7 @@ export async function getOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom dobaljvanja jednog option-a");
+        handleApiError(error,"Greska prilikom dobaljvanja jednog option-a po "+id+" id-iju");
     }
 }
 
@@ -100,7 +100,7 @@ export async function getAll(){
 export async function getByCategory(category){
     try{
         if(!isOptionCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data kategorija nije pronadjena");
+            throw new Error("Data kategorija "+category+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/category/${category}`,{
             headers:getHeader()
@@ -108,14 +108,14 @@ export async function getByCategory(category){
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Greska prilikom dobavljanja po kategoriji");
+        handleApiError(error,"Greska prilikom dobavljanja po kategorij "+category);
     }
 }
 
 export async function findByCategoryAndActiveTrue(category){
     try{
         if(!isOptionCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data kategorija nije pronadjena");
+            throw new Error("Data kategorija "+category+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/category-is-active`,{
             params:{category:(category || "").toUpperCase()},
@@ -124,7 +124,7 @@ export async function findByCategoryAndActiveTrue(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po kategoriji i aktivnosti");
+        handleApiError(error,"Greska prilikom trazenja po kategoriji "+category+" i aktivnosti");
     }
 }
 

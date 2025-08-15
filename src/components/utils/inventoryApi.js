@@ -60,7 +60,7 @@ export async function updateInventory({id,storageEmployeeId, storageForemanId, d
 export async function deleteInventory(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za Inventory nije pronadjen");
+            throw new Error("Dati ID "+id+" za Inventory nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -75,7 +75,7 @@ export async function deleteInventory(id){
 export async function findInventoryByStatus(status){
     try{
         if(!isInventoryValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status ne postoji");
+            throw new Error("Dati status "+status+" ne postoji");
         }
         const response = await api.get(url+`/find-by-status`,{
             params:{
@@ -86,14 +86,14 @@ export async function findInventoryByStatus(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja jednog");
+        handleApiError(error, "Greska prilikom trazenja jednog statusa "+status);
     }
 }
 
 export async function findByStorageEmployeeId(storageEmployeeId){
     try{
         if(!storageEmployeeId){
-            throw new Error("Dati ID za storageEmployee nije pronadjen");
+            throw new Error("Dati ID "+storageEmployeeId+" za storageEmployee nije pronadjen");
         }
         const response = await api.get(url+`/by-storageEmployeeId`,{
             params:{
@@ -104,14 +104,14 @@ export async function findByStorageEmployeeId(storageEmployeeId){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja inventara po magacioneru");
+        handleApiError(error, "Greska prilikom trazenja inventara po id-iju "+storageEmployeeId+" magacioneru");
     }
 }
 
 export async function findByStorageForemanId(storageForemanId){
     try{
         if(storageForemanId == null || isNaN(storageForemanId)){
-            throw new Error("Dati ID za storageForeman nije pronadjen");
+            throw new Error("Dati ID "+storageForemanId+" za storageForeman nije pronadjen");
         }
     const response = await api.get(url+`/by-storageForemanId`,{
         params:{
@@ -122,14 +122,14 @@ export async function findByStorageForemanId(storageForemanId){
     return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage inventara po smenovodji");
+        handleApiError(error, "Greska prilikom pretrage inventara po id-iju "+storageForemanId+" smenovodji");
     }
 }
 
 export async function findOneInventory(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za Inventory nije pronadjen");
+            throw new Error("Dati ID "+id+" za Inventory nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -137,7 +137,7 @@ export async function findOneInventory(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja jednog inventara");
+        handleApiError(error, "Greska prilikom trazenja jednog inventara po "+id+" id-iju");
     }
 }
 
@@ -156,7 +156,7 @@ export async function findAllInventories(){
 export async function findByDate(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum mora biti ispravan i validan");
+            throw new Error("Datum "+date+" mora biti ispravan i validan");
         }
         const response = await api.get(url+`/find-by-date`,{
             params:{
@@ -167,7 +167,7 @@ export async function findByDate(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom pretrage inventara po datumu");
+        handleApiError(error, "Greska prilikom pretrage inventara po datumu "+date);
     }
 }
 
@@ -175,7 +175,7 @@ export async function findByDateRange({startDate, endDate}){
     try{
         if(!moment(startDate,"YYYY-MM-DD",true).isValid() ||
            !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Netacan opseg datuma");
+            throw new Error("Dati opseg datuma "+start+"- "+end+" nije pronadjen");
            }
         const response = await api.get(url+`/find-by-date-range`,{
             params:{
@@ -187,14 +187,14 @@ export async function findByDateRange({startDate, endDate}){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja inventara po opsegu datuma");
+        handleApiError(error, "Greska prilikom trazenja inventara po opsegu "+start+"- "+end+" datuma");
     }
 }
 
 export async function changeStatus({inventoryId, newStatusStr}){
     try{
         if(!inventoryId || !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
-            throw new Error("Nepoznat inventoryId i newStatusStr");
+            throw new Error("Nepoznat inventoryId "+inventoryId+" i newStatusStr "+newStatusStr);
         }
         const response = await api.post(url+`/changeStatus/${inventoryId}`,{
             params:{
@@ -224,7 +224,7 @@ export async function findPendingInventories(){
 export async function findByDateAfter(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum posle za inventar nije pronadjen");
+            throw new Error("Dati datum posle "+date+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/date-after`,{
             params:{
@@ -235,14 +235,14 @@ export async function findByDateAfter(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli inventar za datum posle");
+        handleApiError(error,"Trenutno nismo pronasli inventar za datum posle "+date);
     }
 }
 
 export async function findByDateBefore(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum pre za inventar nije pronadjen");
+            throw new Error("Dati datum pre "+date+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/date-before`,{
             params:{
@@ -253,7 +253,7 @@ export async function findByDateBefore(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli inventar za datum pre");
+        handleApiError(error,"Trenutno nismo pronasli inventar za datum pre "+date);
     }
 }
 
@@ -261,7 +261,7 @@ export async function findByStorageEmployee_FullNameContainingIgnoreCase({firstN
     try{
         if(!firstName || typeof firstName !== "string"|| firstName.trim() === "" ||
             !lastName || typeof lastName !== "string" || lastName.trim() === ""){
-            throw new Error("Dato ime i prezime magacionera nije pronadjeno");
+            throw new Error("Dato ime "+firstName+" i prezime "+lastName+" magacionera nije pronadjeno");
         }
         const response = await api.get(url+`/search/employee-full-name`,{
             params:{
@@ -273,7 +273,7 @@ export async function findByStorageEmployee_FullNameContainingIgnoreCase({firstN
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli ime i prezime magacionera");
+        handleApiError(error,"Trenutno nismo pronasli ime "+firstName+" i prezime "+lastName+" magacionera");
     }
 }
 
@@ -281,7 +281,7 @@ export async function findBystorageForeman_FullNameContainingIgnoreCase({firstNa
     try{
         if(!firstName || typeof firstName !== "string"|| firstName.trim() === "" ||
             !lastName || typeof lastName !== "string" || lastName.trim() === ""){
-            throw new Error("Dato ime i prezime smenovodje nije pronadjeno");
+            throw new Error("Dato ime "+firstName+" i prezime "+lastName+" smenovodje nije pronadjeno");
         }
         const response = await api.get(url+`/search/foreman-full-name`,{
             params:{
@@ -293,14 +293,14 @@ export async function findBystorageForeman_FullNameContainingIgnoreCase({firstNa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli ime i prezime smenovodje");
+        handleApiError(error,"Trenutno nismo pronasli ime "+firstName+" i prezime "+lastName+" smenovodje");
     }
 }
 
 export async function findByStorageEmployee_EmailILikegnoreCase(email){
     try{
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati email za magacionera nije pronadjen");
+            throw new Error("Dati email "+email+" za magacionera nije pronadjen");
         }
         const response = await api.get(url+`/search/employee-email`,{
             params:{
@@ -311,14 +311,14 @@ export async function findByStorageEmployee_EmailILikegnoreCase(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli email za magacionera");
+        handleApiError(error,"Trenutno nismo pronasli email "+email+" za magacionera");
     }
 }
 
 export async function findByStorageEmployee_Address(address){
     try{
         if(!address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Data adresa za magacionera nije pronadjena");
+            throw new Error("Data adresa "+address+" za magacionera nije pronadjena");
         }
         const response = await api.get(url+`/search/employee-address`,{
             params:{
@@ -329,14 +329,14 @@ export async function findByStorageEmployee_Address(address){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli adresu za magacionera");
+        handleApiError(error,"Trenutno nismo pronasli adresu "+address+" za magacionera");
     }
 }
 
 export async function findByStorageEmployee_PhoneNumberLikeIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj-telefona za magacionera nije pronadjen");
+            throw new Error("Dati broj-telefona "+phoneNumber+" za magacionera nije pronadjen");
         }
         const response = await api.get(url+`/search/employee-phone-number`,{
             params:{
@@ -347,14 +347,14 @@ export async function findByStorageEmployee_PhoneNumberLikeIgnoreCase(phoneNumbe
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj-telefona za magacionera");
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona "+phoneNumber+" za magacionera");
     }
 }
 
 export async function findByStorageForeman_Address(address){
     try{
         if(!address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Data adresa za smenovodju nije pronadjena");
+            throw new Error("Data adresa "+address+" za smenovodju nije pronadjena");
         }
         const response = await api.get(url+`/search/foreman-address`,{
             params:{
@@ -365,14 +365,14 @@ export async function findByStorageForeman_Address(address){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli adresu za smenovodju");
+        handleApiError(error,"Trenutno nismo pronasli adresu "+address+" za smenovodju");
     }
 }
 
 export async function findByStorageForeman_PhoneNumberLikeIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj-telefona za smenovodju nije pronadjen");
+            throw new Error("Dati broj-telefona "+phoneNumber+" za smenovodju nije pronadjen");
         }
         const response = await api.get(url+`/search/foreman-phone-number`,{
             params:{
@@ -383,14 +383,14 @@ export async function findByStorageForeman_PhoneNumberLikeIgnoreCase(phoneNumber
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj-telefona za smenovodju");
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona "+phoneNumber+" za smenovodju");
     }
 }
 
 export async function findByStorageForeman_EmailLikeIgnoreCase(email){
     try{
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dati email za smenovodju nije pronadjen");
+            throw new Error("Dati email "+email+" za smenovodju nije pronadjen");
         }
         const response = await api.get(url+`/search/foreman-email`,{
             params:{
@@ -401,7 +401,7 @@ export async function findByStorageForeman_EmailLikeIgnoreCase(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli email za smenovodju");
+        handleApiError(error,"Trenutno nismo pronasli email "+email+" za smenovodju");
     }
 }
 
@@ -410,7 +410,7 @@ export async function findByStatusAndStorageEmployeeFullNameContainingIgnoreCase
         if(!isInventoryValid.includes(status?.toUpperCase()) ||
             !firstName || typeof firstName !== "string"|| firstName.trim() === "" ||
             !lastName || typeof lastName !== "string" || lastName.trim() === ""){
-            throw new Error("Dati status inventara, ime i prezime magacionera nisu pronadjeni");
+            throw new Error("Dati status "+status+" inventara, ime "+firstName+" i prezime "+lastName+" magacionera nisu pronadjeni");
         }
         const response = await api.get(url+`/search/status-and-employee-full-name`,{
             params:{
@@ -423,7 +423,7 @@ export async function findByStatusAndStorageEmployeeFullNameContainingIgnoreCase
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status inventara i ime i prezime magacionera");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" inventara i ime "+firstName+" i prezime "+lastName+" magacionera");
     }
 }
 
@@ -432,7 +432,7 @@ export async function findByStatusAndStorageForemanFullNameContainingIgnoreCase(
         if(!isInventoryValid.includes(status?.toUpperCase()) ||
             !firstName || typeof firstName !== "string"|| firstName.trim() === "" ||
             !lastName || typeof lastName !== "string" || lastName.trim() === ""){
-            throw new Error("Dati status inventara, ime i prezime smenovodje nisu pronadjeni");
+            throw new Error("Dati status "+status+" inventara, ime "+firstName+" i prezime "+lastName+" smenovodje nisu pronadjeni");
         }
         const response = await api.get(url+`/search/status-and-foreman-full-name`,{
             params:{
@@ -445,7 +445,7 @@ export async function findByStatusAndStorageForemanFullNameContainingIgnoreCase(
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status inventara i ime i prezime smenovodje");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" inventara i ime "+firstName+" i prezime "+lastName+" smenovodje");
     }
 }
 
@@ -454,7 +454,7 @@ export async function findInventoryByStorageForemanIdAndDateRange({foremanId, st
         if(isNaN(foremanId) || foremanId == null || 
             !moment(startDate,"YYYY-MM-DD",true).isValid() ||
             !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati id smenovodje i datumski opseg inventara nije pronadjen");
+            throw new Error("Dati id "+foremanId+" smenovodje i datumski opseg "+startDate+" - "+endDate+" inventara nije pronadjen");
         }
         const response = await api.get(url+`/foreman/${foremanId}/inventory-date-range`,{
             params:{
@@ -466,7 +466,7 @@ export async function findInventoryByStorageForemanIdAndDateRange({foremanId, st
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id smenovodje i datumski opseg za inventar");
+        handleApiError(error,"Trenutno nismo pronasli id "+foremanId+" smenovodje i datumski "+startDate+" - "+endDate+" opseg za inventar");
     }
 }
 
@@ -474,7 +474,7 @@ export async function findInventoryByStorageForemanIdAndDateRange({foremanId, st
 export async function findByStorageEmployeeIdAndStatus({employeeId, status}){
     try{
         if(isNaN(employeeId) || employeeId == null || !isInventoryValid.includes(status?.toUpperCase())){
-            throw new Error("Dati id magacionera i status inventara nije pronadjen");
+            throw new Error("Dati id "+employeeId+" magacionera i status "+status+" inventara nije pronadjen");
         }
         const response = await api.get(url+`/search/employee/${employeeId}/status`,{
             params:{
@@ -485,14 +485,14 @@ export async function findByStorageEmployeeIdAndStatus({employeeId, status}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id magacionera i status inventara");
+        handleApiError(error,"Trenutno nismo pronasli id "+employeeId+" magacionera i status "+status+" inventara");
     }
 }
 
 export async function findByStorageForemanIdAndStatus({foremanId, status}){
     try{
         if(isNaN(foremanId) || foremanId == null || !isInventoryValid.includes(status?.toUpperCase())){
-            throw new Error("Dati id smenovodje i status inventara nije pronadjen");
+            throw new Error("Dati id "+foremanId+" smenovodje i status "+status+" inventara nije pronadjen");
         }
         const response = await api.get(url+`/search/foreman/${foremanId}/status`,{
             params:{
@@ -503,7 +503,7 @@ export async function findByStorageForemanIdAndStatus({foremanId, status}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id smenovodje i status inventara");
+        handleApiError(error,"Trenutno nismo pronasli id "+foremanId+" smenovodje i status "+status+" inventara");
     }
 }
 
@@ -512,7 +512,7 @@ export async function findByStorageEmployeeIdAndDateBetween({employeeId, startDa
         if(isNaN(employeeId) || employeeId == null ||
             !moment(startDate,"YYYY-MM-DD",true).isValid() ||
             !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati id magacionera i datumski opseg za inventar nisu pronadjeni");
+            throw new Error("Dati id "+employeeId+" magacionera i datumski "+startDate+" - "+endDate+" opseg za inventar nisu pronadjeni");
         }
         const response = await api.get(url+`/employee/${employeeId}/date-range`,{
             params:{
@@ -524,7 +524,7 @@ export async function findByStorageEmployeeIdAndDateBetween({employeeId, startDa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id magacionera i datumski opseg inventara");
+        handleApiError(error,"Trenutno nismo pronasli id "+employeeId+" magacionera i datumski "+startDate+" - "+endDate+" opseg inventara");
     }
 }
 
@@ -533,7 +533,7 @@ export async function findByStorageForemanIdAndDateBetween({foremanId, startDate
         if(isNaN(foremanId) || foremanId == null ||
             !moment(startDate,"YYYY-MM-DD",true).isValid() ||
             !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati id smenovodje i datumski opseg za inventar nisu pronadjeni");
+            throw new Error("Dati id "+foremanId+" smenovodje i datumski opseg "+startDate+" - "+endDate+" za inventar nisu pronadjeni");
         }
         const response = await api.get(url+`/foreman/${foremanId}/date-range`,{
             params:{
@@ -545,14 +545,14 @@ export async function findByStorageForemanIdAndDateBetween({foremanId, startDate
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id smenovodje i datumski opseg inventara");
+        handleApiError(error,"Trenutno nismo pronasli id "+endDate+" smenovodje i datumski opseg "+startDate+" - "+endDate+" inventara");
     }
 }
 
 export async function countByStorageForemanId(foremanId){
     try{
         if(isNaN(foremanId) || foremanId == null){
-            throw new Error("Dati id za smenovodju nije pronadjen");
+            throw new Error("Dati id "+foremanId+" za smenovodju nije pronadjen");
         }
         const response = await api.get(url+`/count-by/${foremanId}`,{
             headers:getHeader()
@@ -560,14 +560,14 @@ export async function countByStorageForemanId(foremanId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj smenovodja po njihovom id-iju");
+        handleApiError(error,"Trenutno nismo pronasli broj smenovodja po njihovom "+foremanId+" id-iju");
     }
 }
 
 export async function existsByStatus(status){
     try{
         if(!isInventoryValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status za inventar nije pronadjen");
+            throw new Error("Dati status "+status+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/exists-by-status`,{
             params:{
@@ -578,7 +578,7 @@ export async function existsByStatus(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenurno nismo pronasli postojanje datog statusa za inventar");
+        handleApiError(error,"Trenurno nismo pronasli postojanje datog statusa "+status+" za inventar");
     }
 }
 

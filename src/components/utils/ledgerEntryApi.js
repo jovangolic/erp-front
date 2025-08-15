@@ -60,7 +60,7 @@ export async function updateLedgerEntry({id,entryDate,amount,description,account
 export async function deleteLedgerEntry(id){
     try{
         if(!id){
-            throw new Error("Dati ID za LedgerEntry nije pronadjen");
+            throw new Error("Dati ID "+id+" za LedgerEntry nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -75,7 +75,7 @@ export async function deleteLedgerEntry(id){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za LedgerEntry nije pronadjen");
+            throw new Error("Dati ID "+id+" za LedgerEntry nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -83,7 +83,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog LedgerEntry-a");
+        handleApiError(error,"Greska prilikom trazenja jednog LedgerEntry-a po "+id+" id-iju");
     }
 }
 
@@ -102,7 +102,7 @@ export async function findAll(){
 export async function findByType(type){
     try{
         if(!isLedgerEntryTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip LedgerEntry-ja nije pronadjen");
+            throw new Error("Dati tip "+type+" LedgerEntry-ja nije pronadjen");
         }
         const response = await api.get(url+`/by-type`,{
             params:{type:(type || "").toUpperCase()},
@@ -111,7 +111,7 @@ export async function findByType(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu LedgerEntry-ja");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+type+" LedgerEntry-ja");
     }
 }
 
@@ -120,7 +120,7 @@ export async function findByAmountBetween({min, max}){
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
         if (typeof parseMin !== "number" || parseMin < 0 || typeof parseMax !== "number" || parseMax <= 0) {
-            throw new Error("Dati opseg amount-a nije pronadjen");
+            throw new Error("Dati opseg "+parseMin+" - "+parseMax+" amount-a nije pronadjen");
         }
         if(isNaN(parseMin) || parseMin < 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Dati opseg amount-a nije pronadjen");
@@ -135,14 +135,14 @@ export async function findByAmountBetween({min, max}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po opsegu amount-a");
+        handleApiError(error,"Greska prilikom trazenja po opsegu "+min+" - "+max+" amount-a");
     }
 }
 
 export async function findByDescriptionContainingIgnoreCase(keyword){
     try{
         if(!keyword || typeof keyword !== "string" || keyword.trim() === ""){
-            throw new Error("Data kljucna rec nije validna");
+            throw new Error("Data kljucna rec "+keyword+" nije validna");
         }
         const response = await api.get(url+`/by-description`,{
             params:{keyword:keyword},
@@ -151,7 +151,7 @@ export async function findByDescriptionContainingIgnoreCase(keyword){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja prema kljucnoj reci");
+        handleApiError(error,"Greska prilikom trazenja prema kljucnoj reci "+keyword);
     }
 }
 
@@ -159,7 +159,7 @@ export async function findByEntryDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opseg datuma je ne-validan");
+            throw new Error("Dati opseg "+start+" - "+end+" datuma je ne-validan");
         }
         const response = await api.get(url+`/entryDateBetween`,{
             params:{
@@ -171,14 +171,14 @@ export async function findByEntryDateBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po opesgu unosa za datum");
+        handleApiError(error,"Greska prilikom pretrage po opsegu unosa "+start+" - "+end+" za datum");
     }
 }
 
 export async function findByAccount_Id(id){
     try{
         if(!id){
-            throw new Error("Dati ID za racun nije pronadjen");
+            throw new Error("Dati ID "+id+" za racun nije pronadjen");
         }
         const response = await api.get(url+`/account/${id}`,{
             headers:getHeader()
@@ -186,14 +186,14 @@ export async function findByAccount_Id(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po ID-iju racuna");
+        handleApiError(error,"Greska prilikom trazenja po "+id+" ID-iju racuna");
     }
 }
 
 export async function findByAccount_AccountNumber(accountNumber){
     try{
         if(!accountNumber || typeof accountNumber !=="string" || accountNumber.trim() === ""){
-            throw new Error("Dati broj racuna nija pronadjen");
+            throw new Error("Dati broj racuna "+accountNumber+" nija pronadjen");
         }
         const response = await api.get(url+`/accountNumber`,{
             params:{
@@ -204,14 +204,14 @@ export async function findByAccount_AccountNumber(accountNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po broju racuna");
+        handleApiError(error,"Greska prilikom trazenja po broju racuna "+accountNumber);
     }
 }
 
 export async function findByAccount_AccountName(accountName){
     try{
         if(!accountName || typeof accountName !=="string" || accountName.trim() === ""){
-            throw new Error("Dati naziv racuna nija pronadjen");
+            throw new Error("Dati naziv racuna "+accountName+" nija pronadjen");
         }
         const response = await api.get(url+`/accountName`,{
             params:{
@@ -222,14 +222,14 @@ export async function findByAccount_AccountName(accountName){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po nazivu racuna");
+        handleApiError(error,"Greska prilikom trazenja po nazivu racuna "+accountName);
     }
 }
 
 export async function findByAccount_AccountNameContainingIgnoreCase(name){
     try{
         if(!name || typeof name !=="string" || name.trim() === ""){
-            throw new Error("Dati naziv racuna nija pronadjen");
+            throw new Error("Dati naziv racuna "+name+" nija pronadjen");
         }
         const response = await api.get(url+`/search-by-name`,{
             params:{
@@ -240,14 +240,14 @@ export async function findByAccount_AccountNameContainingIgnoreCase(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrazivanja naziva racuna po kljucnoj reci");
+        handleApiError(error,"Greska prilikom pretrazivanja naziva racuna po kljucnoj reci "+name);
     }
 }
 
 export async function findByAccount_Type(type){
     try{
         if(!isAccountTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip racuna nije pronadjen");
+            throw new Error("Dati tip "+type+" racuna nije pronadjen");
         }
         const response = await api.get(url+`/account-type`,{
             params:{type:(type || "").toUpperCase()},
@@ -256,7 +256,7 @@ export async function findByAccount_Type(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po tipu racuna");
+        handleApiError(error,"Greska prilikom trazenja po tipu "+type+" racuna");
     }
 }
 
@@ -264,10 +264,10 @@ export async function findByAccount_Balance(balance){
     try{
         const parseBalance = parseFloat(balance);
         if (typeof parseBalance !== "number" || parseBalance <= 0) {
-            throw new Error("Dati balans nije pronadjen");
+            throw new Error("Dati balans "+parseBalance+" nije pronadjen");
         }
         if(isNaN(parseBalance) || parseBalance <= 0){
-            throw new Error("Dati balans racuna nije pronadjen");
+            throw new Error("Dati balans "+parseBalance+" racuna nije pronadjen");
         }
         const response = await api.get(url+`/account-balance`,{
             params:{
@@ -278,14 +278,14 @@ export async function findByAccount_Balance(balance){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage po balansu racuna");
+        handleApiError(error,"Greska prilikom pretrage po balansu racuna "+balance);
     }
 }
 
 export async function findByEntryDateEquals(date){
     try{
         if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum unosa nije pronadjen");
+            throw new Error("Dati datum "+date+" unosa nije pronadjen");
         }
         const response = await api.get(url+`/entryDateEquals`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -294,14 +294,14 @@ export async function findByEntryDateEquals(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom provere jednakosti datuma");
+        handleApiError(error,"Greska prilikom provere jednakosti datuma "+date);
     }
 }
 
 export async function findByEntryDateBefore(date){
     try{
         if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati entryDateBefore nije pronadjen");
+            throw new Error("Dati datum unosa pre "+date+" nije pronadjen");
         }
         const response = await api.get(url+`/entryDateBefore`,{
             params:{date:moment(date).format("YYYY-MMM-DDTHH:mm:ss")},
@@ -310,14 +310,14 @@ export async function findByEntryDateBefore(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po entryDateBefore");
+        handleApiError(error,"Greska prilikom trazenja po datumu unosa pre "+date);
     }
 }
 
 export async function findByEntryDateAfter(date){
     try{
         if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati entryDateAfter nije pronadjen");
+            throw new Error("Dati datum unosa posle "+date+" nije pronadjen");
         }
         const response = await api.get(url+`/entryDateAfter`,{
             params:{date:moment(date).format("YYYY-MMM-DDTHH:mm:ss")},
@@ -326,7 +326,7 @@ export async function findByEntryDateAfter(date){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po entryDateAfter");
+        handleApiError(error,"Greska prilikom trazenja po datumu unosa posle "+date);
     }
 }
 
@@ -334,7 +334,7 @@ export async function findByEntryDateAfterAndType({date, type}){
     try{
         if(!isLedgerEntryTypeValid.includes(type?.toUpperCase()) ||
             !moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati entryDateAfter i tip nisu pronadjeni");
+            throw new Error("Dati datum unosa posle "+date+" i tip "+type+" nisu pronadjeni");
         }
         const response = await api.get(url+`/dateAfter-type`,{
             params:{
@@ -346,7 +346,7 @@ export async function findByEntryDateAfterAndType({date, type}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja entryDateAAfter i tipa");
+        handleApiError(error,"Greska prilikom trazenja po datumu unosa posle "+date+" i tipa "+type);
     }
 }
 
@@ -354,7 +354,7 @@ export async function findByEntryDateBetweenAndAccount_Id({start, end,accountId}
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !accountId){
-            throw new Error("Dati pocetak i kraju datuma kao i id racuna nisu pronadjeni");
+            throw new Error("Dati pocetak "+start+" i kraju "+end+" datuma kao i id "+accountId+" racuna nisu pronadjeni");
         }
         const response = await api.get(url+`/account/${accountId}/date-range`,{
             params:{
@@ -366,6 +366,6 @@ export async function findByEntryDateBetweenAndAccount_Id({start, end,accountId}
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja opsega unosa datuma i ID-ija za racun");
+        handleApiError(error,"Greska prilikom trazenja opsega unosa "+start+" - "+end+" datuma i ID-ija "+accountId+" za racun");
     }
 }

@@ -46,7 +46,7 @@ export async function update({id, languageCodeType, languageNameType}){
 export async function deleteLanguage(id){
     try{
         if(!id){
-            throw new Error("Dati ID za language nije pronadjen");
+            throw new Error("Dati ID "+id+" za language nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/language/delete/${id}`,{
             headers:getHeader()
@@ -61,7 +61,7 @@ export async function deleteLanguage(id){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID za language nije pronadjen");
+            throw new Error("Dati ID "+id+" za language nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/find-one/${id}`,{
             headers:getHeader()
@@ -69,7 +69,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog jezika");
+        handleApiError(error,"Greska prilikom trazenja jednog jezika po "+id+" id-iju");
     }
 }
 
@@ -88,7 +88,7 @@ export async function getALL(){
 export async function findByCodeType(code){
     try{
         if(!isLanguageCodeTypeValid.includes(code?.toUpperCase())){
-            throw new Error("Dati code jezika nije pronadjen");
+            throw new Error("Dati code "+code+" jezika nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/by-code/${code}`,{
             headers:getHeader()
@@ -96,14 +96,14 @@ export async function findByCodeType(code){
         return response.data;
     }
     catch(error){
-
+        handleApiError(error,"Trenutno nismo pronasi tip koda "+code);
     }
 }
 
 export async function findByNameType(nameType){
     try{
         if(!isLanguageNameTypeValid.includes(nameType?.toUpperCase())){
-            throw new Error("Dati naziv/tip jezika nije pronadjen");
+            throw new Error("Dati naziv/tip "+nameType+" jezika nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/by-name/${nameType}`,{
             headers:getHeader()
@@ -111,7 +111,7 @@ export async function findByNameType(nameType){
         return response.data;
     }
     catch(error){
-        
+        handleApiError(error,"Trenutno nismo pronasli naziv tipa "+nameType+" za dati jezik");
     }
 }
 

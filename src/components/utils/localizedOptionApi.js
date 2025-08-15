@@ -39,7 +39,7 @@ export async function update({id, optionId,languageId,localizedLabel}){
 export async function findOne(id){
     try{
         if(!id){
-            throw new Error("Dati ID ne postoji");
+            throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/find-one/${id}`,{
             headers:getHeader()
@@ -47,7 +47,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja jednog");
+        handleApiError(error,"Greska prilikom trazenja jednog localized-option po "+id+" id-iju");
     }
 }
 
@@ -66,7 +66,7 @@ export async function getAll(){
 export async function getTranslationsForOption(optionId){
     try{
         if(!optionId){
-            throw new Error("Dati ID za option nije pronadjen");
+            throw new Error("Dati ID "+optionId+" za option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/option/${optionId}/translations`,{
             headers:getHeader()
@@ -74,14 +74,14 @@ export async function getTranslationsForOption(optionId){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom prevodjenja");
+        handleApiError(error, "Greska prilikom prevodjenja po id-iju opcije "+optionId);
     }
 }
 
 export async function deleteLocalizedOption(id){
     try{
         if(!id){
-            throw new Error("Dati ID ne postoji");
+            throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/delete/${id}`,{
             headers:getHeader()
@@ -96,7 +96,7 @@ export async function deleteLocalizedOption(id){
 export async function deleteAllByOptionId(optionId){
     try{
         if(!optionId){
-            throw new Error("Dati id za option nije pronadjen");
+            throw new Error("Dati id "+optionId+"za option nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/deleteAll-option/${optionId}`,{
             headers:getHeader()
@@ -131,7 +131,7 @@ export async function addTranslationForOption(optionId, { languageId, localizedL
 export async function getTranslation({optionId,languageId}){
     try{
         if(!optionId || languageId){
-            throw new Error("Dati id za optionid i languageId nisu pronadjeni");
+            throw new Error("Dati id "+optionId+" za optionid i languageId "+languageId+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/option/${optionId}/language/${languageId}`,{
             headers:getHeader()
@@ -146,7 +146,7 @@ export async function getTranslation({optionId,languageId}){
 export async function getAllByLanguage(languageId){
     try{
         if(!languageId){
-            throw new Error("Dati ID za language nije pronadjen");
+            throw new Error("Dati ID "+languageId+" za language nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/translations/language/${languageId}`,{
             headers:getHeader()
@@ -154,14 +154,14 @@ export async function getAllByLanguage(languageId){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja svih jezika  ");
+        handleApiError(error,"Greska prilikom trazenja svih jezika ");
     }
 }
 
 export async function findByOption_Label(label){
     try{
         if(!label || typeof label !== "string" || label.trim() === ""){
-            throw new Error("Dati label za Option nije pronadjen");
+            throw new Error("Dati label "+label+" za Option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/label`,{
             params:{label:label},
@@ -170,14 +170,14 @@ export async function findByOption_Label(label){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja labela za Option");
+        handleApiError(error,"Greska prilikom trazenja labela "+label+" za Option");
     }
 }
 
 export async function findByOption_Value(value){
     try{
         if(!value || typeof value !== "string" || value.trim() === ""){
-            throw new Error("Data vrednost za Option nije pronadjen");
+            throw new Error("Data vrednost "+value+" za Option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/value`,{
             params:{value:value},
@@ -186,14 +186,14 @@ export async function findByOption_Value(value){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja vrednosti za Option");
+        handleApiError(error,"Greska prilikom trazenja vrednosti "+value+" za Option");
     }
 }
 
 export async function findByOption_Category(category){
     try{
         if(!isOptionCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data Option kategorija nije pronadjena");
+            throw new Error("Data Option kategorija "+category+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/category`,{
             params:{category:(category || "").toUpperCase()},
@@ -202,27 +202,27 @@ export async function findByOption_Category(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja po kategoriji za Option");
+        handleApiError(error,"Greska prilikom trazenja po kategoriji "+category+" za Option");
     }
 }
 
 export async function findByLanguage_Id(languageId){
     try{
         if(languageId == null || isNaN(languageId)){
-            throw new Error("Dati ID za jezik nije pronadjen");
+            throw new Error("Dati ID "+languageId+" za jezik nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/language/${languageId}`);
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja ID-ja za jezik");
+        handleApiError(error,"Greska prilikom trazenja ID-ja "+languageId+" za jezik");
     }
 }
 
 export async function findByLanguage_LanguageCodeType(languageCodeType){
     try{
         if(!isLanguageCodeTypeValid.includes(languageCodeType?.toUpperCase())){
-            throw new Error("Dati codeType za jezik nije pronadjen");
+            throw new Error("Dati codeType "+languageCodeType+" za jezik nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/language/code-type`,{
             params:{languageCodeType:(languageCodeType || "").toUpperCase()},
@@ -231,14 +231,14 @@ export async function findByLanguage_LanguageCodeType(languageCodeType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja codeType za jezik");
+        handleApiError(error,"Greska prilikom trazenja codeType "+languageCodeType+" za jezik");
     }
 }
 
 export async function findByLanguage_LanguageNameType(languageNameType){
     try{
         if(!isLanguageNameTypeValid.includes(languageNameType?.toUpperCase())){
-            throw new Error("Dati nameType za jezik nije pronadjen");
+            throw new Error("Dati nameType "+languageNameType+" za jezik nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/language/name-type`,{
             params:{languageNameType:(languageNameType || "").toUpperCase()},
@@ -247,7 +247,7 @@ export async function findByLanguage_LanguageNameType(languageNameType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom trazenja nameType za jezik");
+        handleApiError(error,"Greska prilikom trazenja nameType "+languageNameType+" za jezik");
     }
 }
 

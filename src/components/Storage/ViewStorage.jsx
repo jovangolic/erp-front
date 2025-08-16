@@ -21,6 +21,16 @@ const ViewStorage = () => {
         fetchStorage();
     },[id]);
 
+    function formatShelves(hasShelvesFor){
+        return hasShelvesFor ? "Ima" : "Nema"
+    }
+
+    function calculateAvailable(storage){
+        if(!storage.capacity || !storage.usedCapacity){
+            return 0;
+        }
+        return storage.capacity - storage.usedCapacity;
+    }
 
     if(storage == null){
         return <div>Loading....</div>
@@ -37,7 +47,25 @@ const ViewStorage = () => {
                 <strong>Location</strong> {storage.location}
             </div>
             <div className="mb-3">
-                <strong>Capacity</strong> {storage.capacity}
+                <strong>Capacity: </strong> {storage.capacity}
+            </div>
+            <div className="mb-3">
+                    <strong>Capacity usage: </strong>
+                <div className="progress">
+                    <div
+                        className="progress-bar"
+                        role="progressbar"
+                        style={{ width: `${storage.capacity > 0 ? (storage.usedCapacity / storage.capacity) * 100 : 0}%` }}
+                        >
+                            {storage.usedCapacity} / {storage.capacity}
+                    </div>
+                </div>
+            </div>
+            <div className="mb-3">
+                <strong>Available Capacity: </strong> {calculateAvailable(storage)}
+            </div>
+            <div className="mb-3">
+                <strong>Has Shelves: </strong> {formatShelves(storage.hasShelvesFor)}
             </div>
             <div className="mb-3">
                     <label className="form-label">Type</label>
@@ -46,8 +74,30 @@ const ViewStorage = () => {
                         value={storage.type} 
                         onChange={(e) => setStorage({ ...storage, type: e.target.value })} 
                     >
-                        <option value="PRODUCTION">Production</option>
-                        <option value="DISTRIBUTION">Distribution</option>
+                        <option value="PRODUCTION">PRODUCTION</option>
+                        <option value="DISTRIBUTION">DISTRIBUTION</option>
+                        <option value="YARD">YARD</option>
+                        <option value="SILO">SILO</option>
+                        <option value="COLD_STORAGE">COLD_STORAGE</option>
+                        <option value="OPEN">OPEN</option>
+                        <option value="CLOSED">CLOSED</option>
+                        <option value="INTERIM">INTERIM</option>
+                        <option value="AVAILABLE">AVAILABLE</option>
+                    </select>
+             </div>
+             <div className="mb-3">
+                    <label className="form-label">Status</label>
+                    <select 
+                        className="form-select"
+                        value={storage.status}
+                        onChange={(e) => setStorage({... storage, status: e.target.value})}
+                        >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="UNDER_MAINTENANCE">UNDER_MAINTENANCE</option>
+                        <option value="DECOMMISSIONED">DECOMMISSIONED</option>
+                        <option value="RESERVED">RESERVED</option>
+                        <option value="TEMPORARY">TEMPORARY</option>
+                        <option value="FULL">FULL</option>
                     </select>
              </div>
             <h3>Shelves</h3>

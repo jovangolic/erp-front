@@ -36,6 +36,7 @@ const StorageList = () => {
                         <th>Location</th>
                         <th>Capacity</th>
                         <th>Type</th>
+                        <th>Status</th>
                         <th>Goods</th>
                         <th>Shelves</th>
                     </tr>
@@ -48,6 +49,7 @@ const StorageList = () => {
                         <td>{storage.location}</td>
                         <td>{storage.capacity}</td>
                         <td>{storage.storageType}</td>
+                        <td>{storage.storageStatus}</td>
                         <td>
                             <Link to={`/storage/${storage.id}/goods`} className="btn btn-primary btn-sm">
                             View Goods

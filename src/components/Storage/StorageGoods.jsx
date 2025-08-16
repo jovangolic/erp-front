@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getGoodsByStorageId } from "../utils/goodsApi"; // napravi funkciju u utils
+import { getGoodsByStorageId } from "../utils/goodsApi"; 
 
 const StorageGoods = () => {
   const { id } = useParams();

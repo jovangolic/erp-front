@@ -13,7 +13,7 @@ const UpdateStorage = () => {
     const [newGoods, setNewGoods] = useState({
         name: "",
         unitMeasure: "",
-        supplierType: "CABAGE_SUPPLIER",
+        supplierType: "RAW_MATERIAL",
         goodsType: "RAW_MATERIAL",
     });
 
@@ -38,7 +38,7 @@ const UpdateStorage = () => {
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            const data = await updateStorage(id,storage.name,storage.location,storage.capacity,storage.type,storage.goods,storage.shelves);
+            const data = await updateStorage(id,storage.name,storage.location,storage.capacity,storage.type,storage.status,storage.shelves,storage.hasShelvesFor);
             navigate("/storage", { state: { message: "Storage successfully updated!" } });
         }
         catch(error){
@@ -56,7 +56,7 @@ const UpdateStorage = () => {
     setNewGoods({
       name: "",
       unitMeasure: "",
-      supplierType: "CABAGE_SUPPLIER",
+      supplierType: "RAW_MATERIAL",
       goodsType: "RAW_MATERIAL",
     });
   };
@@ -126,11 +126,33 @@ const UpdateStorage = () => {
                     <label className="form-label">Type</label>
                     <select 
                         className="form-select" 
-                        value={type} 
+                        value={storage.type} 
                         onChange={(e) => setType(e.target.value)} 
                     >
-                        <option value="PRODUCTION">Production</option>
-                        <option value="DISTRIBUTION">Distribution</option>
+                        <option value="PRODUCTION">PRODUCTION</option>
+                        <option value="DISTRIBUTION">DISTRIBUTION</option>
+                        <option value="YARD">YARD</option>
+                        <option value="SILO">SILO</option>
+                        <option value="COLD_STORAGE">COLD_STORAGE</option>
+                        <option value="OPEN">OPEN</option>
+                        <option value="CLOSED">CLOSED</option>
+                        <option value="INTERIM">INTERIM</option>
+                        <option value="AVAILABLE">AVAILABLE</option>
+                    </select>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Status</label>
+                    <select 
+                        className="form-select"
+                        value={storage.status}
+                        onChange={(e) => setStatus(e.target.value)}
+                    >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="UNDER_MAINTENANCE">UNDER_MAINTENANCE</option>
+                        <option value="DECOMMISSIONED">DECOMMISSIONED</option>
+                        <option value="RESERVED">RESERVED</option>
+                        <option value="TEMPORARY">TEMPORARY</option>
+                        <option value="FULL">FULL</option>
                     </select>
                 </div>
                 <hr />
@@ -156,8 +178,16 @@ const UpdateStorage = () => {
                     value={newGoods.supplierType}
                     onChange={(e) => setNewGoods({ ...newGoods, supplierType: e.target.value })}
                 >
-                    <option value="CABAGE_SUPPLIER">Cabage Supplier</option>
-                    <option value="CARROT_SUPPLIER">Carrot Supplier</option>
+                    <option value="RAW_MATERIAL">Raw Material</option>
+                    <option value="MANUFACTURER">Manufacturer</option>
+                    <option value="WHOLESALER">Wholesaler</option>
+                    <option value="DISTRIBUTOR">Distributor</option>
+                    <option value="SERVICE_PROVIDER">Service Provider</option>
+                    <option value="AGRICULTURE">Agriculture</option>
+                    <option value="FOOD_PROCESSING">Food Processing</option>
+                    <option value="LOGISTICS">Logistics</option>
+                    <option value="PACKAGING">Packaging</option>
+                    <option value="MAINTENANCE">Maintenance</option>
                 </select>
                 <select
                     className="form-select mb-2"
@@ -165,7 +195,12 @@ const UpdateStorage = () => {
                     onChange={(e) => setNewGoods({ ...newGoods, goodsType: e.target.value })}
                 >
                     <option value="RAW_MATERIAL">Raw Material</option>
+                    <option value="SEMI_FINISHED_PRODUCT">Semi-Finished Product</option>
                     <option value="FINISHED_PRODUCT">Finished Product</option>
+                    <option value="WRITE_OFS">Write-ofs</option>
+                    <option value="CONSTRUCTION_MATERIAL">Construction-material</option>
+                    <option value="BULK_GOODS">Bulk-goods</option>
+                    <option value="PALLETIZED_GOODS">Palletized-goods</option>
                 </select>
                 <button type="button" className="btn btn-outline-secondary" onClick={addGoods}>
                     Add Goods

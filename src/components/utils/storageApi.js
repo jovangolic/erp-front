@@ -4,7 +4,7 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 const isStorageStatusValid = ["ACTIVE","UNDER_MAINTENANCE","DECOMMISSIONED","RESERVED","TEMPORARY","FULL"];
 
-export async function createStorage({name, location, capacity, shelves, type, goods}) {
+export async function createStorage({name, location, capacity, shelves, type}) {
     try {
         if(!name || typeof name !=="string" || name.trim()==="" || !location || typeof location !=="string" || location.trim()===""
             ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 ||
@@ -16,7 +16,6 @@ export async function createStorage({name, location, capacity, shelves, type, go
             location,
             capacity: parseFloat(capacity),
             shelves,
-            goods, // dodato!
             type: type.toUpperCase()
         };
 
@@ -35,11 +34,11 @@ export async function createStorage({name, location, capacity, shelves, type, go
     }
 }
 
-export async function updateStorage({storageId, name,location, capacity, type, goods,shelves}){
+export async function updateStorage({storageId, name,location, capacity, type,status,shelves,hasShelvesFor}){
     try{
         if(id == null || isNaN(id) || !name || typeof name !=="string" || name.trim()==="" || !location || typeof location !=="string" || location.trim()===""
-            ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 ||
-            !validateStorageType.includes(type?.toUpperCase())){
+            ||isNaN(capacity) || capacity <= 0 || !Array.isArray(shelves) || shelves.length === 0 || typeof hasShelvesFor !== "boolean" ||
+            !validateStorageType.includes(type?.toUpperCase()) || !isStorageStatusValid.includes(status?.toUpperCase())){
         throw new Error("Sva polja moraju biti popunjena");
     }
         const requestBody = {
@@ -47,8 +46,9 @@ export async function updateStorage({storageId, name,location, capacity, type, g
             location,
             capacity: parseFloat(capacity),
             shelves,
-            goods, // dodato!
-            type: type.toUpperCase()
+            type: type.toUpperCase(),
+            status: status.toUpperCase(),
+            hasShelvesFor
         };
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/storages/update/${storageId}`,requestBody,
             {

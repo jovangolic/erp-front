@@ -36,7 +36,7 @@ export async function createItemSales({goodsId, salesId, procurementId, salesOrd
 export async function updateItemSales({id, goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !goodsId || !salesId || !procurementId || !salesOrderId ||
             isNaN(quantity) || parseInt(quantity) <= 0 ||
             isNaN(unitPrice) || parseFloat(unitPrice) <= 0
@@ -61,7 +61,7 @@ export async function updateItemSales({id, goodsId, salesId, procurementId, sale
 
 export async function deleteItemSales(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za itemSales ne postoji");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -76,7 +76,7 @@ export async function deleteItemSales(id){
 
 export async function getOneItemSales(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za itemSales ne postoji");
         }
         const response = await api.get(url+`/item/${id}`,{

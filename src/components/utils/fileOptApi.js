@@ -45,7 +45,7 @@ export async function createFileOpt({extension,mimeType,maxSizeInBytes,uploadEna
 export async function updateFileOpt({id,extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !isFileExtensionValid.includes(extension?.toUpperCase()) ||
             !mimeType || typeof mimeType !== "string" || mimeType.trim() === "" ||
             maxSizeInBytes == null || maxSizeInBytes <= 0 ||
@@ -72,7 +72,7 @@ export async function updateFileOpt({id,extension,mimeType,maxSizeInBytes,upload
 
 export async function deleteFileOpt(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za fileOpt nijr pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/file-opt/delete/${id}`,{
@@ -99,7 +99,7 @@ export async function getAllFileOpts(){
 
 export async function getFileOptById(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za fileOpt nijr pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/file-opt/get-one/${id}`,{

@@ -157,7 +157,7 @@ export async function findByDeliveryDateBetween({from, to}) {
 
 export async function findByBuyerId(buyerId){
     try{
-        if(!buyerId){
+        if(buyerId == null || isNaN(buyerId)){
             throw new Error("ID "+buyerId+" prenosa mora biti prosledjen");
         }
         const response = await api.get(url+`/buyer/${buyerId}`,{

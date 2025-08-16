@@ -88,7 +88,7 @@ export async function toggleRegistrationEnabled(enabled) {
 export async function findByStatusMessage(statusMessage){
     try{
         if(!statusMessage || typeof statusMessage !== "string" || statusMessage.trim() === ""){
-            throw new Error("Dati status poruke nije pronadjen");
+            throw new Error("Dati status "+statusMessage+" poruke nije pronadjen");
         }
         const response = await api.get(url+`/search/by-status-message`,{
             params:{statusMessage:statusMessage},
@@ -97,7 +97,7 @@ export async function findByStatusMessage(statusMessage){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status poruke");
+        handleApiError(error,"Trenutno nismo pronasli status "+statusMessage+" poruke");
     }
 }
 
@@ -152,7 +152,7 @@ export async function findRestarting(){
 export async function existsByStatusMessage(statusMessage){
     try{
         if(!statusMessage || typeof statusMessage !== "string" || statusMessage.trim() === ""){
-            throw new Error("Data statusna poruka nije pronadjena");
+            throw new Error("Data statusna "+statusMessage+" poruka nije pronadjena");
         }
         const response = await api.get(url+`/search/exists-status-message`,{
             params:{statusMessage:statusMessage},
@@ -161,14 +161,14 @@ export async function existsByStatusMessage(statusMessage){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli postojanje statusne poruke");
+        handleApiError(error,"Trenutno nismo pronasli postojanje statusne "+statusMessage+" poruke");
     }
 }
 
 export async function countByStatusMessage(statusMessage){
     try{
         if(!statusMessage || typeof statusMessage !== "string" || statusMessage.trim() === ""){
-            throw new Error("Dati broj statusnih poruka nije pronadjeno");
+            throw new Error("Dati broj statusnih "+statusMessage+" poruka nije pronadjeno");
         }
         const response = await api.get(url+`/search/count-status-message`,{
             params:{statusMessage:statusMessage},
@@ -177,14 +177,14 @@ export async function countByStatusMessage(statusMessage){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj statusnih poruka");
+        handleApiError(error,"Trenutno nismo pronasli broj "+statusMessage+" statusnih poruka");
     }
 }
 
 export async function findBySystemVersion(systemVersion){
     try{
         if(!systemVersion || typeof systemVersion !== "string" || systemVersion.trim() === ""){
-            throw new Error("Data verzija sustema nije pronadjena");
+            throw new Error("Data verzija "+systemVersion+" sustema nije pronadjena");
         }
         const response = await api.get(url+`/search/by-system-version`,{
             params:{systemVersion:systemVersion},
@@ -193,14 +193,14 @@ export async function findBySystemVersion(systemVersion){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli verziju datog sistema");
+        handleApiError(error,"Trenutno nismo pronasli verziju "+systemVersion+" datog sistema");
     }
 }
 
 export async function findByLastRestartTime(lastRestartTime){
     try{
         if(!moment(lastRestartTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati posledji restart nije pronadjen");
+            throw new Error("Dati posledji "+lastRestartTime+" restart nije pronadjen");
         }
         const response = await api.get(url+`/search/last-restart-time`,{
             params:{
@@ -211,7 +211,7 @@ export async function findByLastRestartTime(lastRestartTime){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli vreme kada je poslednji put uradjen restart");
+        handleApiError(error,"Trenutno nismo pronasli vreme "+lastRestartTime+" kada je poslednji put uradjen restart");
     }
 }
 
@@ -243,7 +243,7 @@ export async function findByStatusMessageAndSystemVersion({statusMessage, system
     try{
         if(!statusMessage || typeof statusMessage !== "string" || statusMessage.trim() === "" ||
             !systemVersion || typeof systemVersion !== "string" || systemVersion.trim() === ""){
-            throw new Error("Dati status poruke i verzija sistema nije pronadjena");
+            throw new Error("Dati status "+statusMessage+" poruke i verzija "+systemVersion+" sistema nije pronadjena");
         }
         const response = await api.get(url+`/search/status-message-and-system-version`,{
             params:{
@@ -255,7 +255,7 @@ export async function findByStatusMessageAndSystemVersion({statusMessage, system
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status poruke i verziju sistema");
+        handleApiError(error,"Trenutno nismo pronasli status "+statusMessage+" poruke i verziju "+systemVersion+" sistema");
     }
 }
 
@@ -313,7 +313,7 @@ export async function existsByStatusMessageAndSystemVersion({statusMessage, syst
             !statusMessage || typeof statusMessage !== "string" || statusMessage.trim() === "" ||
             !systemVersion || typeof systemVersion !== "string" || systemVersion.trim() === ""
         ){
-            throw new Error("Dato postojanje statusne poruke i verzije sistema nisu pronadjeni");
+            throw new Error("Dato postojanje statusne "+statusMessage+" poruke i verzije "+systemVersion+" sistema nisu pronadjeni");
         }
         const response = await api.get(url+`/search/exists-status-message-and-system-version`,{
             params:{
@@ -325,14 +325,14 @@ export async function existsByStatusMessageAndSystemVersion({statusMessage, syst
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli postojanje statusne poruke i verzije sistema");
+        handleApiError(error,"Trenutno nismo pronasli postojanje statusne poruke "+statusMessage+" i verzije "+systemVersion+" sistema");
     }
 }
 
 export async function findByLastRestartTimeAfter(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme nije pronadjeno");
+            throw new Error("Dato vreme posle "+time+" nije pronadjeno");
         }
         const response = await api.get(url+`/search/last-restart-time-after`,{
             params:{
@@ -343,7 +343,7 @@ export async function findByLastRestartTimeAfter(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli vreme posle poslednjeg restart");
+        handleApiError(error,"Trenutno nismo pronasli vreme posle "+time+" poslednjeg restart");
     }
 }
 
@@ -351,7 +351,7 @@ export async function findByLastRestartTimeBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme opesage poslednjeg restarta nije pronadjeno");
+            throw new Error("Dato vreme "+start+" - "+end+" opesage poslednjeg restarta nije pronadjeno");
         }
         const response = await api.get(url+`/search/last-restart-time-between`,{
             params:{
@@ -363,11 +363,9 @@ export async function findByLastRestartTimeBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli vreme opsega poslednjeg restart");
+        handleApiError(error,"Trenutno nismo pronasli vreme "+start+" - "+end+" opsega poslednjeg restart");
     }
 }
-
-
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

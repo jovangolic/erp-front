@@ -54,7 +54,7 @@ export async function createFiscalYear({year, startDate, endDate, yearStatus, qu
 export async function updateFiscalYear({id,year, startDate, endDate, yearStatus, quarterStatus, quarters}){
     try{
         if (
-            !id ||
+            id == null || isNaN(id) ||
             isNaN(parseInt(year)) || parseInt(year) <= 0 ||
             !moment(startDate, "YYYY-MM-DD", true).isValid() ||
             !moment(endDate, "YYYY-MM-DD", true).isValid() ||
@@ -93,7 +93,7 @@ export async function updateFiscalYear({id,year, startDate, endDate, yearStatus,
 
 export async function deleteFiscalYear(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -108,7 +108,7 @@ export async function deleteFiscalYear(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{

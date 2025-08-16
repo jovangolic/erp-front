@@ -113,7 +113,7 @@ export async function searchLogs(userId, action, start, end, ipAddress, userAgen
             !ipAddress || typeof ipAddress !== "string" || ipAddress.trim() === "" ||
             !userAgent || typeof userAgent !== "string" || userAgent.trim() === ""
         ){
-            throw new Error("Dati podaci za pretragu nisu validni (userId,action,start,end,ipAddress,userAgent)");
+            throw new Error("Dati podaci za pretragu nisu validni (userId,action,start,end,ipAddress,userAgent)"+userId+" ,"+action+" ,"+start+" ,"+end+" ,"+ipAddress+" ,"+userAgent);
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}audit-logs/search`,{
             params:{
@@ -129,7 +129,7 @@ export async function searchLogs(userId, action, start, end, ipAddress, userAgen
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom pretrage");
+        handleApiError(error,"Greska prilikom pretrage po parametrima: "+userId+" ,"+action+" ,"+start+" ,"+end+" ,"+ipAddress+" ,"+userAgent);
     }
 }
 

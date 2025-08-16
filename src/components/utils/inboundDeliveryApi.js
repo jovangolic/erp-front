@@ -64,7 +64,7 @@ export async function create(date){
 
 export async function update({id, date}){
     try{
-        if(!id ||!isValidInboundDelivery(...date, validateStatus)){
+        if(id == null || isNaN(id) ||!isValidInboundDelivery(...date, validateStatus)){
             throw new Error("Sva polja moraju biti popunjena i validna.");    
         }
         const response = await api.put(url+`/update/${id}`,date,{
@@ -79,7 +79,7 @@ export async function update({id, date}){
 
 export async function deleteInboundDelivery(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -94,7 +94,7 @@ export async function deleteInboundDelivery(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -162,7 +162,7 @@ export async function findByDeliveryDateBetween({from, to}) {
 
 export async function findBySupplyId(supplyId){
     try{
-        if(!supplyId){
+        if(supplyId == null || isNaN(supplyId)){
             throw new Error("ID "+supplyId+" prenosa mora biti prosledjen");
         }
         const response = await api.get(url+`/supply/${supplyId}`,{

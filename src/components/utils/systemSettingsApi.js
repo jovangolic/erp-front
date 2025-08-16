@@ -66,7 +66,7 @@ export async function updateSystemSetting({id,value,description,category,dataTyp
 export async function getOneById(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za systemSetting nije pronadjen");
+            throw new Error("Dati ID "+id+" za systemSetting nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
@@ -74,14 +74,14 @@ export async function getOneById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Greska prilikom jednog dobavljanja");
+        handleApiError(error,"Greska prilikom jednog dobavljanja system-setting po "+id+" id-iju");
     }
 }
 
 export async function deleteSystemSetting(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID za systemSetting nije pronadjen");
+            throw new Error("Dati ID "+id+" za systemSetting nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -96,7 +96,7 @@ export async function deleteSystemSetting(id){
 export async function getByKey(key){
     try{
         if(!key || typeof key !== "string" || key.trim() === ""){
-            throw new Error("Dati kljuc nije pronadjen");
+            throw new Error("Dati kljuc "+key+" nije pronadjen");
         }
         const response = await api.get(url+`/${key}`,{
             headers:getHeader()
@@ -104,7 +104,7 @@ export async function getByKey(key){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greška prilikom dobavljanja ključa");
+        handleApiError(error, "Greška prilikom dobavljanja ključa "+key);
     }
 }
 
@@ -123,7 +123,7 @@ export async function getAll(){
 export async function findByDataType(dataType){
     try{
         if(!isSettingDataTypeValid.includes(dataType?.toUpperCase())){
-            throw new Error("Dati tip podataka za system-setting nije pronadjen");
+            throw new Error("Dati tip "+dataType+" podataka za system-setting nije pronadjen");
         }
         const response = await api.get(url+`/search/data-type`,{
             params:{
@@ -134,7 +134,7 @@ export async function findByDataType(dataType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip podataka za system-setting");
+        handleApiError(error,"Trenutno nismo pronasli tip "+dataType+" podataka za system-setting");
     }
 }
 
@@ -142,7 +142,7 @@ export async function findByValueAndCategory({value, category}){
     try{
         if(!value || typeof value !== "string" || value.trim() === "" ||
             !isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data vrednost i kategorija za system-setting nije pronadjena");
+            throw new Error("Data vrednost "+value+" i kategorija "+category+" za system-setting nije pronadjena");
         }
         const response = await api.get(url+`/search/value-and-category`,{
             params:{
@@ -154,7 +154,7 @@ export async function findByValueAndCategory({value, category}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli vrednost i kategoriju za system-setting");
+        handleApiError(error,"Trenutno nismo pronasli vrednost "+value+" i kategoriju "+category+" za system-setting");
     }
 }
 
@@ -246,7 +246,7 @@ export async function findByDataTypeAndValue({dateType, value}){
     try{
         if(!value || typeof value !=="string" || value.trim() === "" ||
             !isSettingDataTypeValid.includes(dateType?.toUpperCase())){
-            throw new Error("Dati tip-podatka i vrednost nisu pronadjeni");
+            throw new Error("Dati tip-podatka "+dateType+" i vrednost "+value+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/date-type-and-value`,{
             params:{
@@ -258,14 +258,14 @@ export async function findByDataTypeAndValue({dateType, value}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nsmo pronasli tip podatka i vrednist za system-setting");
+        handleApiError(error,"Trenutno nsmo pronasli tip podatka "+dateType+" i vrednost "+value+" za system-setting");
     }
 }
 
 export async function findByCategoryAndIsVisibleTrue(category){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data kategorija nije pronadjena");
+            throw new Error("Data kategorija "+category+" nije pronadjena");
         }
         const response = await api.get(url+`/search/by-category-and-isVisible`,{
             params:{category:(category || "").toUpperCase()},
@@ -274,7 +274,7 @@ export async function findByCategoryAndIsVisibleTrue(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju gde je atribut isVisible tacan");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" gde je atribut isVisible tacan");
     }
 }
 
@@ -293,7 +293,7 @@ export async function findByEditableTrueAndIsVisibleTrue(){
 export async function findBySettingKeyContainingIgnoreCase(keyword){
     try{
         if(!keyword || typeof keyword !== "string" || keyword.trim() === ""){
-            throw new Error("Data kljucna rec nije pronadjena");
+            throw new Error("Data kljucna rec "+keyword+" nije pronadjena");
         }
         const response = await api.get(url+`/search/setting-key`,{
             params:{keyword:keyword},
@@ -302,14 +302,14 @@ export async function findBySettingKeyContainingIgnoreCase(keyword){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli setting-key po kljucnoj reci");
+        handleApiError(error,"Trenutno nismo pronasli setting-key po kljucnoj reci "+keyword);
     }
 }
 
 export async function findBySettingKeyStartingWith(prefix){
     try{
         if(!prefix || typeof prefix !== "string" || prefix.trim() === ""){
-            throw new Error("Dati prefiks nije pronadjen");
+            throw new Error("Dati prefiks "+prefix+" nije pronadjen");
         }
         const response = await api.get(url+`/search/setting-key-starstwith`,{
             params:{prefix:prefix},
@@ -318,14 +318,14 @@ export async function findBySettingKeyStartingWith(prefix){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli setting-key koji pocinje sa datim prefiksom");
+        handleApiError(error,"Trenutno nismo pronasli setting-key koji pocinje sa datim prefiksom "+prefix);
     }
 }
 
 export async function findBySettingKeyEndingWith(suffix){
     try{
         if(!suffix || typeof suffix !== "string" || suffix.trim() === ""){
-            throw new Error("Dati sufiks nije pronadjen");
+            throw new Error("Dati sufiks "+suffix+" nije pronadjen");
         }
         const response = await api.get(url+`/search/setting-key-endswith`,{
             params:{suffix:suffix},
@@ -334,14 +334,14 @@ export async function findBySettingKeyEndingWith(suffix){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli setting-key koji se zavrsava sa datim sufiksom");
+        handleApiError(error,"Trenutno nismo pronasli setting-key koji se zavrsava sa datim sufiksom "+suffix);
     }
 }
 
 export async function findBySettingKeyContaining(substring){
     try{
         if(!substring || typeof substring !== "string" || substring.trim() === ""){
-            throw new Error("Dati substring nije pronadjen");
+            throw new Error("Dati substring "+substring+" nije pronadjen");
         }
         const response = await api.get(url+`/search/setting-key-contains`,{
             params:{substring:substring},
@@ -350,7 +350,7 @@ export async function findBySettingKeyContaining(substring){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli setting-key koji sadrzi dati substring");
+        handleApiError(error,"Trenutno nismo pronasli setting-key koji sadrzi dati substring "+substring);
     }
 }
 
@@ -358,7 +358,7 @@ export async function findByCreatedAtBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati vremenski opseg nije pronadjen");
+            throw new Error("Dati vremenski opseg "+start+" - "+end+" nije pronadjen");
         }
         const response = await api.get(url+`/search/createdAt-between`,{
             params:{
@@ -370,14 +370,14 @@ export async function findByCreatedAtBetween({start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli vremenski opseg za datum kreiranja");
+        handleApiError(error,"Trenutno nismo pronasli vremenski opseg "+start+" - "+end+" za datum kreiranja");
     }
 }
 
 export async function findByUpdatedAtAfter(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme za polje updatedAt nije pronadjeno");
+            throw new Error("Dato vreme "+time+" za polje updatedAt nije pronadjeno");
         }
         const response = await api.get(url+`/search/updatedAt-after`,{
             params:{
@@ -388,14 +388,14 @@ export async function findByUpdatedAtAfter(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum azuriranja posle");
+        handleApiError(error,"Trenutno nismo pronasli datum "+time+" azuriranja posle");
     }
 }
 
 export async function findByUpdatedAtBefore(time){
     try{
         if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme za polje updatedAt nije pronadjeno");
+            throw new Error("Dato vreme "+time+" za polje updatedAt nije pronadjeno");
         }
         const response = await api.get(url+`/search/updateAt-before`,{
             params:{
@@ -406,14 +406,14 @@ export async function findByUpdatedAtBefore(time){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli datum azuriranja pre");
+        handleApiError(error,"Trenutno nismo pronasli datum "+time+" azuriranja pre");
     }
 }
 
 export async function findAllByCategoryOrderBySettingKeyAsc(category){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data kategorja ya setting-key nije pronadjena");
+            throw new Error("Data kategorja "+category+" za setting-key nije pronadjena");
         }
         const response = await api.get(url+`/search/category-order-by-asc`,{
             params:{
@@ -424,14 +424,14 @@ export async function findAllByCategoryOrderBySettingKeyAsc(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip kategorije sortiranog prema rastucem poretku po setting-key");
+        handleApiError(error,"Trenutno nismo pronasli tip "+category+" kategorije sortiranog prema rastucem poretku po setting-key");
     }
 }
 
 export async function findAllByDataTypeOrderByUpdatedAtDesc(dataType){
     try{
         if(!isSettingDataTypeValid.includes(dataType?.toUpperCase())){
-            throw new Error("Dati tip podatka za updatedAt nije pronadjeno");
+            throw new Error("Dati tip "+dataType+" podatka za updatedAt nije pronadjeno");
         }
         const response = await api.get(url+`/search/data-type-order-by-desc`,{
             params:{dataType:(dataType || "").toUpperCase()},
@@ -440,32 +440,36 @@ export async function findAllByDataTypeOrderByUpdatedAtDesc(dataType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nisno pronasli tip podatka sortiranog po opdajucem poretku za updatedAt");
+        handleApiError(error,"Trenutno nisno pronasli tip "+dataType+" podatka sortiranog po opdajucem poretku za updatedAt");
     }
 }
 
 export async function findByDataTypeIn(types){
     try{
         if(!isSettingDataTypeValid.includes(types?.toUpperCase())){
-            throw new Error("Dati tipovi podataka nisu pronadjeni");
+            throw new Error("Dati tipovi "+types+" podataka nisu pronadjeni");
         }
         const response = await api.get(url+`/search/data-type-in`,{
             params:{
-                types:(types || "").toUpperCase()
+                types:(types || "").toUpperCase(),
+                type:arrayList
+            },
+            paramsSerializer : params =>{
+                return params.arrayList.map(s => `arrayList=${s.toUpperCase()}`).join("&");
             },
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tipove podataka koji pripadaju listi tipova");
+        handleApiError(error,"Trenutno nismo pronasli tipove "+types+" podataka koji pripadaju listi tipova");
     }
 }
 
 export async function findByDataTypeCustom(type){
     try{
         if(!isSettingDataTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati tip podataka nije pronadjen");
+            throw new Error("Dati tip "+type+" podataka nije pronadjen");
         }
         const response = await api.get(url+`/seach/data-type-custom`,{
             params:{
@@ -476,7 +480,7 @@ export async function findByDataTypeCustom(type){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli custom tip-podataka");
+        handleApiError(error,"Trenutno nismo pronasli custom tip "+type+" podataka");
     }
 }
 
@@ -591,7 +595,7 @@ export async function findUserManagement(){
 export async function findAllByCategory(category){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Date kategorije nisu pronadjene");
+            throw new Error("Date kategorije "+category+" nisu pronadjene");
         }
         const response = await api.get(url+`/search/all-category`,{
             params:{
@@ -602,14 +606,14 @@ export async function findAllByCategory(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli sve kategorije");
+        handleApiError(error,"Trenutno nismo pronasli sve kategorije "+category);
     }
 }
 
 export async function existsByCategory(category){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Date kategorije nisu pronadjene");
+            throw new Error("Date kategorije "+category+" nisu pronadjene");
         }
         const response = await api.get(url+`/search/exists-by-category`,{
             params:{
@@ -620,14 +624,14 @@ export async function existsByCategory(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli koje sve kategorije postoje");
+        handleApiError(error,"Trenutno nismo pronasli koje sve kategorije "+category+" postoje");
     }
 }
 
 export async function countByCategory(category){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Dati broj kategorija nije pronadjen");
+            throw new Error("Dati broj kategorija "+category+" nije pronadjen");
         }
         const response = await api.get(url+`/search/count-category`,{
             params:{
@@ -638,7 +642,7 @@ export async function countByCategory(category){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli ukupan broj kategorija");
+        handleApiError(error,"Trenutno nismo pronasli ukupan broj kategorija "+category);
     }
 }
 
@@ -646,7 +650,7 @@ export async function findByCategoryAndDataType({category, dataType}){
     try{
         if(!isSettingDataTypeValid.includes(dataType?.toUpperCase() || 
         isSustemSettingCategoryValid.includes(category?.toUpperCase()))){
-            throw new Error("Dati tip podatka i kategorija nisu pronadjeni");
+            throw new Error("Dati tip "+dataType+" podatka i kategorija "+category+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-data-type`,{
             params:{
@@ -658,7 +662,7 @@ export async function findByCategoryAndDataType({category, dataType}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i tip podatka za system-setting");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i tip "+dataType+" podatka za system-setting");
     }
 }
 
@@ -666,7 +670,7 @@ export async function existsByCategoryAndDataType({category, dataType}){
     try{
         if(!isSettingDataTypeValid.includes(dataType?.toUpperCase() || 
         isSustemSettingCategoryValid.includes(category?.toUpperCase()))){
-            throw new Error("Dati tip podatka i kategorija nisu pronadjeni");
+            throw new Error("Dati tip "+dataType+" podatka i kategorija "+category+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-data-type`,{
             params:{
@@ -678,7 +682,7 @@ export async function existsByCategoryAndDataType({category, dataType}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i tip podatka za system-setting koje postoje");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i tip "+dataType+" podatka za system-setting koje postoje");
     }
 }
 
@@ -697,7 +701,7 @@ export async function indDistinctCategories(){
 export async function findByCategoryAndEditable({category, editable}){
     try{
         if(typeof editable !=="boolean" || !isSustemSettingCategoryValid.includes(category?.toUpperCase()) ){
-            throw new Error("Data kategorija i editable atribut nisu pronadjeni");
+            throw new Error("Data kategorija "+category+"i editable "+editable+" atribut nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-editable`,{
             params:{
@@ -709,14 +713,14 @@ export async function findByCategoryAndEditable({category, editable}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i atribut editable");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i atribut editable "+editable);
     }
 }
 
 export async function findByCategoryAndIsVisible({category, isVisible}){
     try{
         if(typeof isVisible !== "boolean" || !isSustemSettingCategoryValid.includes(category?.toUpperCase())){
-            throw new Error("Data kategorija i isVisible atribut nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i isVisible "+isVisible+" atribut nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-visible`,{
             params:{
@@ -728,7 +732,7 @@ export async function findByCategoryAndIsVisible({category, isVisible}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i atribut isVisible");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i atribut isVisible "+isVisible);
     }
 }
 
@@ -736,7 +740,7 @@ export async function findByCategoryAndValue({category, value}){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase()) || 
             !value || typeof value !== "string" || value.trim() === ""){
-            throw new Error("Data kategorija i vrednost nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i vrednost "+value+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-value`,{
             params:{
@@ -748,23 +752,28 @@ export async function findByCategoryAndValue({category, value}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i vrednost za system-setting");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i vrednost "+value+" za system-setting");
     }
 }
 
 export async function findByCategoryIn(categories){
     try{    
         if(!isSustemSettingCategoryValid.includes(categories?.toUpperCase())){
-            throw new Error("Date kategorije nisu pronadjene");
+            throw new Error("Date kategorije "+categories+" nisu pronadjene");
         }
         const response = await api.get(url+`/search/by-category-in`,{
-            params:{categories:(categories || "").toUpperCase()},
+            params:{categories:(categories || "").toUpperCase(),
+                categories: arrayList
+            },
+            paramsSerializer: params => {
+                return params.arrayList.map(s => `arrayList=${s.toUpperCase()}`).join("&");
+            },
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategorije koje pripadaju odredjenoj listi kategorija");
+        handleApiError(error,"Trenutno nismo pronasli kategorije "+categories+" koje pripadaju odredjenoj listi kategorija");
     }
 }
 
@@ -772,7 +781,7 @@ export async function findByCategoryAndCreatedAtAfter({category, fromDate}){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase()) ||
             !moment(fromDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Data kategorija i datum kreiranja nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i datum "+fromDate+" kreiranja nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-createAt-after`,{
             params:{
@@ -784,7 +793,7 @@ export async function findByCategoryAndCreatedAtAfter({category, fromDate}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i datum kreiranja posle");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i datum "+fromDate+" kreiranja posle");
     }
 }
 
@@ -793,7 +802,7 @@ export async function findByCategoryAndUpdatedAtBetween({category, start, end}){
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase()) ||
             !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Data kategorija i datumski opseg nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i datumski opseg "+start+" - "+end+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-update-range`,{
             params:{
@@ -806,14 +815,14 @@ export async function findByCategoryAndUpdatedAtBetween({category, start, end}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kategoriju i opseg datuma za azuriranje");
+        handleApiError(error,"Trenutno nismo pronasli kategoriju "+category+" i opseg "+start+" - "+end+" datuma za azuriranje");
     }
 }
 
 export async function countByCategoryAndEditable({category, editable}){
     try{
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase()) || typeof editable !== "boolean"){
-            throw new Error("Data kategorija i editable nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i editable "+editable+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/count-by-category-and-editable`,{
             params:{
@@ -825,11 +834,9 @@ export async function countByCategoryAndEditable({category, editable}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutmo nismo pronasli broj kategorija i editable za system-setting");
+        handleApiError(error,"Trenutmo nismo pronasli broj kategorija "+category+" i editable "+editable+" za system-setting");
     }
 }
-
-
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

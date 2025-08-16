@@ -98,7 +98,7 @@ export async function findAll(){
 
 export async function existsByRowCountAndStorageId({storageId, rowCount}){
     try{
-        if(isNaN(rowCount) || parseInt(rowCount) <= 0 || !storageId){
+        if(isNaN(rowCount) || parseInt(rowCount) <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greska, nepostojeci red "+rowCount+" polica i id "+storageId+" skladista");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}/rowCount/${rowCount}/exists`,{
@@ -113,7 +113,7 @@ export async function existsByRowCountAndStorageId({storageId, rowCount}){
 
 export async function existsByColsAndStorageId({storageId, cols}){
     try{
-        if(isNaN(cols) || parseInt(cols) <= 0 || !storageId){
+        if(isNaN(cols) || parseInt(cols) <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greska, nepostojeca kolona "+cols+" polica i id "+storageId+" skladista");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}/cols/${cols}/exists`,{
@@ -129,7 +129,7 @@ export async function existsByColsAndStorageId({storageId, cols}){
 export async function existsByRowCountAndColumnAndStorageId({storageId, rowCount, cols}){
     try{
         if(isNaN(rowCount) || parseInt(rowCount) <= 0 ||
-            isNaN(cols) || parseInt(cols) <= 0 || !storageId){
+            isNaN(cols) || parseInt(cols) <= 0 || storageId == null || isNaN(storageId)){
                 throw new Error("Greska, nepostojeci red "+rowCount+" i kolona "+cols+" polica kao i ID "+storageId+" skladista");
             }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}/rowCount/${rowCount}/cols/${cols}/exists`,{
@@ -144,7 +144,7 @@ export async function existsByRowCountAndColumnAndStorageId({storageId, rowCount
 
 export async function findByStorageId(storageId){
     try{
-        if(!storageId){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati ID "+storageId+" skladista je nepostojeci");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/by-storage/${storageId}`,{
@@ -159,7 +159,7 @@ export async function findByStorageId(storageId){
 
 export async function findByRowCountAndStorageId({storageId, rowCount}){
     try{
-        if(isNaN(rowCount) || parseInt(rowCount) <= 0 || !storageId){
+        if(isNaN(rowCount) || parseInt(rowCount) <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greks prilikom trazenja reda "+rowCount+" polica i ID "+storageId+" skladista");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}/rowCount/${rowCount}`,{
@@ -174,7 +174,7 @@ export async function findByRowCountAndStorageId({storageId, rowCount}){
 
 export async function findByColumnAndStorageId({storageId, cols}){
     try{
-        if(isNaN(cols) || parseInt(cols) <= 0 || !storageId){
+        if(isNaN(cols) || parseInt(cols) <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greks prilikom trazenja kolone "+cols+" polica i ID "+storageId+" skladista");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}/cols/${cols}`,{
@@ -190,7 +190,7 @@ export async function findByColumnAndStorageId({storageId, cols}){
 export async function findByRowCountAndColsAndStorageId({storageId, rowCount, cols}){
     try{
         if(isNaN(rowCount) || parseInt(rowCount) <= 0 ||
-            isNaN(cols) || parseInt(cols) <= 0 || !storageId){
+            isNaN(cols) || parseInt(cols) <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greska, prilikom trazenja reda "+rowCount+" i kolone "+cols+" polica kao i ID "+storageId+" skladista");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/storage/${storageId}/rowCount/${rowCount}/cols/${cols}`,{
@@ -205,7 +205,7 @@ export async function findByRowCountAndColsAndStorageId({storageId, rowCount, co
 
 export async function getShelfWithGoods(shelfId){
     try{
-        if(!shelfId){
+        if(shelfId == null || isNaN(shelfId)){
             throw new Error("Dati id "+shelfId+" police, nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/shelves/${shelfId}/with-goods`,{
@@ -220,7 +220,7 @@ export async function getShelfWithGoods(shelfId){
 
 export const getShelvesByStorageId = async (storageId) => {
     try{
-        if(!storageId){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati id skladista "+storageId+" za policu nije pronadjen");
         }
         const response = await api.get(`/${import.meta.env.VITE_API_BASE_URL}/shelves/by-storage/${storageId}`);

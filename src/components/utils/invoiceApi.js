@@ -134,7 +134,7 @@ export async function getByInvoiceStatus(status){
 
 export async function getByBuyerAndStatus({buyerId, status}){
     try{
-        if(!buyerId || !isInvoiceStatusValid.includes(status?.toUpperCase())){
+        if(buyerId == null ||isNaN(buyerId) || !isInvoiceStatusValid.includes(status?.toUpperCase())){
             throw new Error("Dati id za kupca "+buyerId+" i status "+status+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer-status`,{
@@ -170,7 +170,7 @@ export async function getByTotalAmount(totalAmount){
 
 export async function getByBuyerId(buyerId){
     try{
-        if(!buyerId){
+        if(buyerId == null || isNaN(buyerId)){
             throw new Error("Dati id "+buyerId+" za buyer nije pornadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer/${buyerId}`,{
@@ -288,8 +288,8 @@ export async function existsByInvoiceNumber(invoiceNumber){
 
 export async function getInvoicesByBuyerSortedByIssueDate(buyerId){
     try{
-        if(!buyerId){
-            throw new Error("Dati id "+buyerId+" za buyer nije pronadjen");
+        if(buyerId ==  null || isNaN(buyerId)){
+            throw new Error("Dati id "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/sorted-buyer/${buyerId}`,{
             headers:getHeader()

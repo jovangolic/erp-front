@@ -58,7 +58,7 @@ export async function updateBalanceSheet(id, date, totalAssets, totalLiabilities
 
 export async function deleteBalanceSheet(id) {
     try {
-        if (!id) {
+        if (id == null || isNaN(id)) {
             throw new Error("Dati ID "+id+" za balanceSheet nije pronadjen");
         }
         const response = await api.delete(url + `/delete/${id}`, {
@@ -73,7 +73,7 @@ export async function deleteBalanceSheet(id) {
 
 export async function findOne(id) {
     try {
-        if (!id) {
+        if (id == null || isNaN(id)) {
             throw new Error("Dati ID "+id+"za balanceSheet nije pronadjen");
         }
         const response = await api.get(url + `/find-one/${id}`, {
@@ -191,7 +191,7 @@ export async function findByTotalAssets(totalAssets) {
 
 export async function findByFiscalYear_Id(id) {
     try {
-        if (!id) {
+        if (id == null || isNaN(id)) {
             throw new Error("Dati ID "+id+" za fiscalYear nije pronadjen");
         }
         const response = await api.get(url + `/fiscalYear/${id}`, {
@@ -362,7 +362,7 @@ export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, mi
             isNaN(parseMiLiabilities) || parseMiLiabilities <= 0 || typeof onlySolvent !== "boolean" ||
             isNaN(Number(fiscalYearId)) || fiscalYearId == null ||
             !moment(startDate, "YYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid()) {
-            throw new Error("Dati parametri za pretragu, nisu pronasli ocekivani rezultat");
+            throw new Error("Dati parametri za pretragu: "+startDate+" ,"+endDate+" ,"+fiscalYearId+" ,"+minAssets+" ,"+minEquity+" ,"+minLiabilities+" ,"+onlySolvent+" nisu pronasli ocekivani rezultat");
         }
         if (moment(startDate).isAfter(moment(endDate))) {
             throw new Error("Datum početka ne može biti posle datuma završetka");
@@ -374,7 +374,7 @@ export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, mi
         return response.data;
     }
     catch (error) {
-        handleApiError(error, "Trenutno nismo pronasli datu pertragu za balance-sheet po odredjenim parametrima");
+        handleApiError(error, "Trenutno nismo pronasli datu pertragu za balance-sheet po odredjenim parametrima: "+startDate+" ,"+endDate+" ,"+fiscalYearId+" ,"+minAssets+" ,"+minEquity+" ,"+minLiabilities+" ,"+onlySolvent);
     }
 }
 
@@ -418,7 +418,7 @@ export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, mi
         if (isNaN(fiscalYearId) || fiscalYearId == null ||
             !moment(startDate, "YYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid() ||
             isNaN(parseMinAssets) || parseMinAssets <= 0) {
-            throw new Error("Dati parametri za pretragu BalanceSheet-a, ne pronalazi ocekivani rezultat");
+            throw new Error("Dati parametri za pretragu BalanceSheet-a:"+startDate+" , "+endDate+" , "+fiscalYearId+" ,"+minAssets+" ne pronalazi ocekivani rezultat");
         }
         const response = await api.get(url + `/filter-balance-sheet`, {
             params: {

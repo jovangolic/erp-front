@@ -56,7 +56,7 @@ export async function updateWorkCenter({id,name,location,capacity, localStorageI
 export async function deleteWorkCenter(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -71,7 +71,7 @@ export async function deleteWorkCenter(id){
 export async function findOne(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati ID nije pronadjen");
+            throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
@@ -79,7 +79,7 @@ export async function findOne(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli trazeni work-centar");
+        handleApiError(error,"Trenutno nismo pronasli trazeni work-centar po "+id+" id-iju");
     }
 }
 
@@ -98,7 +98,7 @@ export async function findAll(){
 export async function findByName(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Dati naziv za work-center nije pronadjen");
+            throw new Error("Dati naziv "+name+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/by-name`,{
             params:{name:name},
@@ -107,7 +107,7 @@ export async function findByName(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centers po nazivu");
+        handleApiError(error,"Trenutno nismo pronasli work-centers po nazivu "+name);
     }
 }
 
@@ -115,7 +115,7 @@ export async function findByCapacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(parseCapacity <= 0 || isNaN(parseCapacity)){
-            throw new Error("Dati kapacite za work-center nije pronadjen");
+            throw new Error("Dati kapacite "+parseCapacity+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/by-capacity`,{
             params:{capacity:parseCapacity},
@@ -124,14 +124,14 @@ export async function findByCapacity(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centar po kapacitetu");
+        handleApiError(error,"Trenutno nismo pronasli work-centar po kapacitetu "+capacity);
     }
 }
 
 export async function findByLocation(location){
     try{
         if(!location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Data lokacija za work-center nije pronadjen");
+            throw new Error("Data lokacija "+location+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/location`,{
             params:{location:location},
@@ -140,7 +140,7 @@ export async function findByLocation(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centers po datoj lokaciji");
+        handleApiError(error,"Trenutno nismo pronasli work-centers po datoj lokaciji "+location);
     }
 }
 
@@ -148,7 +148,7 @@ export async function findByNameAndLocation({name, location}){
     try{
         if(!location || typeof location !== "string" || location.trim() === "" ||
             !name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Data lokacija i naziv za work-center nije pronadjen");
+            throw new Error("Data lokacija "+location+" i naziv "+name+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/by-name-location`,{
             params:{name:name, location:location},
@@ -157,7 +157,7 @@ export async function findByNameAndLocation({name, location}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centers po datoj lokaciji i nazivu");
+        handleApiError(error,"Trenutno nismo pronasli work-centers po datoj lokaciji "+location+" i nazivu "+name);
     }
 }
 
@@ -165,7 +165,7 @@ export async function findByCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(parseCapacity <= 0 || isNaN(parseCapacity)){
-            throw new Error("Dati kapacite za work-center nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseCapacity+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/capacityGreaterThan`,{
             params:{capacity:parseCapacity},
@@ -174,7 +174,7 @@ export async function findByCapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centar po kapacitetu vecem od");
+        handleApiError(error,"Trenutno nismo pronasli work-centar po kapacitetu vecem od "+capacity);
     }
 }
 
@@ -182,7 +182,7 @@ export async function findByCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(parseCapacity <= 0 || isNaN(parseCapacity)){
-            throw new Error("Dati kapacite za work-center nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseCapacity+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/capacityLessThan`,{
             params:{capacity:parseCapacity},
@@ -191,14 +191,14 @@ export async function findByCapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centar po kapacitetu manjem od");
+        handleApiError(error,"Trenutno nismo pronasli work-centar po kapacitetu manjem od "+capacity);
     }
 }
 
 export async function findByNameContainingIgnoreCase(name){
     try{
         if(!name || typeof name !== "string" || name.trim() === ""){
-            throw new Error("Dati naziv za pretragu work-center nije pronadjen");
+            throw new Error("Dati naziv "+name+" za pretragu work-center nije pronadjen");
         }
         const response = await api.get(url+`/search-by-name`,{
             params:{
@@ -209,14 +209,14 @@ export async function findByNameContainingIgnoreCase(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centers prema datom nazivu za pretragu");
+        handleApiError(error,"Trenutno nismo pronasli work-centers prema datom nazivu "+name+" za pretragu");
     }
 }
 
 export async function findByLocationContainingIgnoreCase(location){
     try{
         if(!location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Data lokacija za pretragu work-center nije pronadjen");
+            throw new Error("Data lokacija "+location+" za pretragu work-center nije pronadjen");
         }
         const response = await api.get(url+`/search-by-location`,{
             params:{
@@ -227,7 +227,7 @@ export async function findByLocationContainingIgnoreCase(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centers prema datoj lokaciji za pretragu");
+        handleApiError(error,"Trenutno nismo pronasli work-centers prema datoj "+location+" lokaciji za pretragu");
     }
 }
 
@@ -236,10 +236,10 @@ export async function findByCapacityBetween({min, max}){
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
         if(isNaN(parseMin) || parseMin <=0 || isNaN(parseMax) || parseMax <= 0){
-            throw new Error("Dati opseg kapacitet za work-center nije pronadjen");
+            throw new Error("Dati opseg "+parseMin+" - "+parseMax+" kapacitet za work-center nije pronadjen");
         }
         if (parseMin >= parseMax) {
-            throw new Error("Neispravan opseg kapaciteta: minimalna i maksimalna vrednost moraju biti pozitivni brojevi");
+            throw new Error("Neispravan opseg "+parseMin+" - "+parseMax+" kapaciteta: minimalna i maksimalna vrednost moraju biti pozitivni brojevi");
         }
         const response = await api.get(url+`/capacity-between`,{
             params:{
@@ -251,14 +251,14 @@ export async function findByCapacityBetween({min, max}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg kapaciteta za work-center");
+        handleApiError(error,"Trenutno nismo pronasli opseg "+min+" - "+max+" kapaciteta za work-center");
     }
 }
 
 export async function findByLocationOrderByCapacityDesc(location){
     try{
         if(!location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Datalokacija za work-center nije pronadjena");
+            throw new Error("Data lokacija "+location+" za work-center nije pronadjena");
         }
         const response = await api.get(url+`/by-locationOrder-desc`,{
             params:{location:location},
@@ -267,14 +267,14 @@ export async function findByLocationOrderByCapacityDesc(location){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju za work-center poredjanu po opadajucem kapacitetu");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" za work-center poredjanu po opadajucem kapacitetu");
     }
 }
 
 export async function findByLocalStorage_Id(localStorageId){
     try{
         if(isNaN(localStorageId) || localStorageId == null){
-            throw new Error("Dati ID za lokalno skladiste, nije pronadjen");
+            throw new Error("Dati ID "+localStorageId+" za lokalno skladiste, nije pronadjen");
         }
         const response = await api.get(url+`/localStorage/${localStorageId}`,{
             headers:getHeader()
@@ -298,14 +298,14 @@ export async function findByLocalStorage_NameContainingIgnoreCase(localStorageNa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+localStorageName+" lokalnog skladista za work-center");
     }
 }
 
 export async function findByLocalStorage_LocationContainingIgnoreCase(localStorageLocation){
     try{
         if(!localStorageLocation || typeof localStorageLocation !== "string" || localStorageLocation.trim() === ""){
-            throw new Error("Data lokacija lokalnog-skladista, za work-center, nije pronadjena");
+            throw new Error("Data lokacija "+localStorageLocation+" lokalnog-skladista, za work-center, nije pronadjena");
         }
         const response = await api.get(url+`/by-localStorageLocation`,{
             params:{localStorageLocation:localStorageLocation},
@@ -314,7 +314,7 @@ export async function findByLocalStorage_LocationContainingIgnoreCase(localStora
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+localStorageLocation+" lokalnog skladista za work-center");
     }
 }
 
@@ -322,7 +322,7 @@ export async function findByLocalStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet za lokalno skladiste nije pronadjen");
+            throw new Error("Dati kapacitet "+parseCapacity+" za lokalno skladiste nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-capacity`,{
             params:{capacity:parseCapacity},
@@ -331,7 +331,7 @@ export async function findByLocalStorage_Capacity(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet lokalnog skladista, za work-center");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet "+capacity+" lokalnog skladista, za work-center");
     }
 }
 
@@ -339,7 +339,7 @@ export async function findByLocalStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet za lokalno skladiste nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseCapacity+" za lokalno skladiste nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-capacity-less-than`,{
             params:{capacity:parseCapacity},
@@ -348,7 +348,7 @@ export async function findByLocalStorage_CapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet lokalnog skladista manjeg od, za work-center");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet lokalnog skladista manjeg od "+capacity+", za work-center");
     }
 }
 
@@ -356,7 +356,7 @@ export async function findByLocalStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet za lokalno skladiste nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseCapacity+" za lokalno skladiste nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-capacity-greater-than`,{
             params:{capacity:parseCapacity},
@@ -365,14 +365,14 @@ export async function findByLocalStorage_CapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli kapacitet lokalnog skladista veceg od, za work-center");
+        handleApiError(error,"Trenutno nismo pronasli kapacitet lokalnog skladista veceg od "+capacity+", za work-center");
     }
 }
 
 export async function findByLocalStorage_Type(localStorageType){
     try{
         if(!validateStorageType.includes(localStorageType?.toUpperCase())){
-            throw new Error("Dati tip lokalnog sladista za work-center, nije pronadjen");
+            throw new Error("Dati tip "+localStorageType+" lokalnog sladista za work-center, nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-type`,{
             params:{
@@ -383,7 +383,7 @@ export async function findByLocalStorage_Type(localStorageType){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli tip "+localStorageType+" lokalnog skladista za work-center");
     }
 }
 
@@ -398,7 +398,7 @@ export async function filterWorkCenters({name, location, capacityMin, capacityMa
             parseCapacityMin >= parseCapacityMax || !validateStatus.includes(status?.toUpperCase()) ||
             !validateStorageType.includes(type?.toUpperCase())
         ){
-            throw new Error("Dati parametri za pretragu work-center, su ne-validni");
+            throw new Error("Dati parametri za pretragu work-center: "+name+" ,"+location+" ,"+parseCapacityMin+" ,"+parseCapacityMax+" ,"+type+" ,"+status+" su ne-validni");
         }
         const response = await api.get(url+`/filter`,{
             params:{
@@ -414,7 +414,7 @@ export async function filterWorkCenters({name, location, capacityMin, capacityMa
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli work-centers po datim parametrima za pretragu");
+        handleApiError(error,"Trenutno nismo pronasli work-centers: "+name+" ,"+location+" ,"+parseCapacityMin+" ,"+parseCapacityMax+" ,"+type+" ,"+status+" po datim parametrima za pretragu");
     }
 }
 
@@ -493,7 +493,7 @@ export async function findByTypeAvailable(){
 export async function findByLocalStorage_Status(status){
     try{
         if(!validateStatus.includes(status?.toUpperCase())){
-            throw new Error("Dati status lokalnog skladista za work-center nije pronadjen");
+            throw new Error("Dati status "+status+" lokalnog skladista za work-center nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-status`,{
             params:{
@@ -504,7 +504,7 @@ export async function findByLocalStorage_Status(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli status lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli status "+status+" lokalnog skladista za work-center");
     }
 }
 
@@ -585,7 +585,7 @@ export async function findByLocationAndCapacityGreaterThan({location, capacity})
         const parseCapacity = parseFloat(capacity);
         if(!location || typeof location !== "string" || location.trim() === "" ||
             parseCapacity <= 0 || isNaN(parseCapacity)){
-            throw new Error("Data lokacija i kapacitet lokalnog skladista za work-center nisu pronadjeni");
+            throw new Error("Data lokacija "+location+" i kapacitet veci od "+parseCapacity+" lokalnog skladista za work-center nisu pronadjeni");
         }
         const response = await api.get(url+`/search/location-and-capacity-greater-than`,{
             params:{
@@ -597,7 +597,7 @@ export async function findByLocationAndCapacityGreaterThan({location, capacity})
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju i kapacitet veci lokalnog skaldista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" i kapacitet veci od "+capacity+" lokalnog skaldista za work-center");
     }
 }
 
@@ -605,7 +605,7 @@ export async function findByNameContainingIgnoreCaseAndLocationContainingIgnoreC
     try{
         if(!name || typeof name !== "string" || name.trim() === "" ||
             !location || typeof location !== "string" || location.trim() === ""){
-            throw new Error("Dati naziv i lokacija lokalnog skladista za work-center nije pronadjena");
+            throw new Error("Dati naziv "+name+" i lokacija "+location+" lokalnog skladista za work-center nije pronadjena");
         }
         const response = await api.get(url+`/search/name-and-location`,{
             params:{
@@ -617,14 +617,14 @@ export async function findByNameContainingIgnoreCaseAndLocationContainingIgnoreC
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv i lokaciju lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" i lokaciju "+location+" lokalnog skladista za work-center");
     }
 }
 
 export async function findByLocalStorage_TypeAndLocalStorage_Status({type, status}){
     try{
         if(!validateStorageType.includes(type?.toUpperCase()) || !validateStatus.includes(status?.toUpperCase())){
-            throw new Error("Dati tip i status lokalnog skladista za work-center nisu pronadjeni");
+            throw new Error("Dati tip "+type+" i status "+status+" lokalnog skladista za work-center nisu pronadjeni");
         }
         const response = await api.get(url+`/search/type-and-status`,{
             params:{
@@ -636,14 +636,14 @@ export async function findByLocalStorage_TypeAndLocalStorage_Status({type, statu
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli tip i status lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli tip "+type+" i status "+status+" lokalnog skladista za work-center");
     }
 }
 
 export async function findByIdBetween({startId, endId}){
     try{
         if(isNaN(startId) || startId == null || isNaN(endId) || endId == null){
-            throw new Error("Dati opseg id-ijeva, nije pronadjen");
+            throw new Error("Dati opseg "+startId+" - "+endId+" id-ijeva, nije pronadjen");
         }
         const response = await api.get(url+`/search/ids-between`,{
             params:{
@@ -655,7 +655,7 @@ export async function findByIdBetween({startId, endId}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli opseg id-ijeva za work-center");
+        handleApiError(error,"Trenutno nismo pronasli opseg "+startId+" - "+endId+" id-ijeva za work-center");
     }
 }
 
@@ -732,7 +732,7 @@ export async function findByNameContainingIgnoreCaseAndLocalStorage_Status({name
     try{
         if(!name || typeof name !== "string" || name.trim() === "" ||
             !validateStatus.includes(status?.toUpperCase())){
-            throw new Error("Dati naziv i status lokalnog skladista za work-center, nisu pronadjeni");
+            throw new Error("Dati naziv "+name+" i status "+status+" lokalnog skladista za work-center, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/name-and-storage-status`,{
             params:{
@@ -744,7 +744,7 @@ export async function findByNameContainingIgnoreCaseAndLocalStorage_Status({name
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli naziv i status lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" i status "+status+" lokalnog skladista za work-center");
     }
 }
 
@@ -752,7 +752,7 @@ export async function findByLocationContainingIgnoreCaseAndLocalStorage_Type({lo
     try{
         if(!location || typeof location !== "string" ||  location.trim() === "" ||
             !validateStorageType.includes(type?.toUpperCase())){
-            throw new Error("Data lokacija i tip lokalnog skladista za work-center, nisu pronadjeni");
+            throw new Error("Data lokacija "+location+" i tip "+type+" lokalnog skladista za work-center, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/location-and-storage-type`,{
             params:{
@@ -764,7 +764,7 @@ export async function findByLocationContainingIgnoreCaseAndLocalStorage_Type({lo
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli lokaciju i tip lokalnog skladista za work-center");
+        handleApiError(error,"Trenutno nismo pronasli lokaciju "+location+" i tip "+type+" lokalnog skladista za work-center");
     }
 }
 
@@ -784,7 +784,7 @@ export async function countWorkCentersByCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet manji od za broj work-centers nije pronadjen");
+            throw new Error("Dati kapacitet manji od "+parseCapacity+" za broj work-centers nije pronadjen");
         }
         const response = await api.get(url+`/search/count-work-centers-by-capacity-less-than`,{
             params:{
@@ -795,7 +795,7 @@ export async function countWorkCentersByCapacityLessThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj work-centers za kapacitet manji od");
+        handleApiError(error,"Trenutno nismo pronasli broj work-centers za kapacitet manji od "+capacity);
     }
 }
 
@@ -803,7 +803,7 @@ export async function countWorkCentersByCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
         if(isNaN(parseCapacity) || parseCapacity <= 0){
-            throw new Error("Dati kapacitet manji od za broj work-centers nije pronadjen");
+            throw new Error("Dati kapacitet veci od "+parseCapacity+" za broj work-centers nije pronadjen");
         }
         const response = await api.get(url+`/search/count-work-centers-by-capacity-greater-than`,{
             params:{
@@ -814,7 +814,7 @@ export async function countWorkCentersByCapacityGreaterThan(capacity){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj work-centers za kapacitet veci od");
+        handleApiError(error,"Trenutno nismo pronasli broj work-centers za kapacitet veci od "+capacity);
     }
 }
 

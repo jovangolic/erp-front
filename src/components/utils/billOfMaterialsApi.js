@@ -180,7 +180,7 @@ export async function filterBOMs({parentProductId, componentId, minQuantity, max
         const parseMaxQuantity = parseFloat(maxQuantity);
         if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null ||
             isNaN(parseMinQuantity) || parseMinQuantity <= 0 || isNaN(parseMaxQuantity) || parseMaxQuantity <= 0){
-            throw new Error("Parametri za pretragu bill-of-material, ne daju rezultat");
+            throw new Error("Parametri za pretragu bill-of-material,: "+parentProductId+" ,"+componentId+" ,"+parseMinQuantity+" ,"+parseMaxQuantity+" ne daju rezultat");
         }
         const response = await api.get(url+`/filter-boms`,{
             params:{
@@ -194,7 +194,7 @@ export async function filterBOMs({parentProductId, componentId, minQuantity, max
         return response.data;
     }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli bill-of-material po datom filteru pretrazivanja");
+        handleApiError(error,"Trenutno nismo pronasli bill-of-material: "+parentProductId+" ,"+componentId+" ,"+minQuantity+" ,"+maxQuantity+" po datom filteru pretrazivanja");
     }
 }
 

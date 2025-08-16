@@ -31,7 +31,7 @@ export async function createOption({label,value,category,active}){
 export async function updateOption({id,label,value,category,active}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !label || typeof label !=="string" || label.trim()==="" ||
             !value || typeof value !=="string" || value.trim()==="" ||
             !isOptionCategoryValid.includes(category?.toUpperCase()) ||
@@ -57,7 +57,7 @@ export async function updateOption({id,label,value,category,active}){
 
 export async function deleteOption(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za option nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/option/delete/${id}`,{
@@ -72,7 +72,7 @@ export async function deleteOption(id){
 
 export async function getOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/get-one/${id}`,{

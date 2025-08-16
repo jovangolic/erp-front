@@ -55,7 +55,7 @@ export async function updateVendor({id, name, email,phoneNumber, address}){
 export async function deleteVendor(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id nije pronadjen");
+            throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
@@ -70,7 +70,7 @@ export async function deleteVendor(id){
 export async function getVendorByName(name){
     try{
         if(!name || name.trim() ==="" || typeof name !== "string"){
-            throw new Error("Naziv prodavca nije pronadjen");
+            throw new Error("Naziv "+name+" prodavca nije pronadjen");
         }
         const response = await api.get(url+`/vendor/by-name`,{
             params:{
@@ -81,14 +81,14 @@ export async function getVendorByName(name){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po imenu");
+        handleApiError(error, "Greska prilikom trazenja po imenu "+name);
     }
 }
 
 export async function getVendorByAddress(address){
     try{
         if(!address || address.trim() ==="" || typeof address !== "string"){
-            throw new Error("Adresa nije pronadjen");
+            throw new Error("Adresa "+address+" nije pronadjen");
         }
         const response = await api.get(url+`/vendor/by-address`,{
             params:{
@@ -117,14 +117,14 @@ export async function getVendorByEmail(email){
         return response.data;
     }   
     catch(error){
-        handleApiError(error, "Greska prilikom trazenja po email");
+        handleApiError(error, "Greska prilikom trazenja po email "+email);
     }
 }
 
 export async function getById(id){
     try{
         if(id == null || isNaN(id)){
-            throw new Error("Dati id nije pronadjen");
+            throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
@@ -132,7 +132,7 @@ export async function getById(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error, "Greska prilikom dobavljanja jednog");
+        handleApiError(error, "Greska prilikom dobavljanja jednog prodavca po "+id+" id-iju");
     }
 }
 
@@ -151,7 +151,7 @@ export async function getAllVendors(){
 export async function findByPhoneNumberLikeIgnoreCase(phoneNumber){
     try{
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === ""){
-            throw new Error("Dati broj telefona za vendora nije pronadjen");
+            throw new Error("Dati broj telefona "+phoneNumber+" za prodavca nije pronadjen");
         }
         const response = await api.get(url+`/by-phone-number`,{
             params:{phoneNumber:phoneNumber},
@@ -160,14 +160,14 @@ export async function findByPhoneNumberLikeIgnoreCase(phoneNumber){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli broj-telefona za vendora");
+        handleApiError(error,"Trenutno nismo pronasli broj-telefona "+phoneNumber+" za prodavca");
     }
 }
 
 export async function searchByName(nameFragment){
     try{
         if(!nameFragment || typeof nameFragment !== "string" || nameFragment.trim() === ""){
-            throw new Error("Dati fragment za naziv vendora nije pronadjen");
+            throw new Error("Dati fragment za naziv "+nameFragment+" prodavca nije pronadjen");
         }
         const response = await api.get(url+`/by-name-fragment`,{
             params:{nameFragment:nameFragment},
@@ -176,7 +176,7 @@ export async function searchByName(nameFragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspeli da pronadjemo naziv vendora po fragmentu");
+        handleApiError(error,"Trenutno nismo uspeli da pronadjemo naziv "+nameFragment+" prodavca po fragmentu");
     }
 }
 
@@ -184,7 +184,7 @@ export async function findByNameIgnoreCaseContainingAndAddressIgnoreCaseContaini
     try{
         if(!name || typeof name !== "string" || name.trim() === "" ||
             !address || typeof address !== "string" || address.trim() === ""){
-            throw new Error("Dati naziv i adresa vendora nisu pronadjeni");
+            throw new Error("Dati naziv "+name+" i adresa "+address+" prodavca nisu pronadjeni");
         }
         const response = await api.get(url+`/by-name-and-address`,{
             params:{
@@ -203,7 +203,7 @@ export async function findByNameIgnoreCaseContainingAndAddressIgnoreCaseContaini
 export async function findByIdBetween({startId, endId}){
     try{
         if(startId == null || isNaN(startId) || endId == null || isNaN(endId)){
-            throw new Error("Dati opseg indeksa nije pornadjen");
+            throw new Error("Dati opseg "+startId+" - "+endId+" indeksa nije pronadjen");
         }
         const response = await api.get(url+`/search/between-ids`,{
             params:{
@@ -215,14 +215,14 @@ export async function findByIdBetween({startId, endId}){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspeli da pronadjemo opseg indeksa za vendora");
+        handleApiError(error,"Trenutno nismo uspeli da pronadjemo opseg "+startId+" - "+endId+" indeksa za prodavca");
     }
 }
 
 export async function findByEmailContainingIgnoreCase(emailFragment){
     try{
         if(!emailFragment || typeof emailFragment !== "string" || emailFragment.trim() === ""){
-            throw new Error("Dati fragment email-a nije pronadjen");
+            throw new Error("Dati fragment "+emailFragment+" email-a nije pronadjen");
         }
         const response = await api.get(url+`/search/by-email-fragment`,{
             params:{emailFragment:emailFragment},
@@ -231,14 +231,14 @@ export async function findByEmailContainingIgnoreCase(emailFragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspeli da pronadjemo vendora po fragmentu email-a");
+        handleApiError(error,"Trenutno nismo uspeli da pronadjemo prodavca po fragmentu "+emailFragment+" email-a");
     }
 }
 
 export async function findByPhoneNumberContaining(phoneNumberFragment){
     try{
         if(!phoneNumberFragment || typeof phoneNumberFragment !== "string" || phoneNumberFragment.trim() === ""){
-            throw new Error("Dati fragment broja telefona nije pronadjen");
+            throw new Error("Dati fragment "+phoneNumberFragment+" broja telefona nije pronadjen");
         }
         const response = await api.get(url+`/search/by-phone-number-fragment`,{
             params:{phoneNumberFragment:phoneNumberFragment},
@@ -247,14 +247,14 @@ export async function findByPhoneNumberContaining(phoneNumberFragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspeli da pronadjemo vendora po fragmentu broja telefona");
+        handleApiError(error,"Trenutno nismo uspeli da pronadjemo prodavca po fragmentu "+phoneNumberFragment+" broja telefona");
     }
 }
 
 export async function findVendorsByMaterialTransactionStatus(status){
     try{
         if(!isMaterialTransactionStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Dati status vezan za transakcije materijala nije pronadjen");
+            throw new Error("Dati status "+status+" vezan za transakcije materijala nije pronadjen");
         }
         const response = await api.get(url+`/search/by-material-transaction-status`,{
             params:{
@@ -265,14 +265,14 @@ export async function findVendorsByMaterialTransactionStatus(status){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli vendore po statusu transakcije materijala");
+        handleApiError(error,"Trenutno nismo pronasli prodavce po statusu "+status+" transakcije materijala");
     }
 }
 
 export async function countByAddressContainingIgnoreCase(addressFragment){
     try{
         if(!addressFragment || typeof addressFragment !== "string" || addressFragment.trim() === ""){
-            throw new Error("Dati broj adresnih fragmenata nije pronadjen");
+            throw new Error("Dati broj adresnih "+addressFragment+" fragmenata nije pronadjen");
         }
         const response = await api.get(url+`/search/count-by-address-fragment`,{
             params:{addressFragment:addressFragment},
@@ -281,14 +281,14 @@ export async function countByAddressContainingIgnoreCase(addressFragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspeli da pronadjemo ukupan broj adresa koje sadrze fragmente date adrese");
+        handleApiError(error,"Trenutno nismo uspeli da pronadjemo ukupan broj adresa koje sadrze fragmente "+addressFragment+" date adrese");
     }
 }
 
 export async function countByNameContainingIgnoreCase(nameFragment){
     try{
         if(!nameFragment || typeof nameFragment !== "string" || nameFragment.trim() === ""){
-            throw new Error("Dati broj fragmenata za naziv nije pronadjen");
+            throw new Error("Dati broj fragmenata "+nameFragment+" za naziv nije pronadjen");
         }
         const response = await api.get(url+`/search/count-by-address-fragment`,{
             params:{nameFragment:nameFragment},
@@ -297,14 +297,14 @@ export async function countByNameContainingIgnoreCase(nameFragment){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspeli da pronadjemo ukupan broj naziva koje sadrze fragmente datog naziva");
+        handleApiError(error,"Trenutno nismo uspeli da pronadjemo ukupan broj naziva koje sadrze fragmente "+nameFragment,+" datog naziva");
     }
 }
 
 export async function existsByEmail(email){
     try{
         if(!email || typeof email !== "string" || email.trim() === ""){
-            throw new Error("Dato postojanje email-a za vendora nije pronadjeno");
+            throw new Error("Dato postojanje "+email+" email-a za prodavca nije pronadjeno");
         }
         const response = await api.get(url+`/exists-by-email`,{
             params:{email:email},
@@ -313,7 +313,7 @@ export async function existsByEmail(email){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo uspela da pronadjemo postojanje email-a za vendora");
+        handleApiError(error,"Trenutno nismo uspela da pronadjemo postojanje email-a "+email+" za prodavca");
     }
 }
 
@@ -351,7 +351,7 @@ export async function findVendorsByTransactionStatuses(statuses){
                 statuses:arrayStatus
             },
             paramsSerializer: params => {
-                return params.arrayStatus.map(s => `arrayStuts=${s.toUpperCase()}`).join("&");
+                return params.arrayStatus.map(s => `arrayStatus=${s.toUpperCase()}`).join("&");
             },
             headers:getHeader()
         });

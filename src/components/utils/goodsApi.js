@@ -133,7 +133,7 @@ export async function findByStorageName(storageName){
 
 export async function findBySupplyId(supplyId){
     try{
-        if(!supplyId){
+        if(supplyId == null || isNaN(supplyId)){
             throw new Error("Dati ID "+supplyId+" za dobavljaca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/supply/${supplyId}`,{
@@ -151,7 +151,7 @@ export async function findByBarCodeAndGoodsType({barCode, goodsType}){
         if(!barCode || typeof barCode !== "string" || barCode.trim() === "" ||
             !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
                 throw new Error("Dati barCode "+barCode+" i tip robe "+goodsType+" nije pronadjen");
-            }
+        }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-barCode-and-goodsType`,{
             params:{
                 barCode,goodsType:goodsType.toUpperCase()
@@ -203,7 +203,7 @@ export async function findSingleByBarCode(barCode){
 
 export const getGoodsByStorageId = async (storageId) => {
     try{
-        if(!storageId){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati ID "+storageId+" sa skladiste nije pronadjen");
         }
         const response = await api.get(`/goods/by-storage/${storageId}`);

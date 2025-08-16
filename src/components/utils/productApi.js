@@ -165,7 +165,7 @@ export async function findByName(name){
 
 export async function findByStorageId(storageId){
     try{
-        if(!storageId){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati storageId "+storageId+"  za proizvod, ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-storage/${storageId}`,{

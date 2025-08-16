@@ -36,7 +36,7 @@ export async function createPayment({amount, paymentDate, method, status,referen
 export async function updatePayment({id,amount, paymentDate, method, status,referenceNumber, buyerId, relatedSalesId} ){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             isNaN(amount) || parseFloat(amount) <=0 ||
             !moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             !isPaymentMethodValid.includes(method?.toUpperCase()) ||
@@ -65,7 +65,7 @@ export async function updatePayment({id,amount, paymentDate, method, status,refe
 
 export async function deletePayment(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za payment nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/payments/delete/${id}`,{
@@ -80,7 +80,7 @@ export async function deletePayment(id){
 
 export async function getPayment(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za payment nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/${id}`,{
@@ -107,7 +107,7 @@ export async function getAllPayments(){
 
 export async function getPaymentsByBuyer(buyerId){
     try{
-        if(!buyerId){
+        if(buyerId == null || isNaN(buyerId)){
             throw new Error("BuyerId nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/payments/payment/buyer/${buyerId}`,{

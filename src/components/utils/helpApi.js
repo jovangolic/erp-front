@@ -36,7 +36,7 @@ export async function createHelp({title,content,category,isVisible}){
 export async function updateHelp({id,title,content,category,isVisible}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !title || typeof title !== "string" || title.trim() === ""||
             !content || typeof content !== "string" || content.trim() === ""||
             !isHelpCategoryValid.includes(category?.toUpperCase()) ||
@@ -62,7 +62,7 @@ export async function updateHelp({id,title,content,category,isVisible}){
 
 export async function deleteHelp(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za help nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/help/delete/${id}`,{
@@ -77,7 +77,7 @@ export async function deleteHelp(id){
 
 export async function getById(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za help nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/get-one/${id}`,{

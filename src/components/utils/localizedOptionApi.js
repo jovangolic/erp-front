@@ -22,7 +22,7 @@ export async function create({optionId,languageId,localizedLabel}){
 
 export async function update({id, optionId,languageId,localizedLabel}){
     try{
-        if(!id || !optionId || !languageId || !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
+        if(id == null || isNaN(id) || !optionId || !languageId || !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
         const requestBody = {optionId,languageId,localizedLabel};
@@ -38,7 +38,7 @@ export async function update({id, optionId,languageId,localizedLabel}){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/find-one/${id}`,{
@@ -80,7 +80,7 @@ export async function getTranslationsForOption(optionId){
 
 export async function deleteLocalizedOption(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/delete/${id}`,{
@@ -95,7 +95,7 @@ export async function deleteLocalizedOption(id){
 
 export async function deleteAllByOptionId(optionId){
     try{
-        if(!optionId){
+        if(optionId == null || isNaN(optionId)){
             throw new Error("Dati id "+optionId+"za option nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/deleteAll-option/${optionId}`,{
@@ -130,7 +130,7 @@ export async function addTranslationForOption(optionId, { languageId, localizedL
 
 export async function getTranslation({optionId,languageId}){
     try{
-        if(!optionId || languageId){
+        if(optionId == null || isNaN(optionId) || languageId){
             throw new Error("Dati id "+optionId+" za optionid i languageId "+languageId+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/option/${optionId}/language/${languageId}`,{
@@ -145,7 +145,7 @@ export async function getTranslation({optionId,languageId}){
 
 export async function getAllByLanguage(languageId){
     try{
-        if(!languageId){
+        if(languageId == null || isNaN(languageId)){
             throw new Error("Dati ID "+languageId+" za language nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/translations/language/${languageId}`,{

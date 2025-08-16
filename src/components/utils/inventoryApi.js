@@ -92,7 +92,7 @@ export async function findInventoryByStatus(status){
 
 export async function findByStorageEmployeeId(storageEmployeeId){
     try{
-        if(!storageEmployeeId){
+        if(storageEmployeeId == null || isNaN(storageEmployeeId)){
             throw new Error("Dati ID "+storageEmployeeId+" za storageEmployee nije pronadjen");
         }
         const response = await api.get(url+`/by-storageEmployeeId`,{
@@ -193,7 +193,7 @@ export async function findByDateRange({startDate, endDate}){
 
 export async function changeStatus({inventoryId, newStatusStr}){
     try{
-        if(!inventoryId || !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
+        if(inventoryId == null || isNaN(inventoryId) || !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
             throw new Error("Nepoznat inventoryId "+inventoryId+" i newStatusStr "+newStatusStr);
         }
         const response = await api.post(url+`/changeStatus/${inventoryId}`,{

@@ -33,7 +33,7 @@ export async function updateJournalItem({id,accountId,debit,credit}){
     try{
         const parsedDebit = parseFloat(debit);
         const parsedCredit = parseFloat(credit);
-        if(!id || accountId == null || isNaN(accountId) || isNaN(parsedDebit) || parsedDebit < 0 || isNaN(parsedCredit) || parsedCredit < 0){
+        if(id == null || isNaN(id) || accountId == null || isNaN(accountId) || isNaN(parsedDebit) || parsedDebit < 0 || isNaN(parsedCredit) || parsedCredit < 0){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
         const requestBody = {accountId,debit,credit};
@@ -49,7 +49,7 @@ export async function updateJournalItem({id,accountId,debit,credit}){
 
 export async function deleteJournalItem(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za JournalItem nije pronadjen");
         }
         const response = await api.delete(url+`/delete'/${id}`,{
@@ -64,7 +64,7 @@ export async function deleteJournalItem(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za JournalItem nije pronadjen");
         }
         const response = await api.delete(url+`/find-one'/${id}`,{

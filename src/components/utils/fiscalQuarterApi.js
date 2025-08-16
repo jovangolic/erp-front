@@ -35,7 +35,7 @@ export async function createFiscalQarter({quarterStatus,startDate,endDate,fiscal
 export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate,fiscalYearId}){
     try{
         if(
-            !id || fiscalYearId == null || isNaN(parseInt(fiscalYearId)) ||
+            id == null || isNaN(id) || fiscalYearId == null || isNaN(parseInt(fiscalYearId)) ||
             !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) ||
             !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()
         ){
@@ -54,7 +54,7 @@ export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate,fi
 
 export async function deleteFiscalQuarter(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za fiskalni kvartal nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -69,7 +69,7 @@ export async function deleteFiscalQuarter(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za fiskalni kvartal nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -96,7 +96,7 @@ export async function findAll(){
 
 export async function findByFiscalYear_Id(fiscalYearId) {
     try {
-        if (!fiscalYearId || isNaN(parseInt(fiscalYearId))) {
+        if (fiscalYearId == null || isNaN(fiscalYearId) || isNaN(parseInt(fiscalYearId))) {
             throw new Error("Neispravan ID "+fiscalYearId+" fiskalne godine");
         }
         const response = await api.get(url+`/by-fiscalYear/${fiscalYearId}`, {
@@ -145,7 +145,7 @@ export async function findByStartDateBetween({start, end}){
 
 export async function findByFiscalYearIdAndQuarterStatus({fiscalYearId,status}){
     try{
-        if(!fiscalYearId || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
+        if(fiscalYearId == null || isNaN(fiscalYearId) || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
             throw new Error("Dati ID "+fiscalYearId+" za fiskalnu godinu i stastus "+status+" nisu pronadjeni");
         }
         const response = await api.get(url+`/fiscalYear/${fiscalYearId}/quarters`,{

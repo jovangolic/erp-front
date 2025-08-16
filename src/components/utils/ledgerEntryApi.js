@@ -38,7 +38,7 @@ export async function updateLedgerEntry({id,entryDate,amount,description,account
     try{
         const parseAmount = parseFloat(amount);
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !moment(entryDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
             isNaN(parseAmount) || parseAmount <= 0 ||
             !description || typeof description !=="string" || description.trim() === "" ||
@@ -59,7 +59,7 @@ export async function updateLedgerEntry({id,entryDate,amount,description,account
 
 export async function deleteLedgerEntry(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za LedgerEntry nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -74,7 +74,7 @@ export async function deleteLedgerEntry(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za LedgerEntry nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -177,7 +177,7 @@ export async function findByEntryDateBetween({start, end}){
 
 export async function findByAccount_Id(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za racun nije pronadjen");
         }
         const response = await api.get(url+`/account/${id}`,{
@@ -353,7 +353,7 @@ export async function findByEntryDateAfterAndType({date, type}){
 export async function findByEntryDateBetweenAndAccount_Id({start, end,accountId}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !accountId){
+            accountId == null || isNaN(accountId)){
             throw new Error("Dati pocetak "+start+" i kraju "+end+" datuma kao i id "+accountId+" racuna nisu pronadjeni");
         }
         const response = await api.get(url+`/account/${accountId}/date-range`,{

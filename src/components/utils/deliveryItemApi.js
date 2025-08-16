@@ -27,7 +27,7 @@ export async function createinboundDeliveryId({productId,quantity,inboundDeliver
 
 export async function update({id,productId,quantity,inboundDeliveryId,outboundDeliveryId}){
     try{    
-        if(!id || !productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
+        if(id == null || isNaN(id) || !productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {productId, quantity,inboundDeliveryId, outboundDeliveryId};
@@ -43,7 +43,7 @@ export async function update({id,productId,quantity,inboundDeliveryId,outboundDe
 
 export async function deleteDeliveryItem(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati Id "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -58,7 +58,7 @@ export async function deleteDeliveryItem(id){
 
 export async function findById(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati Id "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
@@ -177,7 +177,7 @@ export async function findByOutboundDelivery_DeliveryDateBetween({start,end}){
 
 export async function findByProduct(productId){
     try{
-        if(!productId){
+        if(productId == null || isNaN(productId)){
             throw new Error("Dati id "+productId+" za proizvod nije pronadjen");
         }
         const response = await api.get(url+`/product/${productId}`,{
@@ -192,7 +192,7 @@ export async function findByProduct(productId){
 
 export async function findByInboundDeliveryId(inboundId){
     try{
-        if(!inboundId){
+        if(inboundId == null || isNaN(inboundId)){
             throw new Error("Dati id"+inboundId+" za inboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/inbound/${inboundId}`,{
@@ -207,7 +207,7 @@ export async function findByInboundDeliveryId(inboundId){
 
 export async function findByOutboundDeliveryId(outboundId){
     try{
-        if(!outboundId){
+        if(outboundId == null || isNaN(outboundId)){
             throw new Error("Dati id "+outboundId+" za outboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/outbound/${outboundId}`,{

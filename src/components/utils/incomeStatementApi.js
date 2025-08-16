@@ -63,7 +63,7 @@ export async function updateIncomeStatement({id,periodStart,periodEnd,totalReven
 
 export async function deleteIncomeStatement(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za incomeStatement nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -78,7 +78,7 @@ export async function deleteIncomeStatement(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za incomeStatement nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{

@@ -26,7 +26,7 @@ export const generateReport = async (reportType) => {
 
 export const downloadReport = async (reportId) => {
   try {
-    if(!reportId){
+    if(reportId == null || isNaN(reportId)){
       throw new Error("Id od report-a nije pronadjen.");
     }
     const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/reports/download/${reportId}`, { responseType: 'blob' });
@@ -39,7 +39,7 @@ export const downloadReport = async (reportId) => {
 
 export async function getReportById(id){
   try{
-    if(!reportId){
+    if(reportId == null || isNaN(reportId)){
       throw new Error("Id "+id+" od report-a nije pronadjen.");
     }
     const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/reports/get/${id}`,{

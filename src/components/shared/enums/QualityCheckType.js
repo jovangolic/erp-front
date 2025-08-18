@@ -1,0 +1,10 @@
+export const QualityCheckType = Object.freeze({
+
+    "VISUAL" :VISUAL,
+	"DIMENSIONAL" : DIMENSIONAL,
+	"CHEMICAL" : CHEMICAL,
+	"FUNCTIONAL" : FUNCTIONAL, 
+	"TEMPERATURE" : TEMPERATURE, 
+	"HUMIDITY" : HUMIDITY,
+	"OTHER" : OTHER
+});

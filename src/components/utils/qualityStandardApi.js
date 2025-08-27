@@ -25,6 +25,9 @@ export async function createQualityStandard({productId,description,minValue,maxV
            isNaN(parseMinValue) || parseMaxValue <= 0 || isNaN(parseMaxValue) || parseMaxValue <= 0 || !isUnitValid.includes(unit?.toUpperCase())){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
+        if(parseMin > parseMax){
+            throw new Error("Minimalna vrednost kvaliteta-standarda ne sme da bude veci od maksimalne vrednost");
+        }
         const requestBody = {productId,description,minValue,maxValue,unit};
         const response = await api.post(url+`/create/new-quality-standard`,requestBody,{
             headers:getHeader()
@@ -44,6 +47,9 @@ export async function updateQualityStandard({id,productId,description,minValue,m
             isNaN(productId) || productId == null || !description || typeof description !== "string" || description.trim() === "" || 
             isNaN(parseMinValue) || parseMaxValue <= 0 || isNaN(parseMaxValue) || parseMaxValue <= 0 || !isUnitValid.includes(unit?.toUpperCase())){
             throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalna vrednost kvaliteta-standarda ne sme da bude veci od maksimalne vrednost");
         }
         const requestBody = {productId,description,minValue,maxValue,unit};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -110,6 +116,12 @@ export async function searchQualityStandards({supplyId, productStorageMin, produ
            isNaN(parseSupplyMin) || parseSupplyMin <= 0 || isNaN(parseSupplyMax) || parseSupplyMax <= 0 || isNaN(parseShelfRow) || parseShelfRow <= 0 ||
            isNaN(parseShelfCol) || parseShelfCol <= 0){
             throw new Error("Dati parametri za pretragu: "+supplyId+" ,"+parseProductStorageMin+" ,"+parseProductStorageMax+" ,"+parseSupplyMin+" ,"+parseSupplyMax+" ,"+parseShelfRow+" ,"+parseShelfCol+" ne daju ocekivani rezultat");
+        }
+        if(parseProductStorageMin > parseProductStorageMax){
+            throw new Error("Minimalni kapacitet skladista ne sme biti veci od maksimalnog kapaciteta skladista");
+        }
+        if(parseSupplyMin > parseSupplyMax){
+            throw new Error("Minimalna vrednost nabavke ne sme biti veca od maksimalne vrednosti nabavke");
         }
         const response = await api.get(url+`/search-standards`,{
             params:{
@@ -228,6 +240,9 @@ export async function findByMinValueBetween({min, max}){
         if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || parseMin > parseMax){
             throw new Error("Opseg minimalne vrednosti "+parseMin+" - "+parseMax+" za kvalitet-standarda, nije pronadjen");
         }
+        if(parseMin > parseMax){
+            throw new Error("Minimalna vrednost ne sme biti veca od maksimalne vrednosti");
+        }
         const response = await api.get(url+`/min-value-between`,{
             params:{
                 min:parseMin,
@@ -305,6 +320,9 @@ export async function findByMaxValueBetween({min, max}){
         const parseMax = parseFloat(max);
         if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <=0 || parseMin > parseMax){
             throw new Error("Opseg maksimalne vrednosti "+parseMin+" - "+parseMax+" za kvalitet-standarda, nije pronadjen");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalna vrednost ne sme biti veca od maksimalne vrednosti");
         }
         const response = await api.get(url+`/max-value-between`,{
             params:{
@@ -460,6 +478,9 @@ export async function findByProduct_CurrentQuantityBetween({min, max}){
         const parseMax = parseFloat(max);
         if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || parseMin > parseMax){
             throw new Error("Opseg trenutne kolicine "+parseMin+" - "+parseMax+" proizvoda za kvalitet-standarda, nije pronadjen");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalna kolicina ne sme biti veca od maksimalne kolicine");
         }
         const response = await api.get(url+`/search/product-current-quantity-between`,{
             params:{
@@ -722,3 +743,333 @@ export async function findByProductStorageCapacityBetweenAndStatus({min, max, st
     }
 }
 
+export async function findByProductStorageCapacityStatusAndType({min, max, status, type}){
+    try{
+        const parseMin = parseFloat(min);
+        const parseMax = parseFloat(max);
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 ||
+           !isStorageStatusValid.includes(status?.toUpperCase()) || !iseStorageTypeValid.includes(type?.toUpperCase())){
+                throw new Error("Opseg kapaciteta skladista "+parseMin+" - "+parseMax+" i njegov status "+status+" i tip "+type+" za proizvod, nisu pronadjeni");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalni kapacitet skladista ne sme da bude veci od maksimalnog kapaciteta skladista");
+        }
+        const response = await api.get(url+`/search/product/storage-capacity-status-type`,{
+            params:{
+                min:parseMin,
+                max:parseMax,
+                status:(status || "").toUpperCase(),
+                type:(type || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opseg kapaciteta skladista "+min+" - "+max+" njegov status "+status+" i tip "+type+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacity({storageName, capacity}){
+    try{
+        const parseCapacity = parseFloat(capacity);
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
+            throw new Error("Dati naziv skladista "+storageName+" i njegov kapacitet "+parseCapacity+" za proizvod, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/product/storage-name-capacity`,{
+            params:{
+                storageName:storageName,
+                capacity:parseCapacity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv skladista "+storageName+" i kapacitet "+capacity+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityGreaterThan({storageName, capacity}){
+    try{
+        const parseCapacity = parseFloat(capacity);
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
+            throw new Error("Dati naziv skladista "+storageName+" i njegov kapacitet veci od "+parseCapacity+" za proizvod, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/product/storage-name-capacity-greater-than`,{
+            params:{
+                storageName:storageName,
+                capacity:parseCapacity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv skladista "+storageName+" i kapacitet veci od "+capacity+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityLessThan({storageName, capacity}){
+    try{
+        const parseCapacity = parseFloat(capacity);
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
+            throw new Error("Dati naziv skladista "+storageName+" i njegov kapacitet manji od "+parseCapacity+" za proizvod, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/product/storage-name-capacity-less-than`,{
+            params:{
+                storageName:storageName,
+                capacity:parseCapacity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv skladista "+storageName+" i kapacitet manji od "+capacity+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityBetween({storageName, min, max}){
+    try{
+        const parseMin = parseFloat(min);
+        const parseMax = parseFloat(max);
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || 
+          !storageName || typeof storageName !== "string" || storageName.trim() === ""){
+            throw new Error("Dati naziv skladista "+storageName+" i opseg njegovog kapaciteta "+parseMin+" - "+parseMax+" za proizvod, nisu pronadjeni");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalni kapacitet skladista ne sme da bude veci od maksimalnog kapaciteta skladista");
+        }
+        const response = await api.get(url+`/search/product/storage-name-capacity-between`,{
+            params:{
+                storageName:storageName,
+                min:parseMin,
+                max:parseMax
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opseg kapacitet skladista "+min+" - "+max+" oi njegov naziv "+storageName+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacity({storageLocation, capacity}){
+    try{
+        const parseCapacity = parseFloat(capacity);
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
+            throw new Error("Lokacija skladista "+storageLocation+" i njegov kapacitet "+parseCapacity+" za proizvod, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/product/storage-location-capacity`,{
+            params:{
+                storageLocation:storageLocation,
+                capacity:parseCapacity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli lokaciju skladista "+storageLocation+" i njegov kapacitet "+capacity+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacityGreaterThan({storageLocation, capacity}){
+    try{
+        const parseCapacity = parseFloat(capacity);
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
+            throw new Error("Lokacija skladista "+storageLocation+" i njegov kapacitet veci od "+parseCapacity+" za proizvod, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/product/storage-location-capacity-greater-than`,{
+            params:{
+                storageLocation:storageLocation,
+                capacity:parseCapacity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli lokaciju skladista "+storageLocation+" i njegov kapacitet veci od "+capacity+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacityLessThan({storageLocation, capacity}){
+    try{
+        const parseCapacity = parseFloat(capacity);
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
+            throw new Error("Lokacija skladista "+storageLocation+" i njegov kapacitet manji od "+parseCapacity+" za proizvod, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/product/storage-location-capacity-less-than`,{
+            params:{
+                storageLocation:storageLocation,
+                capacity:parseCapacity
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli lokaciju skladista "+storageLocation+" i njegov kapacitet manji od "+capacity+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacityBetween({storageLocation, min, max}){
+    try{
+        const parseMin = parseFloat(min);
+        const parseMax = parseFloat(max);
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" ||
+           isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
+            throw new Error("Lokacija skladista "+storageLocation+" i opseg kapaciteta "+parseMin+" - "+parseMax+" za proizvod, nisu pronadjeni");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalni kapacitet skladista ne sme da bude veci od maksimalnog kapaciteta skladista");
+        }
+        const response = await api.get(url+`/search/product/storage-location-capacity-between`,{
+            params:{
+                storageLocation:storageLocation,
+                min: parseMin,
+                max:parseMax
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli lokaciju skladista "+storageLocation+" i opseg kapaciteta "+min+" - "+max+" za proizvod");
+    }
+}
+
+export async function findByProduct_StorageHasShelvesForIsNull(){
+    try{
+        const response = await api.get(url+`/search/product/storage-has-shelves-is-null`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli skladiste bez polica za proizvod");
+    }
+}
+
+export async function findByProduct_SupplyId(supplyId){
+    try{
+        if(isNaN(supplyId) || supplyId == null){
+            throw new Error("Dati id "+supplyId+" dobavljaca proizvoda, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/product/supply/${supplyId}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+supplyId+" dobavljaca za proizvod");
+    }
+}
+
+export async function findByProduct_ShelfId(shelfId){
+    try{
+        if(isNaN(shelfId) || shelfId == null){
+            throw new Error("Dati id "+shelfId+" police za proizvod, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/product/shelf/${shelfId}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+shelfId+" police za proizvod");
+    }
+}
+
+export async function findByProduct_ShelfRowCount(rowCount){
+    try{
+        const parseRowCount = parseInt(rowCount,10);
+        if(isNaN(parseRowCount) || parseRowCount <= 0){
+            throw new Error("Dati red police "+parseRowCount+" za proizvod, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/product/shelf-row-count`,{
+            params:{
+                rowCount:parseRowCount
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli red police "+rowCount+" za dati proizvod");
+    }
+}
+
+export async function findByProduct_ShelfCols(cols){
+    try{
+        const parseCols = parseInt(cols,10);
+        if(isNaN(parseCols) || parseCols <= 0){
+            throw new Error("Dati raf police "+parseCols+" za proizvod, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/product/shelf-cols`,{
+            params:{
+                cols:parseCols
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli rad "+cols+" police za proizvod");
+    }
+}
+
+export async function findByProduct_ShelfRowAndColNullable({row, col}){
+    try{
+        const parseRow = parseInt(row,10);
+        const parseCol = parseInt(col,10);
+        if(isNaN(parseRow) || parseRow <= 0 || isNaN(parseCol) || parseCol <=-0 ){
+            throw new Error("Dati red "+parseRow+" i raf "+parseCol+" police za proizvod, ne postoje");
+        }
+        const response = await api.get(url+`/search/product/shelf-row-col`,{
+            params:{
+                row:parseRow,
+                col:parseCol
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli red "+row+" i raf "+col+" police koji ne postoje, za proizvod");
+    }
+}
+
+export async function findByProduct_ShelfRowAndColBetweenNullable({rowMin, rowMax, colMin, colMax}){
+    try{
+        const parseRowMin = parseInt(rowMin,10);
+        const parseRowMax = parseInt(rowMax,10);
+        const parseColMin = parseInt(colMin,10);
+        const parseColMax = parseInt(colMax,10);
+        if(isNaN(parseRowMin) || parseRowMin <= 0 || isNaN(parseRowMax) || parseRowMax <= 0 || isNaN(parseColMin) || parseColMin <= 0 || isNaN(parseColMax) || parseColMax <= 0){
+            throw new Error("Opseg redova "+parseRowMin+" - "+parseRowMax+" i opseg rafova "+parseColMin+" - "+parseColMax+" polica nisu pronadjeni");
+        }
+        if(parseRowMin > parseRowMax){
+            throw new Error("Najmanja vrednost za red ne sme biti veca od najvece vrednosti reda");
+        }
+        if(parseColMin > parseColMax){
+            throw new Error("Najmanja vrednost rafa ne sme biti veca od najvece vrednosti rafa");
+        }
+        const response = await api.get(url+`/search/product/shelf-row-and-col-between`,{
+            params:{
+                rowMin:parseRowMin,
+                rowMax:parseRowMax,
+                colMin:parseColMin,
+                colMax:parseColMax
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opseg redova "+rowMin+" - "+rowMax+" i opseg rafova "+colMin+" - "+colMax+" polica, koji ne postoje");
+    }
+}

@@ -9,7 +9,7 @@ function handleApiError(error, customMessage) {
 }
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/materialTransactions`;
-const isTransactionTypeValid = ["RECEIPT","RETURN","TRANSFER_TO_LAB","SCRAP","INTERNAL_USE", "CORRECTION"];
+const isMaterialTransactionTypeValid = ["RECEIPT","RETURN","TRANSFER_TO_LAB","SCRAP","INTERNAL_USE", "CORRECTION"];
 const isMaterialTransactionStatusValid = ["PENDING","APPROVED","SENT_TO_LAB","LAB_CONFIRMED","COMPLETED","REJECTED"];
 const isUnitOfMeasureValid = ["KG","METER","PCS","LITER","BOX","PALLET"];
 
@@ -357,7 +357,7 @@ export async function findByQuantityLessThan(quantity){
 
 export async function findByType(type){
     try{
-        if(!isTransactionTypeValid.includes(type?.toUpperCase())){
+        if(!isMaterialTransactionTypeValid.includes(type?.toUpperCase())){
             throw new Error("Dati tip "+type+" transakcije za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/by-type`,{

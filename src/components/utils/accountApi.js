@@ -35,7 +35,7 @@ export async function createAccount({accountNumber,accountName,type,balance}){
 export async function updateAccount({id,accountNumber,accountName,type,balance}){
     try{
         if(
-            !id ||
+            id == null || isNaN(id) ||
             !accountNumber || typeof accountNumber !=="string" || accountNumber.trim()==="" ||
             !accountName || typeof accountName !=="string" || accountName.trim()==="" ||
             !isAccountTypeValid.includes(type?.toUpperCase()) ||
@@ -56,7 +56,7 @@ export async function updateAccount({id,accountNumber,accountName,type,balance})
 
 export async function deleteAccount(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za account nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -71,7 +71,7 @@ export async function deleteAccount(id){
 
 export async function findOne(id){
     try{
-        if(!id){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za account nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -93,6 +93,21 @@ export async function findAll(){
     }
     catch(error){
         handleApiError(error,"Greska prilikom trazenja svih racuna  ");
+    }
+}
+
+export async function findOneWithTransactions(id){
+    try{
+        if(id == null || isNaN(id)){
+            throw new Error("Dati ID "+id+" za detaljan-racun sa transakcijama, nije pronadjen");
+        }
+        const response = await api.get(url+`/detailed-account/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za detaljan-racun sa transakcijama");
     }
 }
 

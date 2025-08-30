@@ -19,6 +19,7 @@ const isGoodsTypeValid = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODU
 const isReferenceTypeValid = ["GOODS_RECEIPT","PRODUCTION_ORDER","STORAGE_ITEM","BATCH","MATERIAL"];
 const isQualityCheckTypeValid = ["VISUAL","DIMENSIONAL","CHEMICAL","FUNCTIONAL","TEMPERATURE","HUMIDITY","OTHER"];
 const isQualityCheckStatusValid = ["PASSED","FILED","CONDITIONAL","PENDING"];
+const isSeverityLevelValid = ["TRIVIAL", "MINOR", "MODERATE", "MAJOR", "CRITICAL"];
 
 export async function createInspectionDefect({quantityAffected,inspectionId,defectId}){
     try{    
@@ -1173,5 +1174,257 @@ export async function findByInspection_Product_GoodsType(goodsType){
     }
     catch(error){
         handleApiError(error,"Trwnutno nismo pronasli tip robe "+goodsType+" proizvoda za dati inspection-defect");
+    }
+}
+
+export async function findByInspection_Batch_Id(batchId){
+    try{
+        if(isNaN(batchId) || batchId == null){
+            throw new Error("Dati id "+batchId+" batch za inspection-defect, nije proandjen");
+        }
+        const response = await api.get(url+`/search/inspection/batch/${batchId}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+batchId+" batcha za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_CodeContainingIgnoreCase(code){
+    try{
+        if(!code || typeof code !== "string" || code.trim() === ""){
+            throw new Error("Kod "+code+" za defekat koji pripada inspection-defect, nije pronadjen");
+        } 
+        const response = await api.get(url+`/search/defect-code`,{
+            params:{code:code},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kod "+code+" za defekat koji pripada inspection-defect");
+    }
+}
+
+export async function findByDefect_NameContainingIgnoreCase(name){
+    try{
+        if(!name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Naziv defekta "+name+" za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/defect-name`,{
+            params:{
+                name:name
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv defekta "+name+" za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_DescriptionContainingIgnoreCase(description){
+    try{
+        if(!description || typeof description !== "string" || description.trim() === ""){
+            throw new Error("Opis defekta "+description+" za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/defect-description`,{
+            params:{
+                description:description
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opis defekta "+description+" za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_CodeContainingIgnoreCaseAndDefect_NameContainingIgnoreCase({code, name}){
+    try{
+        if(!code || typeof code !== "string" || code.trim() === "" ||
+           !name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Kod "+code+" i naziv "+name+" defekta za dati inspection-defect, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/defect/code-and-name`,{
+            params:{
+                code:code,
+                name:name
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kod "+code+" i naziv "+name+" defekta za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_Severity(severity){
+    try{
+        if(!isSeverityLevelValid.includes(severity?.toUpperCase())){
+            throw new Error("Tip ozbiljnosti "+severity+" defekta za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/search/defect-severity`,{
+            params:{
+                severity:(severity || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Treutno nismo pronasli tip ozbiljnosti "+severity+" defekta za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_CodeContainingIgnoreCaseAndDefect_Severity({code, severity}){
+    try{
+        if(!code || typeof code !== "string" || code.trim() === "" || !isSeverityLevelValid.includes(severity?.toUpperCase())){
+            throw new Error("Kod "+code+" i tip ozbiljnosti "+severity+" defekta za dati inspection-defect, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/defect/code-and-severity`,{
+            params:{
+                code:code,
+                severity:(severity || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli kod "+code+" i tip ozbiljnost "+severity+" defekta za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_NameContainingIgnoreCaseAndDefect_Severity({name, severity}){
+    try{
+        if(!name || typeof name !== "string" || name.trim() === "" || !isSeverityLevelValid.includes(severity?.toUpperCase())){
+            throw new Error("Naziv "+name+" i tip ozbiljnosti "+severity+" defekta za dati inspection-defect, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/defect/name-and-severity`,{
+            params:{
+                name:name,
+                severity:(severity || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naziv "+name+" i tip ozbiljnost "+severity+" defekta za dati inspection-defect");
+    }
+}
+
+export async function findByDefect_SeverityAndDefect_DescriptionContainingIgnoreCase({severity, descPart}){
+    try{
+        if(!descPart || typeof descPart !== "string" || descPart.trim() === "" || !isSeverityLevelValid.includes(severity?.toUpperCase())){
+            throw new Error("Opis "+descPart+" i tip ozbiljnosti "+severity+" defekta za dati inspection-defect, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/search/defect/severity-and-desc-part`,{
+            params:{
+                descPart:descPart,
+                severity:(severity || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opis "+descPart+" i tip ozbiljnosti "+severity+" defetka za dati inspection-defect");
+    }
+}
+
+export async function countByDefect_Severity(severity){
+    try{
+        if(!isSeverityLevelValid.includes(severity?.toUpperCase())){
+            throw new Error("Tip ozbiljnosti "+severity+" defekta za dati inspection-defect, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/count/defect-severity`,{
+            params:{
+                severity:(severity || "").toUpperCase()
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj tipa ozbiljnosti "+severity+" defekta za dati inspection-defect");
+    }
+}
+
+export async function countByDefect_Code(code){
+    try{
+        if(!code || typeof code !== "string" || code.trim() === ""){
+            throw new Error("Kod "+code+" defekta za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/count/defect-code`,{
+            params:{
+                code:code
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj koda "+code+" defekta za dati inspection-defect");
+    }
+}
+
+export async function countByDefect_Name(name){
+    try{
+        if(!name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Kod "+name+" defekta za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/count/defect-name`,{
+            params:{
+                name:name
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj koda "+name+" defekta za dati inspection-defect");
+    }
+}
+
+export async function existsByDefect_Code(code){
+    try{
+        if(!code || typeof code !== "string" || code.trim() === ""){
+            throw new Error("Kod "+code+" defekta za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/exist/defect-code`,{
+            params:{
+                code:code
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli postojanje koda "+code+" defekta za dati inspection-defect");
+    }
+}
+
+export async function existsByDefect_Name(name){
+    try{
+        if(!name || typeof name !== "string" || name.trim() === ""){
+            throw new Error("Naziv "+name+" defekta za dati inspection-defect, nije pronadjen");
+        }
+        const response = await api.get(url+`/exist/defect-name`,{
+            params:{
+                name:name
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli postojanje naziv "+name+" defekta za dati inspection-defect");
     }
 }

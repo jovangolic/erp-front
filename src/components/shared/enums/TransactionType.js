@@ -4,5 +4,6 @@ export const TransactionType = Object.freeze({
     "DEPOSIT" : DEPOSIT,
     "WITHDRAWAL" : WITHDRAWAL,
     "PAYMENT" : PAYMENT,
-    "REFUND" : REFUND
+    "REFUND" : REFUND,
+    "CASH" : CASH
 });

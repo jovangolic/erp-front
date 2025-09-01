@@ -9,7 +9,7 @@ function handleApiError(error, customMessage) {
 }
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/inspectionDefects`;
-const isInspectionTypeValid = ["INCOMING", "IN_PROCESS", "FINAL", "PRE_SHIPMENT", "POST_DELIVERY", "AUDIT", "SAMPLING"];
+const isInspectionTypeValid = ["INCOMING", "IN_PROCESS", "FINAL_INSPECTION", "PRE_SHIPMENT", "POST_DELIVERY", "AUDIT", "SAMPLING"];
 const isInspectionResultValid = ["PASS","FAIL","REWORK","PENDING","ACCEPTED_WITH_DEVIATION","SCRAP","ON_HOLD"];
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const iseStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
@@ -19,7 +19,7 @@ const isGoodsTypeValid = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODU
 const isReferenceTypeValid = ["GOODS_RECEIPT","PRODUCTION_ORDER","STORAGE_ITEM","BATCH","MATERIAL"];
 const isQualityCheckTypeValid = ["VISUAL","DIMENSIONAL","CHEMICAL","FUNCTIONAL","TEMPERATURE","HUMIDITY","OTHER"];
 const isQualityCheckStatusValid = ["PASSED","FILED","CONDITIONAL","PENDING"];
-const isSeverityLevelValid = ["TRIVIAL", "MINOR", "MODERATE", "MAJOR", "CRITICAL"];
+const isSeverityLevelValid = ["TRIVIAL_SEVERITY", "MINOR_SEVERITY", "MODERATE_SEVERITY", "MAJOR_SEVERITY", "CRITICAL_SEVERITY"];
 
 export async function createInspectionDefect({quantityAffected,inspectionId,defectId}){
     try{    

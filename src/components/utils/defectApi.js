@@ -9,7 +9,7 @@ function handleApiError(error, customMessage) {
 }
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/defects`;
-const isSeverityLevelValid = ["TRIVIAL", "MINOR", "MODERATE", "MAJOR", "CRITICAL"];
+const isSeverityLevelValid = ["TRIVIAL_SEVERITY", "MINOR_SEVERITY", "MODERATE_SEVERITY", "MAJOR_SEVERITY", "CRITICAL_SEVERITY"];
 
 
 export async function createDefect({code,name,description,severity}){

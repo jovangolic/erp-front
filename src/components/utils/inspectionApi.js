@@ -9,7 +9,7 @@ function handleApiError(error, customMessage) {
 }
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/inspections`;
-const isInspectionTypeValid = ["INCOMING", "IN_PROCESS", "FINAL", "PRE_SHIPMENT", "POST_DELIVERY", "AUDIT", "SAMPLING"];
+const isInspectionTypeValid = ["INCOMING", "IN_PROCESS", "FINAL_INSPECTION", "PRE_SHIPMENT", "POST_DELIVERY", "AUDIT", "SAMPLING"];
 const isInspectionResultValid = ["PASS","FAIL","REWORK","PENDING","ACCEPTED_WITH_DEVIATION","SCRAP","ON_HOLD"];
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const iseStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];

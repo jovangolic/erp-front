@@ -402,7 +402,7 @@ export async function findByInspection_InspectionDateBetween({start, end}){
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg datuma inspekcije "+start+" - "+end+" za dati inspection-defect, nije pronadjen");
         }
-        if(end > start){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme doci pre datuma za pocetak");
         }
         const response = await api.get(url+`/search/inspection-date-between`,{
@@ -826,7 +826,7 @@ export async function findByInspection_QualityCheck_LocDateBetween({start, end})
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg datuma "+start+" - "+end+" provere-kvaliteta za dati inspection-defect, nije pronadjen");
         }
-        if(end > start){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti pre datuma za pocetak");
         }
         const response = await api.get(url+`/search/inspection/quality-check-loc-date-range`,{

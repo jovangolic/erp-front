@@ -468,6 +468,9 @@ export async function findByLocDateBetween({startDate, endDate}){
         if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg datuma "+startDate+" - "+endDate+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
+        }
         const response = await api.get(url+`/date-between`,{
             params:{
                 startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
@@ -487,6 +490,9 @@ export async function findByStatusAndLocDateBetween({status, startDate, endDate}
         if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
            !isQualityCheckStatusValid.includes(status?.toUpperCase())){
             throw new Error("Opseg datuma "+startDate+" - "+endDate+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
+        }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/by-status-and-date-between`,{
             params:{
@@ -509,6 +515,9 @@ export async function findByCheckTypeAndLocDateBetween({checkType, startDate, en
            !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
             throw new Error("Opseg datuma "+startDate+" - "+endDate+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
+        }
         const response = await api.get(url+`/by-check-type-and-date-range`,{
             params:{
                 checkType:(checkType || "").toUpperCase(),
@@ -529,6 +538,9 @@ export async function findByReferenceTypeAndLocDateBetween({referenceType, start
         if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
            !isReferenceTypeValid.includes(referenceType?.toUpperCase())){
             throw new Error("Opseg datuma "+startDate+" - "+endDate+" i tip reference "+referenceType+" za potvrdu-kvaliteta, nisu pronadjemi");
+        }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/by-reference-type-and-date-range`,{
             params:{
@@ -604,6 +616,9 @@ export async function existsByInspectorIdAndLocDateBetween({inspectorId, startDa
         if(isNaN(inspectorId) || inspectorId == null || !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
            !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("ID inspektora "+inspectorId+" i opseg datuma "+startDate+" - "+endDate+" za potvrdu-kvaliteta, nisu pronadjeni");
+        }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/exists/inspector/${inspectorId}/date-between`,{
             params:{
@@ -713,6 +728,9 @@ export async function countByLocDateBetween({startDate, endDate}){
     try{
         if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Broj datuma po opsegu "+startDate+" - "+endDate+" za potvrdu-kvaliteta, nisu pronadjeni");
+        }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/search/count-date-between`,{
             params:{

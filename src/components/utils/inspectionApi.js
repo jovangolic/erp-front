@@ -422,6 +422,9 @@ export async function findByInspectionDateBetween({start, end}){
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg datuma "+start+" - "+end+" inspekcije, nije pronadjen");
         }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum kraja inspekcije ne sme biti ispred datuma pocetka inspekcije");
+        }
         const response = await api.get(url+`/inspection-date-between`,{
             params:{
                 start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
@@ -563,6 +566,9 @@ export async function findByBatch_ExpiryDateBetween({start, end}){
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Datum opsega "+start+" - "+end+" isticanja za dati batch, nije pronadjen");
         }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum isticanja za kraj ne sme biti ispred datuma isticanja za pocetak");
+        }
         const response = await api.get(url+`/search/batch/expiry-date-range`,{
             params:{
                 start:moment(start).format("YYYY-MM-DD"),
@@ -635,6 +641,9 @@ export async function findByBatch_ProductionDateBetween({productionDateStart, pr
     try{
         if(!moment(productionDateStart,"YYYY-MM-DD",true).isValid() || !moment(productionDateEnd,"YYYY-MM-DD",true).isValid()){
             throw new Error("Opseg datuma proizvodnje "+productionDateStart+" - "+productionDateEnd+" za batch, nije pronadjen");
+        }
+        if(moment(productionDateEnd).isBefore(moment(productionDateStart))){
+            throw new Error("Datum za kraj proizvodnje ne sme biti ispred datuma za pocetak proizvodnje");
         }
         const response = await api.get(url+`/search/batch/production-date-range`,{
             params:{
@@ -1787,6 +1796,9 @@ export async function findByQualityCheckLocDateBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Datum opsega "+start+" - "+end+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
+        }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj pootvrde-kvaliteta ne sme niti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/quality-check/loc-date-range`,{
             params:{

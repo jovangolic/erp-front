@@ -126,6 +126,9 @@ export async function search({inspectionId, productName, status, minMeasuredValu
            !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid())){
                 throw new Error("Pretraga po datim parametrima: "+inspectionId+" ,"+productName+" ,"+status+" ,"+parseMinMeasuredValue+" ,"+startDate+" ,"+endDate+" ne daje ocekivani rezultat");
         }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj testa ne sme biti ispred datuma za pocetak testa");
+        }
         const response = await api.get(url+`/search`,{
             params:{
                 inspectionId:inspectionId,
@@ -190,6 +193,9 @@ export async function searchTestMeasurements(
                     parseStorageCapacityMax+" ,"+storageType+" ,"+storageStatus+" ,"+parseSupplyQuantityMin+" ,"+parseSupplyQuantityMax+" ,"+
                     supplyUpdatesAfter+" ,"+supplyUpdatesBefore+" ne daju ocekivani rezultat"
                 );
+        }
+        if(moment(supplyUpdatesBefore).isBefore(supplyUpdatesAfter)){
+            throw new Error("Datum za azuriranje nabavke pre, ne sme biti ispred datuma za azururanje nabavke posle");
         }
         const response = await api.get(url+`/search-standard`,{
             params:{
@@ -400,6 +406,9 @@ export async function findByInspection_InspectionDateBetween({start, end}){
     try{    
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Datum opsega "+start+" - "+end+" date inspekcije, nije pronadjen");
+        }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj inspekcije ne sme biti ispred datuma za pocetak inspekcije");
         }
         const response = await api.get(url+`/search/inspection-date-between`,{
             params:{
@@ -1013,6 +1022,9 @@ export async function findByInspection_QualityCheck_LocDateBetween({start, end})
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg datuma "+start+" - "+end+" provere-kvaliteta za inspekciju, nije pronadjen");
+        }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj inspekcije potvrde-kvaliteta, ne sme biti ispred datuma za pocetak inspekcije potvrde-kvaliteta");
         }
         const response = await api.get(url+`/search/inspection/quality-check-date-between`,{
             params:{

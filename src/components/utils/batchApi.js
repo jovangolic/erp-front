@@ -141,6 +141,9 @@ export async function getBatchesProducedBetween({start, end}){
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati vremenski opseg "+start+" - "+end+" za proizvedene batche-eve, nije pronadjen");
         }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj proizvodnje batch-eva ne sme biti ispred datuma za pocetak proizvodnje batch-eva");
+        }
         const response = await api.get(url+`/produced-between`,{
             params:{
                 start:moment(start).format("YYYY-MM-DD"),
@@ -159,6 +162,9 @@ export async function getBatchesExpiringBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
             throw new Error("Dati vremenski opseg "+start+" - "+end+" za batche-eve koji isticu, nije pronadjeni");
+        }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj isticanja batch-eva ne sme biti ispred datuma za pocetak isticanje batch-eva");
         }
         const response = await api.get(url+`/expiring-between`,{
             params:{
@@ -322,6 +328,9 @@ export async function findByProductionDateBetween({startDate, endDate}){
         if(!moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()){
             throw new Error("Datum opsega "+startDate+" - "+endDate+" proizvodnje, za dati batch, nije pronadjen");
         }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj prozivodnje batch-eva ne sme biti ispred datuma za pocetak proizvodnje batch-eva");
+        }
         const response = await api.get(url+`/by-production-date-between`,{
             params:{
                 startDate:moment(startDate).format("YYYY-MM-DD"),
@@ -395,6 +404,9 @@ export async function findByExpiryDateBetween({expiryDateStart, expiryDateEnd}){
         if(!moment(expiryDateStart,"YYYY-MM-DD",true).isValid() || 
            !moment(expiryDateEnd,"YYYY-MM-DD",true).isValid()){
             throw new Error("Datum opsega "+expiryDateStart+" - "+expiryDateEnd+" isteka, za dati batch, nije pronadjen");
+        }
+        if(moment(expiryDateEnd).isBefore(moment(expiryDateStart))){
+            throw new Error("Datum za kraj isticanja batch-eva ne sme biti ispred datuma za pocetak isticanja batch-eva");
         }
         const response = await api.get(url+`/by-expiry-date-between`,{
             params:{
@@ -718,6 +730,9 @@ export async function findByProductIdAndExpiryDateBetween({productId, startDate,
         if(isNaN(productId) || productId == null ||
            !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()){
                 throw new Error("Dati id "+productId+" proizvoda i opseg isticanja "+startDate+" - "+endDate+" datuma, nije pronadjen");
+        }
+        if(moment(endDate).isBefore(moment(startDate))){
+            throw new Error("Datum za kraj isticanja batch-eva ne sme biti ispred datuma za pocetak isticanja batch-eva");
         }
         const response = await api.get(url+`/search/product/${productId}/expiry-date-between`,{
             params:{

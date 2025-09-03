@@ -2,7 +2,21 @@
 
 # Front-end is not finished yet, currently, work in progress
 
-The frontend of the SLAM ERP system application is developed in a modern JavaScript environment using React in combination with Vita for fast build and hot-reloading during development. The goal is to create an intuitive and responsive user interface that enables easy management of storage, logistics and finances.
+## ERP Frontend System G-soft ERP for micro, small and medium-sized enterprises
+## Description:
+G-soft is an ERP software developed with the aim of helping micro, small and medium-sized enterprises to improve, offer and expand their business.
+It was developed using SOLID principles of software development, which makes it sustainable, easily upgradeable and suitable for long-term maintenance. It is these features that make G-soft a valuable product for IT companies and potential partners.
+
+Current functionalities:
+• Storage
+• Logistics
+• Accounting
+• Material management
+• Production planning
+• Quality control
+Disclaimer:
+
+G-soft is not a copy of existing ERP systems, but an original solution tailored to local market needs.
 
 The application is organized by components, with a structure that includes:
 

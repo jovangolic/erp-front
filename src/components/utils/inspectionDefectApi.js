@@ -1428,3 +1428,39 @@ export async function existsByDefect_Name(name){
         handleApiError(error,"Trenutno nismo pronasli postojanje naziv "+name+" defekta za dati inspection-defect");
     }
 }
+
+export async function findByConfirmed(confirmed){
+    try{
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Status potvrde "+confirmed+" mora biti tru/false, tacno/netacno");
+        }
+        const response = await api.get(url+`/confirmed`,{
+            params:{
+                confirmed:confirmed
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli status "+confirmed+" za potvrdu.");
+    }
+}
+
+export async function findByDefectIdAndConfirmed({defectId, confirmed}){
+    try{
+        if(isNaN(defectId) || defectId ==  null || typeof confirmed !== "boolean"){
+            throw new Error("ID "+defectId+" defekta i status potvrde "+confirmed+" za inspekciju-defekta, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/defects/${defectId}/confirmed`,{
+            params:{
+                confirmed:confirmed
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+defectId+" defekta i njegov status potvrde "+confirmed);
+    }
+}

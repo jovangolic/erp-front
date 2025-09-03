@@ -10,7 +10,7 @@ function handleApiError(error, customMessage) {
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/defects`;
 const isSeverityLevelValid = ["TRIVIAL_SEVERITY", "MINOR_SEVERITY", "MODERATE_SEVERITY", "MAJOR_SEVERITY", "CRITICAL_SEVERITY"];
-
+const isDefectStatusValid = ["All","ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createDefect({code,name,description,severity}){
     try{
@@ -364,5 +364,102 @@ try{
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli postojanje datog defekta po kodu "+code);
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isDefectStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status defekta "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status defekta "+status);
+    }
+}
+
+export async function confirmDefect(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu defekta, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu defekata");
+    }
+} 
+
+export async function closeDefect(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje defekta, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje defekata");
+    }
+}
+
+export async function cancelDefect(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje defekta, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje defekata");
+    }
+}
+
+export async function searchDefects({severity, descPart, status, confirmed}){
+    try{
+        if(!isSeverityLevelValid.includes(severity?.toUpperCase()) || !descPart || typeof descPart !== "string" || descPart.trim() === "" || 
+          !isDefectStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+            throw new Error("Dati parametri pretrage "+severity+" ,"+descPart+" ,"+status+" ,"+confirmed+" ne daju ocekivani rezultat");
+        }
+        const response = await api.get(url+`/search-defects`,{
+            params:{
+                severity:(severity || "").toUpperCase(),
+                descPart: descPart,
+                status : (status || "").toUpperCase(),
+                confirmed : confirmed
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli rezultat za unesene parametre: "+severity+" ,"+descPart+" ,"+status+" ,"+confirmed);
+    }
+}
+
+export async function trackDefect(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" defekta za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" defekta za pracenje");
     }
 }

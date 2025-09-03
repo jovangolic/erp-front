@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { findAll, deleteDefect } from "../utils/defectApi";
+import { findAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionContainingIgnoreCase, trackDefect } from "../utils/defectApi";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import ReportsModal from "./ReportsModal";
+import TrackModal from "./TrackModal";
 
 const DefectList = () => {
     
@@ -12,6 +14,18 @@ const DefectList = () => {
     const rowsPerPage = 10;
     const [rangeStart, setRangeStart] = useState("");
     const [rangeEnd, setRangeEnd] = useState("");
+    const [filterStatus, setFilterStatus] = useState("ALL");
+    const [showReports, setShowReports] = useState(false);
+    //za pracenje defekata
+    const [showTrackModal, setShowTrackModal] = useState(false);
+    const [trackedDefect, setTrackedDefect] = useState(null);   
+
+    const filteredInspections = defect?.inspections.filter(ins => {
+        if (filterStatus === "ALL") return true;
+        if (filterStatus === "ACTIVE") return ins.status !== "CANCELLED";
+        if (filterStatus === "CANCELLED") return ins.status === "CANCELLED";
+        return true;
+    }) || [];
 
     useEffect(() => {
         const fetchAllDefect = async () => {
@@ -42,10 +56,92 @@ const DefectList = () => {
         return paginated;
     };
 
-    const handleExecute =() => {
-        if(defect.length === 0){
-            alert("Nema defekata za izvršenje!");
+    const handleExecute =async() => {
+        // 1. Provera da li postoji defekt
+        if (!defect || !defect.code) {
+            alert("Nema defekta za izvrsenje!");
             return;
+        }
+        //provera da li defekat ima inspekcije,
+        //tacnije da li tabela sa inspekcijama ne postoji, i ako postoji da li je njena duzina jednaka nuli, prazna
+        if(!defect.inspections || defect.inspections.length === 0){
+            alert("Defekt nema inspekcija!");
+            return;
+        }
+        const updatedInspections = defect.inspections.map((ins) => ({
+            ...ins,
+            confirmed: true, // primer dodavanja polja za status
+        }));
+
+        setDefect({
+            ...defect,
+            inspections: updatedInspections,
+        });
+        try{
+            await confirmDefect(defect.id);
+            alert(`Defekt ${defect.code} je potvrdjen!`);
+        }
+        catch(error){
+            alert("Greska pri potvrdi ",error.message);
+        }
+    };
+
+    const handleCancel = async() => {
+        if (!defect || !defect.code) {
+            alert("Nema defekta za izvrsenje!");
+            return;
+        }
+        if(!defect.inspections || defect.inspections.length === 0){
+            alert("Defekt nema inspekcija!");
+            return;
+        }
+        try{
+            await cancelDefect(defect.id);
+            const updatedInspections = defect.inspections.map(ins => ({
+                ...ins,
+                confirmed: false
+            }));
+
+            setDefect({
+                ...defect,
+                status: "CANCELLED",
+                confirmed: false,
+                inspections: updatedInspections
+            });
+            alert(`Defekt ${defect.code} je otkazan!`);
+        }
+        catch(error){
+            alert("Greska pri otkazivanju ",error.message);
+        }
+    };
+
+    const handleTrack = async (defectId) => {
+        try {
+            const defectData = await trackDefect(defectId);
+            setTrackedDefect(defectData);
+            setShowTrackModal(true);
+        } catch (error) {
+            alert("Greska pri pracenju defekta: " + error.message);
+        }
+    };
+
+    const handleReports = async() => {
+        try{
+            if(!defect || defect.description){
+                alert("Defekt nema opis za izvestaj!");
+                return;
+            }
+            const relatedDefects = await findByDescriptionContainingIgnoreCase(defect.description);
+            if (relatedDefects.length === 0) {
+                alert("Nema pronadjenih defekata za dati opis.");
+                return;
+            }
+            console.log("Pronadjeni defekti:", relatedDefects);
+                alert(`Pronasli smo ${relatedDefects.length} slicnih defekata po opisu.`);
+            setShowReports(true);    
+            }
+        catch(error){
+            alert("Greska pri generisanju izvestaja: " + error.message);
         }
     };
 
@@ -54,7 +150,7 @@ const DefectList = () => {
     const handleDeleteItem = async (id) => {
         if (!window.confirm("Da li ste sigurni da želite da obrišete?")) return;
         try {
-            await deleteDefect(id); // poziv API-ja
+            await deleteDefect(id); // poziv iz API-ja
             const updatedInspections = defect.inspections.filter((item) => item.id !== id);
             setDefect({ ...defect, inspections: updatedInspections });
         } 
@@ -62,6 +158,7 @@ const DefectList = () => {
             setErrorMessage(error.message);
         }
     };
+
 
     return(
         <Container fluid>
@@ -79,10 +176,20 @@ const DefectList = () => {
             <Row className="align-items-center bg-light border-bottom p-2">
                 <Col>
                     <ButtonGroup>
-                        <Button variant="primary">Execute</Button>
-                        <Button variant="secondary">Track</Button>
-                        <Button variant="warning">Cancel</Button>
-                        <Button variant="info">Reports</Button>
+                        <Button variant="primary" onClick={handleExecute}>Execute</Button>
+                        <Button variant="secondary" onClick={() => handleTrack(defect.id)}>Track Defect</Button>
+                        <TrackModal
+                            show={showTrackModal}
+                            onHide={() => setShowTrackModal(false)}
+                            defect={trackedDefect}
+                            />
+                        <Button variant="warning" onClick={handleCancel}>Cancel</Button>
+                        <Button variant="info" onClick={handleReports}>Reports</Button>
+                        <ReportsModal
+                            show={showReports}
+                            onHide={() => setShowReports(false)}
+                            description={defect?.description}
+                            />
                     </ButtonGroup>
                 </Col>
                 <Col xs="auto">
@@ -99,9 +206,19 @@ const DefectList = () => {
             <Row className="mb-3 bg-primary text-white p-2">
                 <Col>
                     <Button variant="light" onClick={handleExecute}>Execute</Button>
-                    <Button variant="light">Track Defect</Button>
-                    <Button variant="light">Cancel</Button>
-                    <Button variant="light">Reports</Button>
+                    <Button variant="light" onClick={() => handleTrack(defect.id)}>Track Defect</Button>
+                    <TrackModal
+                        show={showTrackModal}
+                        onHide={() => setShowTrackModal(false)}
+                        defect={trackedDefect}
+                        />
+                    <Button variant="light" onClick={handleCancel}>Cancel</Button>
+                    <Button variant="light" onClick={handleReports}>Reports</Button>
+                    <ReportsModal
+                        show={showReports}
+                        onHide={() => setShowReports(false)}
+                        description={defect?.description}
+                        />
                     <Button variant="light">Trailer Management</Button>
                     <Button variant="light">Trail Defect</Button>
                 </Col>
@@ -112,85 +229,125 @@ const DefectList = () => {
             {/* Tabela inspekcija */}
             <Row className="mt-3">
                 <Col>
-                <h5>Inspections for defect: {defect.code}</h5>
+                    <Card>
+                        <Card.Header>
+                            <Row className="align-items-center">
+                                <Col><h5>Inspections for defect: {defect.code}</h5></Col>
+                                <Col xs="auto">
+                                    <Button
+                                        variant={filterStatus === "ALL" ? "primary" : "light"}
+                                        className="me-1"
+                                        onClick={() => setFilterStatus("ALL")}
+                                        >
+                                        All
+                                    </Button>
+                                    <Button
+                                        variant={filterStatus === "ACTIVE" ? "primary" : "light"}
+                                        className="me-1"
+                                        onClick={() => setFilterStatus("ACTIVE")}
+                                        >
+                                        Active
+                                    </Button>
+                                    <Button
+                                        variant={filterStatus === "CANCELLED" ? "primary" : "light"}
+                                        onClick={() => setFilterStatus("CANCELLED")}
+                                    >
+                                        Cancelled
+                                    </Button>
+                                </Col>
+                            </Row>
+                            <Row className="mt-2 align-items-center">
+                                <Col xs="auto">
+                                    <Form.Control
+                                    type="number"
+                                    placeholder="From"
+                                    value={rangeStart}
+                                    onChange={(e) => setRangeStart(e.target.value)}
+                                    />
+                                </Col>
+                                <Col xs="auto">
+                                    <Form.Control
+                                    type="number"
+                                    placeholder="To"
+                                    value={rangeEnd}
+                                    onChange={(e) => setRangeEnd(e.target.value)}
+                                    />
+                                </Col>
+                                <Col xs="auto">
+                                    <Button variant="secondary" onClick={() => setCurrentPage(1)}>
+                                    Apply
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Card.Header>
 
-                    {/* Range filter */}
-                    <Row className="mb-2 align-items-center">
-                        <Col xs="auto">
-                        <Form.Control
-                            type="number"
-                            placeholder="From"
-                            value={rangeStart}
-                            onChange={(e) => setRangeStart(e.target.value)}
-                        />
-                        </Col>
-                        <Col xs="auto">
-                        <Form.Control
-                            type="number"
-                            placeholder="To"
-                            value={rangeEnd}
-                            onChange={(e) => setRangeEnd(e.target.value)}
-                        />
-                        </Col>
-                        <Col xs="auto">
-                        <Button variant="secondary" onClick={() => setCurrentPage(1)}>
-                            Apply
-                        </Button>
-                        </Col>
-                    </Row>
+                        <Card.Body className="p-0">
+                            <Row className="bg-dark text-white fw-bold p-2">
+                                <Col>ID</Col>
+                                <Col>Inspection ID</Col>
+                                <Col>Quantity</Col>
+                                <Col>Confirmed</Col>
+                                <Col>Status</Col>
+                                <Col xs="auto">Actions</Col>
+                            </Row>
 
-                    {/* Tabela */}
-                    <Row className="bg-dark text-white p-2 fw-bold">
-                        <Col>ID</Col>
-                        <Col>Inspection ID</Col>
-                        <Col>Quantity Affected</Col>
-                        <Col xs="auto">Actions</Col>
-                    </Row>
-
-                    {getPaginatedInspections().map((ins) => (
-                        <Row key={ins.id} className="border-bottom align-items-center p-2">
-                            <Col>{ins.id}</Col>
-                            <Col>{ins.inspection?.id}</Col>
-                            <Col>{ins.quantityAffected}</Col>
-                            <Col xs="auto">
+                            {getPaginatedInspections().map((ins) => (
+                            <Row key={ins.id} className="border-bottom align-items-center p-2">
+                                <Col>{ins.id}</Col>
+                                <Col>{ins.inspection?.id}</Col>
+                                <Col>{ins.quantityAffected}</Col>
+                                <Col>
+                                {ins.confirmed ? (
+                                    <Badge bg="success">Yes</Badge>
+                                ) : (
+                                    <Badge bg="warning">No</Badge>
+                                )}
+                                </Col>
+                                <Col>
+                                {ins.status === "NEW" && <Badge bg="info">NEW</Badge>}
+                                {ins.status === "CONFIRMED" && <Badge bg="success">CONFIRMED</Badge>}
+                                {ins.status === "CLOSED" && <Badge bg="secondary">CLOSED</Badge>}
+                                {ins.status === "CANCELLED" && <Badge bg="danger">CANCELLED</Badge>}
+                                </Col>
+                                <Col xs="auto">
                                 <ButtonGroup size="sm">
-                                <Button variant="primary">View</Button>
-                                <Button
-                                    variant="danger"
-                                    onClick={() => handleDeleteItem(ins.id)}
-                                >
-                                    Delete
-                                </Button>
+                                    <Button variant="primary">View</Button>
+                                    <Button variant="danger" onClick={() => handleDeleteItem(ins.id)}>
+                                        Delete
+                                    </Button>
                                 </ButtonGroup>
-                            </Col>
-                        </Row>
-                    ))}
+                                </Col>
+                            </Row>
+                            ))}
+                        </Card.Body>
 
-                    {/* Pagination */}
-                    <Row className="mt-2">
-                        <Col xs="auto">
-                            <Button
-                                variant="secondary"
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                            >
-                                Previous
-                            </Button>
-                        </Col>
-                        <Col xs="auto">
-                            <Button
-                                variant="secondary"
-                                disabled={
-                                currentPage * rowsPerPage >= (defect.inspections?.length || 0)
-                                }
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                            >
-                                Next
-                            </Button>
-                        </Col>
-                    </Row>
+                        <Card.Footer>
+                            <Row className="align-items-center">
+                                <Col xs="auto">
+                                    <Button
+                                    variant="secondary"
+                                    disabled={currentPage === 1}
+                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                    className="me-2"
+                                    >
+                                        Previous
+                                    </Button>
+                                    <Button
+                                    variant="secondary"
+                                    disabled={currentPage * rowsPerPage >= (defect.inspections?.length || 0)}
+                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                    >
+                                        Next
+                                    </Button>
+                                </Col>
+                                <Col className="text-center">
+                                    Page {currentPage} / {Math.ceil(filteredInspections.length / rowsPerPage)}
+                                </Col>
+                            </Row>
+                        </Card.Footer>
+                    </Card>
                 </Col>
-            </Row>
+                </Row>
 
             {/* Footer */}
             <Row>

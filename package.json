@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:api": "cross-env JAVA_OPTS='-Xmx2048m' npx @openapitools/openapi-generator-cli generate -i http://localhost:8080/v3/api-docs -g typescript-axios -o src/generated --global-property apiDocs=false,modelDocs=false"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -32,6 +33,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "cross-env": "^10.0.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",

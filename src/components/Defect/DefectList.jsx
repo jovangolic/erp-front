@@ -247,18 +247,6 @@ const DefectList = () => {
                     />
                 </Col>
             </Row>
-            {/* Tabela inspekcija za selektovani defekt */}
-            <Row className="mt-3">
-                <Col>
-                    <h5>Inspections for defect: {defect.code}</h5>
-                    <InspectionTable
-                        inspections={defect.inspections}
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        handleDeleteItem={handleDeleteItem}
-                    />
-                </Col>
-            </Row>
 
             {/* Tabela inspekcija */}
             <Row className="mt-3">

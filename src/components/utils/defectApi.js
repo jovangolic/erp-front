@@ -41,7 +41,7 @@ export async function updateDefect({id,code,name,description,severity}){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {code,name,description,severity};
-        const response = await api.put(url+`/update${id}`,requestBody,{
+        const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -499,5 +499,17 @@ export async function generalSearch({id, idFrom, idTo, code, name, description, 
             id+" ,opseg id-ijeva "+idFrom+" - "+idTo+",code "+code+" ,name "+name+" ,description "+description+" ,severity "+severity+" ,status "+
             status+" ,confirmed "+confirmed+" ."
         );
+    }
+}
+
+export async function getReports({ id = null, description = null }) {
+    try {
+        const response = await api.get(url+`/reports`, {
+            params: { id, description },
+            headers: getHeader()
+        });
+        return response.data;
+    } catch (error) {
+        handleApiError(error, `Trenutno nismo pronasli rezultat za id: ${id}, description: ${description}`);
     }
 }

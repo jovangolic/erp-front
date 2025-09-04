@@ -132,6 +132,20 @@ export async function registerUser(firstName,lastName,email,username,password,ph
     }
 }
 
+export async function logout() {
+    try {
+        const response = await api.post("/auth/logout", {}, { headers: getHeader() });
+        // Brise token lokalno (localStorage/sessionStorage)
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        return response.data;
+    } 
+    catch (error) {
+        console.error("Logout error", error);
+        throw error;
+    }
+}
+
 /*Funkcija za kreiranje zaposlenog od strane admina */
 export async function createUserByAdmin(firstName,lastName,email,username,password,phoneNumber,address,roleIds){
     try{

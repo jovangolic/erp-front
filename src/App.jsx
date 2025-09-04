@@ -38,6 +38,12 @@ import AdminSystemPage from "./components/admin/AdminSystemPage";
 import SystemSettings from "./components/admin/SystemSettings/SystemSettings";
 import Sidebar from "./components/layout/Sidebar";
 import MainLayout from "./components/layout/MainLayout";
+import DefectPage from "./components/Defect/DefectPage";
+import DefectList from "./components/Defect/DefectList";
+import AddDefect from "./components/Defect/AddDefect";
+import EditDefect from "./components/Defect/EditDefect";
+import GeneralSearchDefect from "./components/Defect/GeneralSearchDefect";
+
 
 const App = () => {
     return (
@@ -87,6 +93,21 @@ const App = () => {
                         <Route path="/view/:id" element={<HelpDetails />} />
                         <Route path="/edit-options" element={<EditSystemSettingModal />} />
                         <Route path="/localized-options" element={<LocalizedOptionManager />} />
+
+                        {/* DefectPage kao parent route */}
+                        <Route path="/defects" element={<DefectPage />}>
+                        <Route index element={<DefectList />} /> {/* default */}
+                        <Route path="add" element={<AddDefect />} />
+                        <Route path="edit" element={<EditDefect />} />
+                        <Route path="delete" element={<h3>Delete Defect (TODO)</h3>} />
+                        <Route path="search" element={<h3>Search Defect (TODO)</h3>} />
+                        <Route path="general-search" element={<GeneralSearchDefect />} />
+                        <Route path="track-defect" element={<h3>Track Defect (TODO)</h3>} />
+                        <Route path="reports" element={<h3>Reports (TODO)</h3>} />
+                        </Route>
+
+                        {/* Ostale rute */}
+                        <Route path="/login" element={<h3>Login Page (TODO)</h3>} />
 
                         {/* Redirekcija */}
                         <Route path="/home" element={<Navigate to="/admin/system" replace />} />

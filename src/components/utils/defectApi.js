@@ -463,3 +463,41 @@ export async function trackDefect(id){
         handleApiError(error,"Trenutno nismo pronasli id "+id+" defekta za pracenje");
     }
 }
+
+export async function generalSearch({id, idFrom, idTo, code, name, description, severity, status, confirmed}){
+    try{
+        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null ||
+          !code || typeof code !== "string" || code.trim() === "" || 
+          !name || typeof name !== "string" || name.trim() === "" || !description || typeof description !== "string" || description.trim === "" ||
+          !isSeverityLevelValid.includes(severity?.toUpperCase()) || !isDefectStatusValid.includes(status?.toUpperCase()) ||
+          typeof confirmed !== "boolean"){
+            throw new Error("Dati parametri: id "+id+" ,opseg id-ijeva "+idFrom+" - "+idTo+" ,code "+code+" ,name "+name+" description, "+description+" ,severity "+severity+
+                " ,status "+status+" ,confirmed "+confirmed+" ne daju ocekivani rezultat"
+            );
+        }
+        if(idFrom > idTo){
+            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
+        }
+        const response = await api.get(url+`/general-search`,{
+            params:{
+                id:id,
+                idFrom:idFrom,
+                idTo:idTo,
+                code:code,
+                name:name,
+                description:description,
+                severity:(severity || "").toUpperCase(),
+                status :(status || "").toUpperCase(),
+                confirmed : confirmed
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli rezultat za unesene/uneti parametar/parametre: id "+
+            id+" ,opseg id-ijeva "+idFrom+" - "+idTo+",code "+code+" ,name "+name+" ,description "+description+" ,severity "+severity+" ,status "+
+            status+" ,confirmed "+confirmed+" ."
+        );
+    }
+}

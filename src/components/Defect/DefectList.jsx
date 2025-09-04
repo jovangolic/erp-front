@@ -18,7 +18,10 @@ const DefectList = () => {
     const [showReports, setShowReports] = useState(false);
     //za pracenje defekata
     const [showTrackModal, setShowTrackModal] = useState(false);
-    const [trackedDefect, setTrackedDefect] = useState(null);   
+    const [trackedDefect, setTrackedDefect] = useState(null); 
+    //za pretragu defekta
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchParams, setSearchParams] = useState({});  
 
     const filteredInspections = defect?.inspections.filter(ins => {
         if (filterStatus === "ALL") return true;
@@ -223,8 +226,39 @@ const DefectList = () => {
                     <Button variant="light">Trail Defect</Button>
                 </Col>
             </Row>
-            {/* Tabs*/}
-            
+            {/* General Search Form */}
+            <Row className="mb-3">
+                <Col>
+                    <DefectSearchForm
+                        searchParams={searchParams}
+                        setSearchParams={setSearchParams}
+                        onSearch={handleSearch}
+                    />
+                </Col>
+            </Row>
+            {/* Tabela sa rezultatima generalne pretrage */}
+            <Row className="mb-4">
+                <Col>
+                    <GeneralSearchDefect
+                        results={searchResults}
+                        onSelectDefect={(selected) => setDefect(selected)}
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                    />
+                </Col>
+            </Row>
+            {/* Tabela inspekcija za selektovani defekt */}
+            <Row className="mt-3">
+                <Col>
+                    <h5>Inspections for defect: {defect.code}</h5>
+                    <InspectionTable
+                        inspections={defect.inspections}
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage}
+                        handleDeleteItem={handleDeleteItem}
+                    />
+                </Col>
+            </Row>
 
             {/* Tabela inspekcija */}
             <Row className="mt-3">

@@ -18,8 +18,8 @@ const ReportsModal = ({ show, onHide, description }) => {
             const data = await searchDefects({
                 severity,
                 descPart,
-                status: isAdvanced ? defectStatus : null, // simple pretraga ignoriše status
-                confirmed: isAdvanced ? confirmed : null   // simple pretraga ignoriše confirmed
+                status: isAdvanced ? defectStatus : null, // simple pretraga ignorise status
+                confirmed: isAdvanced ? confirmed : null   // simple pretraga ignorise confirmed
             });
             setResults(data);
             setErrorMessage("");

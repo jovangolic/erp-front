@@ -4,6 +4,7 @@ import { findAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionCo
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import ReportsModal from "./ReportsModal";
 import TrackModal from "./TrackModal";
+import DefectDropdown from "./DefectDropdown";
 
 const DefectList = () => {
     
@@ -168,7 +169,7 @@ const DefectList = () => {
             {/*Top menu-bar */}
             <Navbar bg="light" variant="light" className="border-bottom">
                 <Nav>
-                    <Nav.Link href="#">Defect</Nav.Link>
+                    <DefectDropdown handleExit={handleExit} />
                     <Nav.Link href="#">Edit</Nav.Link>
                     <Nav.Link href="#">Goto</Nav.Link>
                     <Nav.Link href="#">System</Nav.Link>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Container, NavDropdown } from "react-bootstrap";
-import { findAll, searchDefects, createDefect, editDefect, deleteDefect, confirmDefect, cancelDefect, generalSearch } from "../utils/defectApi";
+import { findAll, searchDefects, createDefect, deleteDefect, confirmDefect, cancelDefect, generalSearch, updateDefect } from "../utils/defectApi";
 import { logout } from "../utils/AppFunction";
 import { Container, Row, Col, Button, Navbar, Nav } from "react-bootstrap";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import DefectDropdown from "./DefectDropdown";
 
 const DefectPage = () => {
 
@@ -49,7 +50,7 @@ const DefectPage = () => {
     },[]);
 
     //hendler funkcije - ili na srpskom majkumu j.... pomocne funkcije, Jovane, jebemu pisi cirilicom XD ;) :), Only jokes bloke, are allowed
-    const handleAddDefect =async(payload) => {
+    const handleAddDefect = async(payload) => {
         if (!payload?.code || !payload?.name || !payload?.description || !payload?.severity) {
             alert("Sva polja su obavezna!");
             return;
@@ -61,7 +62,7 @@ const DefectPage = () => {
         }
         catch(error){
             console.error("Greska prilikom kreiranja defekta:", error.message);
-            alert(error.message || "Nesto je pošlo po zlu prilikom kreiranja defekta.");
+            alert(error.message || "Nesto je poslo po zlu prilikom kreiranja defekta.");
         }
     };
 
@@ -69,16 +70,16 @@ const DefectPage = () => {
         try {
             const updated = await updateDefect({ id, ...updatedData });
             setDefects((prev) =>
-            prev.map((d) => (d.id === id ? updated : d))
+                prev.map((d) => (d.id === id ? updated : d))
             );
             setDefect(updated);
             setShowEditModal(true);
         } 
         catch (error) {
             console.error("Greska prilikom azuriranja defekta:", error.message);
-            alert(error.message || "Nesto je pošlo po zlu prilikom azuriranja defekta.");
+            alert(error.message || "Nesto je poslo po zlu prilikom azuriranja defekta.");
         }
-        };
+    };
 
     const handleDeleteDefect =async(id) => {
         try{
@@ -94,9 +95,7 @@ const DefectPage = () => {
     const handleTrackDefect = async (id) => {
         try {
             if (!id || isNaN(id)) throw new Error("Nevalidan ID defekta za pracenje");
-
             const data = await trackDefect(id);
-
             setDefect(data);
             setShowTrackModal(true);
             setErrorMessage("");
@@ -152,11 +151,9 @@ const DefectPage = () => {
             const idVal = searchId ? parseInt(searchId) : null;
             const fromVal = rangeStart ? parseInt(rangeStart) : null;
             const toVal = rangeEnd ? parseInt(rangeEnd) : null;
-
             if ((fromVal != null && toVal != null) && fromVal > toVal) {
                 throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja");
             }
-
             const data = await generalSearch({
             id: idVal,
             idFrom: fromVal,
@@ -182,29 +179,19 @@ const DefectPage = () => {
         }
     };
 
-    const handlePageChange =async(newPage) => {
-        setCurrentPage(newPage);
-    };
-
-    /*const handleExit = async () => {
-        try {
-            await logout();
-            window.location.href = "/login"; // redirect na login
-        } 
-        catch (error) {
-            alert("Greska pri odjavi");
-        }
-    };*/
-
     const handleExit = async () => {
         try {
             await logout();
             navigate("/login"); // redirect na login stranicu
         } 
         catch (error) {
-            alert("Greška pri odjavi");
+            alert("Greska pri odjavi");
         }
-  };
+    };
+
+    const handlePageChange =async(newPage) => {
+        setCurrentPage(newPage);
+    };
 
     return(
         <Container fluid>
@@ -217,40 +204,13 @@ const DefectPage = () => {
             {/* Top menu-bar */}
             <Navbar bg="light" variant="light" className="border-bottom">
                 <Nav>
-                {/* Defect dropdown */}
-                <NavDropdown title="Defect" id="defect-nav-dropdown">
-                    <NavDropdown.Item onClick={handleAddDefect} as={Link} to="/defects/add">
-                        Create
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleEditDefect} as={Link} to="/defects/edit">
-                        Update
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleDeleteDefect} as={Link} to="defects/delete">
-                        Delete
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleSearch} as={Link} to="/defects/search">
-                        Search
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleTrackDefect} as={Link} to="/defects/track-defect">
-                        Track-Defects
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleReports} as={Link} to="/defects/reports">
-                        Reports
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={handleGeneralSearch} as={Link} to="/defects/general-search">
-                        General-search
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={handleExit}>
-                        Exit
-                    </NavDropdown.Item>
-                </NavDropdown>
-
-                {/* Ostali glavni meniji (bez dropdowna za sada) */}
-                <Nav.Link as={Link} to="/edit">Edit</Nav.Link>
-                <Nav.Link as={Link} to="/goto">Goto</Nav.Link>
-                <Nav.Link as={Link} to="/system">System</Nav.Link>
-                <Nav.Link as={Link} to="/help">Help</Nav.Link>
+                    {/* Defect dropdown */}
+                        <DefectDropdown handleExit={handleExit} />
+                    {/* Ostali glavni meniji (bez dropdowna za sada) */}
+                    <Nav.Link as={Link} to="/edit">Edit</Nav.Link>
+                    <Nav.Link as={Link} to="/goto">Goto</Nav.Link>
+                    <Nav.Link as={Link} to="/system">System</Nav.Link>
+                    <Nav.Link as={Link} to="/help">Help</Nav.Link>
                 </Nav>
             </Navbar>
             {/* Ovde se prikazuje sadržaj child ruta */}

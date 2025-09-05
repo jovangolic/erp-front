@@ -129,6 +129,85 @@ export async function getByCategory(category){
     }
 }
 
+export async function findAllCategories(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/all-categories`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli sve tipove kategorija za Help");
+    }
+}
+
+export async function findByTitleContainingIgnoreCase(title){
+    try{
+        if(!title || typeof title !== "string" || title.trim() === ""){
+            throw new Error("Dati naslov "+title+" za  Help, nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/search/title`,{
+            params:{title:title},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli naslov "+title+" za dati Help");
+    }
+}
+
+export async function findByContentContainingIgnoreCase(content){
+    try{
+        if(!content || typeof content !== "string" || content.trim() === ""){
+            throw new Error("Dati sadrzaj "+content+" za Help, nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/search/content`,{
+            params:{content:content},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli sadrzaj "+content+" za dati Help");
+    }
+}
+
+export async function findByTitleContainingIgnoreCaseAndContentContainingIgnoreCase({title, content}){
+    try{    
+        if(!title || typeof title !== "string" || title.trim() === "" || !content || typeof content !== "string" || content.trim() === ""){
+            throw new Error("Dati naslov "+title+" i sadrzaj "+content+" za Help, nisu pronadjeni");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/search/title-content`,{
+            params:{
+                title:title,
+                content:content
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(errorr){
+        handleApiError(errorr,"Trenutno nismo pronasli naslov "+title+" i sadrzaj "+content+" za dati Help");
+    }
+}
+
+export async function existsByTitle(title){
+    try{
+        if(!title || typeof title !== "string" || title.trim() === ""){
+            throw new Error("Dati naslov "+title+" za Help, nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/exists/title`,{
+            params:{title:title},
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli postojanje naslova "+title+" za dati Help");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

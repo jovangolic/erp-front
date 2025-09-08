@@ -1,4 +1,3 @@
-import { min } from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];

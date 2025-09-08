@@ -5,6 +5,7 @@ import Welcome from "./Welcome";
 import { Container, Navbar, Nav, Row, Col, Form } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import HelpCategorySelect from "./HelpCategorySelect";
+import Content from "./Content";
 
 const HelpPage = () => {
 
@@ -32,6 +33,13 @@ const HelpPage = () => {
                 <Col md={6} lg={4}>
                     <Form>
                         <About />
+                    </Form>
+                </Col>
+            </Row>
+            <Row className="p-3">
+                <Col md={6} lg={4}>
+                    <Form>
+                        <Content />
                     </Form>
                 </Col>
             </Row>

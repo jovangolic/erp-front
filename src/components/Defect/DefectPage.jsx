@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Container, NavDropdown } from "react-bootstrap";
 import { findAll, searchDefects, createDefect, deleteDefect, confirmDefect, cancelDefect, generalSearch, updateDefect } from "../utils/defectApi";
 import { logout } from "../utils/AppFunction";
 import { Container, Row, Col, Button, Navbar, Nav } from "react-bootstrap";
@@ -36,31 +35,31 @@ const DefectPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAllDefects =async() => {
-            try{
+        const fetchAllDefects = async () => {
+            try {
                 const data = await findAll();
                 setDefects(data);
                 if (data.length > 0) setDefect(data[0]); // po default-u prvi defekt
             }
-            catch(error){
+            catch (error) {
                 setErrorMessage(error.message);
             }
         };
         fetchAllDefects();
-    },[]);
+    }, []);
 
     //hendler funkcije - ili na srpskom majkumu j.... pomocne funkcije, Jovane, jebemu pisi cirilicom XD ;) :), Only jokes bloke, are allowed
-    const handleAddDefect = async(payload) => {
+    const handleAddDefect = async (payload) => {
         if (!payload?.code || !payload?.name || !payload?.description || !payload?.severity) {
             alert("Sva polja su obavezna!");
             return;
         }
-        try{
-            const created = await createDefect({...payload});
+        try {
+            const created = await createDefect({ ...payload });
             setDefect(created);
             setShowEditModal(true);
         }
-        catch(error){
+        catch (error) {
             console.error("Greska prilikom kreiranja defekta:", error.message);
             alert(error.message || "Nesto je poslo po zlu prilikom kreiranja defekta.");
         }
@@ -74,20 +73,20 @@ const DefectPage = () => {
             );
             setDefect(updated);
             setShowEditModal(true);
-        } 
+        }
         catch (error) {
             console.error("Greska prilikom azuriranja defekta:", error.message);
             alert(error.message || "Nesto je poslo po zlu prilikom azuriranja defekta.");
         }
     };
 
-    const handleDeleteDefect =async(id) => {
-        try{
+    const handleDeleteDefect = async (id) => {
+        try {
             await deleteDefect(id);
             setDefects(defects.filter(d => d.id !== id));
             setSuccessMessage(`Defect ${id} deleted successfully`);
         }
-        catch(error){
+        catch (error) {
             setErrorMessage(error.message);
         }
     };
@@ -99,7 +98,7 @@ const DefectPage = () => {
             setDefect(data);
             setShowTrackModal(true);
             setErrorMessage("");
-        } 
+        }
         catch (error) {
             setErrorMessage(error.message);
         }
@@ -112,9 +111,9 @@ const DefectPage = () => {
                 description: defect?.description || null
             });
             setDefects(data);
-            if(data.length > 0) setDefect(data[0]);
+            if (data.length > 0) setDefect(data[0]);
             setShowReportsModal(true);
-        } 
+        }
         catch (error) {
             setErrorMessage(error.message);
         }
@@ -126,10 +125,10 @@ const DefectPage = () => {
                 throw new Error("Opis za pretragu mora biti unet i validan");
             }
             const data = await searchDefects({
-            severity: filterSeverity,
-            descPart: searchDescription,
-            status: filterStatus,
-            confirmed: filterConfirmed
+                severity: filterSeverity,
+                descPart: searchDescription,
+                status: filterStatus,
+                confirmed: filterConfirmed
             });
 
             if (!data || !Array.isArray(data)) {
@@ -138,7 +137,7 @@ const DefectPage = () => {
             setDefects(data);
             if (data.length > 0) setDefect(data[0]);
             setErrorMessage("");
-        } 
+        }
         catch (error) {
             setErrorMessage(error.message);
             setDefects([]);
@@ -155,15 +154,15 @@ const DefectPage = () => {
                 throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja");
             }
             const data = await generalSearch({
-            id: idVal,
-            idFrom: fromVal,
-            idTo: toVal,
-            code: searchCode || null,
-            name: searchName || null,
-            description: searchDescription || null,
-            severity: filterSeverity !== "ALL" ? filterSeverity : null,
-            status: filterStatus !== "ALL" ? filterStatus : null,
-            confirmed: filterConfirmed // true/false/null
+                id: idVal,
+                idFrom: fromVal,
+                idTo: toVal,
+                code: searchCode || null,
+                name: searchName || null,
+                description: searchDescription || null,
+                severity: filterSeverity !== "ALL" ? filterSeverity : null,
+                status: filterStatus !== "ALL" ? filterStatus : null,
+                confirmed: filterConfirmed // true/false/null
             });
 
             if (!data || !Array.isArray(data)) {
@@ -172,7 +171,7 @@ const DefectPage = () => {
             setDefects(data);
             if (data.length > 0) setDefect(data[0]); // default: prvi defekt
             setErrorMessage("");
-        } 
+        }
         catch (error) {
             setErrorMessage(error.message);
             setDefects([]);
@@ -183,17 +182,17 @@ const DefectPage = () => {
         try {
             await logout();
             navigate("/login"); // redirect na login stranicu
-        } 
+        }
         catch (error) {
             alert("Greska pri odjavi");
         }
     };
 
-    const handlePageChange =async(newPage) => {
+    const handlePageChange = async (newPage) => {
         setCurrentPage(newPage);
     };
 
-    return(
+    return (
         <Container fluid>
             {/* Toolbar sa dugmadima */}
             {/* Search form */}
@@ -205,7 +204,7 @@ const DefectPage = () => {
             <Navbar bg="light" variant="light" className="border-bottom">
                 <Nav>
                     {/* Defect dropdown */}
-                        <DefectDropdown handleExit={handleExit} />
+                    <DefectDropdown handleExit={handleExit} />
                     {/* Ostali glavni meniji (bez dropdowna za sada) */}
                     <Nav.Link as={Link} to="/edit">Edit</Nav.Link>
                     <Nav.Link as={Link} to="/goto">Goto</Nav.Link>

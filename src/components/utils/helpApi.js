@@ -208,6 +208,18 @@ export async function existsByTitle(title){
     }
 }
 
+export async function findFaqContent(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/help/faq`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli FAQ sadrzaj");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

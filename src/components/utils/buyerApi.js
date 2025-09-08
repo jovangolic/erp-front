@@ -116,7 +116,7 @@ export async function existsByPib(pib){
     }
 }
 
-export async function searchBuyers(keyword){
+export async function searchBuyer(keyword){
     try{
         if(!keyword || typeof keyword !== "string" || keyword.trim() === ""){
             throw new Error("Pretraga po kljucnoj reci "+keyword+" je nevalidna");

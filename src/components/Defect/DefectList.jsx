@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { findAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionContainingIgnoreCase, trackDefect } from "../utils/defectApi";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Navbar, Nav, ButtonGroup,Form } from "react-bootstrap";
 import ReportsModal from "./ReportsModal";
 import TrackModal from "./TrackModal";
 import DefectDropdown from "./DefectDropdown";
+import DefectSearchForm from "./DefectSearchForm";
+import GeneralSearchDefect from "./GeneralSearchDefect";
 
 const DefectList = () => {
     
-    const [defect, setDefect] = useState([]);
+    const [defect, setDefect] = useState({ inspections: [] });
     const [errorMessage, setErrorMessage] = useState("");
     //state za paginaciju i filter
     const [currentPage, setCurrentPage] = useState(1);
@@ -163,6 +165,49 @@ const DefectList = () => {
         }
     };
 
+    const handleExit = async () => {
+        try {
+            await logout();
+            navigate("/login"); // redirect na login stranicu
+        } 
+        catch (error) {
+            alert("Greska pri odjavi");
+        }
+    };
+
+    const handleGeneralSearch = async () => {
+            try {
+                // Validacija unosa
+                const idVal = searchId ? parseInt(searchId) : null;
+                const fromVal = rangeStart ? parseInt(rangeStart) : null;
+                const toVal = rangeEnd ? parseInt(rangeEnd) : null;
+                if ((fromVal != null && toVal != null) && fromVal > toVal) {
+                    throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja");
+                }
+                const data = await generalSearch({
+                id: idVal,
+                idFrom: fromVal,
+                idTo: toVal,
+                code: searchCode || null,
+                name: searchName || null,
+                description: searchDescription || null,
+                severity: filterSeverity !== "ALL" ? filterSeverity : null,
+                status: filterStatus !== "ALL" ? filterStatus : null,
+                confirmed: filterConfirmed // true/false/null
+                });
+    
+                if (!data || !Array.isArray(data)) {
+                    throw new Error("Nije vracen validan rezultat pretrage");
+                }
+                setDefects(data);
+                if (data.length > 0) setDefect(data[0]); // default: prvi defekt
+                setErrorMessage("");
+            } 
+            catch (error) {
+                setErrorMessage(error.message);
+                setDefects([]);
+            }
+    };
 
     return(
         <Container fluid>

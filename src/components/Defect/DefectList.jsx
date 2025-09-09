@@ -7,6 +7,7 @@ import TrackModal from "./TrackModal";
 import DefectDropdown from "./DefectDropdown";
 import DefectSearchForm from "./DefectSearchForm";
 import GeneralSearchDefect from "./GeneralSearchDefect";
+import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 
 const DefectList = () => {
     
@@ -209,18 +210,50 @@ const DefectList = () => {
             }
     };
 
+    const handleSearch = async () => {
+            try {
+                if (!searchDescription || typeof searchDescription !== "string") {
+                    throw new Error("Opis za pretragu mora biti unet i validan");
+                }
+                const data = await searchDefects({
+                    severity: filterSeverity,
+                    descPart: searchDescription,
+                    status: filterStatus,
+                    confirmed: filterConfirmed
+                });
+    
+                if (!data || !Array.isArray(data)) {
+                    throw new Error("Nije vracen validan rezultat pretrage");
+                }
+                setDefects(data);
+                if (data.length > 0) setDefect(data[0]);
+                setErrorMessage("");
+            }
+            catch (error) {
+                setErrorMessage(error.message);
+                setDefects([]);
+            }
+    };
+
     return(
         <Container fluid>
             {/*Top menu-bar */}
-            <Navbar bg="light" variant="light" className="border-bottom">
-                <Nav>
-                    <DefectDropdown handleExit={handleExit} />
-                    <Nav.Link href="#">Edit</Nav.Link>
-                    <Nav.Link href="#">Goto</Nav.Link>
-                    <Nav.Link href="#">System</Nav.Link>
-                    <Nav.Link href="#">Help</Nav.Link>
-                </Nav>
-            </Navbar>
+            <Row className="bg-light fixed-top">
+                <Navbar bg="light" variant="light" className="border-bottom w-100">
+                    <Nav className="ms-2">
+                        <DefectDropdown handleExit={handleExit} />
+                        <Nav.Link href="#">File</Nav.Link>
+                        <Nav.Link href="#">Edit</Nav.Link>
+                        <Nav.Link href="#">Goto</Nav.Link>
+                        <Nav.Link href="#">System-Status</Nav.Link>
+                        <Nav.Link href="#">System-Setting</Nav.Link>
+                        <Nav.Link href="#">Localized-Option</Nav.Link>
+                        <Nav.Link href="#">Permission</Nav.Link>
+                        <Nav.Link href="#">Option</Nav.Link>
+                        <HelpDropdownPage />
+                    </Nav>
+                </Navbar>
+            </Row>
             {/*Toolbar (red ispod – Execute, Track, Cancel, Reports, Search bar...) */}
             <Row className="align-items-center bg-light border-bottom p-2">
                 <Col>

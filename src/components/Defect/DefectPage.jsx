@@ -4,6 +4,7 @@ import { logout } from "../utils/AppFunction";
 import { Container, Row, Col, Button, Navbar, Nav } from "react-bootstrap";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import DefectDropdown from "./DefectDropdown";
+import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 
 const DefectPage = () => {
 
@@ -209,7 +210,7 @@ const DefectPage = () => {
                     <Nav.Link as={Link} to="/edit">Edit</Nav.Link>
                     <Nav.Link as={Link} to="/goto">Goto</Nav.Link>
                     <Nav.Link as={Link} to="/system">System</Nav.Link>
-                    <Nav.Link as={Link} to="/help">Help</Nav.Link>
+                    <HelpDropdownPage />
                 </Nav>
             </Navbar>
             {/* Ovde se prikazuje sadržaj child ruta */}

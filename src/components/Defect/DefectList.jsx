@@ -258,14 +258,14 @@ const DefectList = () => {
             <Row className="align-items-center bg-light border-bottom p-2">
                 <Col>
                     <ButtonGroup>
-                        <Button variant="primary" onClick={handleExecute}>Execute</Button>
-                        <Button variant="secondary" onClick={() => handleTrack(defect.id)}>Track Defect</Button>
+                        <Button variant="primary" onClick={handleExecute} className="me-2">Execute</Button>
+                        <Button variant="secondary" onClick={() => handleTrack(defect.id)} className="me-2">Track Defect</Button>
                         <TrackModal
                             show={showTrackModal}
                             onHide={() => setShowTrackModal(false)}
                             defect={trackedDefect}
                             />
-                        <Button variant="warning" onClick={handleCancel}>Cancel</Button>
+                        <Button variant="warning" onClick={handleCancel} className="me-2">Cancel</Button>
                         <Button variant="info" onClick={handleReports}>Reports</Button>
                         <ReportsModal
                             show={showReports}
@@ -287,21 +287,21 @@ const DefectList = () => {
             {/* Toolbar */}
             <Row className="mb-3 bg-primary text-white p-2">
                 <Col>
-                    <Button variant="light" onClick={handleExecute}>Execute</Button>
-                    <Button variant="light" onClick={() => handleTrack(defect.id)}>Track Defect</Button>
+                    <Button variant="light" onClick={handleExecute} className="me-2">Execute</Button>
+                    <Button variant="light" onClick={() => handleTrack(defect.id)} className="me-2">Track Defect</Button>
                     <TrackModal
                         show={showTrackModal}
                         onHide={() => setShowTrackModal(false)}
                         defect={trackedDefect}
                         />
-                    <Button variant="light" onClick={handleCancel}>Cancel</Button>
-                    <Button variant="light" onClick={handleReports}>Reports</Button>
+                    <Button variant="light" onClick={handleCancel} className="me-2">Cancel</Button>
+                    <Button variant="light" onClick={handleReports} className="me-2">Reports</Button>
                     <ReportsModal
                         show={showReports}
                         onHide={() => setShowReports(false)}
                         description={defect?.description}
                         />
-                    <Button variant="light">Trailer Management</Button>
+                    <Button variant="light" className="me-2">Trailer Management</Button>
                     <Button variant="light">Trail Defect</Button>
                 </Col>
             </Row>
@@ -386,6 +386,7 @@ const DefectList = () => {
                             <Row className="bg-dark text-white fw-bold p-2">
                                 <Col>ID</Col>
                                 <Col>Inspection ID</Col>
+                                <Col>Defect ID</Col>
                                 <Col>Quantity</Col>
                                 <Col>Confirmed</Col>
                                 <Col>Status</Col>
@@ -396,6 +397,7 @@ const DefectList = () => {
                             <Row key={ins.id} className="border-bottom align-items-center p-2">
                                 <Col>{ins.id}</Col>
                                 <Col>{ins.inspection?.id}</Col>
+                                <Col>{ins.defect?.id}</Col>
                                 <Col>{ins.quantityAffected}</Col>
                                 <Col>
                                 {ins.confirmed ? (

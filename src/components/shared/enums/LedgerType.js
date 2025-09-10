@@ -1,5 +1,5 @@
 export const LedgerType = Object.freeze({
 
-    "DEBIT": DEBIT,
-    "CREDIT": CREDIT
+    DEBIT : "DEBIT",
+    CREDIT : "CREDIT"
 });

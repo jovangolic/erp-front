@@ -213,7 +213,7 @@ const DefectPage = () => {
                     <HelpDropdownPage />
                 </Nav>
             </Navbar>
-            {/* Ovde se prikazuje sadržaj child ruta */}
+            {/* Ovde se prikazuje sadrzaj child ruta */}
             <Outlet />
         </Container>
     );

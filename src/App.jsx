@@ -43,6 +43,10 @@ import DefectList from "./components/Defect/DefectList";
 import AddDefect from "./components/Defect/AddDefect";
 import EditDefect from "./components/Defect/EditDefect";
 import GeneralSearchDefect from "./components/Defect/GeneralSearchDefect";
+import HelpPage from "./components/top-menu-bar/Help/HelpPage";
+import Welcome from "./components/top-menu-bar/Help/Welcome";
+import About from "./components/top-menu-bar/Help/About";
+import HelpCategorySelect from "./components/top-menu-bar/Help/HelpCategorySelect";
 
 
 const App = () => {
@@ -105,7 +109,16 @@ const App = () => {
                         <Route path="track-defect" element={<h3>Track Defect (TODO)</h3>} />
                         <Route path="reports" element={<h3>Reports (TODO)</h3>} />
                         </Route>
-
+                        {/*HelpPage */}
+                        <Route path="/help" element={<HelpPage />}>
+                            <Route index element={<Welcome />} />          {/* /help */}
+                            <Route path="welcome" element={<Welcome />} />{/* /help/welcome */}
+                            <Route path="about" element={<About />} />    {/* /help/about */}
+                            <Route path="content" element={<Content />} />
+                            <Route path="category" element={<HelpCategorySelect />} />
+                            <Route path="title" element={<Title />} />
+                            <Route path="isVisible" element={<IsVisible />} />
+                        </Route>
                         {/* Ostale rute */}
                         <Route path="/login" element={<h3>Login Page (TODO)</h3>} />
 

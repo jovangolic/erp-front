@@ -6,6 +6,8 @@ import { Container, Navbar, Nav, Row, Col, Form } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import HelpCategorySelect from "./HelpCategorySelect";
 import Content from "./Content";
+import Title from "./Title";
+import IsVisible from "./IsVisible";
 
 const HelpPage = () => {
 
@@ -50,6 +52,27 @@ const HelpPage = () => {
                             value={selectedCategory}
                             onChange={(val) => setSelectedCategory(val)}
                         />
+                    </Form>
+                </Col>
+            </Row>
+            <Row className="p-3">
+                <Col md={6} lg={4}>
+                    <Form>
+                        <Title />
+                    </Form>
+                </Col>
+            </Row>
+            <Row className="p-3">
+                <Col md={6} lg={4}>
+                    <Form>
+                        <Content />
+                    </Form>
+                </Col>
+            </Row>
+            <Row className="p-3">
+                <Col md={6} lg={4}>
+                    <Form>
+                        <IsVisible />
                     </Form>
                 </Col>
             </Row>

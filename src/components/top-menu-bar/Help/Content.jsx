@@ -48,10 +48,9 @@ const Content = () => {
                     ))}
                 </Accordion>
                 </Col>
-      </Row>
-
-      <Footer />
-    </Container>
+            </Row>
+            <Footer />
+        </Container>
   );
 };
 

@@ -1,6 +1,6 @@
 # Frontend – React + Vite
 
-# Front-end is not finished yet, currently, work in progress
+# Front-end is not finished yet, currently, UI/UX is in progress
 
 ## ERP Frontend System G-soft ERP for micro, small and medium-sized enterprises
 ## Description:

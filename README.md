@@ -51,4 +51,4 @@ The frontend uses Axios to communicate with backend REST API services. Each enti
 
 Working on UI/UX design
 
-© 2025 G-Soft ERP – All rights reserved.
+# © 2025 G-Soft ERP System – All rights reserved. Property of Jovan Golic

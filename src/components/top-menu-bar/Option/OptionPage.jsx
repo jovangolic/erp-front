@@ -4,10 +4,16 @@ import React, { useState } from "react";
 import OptionDropdownPage from "./OptionDropdownPage";
 import OptionCategorySelect from "./OptionCategorySelect";
 import IsActive from "./isActive";
+import Label from "./Label";
+import Value from "./Value";
 
 const Option =() => {
 
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [label, setLabel] = useState("");
+    const [value, setValue] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isActive, setIsActive] = useState(true);
 
     return(
         <Container fluid>
@@ -16,7 +22,28 @@ const Option =() => {
                     <OptionDropdownPage />
                 </Nav>
             </Navbar>
-
+            <Row className="p-3">
+                <Col md={6} lg={4}>
+                    <Form>
+                        <Label 
+                            value={label}
+                            onChange={(val) => setLabel(val)}
+                            error={errorMessage}
+                        />
+                    </Form>
+                </Col>
+            </Row>
+            <Row className="p-3">
+                <Col md={6} lg={4}>
+                    <Form>
+                        <Value 
+                            value={value}
+                            onChange={(val) => setValue(val)}
+                            error={errorMessage}
+                        />
+                    </Form>
+                </Col>
+            </Row>
 
             <Row className="p-3">
                 <Col md={6} lg={4}>
@@ -31,7 +58,10 @@ const Option =() => {
             <Row className="p-3">
                 <Col md={6} lg={4}>
                     <Form>
-                        <IsActive />
+                    <IsActive 
+                        isActive={isActive}
+                        onToggle={(val) => setIsActive(val)}
+                    />
                     </Form>
                 </Col>
             </Row>

@@ -46,7 +46,15 @@ import GeneralSearchDefect from "./components/Defect/GeneralSearchDefect";
 import HelpPage from "./components/top-menu-bar/Help/HelpPage";
 import Welcome from "./components/top-menu-bar/Help/Welcome";
 import About from "./components/top-menu-bar/Help/About";
+import Content from "./components/top-menu-bar/Help/Content";
+import Title from "./components/top-menu-bar/Help/Title";
+import IsVisible from "./components/top-menu-bar/Help/IsVisible";
 import HelpCategorySelect from "./components/top-menu-bar/Help/HelpCategorySelect";
+import OptionPage from "./components/top-menu-bar/Option/OptionPage";
+import Label from "./components/top-menu-bar/Option/Label";
+import IsActive from "./components/top-menu-bar/Option/isActive";
+import Value from "./components/top-menu-bar/Option/Value";
+import OptionCategorySelect from "./components/top-menu-bar/Option/OptionCategorySelect";
 
 
 const App = () => {
@@ -118,6 +126,14 @@ const App = () => {
                             <Route path="category" element={<HelpCategorySelect />} />
                             <Route path="title" element={<Title />} />
                             <Route path="isVisible" element={<IsVisible />} />
+                        </Route>
+                        {/*Option page */}
+                        <Route path="/option" element={<OptionPage />} >
+                            <Route index element={<Label />} />
+                            <Route path="label" element={<Label />}/>
+                            <Route path="value" element={<Value />}/>
+                            <Route path="active" element={<IsActive />}/>
+                            <Route path="category" element={<OptionCategorySelect />}/>
                         </Route>
                         {/* Ostale rute */}
                         <Route path="/login" element={<h3>Login Page (TODO)</h3>} />

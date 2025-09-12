@@ -4,7 +4,7 @@ import {OptionCategory } from "../../shared/enums/OptionCategory";
 
 const OptionCategorySelect = ({value, onChange}) => {
     return(
-        <Form.Group controlId="helpCategory">
+        <Form.Group controlId="optionCategory">
             <Form.Label>Category</Form.Label>
             <Form.Select value={value} onChange={(e) => onChange(e.target.value)}>
                 <option value="">-- Select Category --</option>

@@ -62,13 +62,7 @@ const HelpPage = () => {
                     </Form>
                 </Col>
             </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <Content />
-                    </Form>
-                </Col>
-            </Row>
+            
             <Row className="p-3">
                 <Col md={6} lg={4}>
                     <Form>

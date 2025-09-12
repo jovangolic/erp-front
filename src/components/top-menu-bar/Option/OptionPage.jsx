@@ -7,7 +7,7 @@ import IsActive from "./isActive";
 import Label from "./Label";
 import Value from "./Value";
 
-const Option =() => {
+const OptionPage =() => {
 
     const [selectedCategory, setSelectedCategory] = useState("");
     const [label, setLabel] = useState("");
@@ -58,10 +58,10 @@ const Option =() => {
             <Row className="p-3">
                 <Col md={6} lg={4}>
                     <Form>
-                    <IsActive 
-                        isActive={isActive}
-                        onToggle={(val) => setIsActive(val)}
-                    />
+                        <IsActive 
+                            isActive={isActive}
+                            onToggle={(val) => setIsActive(val)}
+                        />
                     </Form>
                 </Col>
             </Row>
@@ -70,4 +70,4 @@ const Option =() => {
     );
 };
 
-export default Option;
+export default OptionPage;

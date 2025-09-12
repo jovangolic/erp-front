@@ -52,9 +52,11 @@ import IsVisible from "./components/top-menu-bar/Help/IsVisible";
 import HelpCategorySelect from "./components/top-menu-bar/Help/HelpCategorySelect";
 import OptionPage from "./components/top-menu-bar/Option/OptionPage";
 import Label from "./components/top-menu-bar/Option/Label";
-import IsActive from "./components/top-menu-bar/Option/isActive";
+import IsActive from "./components/top-menu-bar/Option/IsActive";
 import Value from "./components/top-menu-bar/Option/Value";
 import OptionCategorySelect from "./components/top-menu-bar/Option/OptionCategorySelect";
+import GoToPage from "./components/top-menu-bar/GoTo/GoToPage";
+import GoToLabel from "./components/top-menu-bar/GoTo/GoToLabel";
 
 
 const App = () => {
@@ -132,8 +134,12 @@ const App = () => {
                             <Route index element={<Label />} />
                             <Route path="label" element={<Label />}/>
                             <Route path="value" element={<Value />}/>
-                            <Route path="active" element={<IsActive />}/>
-                            <Route path="category" element={<OptionCategorySelect />}/>
+                            <Route path="category" element={<OptionCategorySelect />} />
+                            <Route path="active" element={<IsActive />} />
+                        </Route>
+                        {/*GoTo page */}
+                        <Route path="/goto" element={<GoToPage />} >
+                            <Route index element={<GoToLabel />} />
                         </Route>
                         {/* Ostale rute */}
                         <Route path="/login" element={<h3>Login Page (TODO)</h3>} />

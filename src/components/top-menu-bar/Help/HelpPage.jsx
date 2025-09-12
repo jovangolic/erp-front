@@ -24,52 +24,6 @@ const HelpPage = () => {
                 </Nav>
             </Navbar>
             
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <Welcome />
-                    </Form>
-                </Col>
-            </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <About />
-                    </Form>
-                </Col>
-            </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <Content />
-                    </Form>
-                </Col>
-            </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <HelpCategorySelect
-                            value={selectedCategory}
-                            onChange={(val) => setSelectedCategory(val)}
-                        />
-                    </Form>
-                </Col>
-            </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <Title />
-                    </Form>
-                </Col>
-            </Row>
-            
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <IsVisible />
-                    </Form>
-                </Col>
-            </Row>
             <Outlet />
         </Container>
     );

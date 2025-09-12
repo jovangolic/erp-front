@@ -89,7 +89,7 @@ const About = () => {
       {/* Footer */}
       <Row className="mt-5">
         <Col className="text-center text-muted">
-          © ERP G-soft System 2025
+          © ERP G-Soft System 2025
         </Col>
       </Row>
     </>

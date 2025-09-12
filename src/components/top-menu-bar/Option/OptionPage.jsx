@@ -3,7 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import React, { useState } from "react";
 import OptionDropdownPage from "./OptionDropdownPage";
 import OptionCategorySelect from "./OptionCategorySelect";
-import IsActive from "./isActive";
+import IsActive from "./IsActive";
 import Label from "./Label";
 import Value from "./Value";
 
@@ -22,49 +22,7 @@ const OptionPage =() => {
                     <OptionDropdownPage />
                 </Nav>
             </Navbar>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <Label 
-                            value={label}
-                            onChange={(val) => setLabel(val)}
-                            error={errorMessage}
-                        />
-                    </Form>
-                </Col>
-            </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <Value 
-                            value={value}
-                            onChange={(val) => setValue(val)}
-                            error={errorMessage}
-                        />
-                    </Form>
-                </Col>
-            </Row>
-
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <OptionCategorySelect
-                            value={selectedCategory}
-                            onChange={(val) => setSelectedCategory(val)}
-                        />
-                    </Form>
-                </Col>
-            </Row>
-            <Row className="p-3">
-                <Col md={6} lg={4}>
-                    <Form>
-                        <IsActive 
-                            isActive={isActive}
-                            onToggle={(val) => setIsActive(val)}
-                        />
-                    </Form>
-                </Col>
-            </Row>
+            
             <Outlet />
         </Container>
     );

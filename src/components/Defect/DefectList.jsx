@@ -8,6 +8,8 @@ import DefectDropdown from "./DefectDropdown";
 import DefectSearchForm from "./DefectSearchForm";
 import GeneralSearchDefect from "./GeneralSearchDefect";
 import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
+import OptionDropdownPage from "../top-menu-bar/Option/OptionDropdownPage";
+import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 
 const DefectList = () => {
     
@@ -244,12 +246,12 @@ const DefectList = () => {
                         <DefectDropdown handleExit={handleExit} />
                         <Nav.Link href="#">File</Nav.Link>
                         <Nav.Link href="#">Edit</Nav.Link>
-                        <Nav.Link href="#">Goto</Nav.Link>
+                        <GoToDropdownPage />
                         <Nav.Link href="#">System-Status</Nav.Link>
                         <Nav.Link href="#">System-Setting</Nav.Link>
                         <Nav.Link href="#">Localized-Option</Nav.Link>
                         <Nav.Link href="#">Permission</Nav.Link>
-                        <Nav.Link href="#">Option</Nav.Link>
+                        <OptionDropdownPage />
                         <HelpDropdownPage />
                     </Nav>
                 </Navbar>

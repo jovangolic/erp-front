@@ -2,7 +2,8 @@ import { NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function GoToDropdownPage(){
-    <NavDropdown title="Help" id="top-nav-help">
+    return(
+        <NavDropdown title="Help" id="top-nav-help">
             <NavDropdown.Item as={Link} to="/goto/label">Label</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/goto/description">Description</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/goto/category">Category</NavDropdown.Item>
@@ -12,5 +13,6 @@ export default function GoToDropdownPage(){
             <NavDropdown.Item as={Link} to="/goto/active">Active</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/goto/roles">Roles</NavDropdown.Item>
             <NavDropdown.Divider />
-    </NavDropdown>
+        </NavDropdown>
+    );
 };

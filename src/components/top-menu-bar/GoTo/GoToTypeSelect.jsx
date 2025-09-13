@@ -10,7 +10,7 @@ const GoToTypeSelect = ({value, onChange}) => {
                 <option value="">-- Select Type --</option>
                 {Object.values(GoToType).map((t) => (
                     <option key={t} value={t}>
-                        {cat.replaceAll("_", " ")}
+                        {t.replaceAll("_", " ")}
                     </option>
                 ))}
             </Form.Select>

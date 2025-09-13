@@ -1,17 +1,18 @@
 import { Container, Navbar, Nav, Row, Col, Form } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
-import GoToLabel from "./GoToLabel";
-import IsActive from "./IsActive";
 import GoToDropdownPage from "./GoToDropdownPage";
 import GoToTypeSelect from "./GoToTypeSelect";
 import GoToCategorySelect from "./GoToCategorySelect";
 import { useState } from "react";
+import GoToList from "./GoToList";
+import GoToModal from "./GoToModal";
 
 
 const GoToPage =() =>{
 
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedType, setSelectedType] = useState("");
+    const [roles, setRoles] = useState([]);
     //Za greske i poruke
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");   
@@ -26,6 +27,12 @@ const GoToPage =() =>{
                 <Nav>
                     <GoToTypeSelect />
                 </Nav>
+               <Nav>
+                    <GoToList />
+               </Nav>
+               <Nav>
+                    <GoToModal />
+               </Nav>
             </Navbar>
             <Outlet />
         </Container>

@@ -56,7 +56,10 @@ import IsActive from "./components/top-menu-bar/Option/IsActive";
 import Value from "./components/top-menu-bar/Option/Value";
 import OptionCategorySelect from "./components/top-menu-bar/Option/OptionCategorySelect";
 import GoToPage from "./components/top-menu-bar/GoTo/GoToPage";
-import GoToLabel from "./components/top-menu-bar/GoTo/GoToLabel";
+import GoToCategorySelect from "./components/top-menu-bar/GoTo/GoToCategorySelect";
+import GoToTypeSelect from "./components/top-menu-bar/GoTo/GoToTypeSelect";
+import GoToList from "./components/top-menu-bar/GoTo/GoToList";
+import GoToModal from "./components/top-menu-bar/GoTo/GoToModal";
 
 
 const App = () => {
@@ -139,8 +142,20 @@ const App = () => {
                         </Route>
                         {/*GoTo page */}
                         <Route path="/goto" element={<GoToPage />} >
-                            <Route index element={<GoToLabel />} />
+                            <Route index element={<GoToList />}/>
+                            <Route path="list" element={<GoToList />}/>
+                            <Route path="modal" element={<GoToModal />}/>
+                            <Route path="category" element={<GoToCategorySelect />}/>
+                            <Route path="type" element={<GoToTypeSelect />}/>
                         </Route>
+                        {/*Admin-page */}
+                        <Route path="/admin" element={<GoToAdminPage />} >
+                            <Route index element={<GoToLabel />}/>
+                            <Route path="go-to-label" element={<GoToLabel />}/>
+                            <Route path="is-active" element={<IsActivePage />}/>
+                            <Route path="roles" element={<RoleSelect />}/>
+                        </Route>
+                        
                         {/* Ostale rute */}
                         <Route path="/login" element={<h3>Login Page (TODO)</h3>} />
 

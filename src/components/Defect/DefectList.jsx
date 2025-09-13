@@ -10,6 +10,7 @@ import GeneralSearchDefect from "./GeneralSearchDefect";
 import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 import OptionDropdownPage from "../top-menu-bar/Option/OptionDropdownPage";
 import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
+import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
 
 const DefectList = () => {
     
@@ -246,6 +247,7 @@ const DefectList = () => {
                         <DefectDropdown handleExit={handleExit} />
                         <Nav.Link href="#">File</Nav.Link>
                         <Nav.Link href="#">Edit</Nav.Link>
+                        <AdminDropdownPage />
                         <GoToDropdownPage />
                         <Nav.Link href="#">System-Status</Nav.Link>
                         <Nav.Link href="#">System-Setting</Nav.Link>

@@ -3,15 +3,13 @@ import { Link } from "react-router-dom";
 
 export default function GoToDropdownPage(){
     return(
-        <NavDropdown title="Help" id="top-nav-help">
-            <NavDropdown.Item as={Link} to="/goto/label">Label</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/goto/description">Description</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/goto/category">Category</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/goto/type">Type</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/goto/path">Path</NavDropdown.Item>
-            <NavDropdown.Item as={Link} tp="/goto/icon">Icon</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/goto/active">Active</NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/goto/roles">Roles</NavDropdown.Item>
+        <NavDropdown title="Go To" id="top-nav-goto">
+            <NavDropdown.Item as={Link} to="/accounting">Racunovodstvo</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/storage">Skladiste</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/logistics">Logistika</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/materials">Materijali</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/production">Planiranje proizvodnje</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/quality">Kontrola kvaliteta</NavDropdown.Item>
             <NavDropdown.Divider />
         </NavDropdown>
     );

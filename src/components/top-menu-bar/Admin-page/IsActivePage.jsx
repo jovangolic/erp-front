@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Spinner } from "react-bootstrap";
 
-const IsActive = ({ isActive, onToggle }) => {
+const IsActivePage = ({ isActive, onToggle }) => {
 
     const [loading, setLoading] = useState(false);
 
@@ -39,4 +39,4 @@ const IsActive = ({ isActive, onToggle }) => {
   );
 };
 
-export default IsActive;
+export default IsActivePage;

@@ -58,8 +58,12 @@ import OptionCategorySelect from "./components/top-menu-bar/Option/OptionCategor
 import GoToPage from "./components/top-menu-bar/GoTo/GoToPage";
 import GoToCategorySelect from "./components/top-menu-bar/GoTo/GoToCategorySelect";
 import GoToTypeSelect from "./components/top-menu-bar/GoTo/GoToTypeSelect";
-import GoToList from "./components/top-menu-bar/GoTo/GoToList";
+import GoToList from "./components/top-menu-bar/Admin-page/GoToList";
 import GoToModal from "./components/top-menu-bar/GoTo/GoToModal";
+import GoToAdminPage from "./components/top-menu-bar/Admin-page/GoToAdminPage";
+import GoToLabel from "./components/top-menu-bar/Admin-page/GoToLabel";
+import IsActivePage from "./components/top-menu-bar/Admin-page/IsActivePage";
+import RoleSelect from "./components/top-menu-bar/Admin-page/RoleSelect";
 
 
 const App = () => {
@@ -142,8 +146,7 @@ const App = () => {
                         </Route>
                         {/*GoTo page */}
                         <Route path="/goto" element={<GoToPage />} >
-                            <Route index element={<GoToList />}/>
-                            <Route path="list" element={<GoToList />}/>
+                            <Route index element={<GoToModal />}/>
                             <Route path="modal" element={<GoToModal />}/>
                             <Route path="category" element={<GoToCategorySelect />}/>
                             <Route path="type" element={<GoToTypeSelect />}/>
@@ -151,6 +154,7 @@ const App = () => {
                         {/*Admin-page */}
                         <Route path="/admin" element={<GoToAdminPage />} >
                             <Route index element={<GoToLabel />}/>
+                            <Route path="list" element={<GoToList />}/>
                             <Route path="go-to-label" element={<GoToLabel />}/>
                             <Route path="is-active" element={<IsActivePage />}/>
                             <Route path="roles" element={<RoleSelect />}/>

@@ -4,7 +4,6 @@ import GoToDropdownPage from "./GoToDropdownPage";
 import GoToTypeSelect from "./GoToTypeSelect";
 import GoToCategorySelect from "./GoToCategorySelect";
 import { useState } from "react";
-import GoToList from "./GoToList";
 import GoToModal from "./GoToModal";
 
 
@@ -27,9 +26,6 @@ const GoToPage =() =>{
                 <Nav>
                     <GoToTypeSelect />
                 </Nav>
-               <Nav>
-                    <GoToList />
-               </Nav>
                <Nav>
                     <GoToModal />
                </Nav>

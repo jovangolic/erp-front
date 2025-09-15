@@ -1,3 +1,4 @@
+import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 function handleApiError(error, customMessage) {
@@ -510,5 +511,175 @@ export async function getReports({ id = null, description = null }) {
         return response.data;
     } catch (error) {
         handleApiError(error, `Trenutno nismo pronasli rezultat za id: ${id}, description: ${description}`);
+    }
+}
+
+export async function searchByDateOnly(date){
+    try{
+        if(!moment(date,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Uneti datum "+date+" ne daje ocekivani rezultat");
+        }
+        const response = await api.get(url+`/search/by-date`,{
+            params:{
+                date:moment(date).format("YYYY-MM-DD")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli rezultat po samo unetom datumum "+date);
+    }
+}
+
+export async function countDefectsBySeverity(){
+    try{
+        const response = await api.get(url+`/count/defects-severity`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj defekata po ozbiljnosti");
+    }
+}
+
+export async function countDefectsByStatus(){
+    try{
+        const response = await api.get(url+`/count/defects-status`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj defekata po statusu");
+    }
+}
+
+export async function countDefectsByConfirmed(){
+    try{
+        const response = await api.get(url+`/count/defects-confirmed`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj defekata po potvrdi");
+    }
+}
+
+export async function countDefectsByStatusAndSeverity(){
+    try{    
+        const response = await api.get(url+`/count/defects-status-and-severity`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj defekata po statusu i ozbiljnosti");
+    }
+}
+
+export async function countDefectsByYearAndMonth(){
+    try{
+        const response = await api.get(url+`/count/defects-year-and-month`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj defekata po godini i mesecu");
+    }
+}
+
+export async function findByCreatedDate(createdDate){
+    try{
+        if(!moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Datum-vreme "+createdDate+" kreiranja datog defekta, nije pronadjeno");
+        }
+        const response = await api.get(url+`/created-date`,{
+            params:{
+                createdDate:moment(createdDate).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli defekat po datumu i vremenu "+createdDate+" kreiranja");
+    }
+}
+
+export async function findByCreatedDateAfter(createdDate){
+    try{
+        if(!moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Datum-vreme posle "+createdDate+" kreiranja datog defekta, nije pronadjeno");
+        }
+        const response = await api.get(url+`/created-date-after`,{
+            params:{
+                createdDate:moment(createdDate).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli defekat po datumu i vremenu posle "+createdDate+" kreiranja");
+    }
+}
+
+export async function findByCreatedDateBefore(createdDate){
+    try{
+        if(!moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Datum-vreme pre "+createdDate+" kreiranja datog defekta, nije pronadjeno");
+        }
+        const response = await api.get(url+`/created-date-before`,{
+            params:{
+                createdDate:moment(createdDate).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli defekat po datumu i vremenu pre "+createdDate+" kreiranja");
+    }
+}
+
+export async function findByCreatedDateBetween({start, end}){
+    try{
+        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Opseg datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
+        }
+        const response = await api.get(url+`/created-date-between`,{
+            params:{
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli opseg datuma i vremena "+start+" - "+end+" za kreiranje defekta");
+    }
+}
+
+export async function countByCreatedAtBetween({start, end}){
+    try{
+        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            throw new Error("Broj opsega datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
+        }
+        const response = await api.get(url+`/count/created-date-between`,{
+            params:{
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj opsega datuma i vremena "+start+" - "+end+" za kreiranje defekta");
     }
 }

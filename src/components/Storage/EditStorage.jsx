@@ -4,7 +4,7 @@ import { updateStorage, getByStorageId } from "../utils/storageApi";
 
 const UpdateStorage = () => {
 
-    const { id } = useParams(); // ID inventara koji se uređuje
+    const { id } = useParams(); // ID inventara koji se uredjuje
     const [storage, setStorage] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();

@@ -11,6 +11,7 @@ import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 import OptionDropdownPage from "../top-menu-bar/Option/OptionDropdownPage";
 import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
+import { logout } from "../utils/AppFunction";
 
 const DefectList = () => {
     
@@ -394,6 +395,7 @@ const DefectList = () => {
                                 <Col>Quantity</Col>
                                 <Col>Confirmed</Col>
                                 <Col>Status</Col>
+                                <Col>Date-Time</Col>
                                 <Col xs="auto">Actions</Col>
                             </Row>
 

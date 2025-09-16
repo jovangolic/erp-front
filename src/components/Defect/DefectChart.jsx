@@ -1,5 +1,5 @@
 import React from "react";
-import { Bar } from "react-chartjs-2";
+import { Bar,Pie,Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,51 +7,53 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
 } from "chart.js";
 
 // Registracija potrebnih Chart.js komponenti
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale,LinearScale,BarElement,Title,Tooltip,Legend,ArcElement,PointElement,LineElement);
 
-const DefectChart = ({ data }) => {
-  // data je objekat sa brojem defekata po ozbiljnosti
-  // primer: { trivial: 5, minor: 10, moderate: 7, major: 3, critical: 1 }
+const DefectChart = ({ 
+    title = "Statistika defekata", 
+    data = [], 
+    xKey = "label", 
+    yKey = "count", 
+    type = "bar" 
+    }) => {
   
-  const chartData = {
-    labels: ["Trivial", "Minor", "Moderate", "Major", "Critical"],
-    datasets: [
-      {
-        label: "Broj Defekata",
-        data: [
-          data.trivial || 0,
-          data.minor || 0,
-          data.moderate || 0,
-          data.major || 0,
-          data.critical || 0
-        ],
-        backgroundColor: [
-          "#6c757d",
-          "#0d6efd",
-          "#198754",
-          "#ffc107",
-          "#dc3545"
-        ]
-      }
-    ]
-  };
+    const safeData = Array.isArray(data) ? data : [];
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Defekti po Ozbiljnosti" }
-    },
-    scales: {
-      y: { beginAtZero: true }
-    }
-  };
+    const chartData = {
+      labels: safeData.map(item => item[xKey]),
+      datasets: [
+        {
+          label: title,
+          data: safeData.map(item => item[yKey]),
+          backgroundColor: [
+            "#6c757d", "#0d6efd", "#198754", "#ffc107", "#dc3545",
+            "#20c997", "#6610f2", "#fd7e14"
+          ]
+        }
+      ]
+};
 
-  return <Bar data={chartData} options={options} />;
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: { display: true, text: title }
+      },
+      scales: type === "bar" || type === "line"
+        ? { y: { beginAtZero: true } }
+        : {}
+    };
+
+    if (type === "pie") return <Pie data={chartData} options={options} />;
+    if (type === "line") return <Line data={chartData} options={options} />;
+    return <Bar data={chartData} options={options} />;
 };
 
 export default DefectChart;

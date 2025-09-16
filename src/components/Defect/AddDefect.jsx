@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { createDefect } from "../utils/defectApi";
+import React, { useEffect, useState } from "react";
+import { createDefect,confirmDefect,cancelDefect,trackDefect,findByDescriptionContainingIgnoreCase,countDefectsByYearAndMonth } from "../utils/defectApi";
 import { Container, Form, Button, Alert,Row, Col, Navbar, Nav, ButtonGroup, Card } from "react-bootstrap";
 import DefectDropdown from "./DefectDropdown";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
@@ -9,6 +9,7 @@ import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 import TrackModal from "./TrackModal";
 import ReportsModal from "./ReportsModal";
 import DefectChart from "./DefectChart";
+import { logout } from "../utils/AppFunction";
 
 const AddDefect = () => {
     const [code, setCode] = useState("");
@@ -22,6 +23,21 @@ const AddDefect = () => {
     const [trackedDefect, setTrackedDefect] = useState(null); 
     const [showReports, setShowReports] = useState(false);
     const [defect, setDefect] = useState({ inspections: [] });
+    const [monthlyData, setMonthlyData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await countDefectsByYearAndMonth();
+                setMonthlyData(Array.isArray(data) ? data : []);
+            } 
+            catch (error) {
+                console.error("Greska prilikom ucitavanja podataka:", error);
+                setMonthlyData([]); // fallback na prazan niz
+            }
+            };
+        fetchData();
+    }, []);
 
     const defectStats = {
         trivial: 5,
@@ -34,12 +50,13 @@ const AddDefect = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-        const data = await createDefect({ code, name, description, severity, status });
-        setSuccessMessage(`Defekt ${data.code} uspešno kreiran!`);
-        setErrorMessage("");
-        } catch (error) {
-        setErrorMessage(error.message);
-        setSuccessMessage("");
+            const data = await createDefect({ code, name, description, severity, status });
+            setSuccessMessage(`Defekt ${data.code} uspesno kreiran!`);
+            setErrorMessage("");
+        } 
+        catch (error) {
+            setErrorMessage(error.message);
+            setSuccessMessage("");
         }
     };
 
@@ -285,8 +302,34 @@ const AddDefect = () => {
                 <Col xs={12} md={12} lg={12} xl={12}>
                     <Card className="shadow-sm w-100">
                         <Card.Body>
-                        <h3 className="text-center mb-4">Statistika Defekata</h3>
-                        <DefectChart data={defectStats} />
+                            <h3 className="text-center mb-4">Statistika Defekata</h3>
+                            {/**Defekat grafikon za severity/ozbiljnost */}
+                            <DefectChart 
+                                title="Defekti po ozbiljnosti" 
+                                data={severity} 
+                                xKey="severity" 
+                                yKey="count" 
+                                type="bar" 
+                                />
+                            {/**Defekat grafikon za status */}
+                            <DefectChart 
+                                title="Defekti po statusu"
+                                data={status}
+                                xKey="status"
+                                yKey="count"
+                                type="pie"
+                            />    
+                            {/**Defekat grafikon za mesecnu statistiku */}
+                            <DefectChart 
+                                title="Defekti po mesecima" 
+                                data={monthlyData.map(d => ({
+                                    label: `${d.month}.${d.year}`,
+                                    count: d.count
+                                }))} 
+                                xKey="label" 
+                                yKey="count" 
+                                type="line" 
+                            />
                         </Card.Body>
                     </Card>
                 </Col>

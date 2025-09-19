@@ -12,6 +12,7 @@ import OptionDropdownPage from "../top-menu-bar/Option/OptionDropdownPage";
 import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
 import { logout } from "../utils/AppFunction";
+import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 
 const DefectList = () => {
     
@@ -247,7 +248,7 @@ const DefectList = () => {
                     <Nav className="ms-2">
                         <DefectDropdown handleExit={handleExit} />
                         <Nav.Link href="#">File</Nav.Link>
-                        <Nav.Link href="#">Edit</Nav.Link>
+                        <EditOptDropdownPage />
                         <AdminDropdownPage />
                         <GoToDropdownPage />
                         <Nav.Link href="#">System-Status</Nav.Link>
@@ -260,7 +261,7 @@ const DefectList = () => {
                 </Navbar>
             </Row>
             {/*Toolbar (red ispod – Execute, Track, Cancel, Reports, Search bar...) */}
-            <Row className="align-items-center bg-light border-bottom p-2">
+            <Row clasclassName="align-items-center bg-light border-bottom p-2 fixed-top" style={{ top: '56px', zIndex: 1000 }}>
                 <Col>
                     <ButtonGroup>
                         <Button variant="primary" onClick={handleExecute} className="me-2">Execute</Button>

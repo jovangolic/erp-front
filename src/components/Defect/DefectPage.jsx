@@ -5,6 +5,7 @@ import { Container, Row, Col, Button, Navbar, Nav } from "react-bootstrap";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import DefectDropdown from "./DefectDropdown";
 import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
+import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 
 const DefectPage = () => {
 
@@ -207,8 +208,8 @@ const DefectPage = () => {
                     {/* Defect dropdown */}
                     <DefectDropdown handleExit={handleExit} />
                     {/* Ostali glavni meniji (bez dropdowna za sada) */}
-                    <Nav.Link as={Link} to="/edit">Edit</Nav.Link>
-                    <Nav.Link as={Link} to="/goto">Goto</Nav.Link>
+                    <EditOptDropdownPage />
+                    <GoToDropdownPage />
                     <Nav.Link as={Link} to="/system">System</Nav.Link>
                     <HelpDropdownPage />
                 </Nav>

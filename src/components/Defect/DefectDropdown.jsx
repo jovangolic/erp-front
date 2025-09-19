@@ -6,6 +6,7 @@ export default function DefectDropdown({ handleExit }) {
     <NavDropdown title="Defect" id="top-nav-defect">
       <NavDropdown.Item as={Link} to="/defects/add">Create</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/edit">Update</NavDropdown.Item>
+      <NavDropdown.Item as={Link} to="/defects/view">View</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/delete">Delete</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/search">Search</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/track">Track-Defects</NavDropdown.Item>

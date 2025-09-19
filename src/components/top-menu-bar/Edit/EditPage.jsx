@@ -1,16 +1,15 @@
 import { Container, Navbar, Nav, Row, Col, Form } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import React, { useState } from "react";
-import FileOptDropdownPage from "./FileOptDropdownPage";
+import EditOptDropdownPage from "./EditOptDropdownPage";
 
-
-const FilePage =() => {
+const EditPage = () => {
 
     return(
         <Container fluid>
             <Navbar bg="light" variant="light" className="border-bottom">
                 <Nav>
-                    <FileOptDropdownPage />
+                    <EditOptDropdownPage />
                 </Nav>
             </Navbar>
             <Outlet />
@@ -18,4 +17,4 @@ const FilePage =() => {
     );
 };
 
-export default FilePage;
+export default EditPage;

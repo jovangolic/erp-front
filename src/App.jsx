@@ -64,7 +64,19 @@ import GoToAdminPage from "./components/top-menu-bar/Admin-page/GoToAdminPage";
 import GoToLabel from "./components/top-menu-bar/Admin-page/GoToLabel";
 import IsActivePage from "./components/top-menu-bar/Admin-page/IsActivePage";
 import RoleSelect from "./components/top-menu-bar/Admin-page/RoleSelect";
-
+import ViewDefect from "./components/Defect/ViewDefect";
+import EditPage from "./components/top-menu-bar/Edit/EditPage";
+import EditName from "./components/top-menu-bar/Edit/EditName";
+import EditValue from "./components/top-menu-bar/Edit/EditValue";
+import EditOptList from "./components/top-menu-bar/Edit/EditOptList";
+import EditOptForm from "./components/top-menu-bar/Edit/EditOptForm";
+import EditTypeSelect from "./components/top-menu-bar/Edit/EditTypeSelect";
+import FilePage from "./components/top-menu-bar/File/FilePage";
+import FileOptList from "./components/top-menu-bar/File/FileOptList";
+import FileOptForm from "./components/top-menu-bar/File/FileOptForm";
+import FileActionsSelector from "./components/top-menu-bar/File/FileActionsSelector";
+import FileOptIndex from "./components/top-menu-bar/File/FileOptIndex";
+import FileActionsAdvanced from "./components/top-menu-bar/File/FileActionsAdvanced";
 
 const App = () => {
     return (
@@ -120,6 +132,7 @@ const App = () => {
                         <Route index element={<DefectList />} /> {/* default */}
                         <Route path="add" element={<AddDefect />} />
                         <Route path="edit" element={<EditDefect />} />
+                        <Route path="view" element={<ViewDefect />}/>
                         <Route path="delete" element={<h3>Delete Defect (TODO)</h3>} />
                         <Route path="search" element={<h3>Search Defect (TODO)</h3>} />
                         <Route path="general-search" element={<GeneralSearchDefect />} />
@@ -143,6 +156,24 @@ const App = () => {
                             <Route path="value" element={<Value />}/>
                             <Route path="category" element={<OptionCategorySelect />} />
                             <Route path="active" element={<IsActive />} />
+                        </Route>
+                        {/**EditOpt page */}
+                        <Route path="/editOpt" element={<EditPage />}>
+                            <Route index element={<EditName />} />
+                            <Route path="name" element={<EditName />}/>
+                            <Route path="value" element={<EditValue />}/>
+                            <Route path="opt-type" element={<EditTypeSelect />}/>
+                            <Route path="opt-list" element={<EditOptList />}/>
+                            <Route path="opt-form" element={<EditOptForm />}/>
+                        </Route>  
+                        {/**FileOpt page */}
+                        <Route path="/fileOpt" element={<FilePage />}>
+                            <Route index element={<FileOptIndex />}/>
+                            <Route path="opt-index" element={<FileOptIndex />}/>
+                            <Route path="opt-list" element={<FileOptList />}/>
+                            <Route path="opt-form" element={<FileOptForm />}/>
+                            <Route path="opt-advanced-actions" element={<FileActionsAdvanced />}/>
+                            <Route path="action-selector" element={<FileActionsSelector />}/>
                         </Route>
                         {/*GoTo page */}
                         <Route path="/goto" element={<GoToPage />} >

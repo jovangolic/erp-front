@@ -142,6 +142,27 @@ export async function getByAction(action){
     }
 }
 
+export async function saveFileOpt({extension,mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions}){
+    try{
+        if(
+            !isFileExtensionValid.includes(extension?.toUpperCase()) ||
+            !mimeType || typeof mimeType !== "string" || mimeType.trim() === "" ||
+            maxSizeInBytes == null || maxSizeInBytes <= 0 ||
+            typeof uploadEnabled !=="boolean" ||typeof previewEnabled !=="boolean" ||
+            !isValidFileActionSet(availableActions)
+        ){
+            throw new Error("Sva polja moraju biti validna i popunjena")
+        }
+        const requestBody = {extension: (extension || "").toUpperCase(),mimeType,maxSizeInBytes,uploadEnabled,previewEnabled,availableActions};
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/file-opt/save/`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

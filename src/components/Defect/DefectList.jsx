@@ -14,6 +14,7 @@ import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
 import { logout } from "../utils/AppFunction";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
+import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
 
 const DefectList = () => {
     
@@ -253,7 +254,7 @@ const DefectList = () => {
                         <AdminDropdownPage />
                         <GoToDropdownPage />
                         <Nav.Link href="#">System-Status</Nav.Link>
-                        <Nav.Link href="#">System-Setting</Nav.Link>
+                        <SystemSettingDropdownPage />
                         <Nav.Link href="#">Localized-Option</Nav.Link>
                         <Nav.Link href="#">Permission</Nav.Link>
                         <OptionDropdownPage />

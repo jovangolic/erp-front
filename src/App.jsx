@@ -80,6 +80,12 @@ import FileActionsAdvanced from "./components/top-menu-bar/File/FileActionsAdvan
 import EditOptListPage from "./components/top-menu-bar/Edit/EditOptListPage";
 import FileOptAdvancedPage from "./components/top-menu-bar/File/FileOptAdvancedPage";
 import FileOptAdvancedPageWrapper from "./components/top-menu-bar/File/FileOptAdvancedPageWrapper";
+import SystemSettingPage from "./components/top-menu-bar/System/SystemSetting/SystemSettingPage";
+import SystemSettingIndexPage from "./components/top-menu-bar/System/SystemSetting/SystemSettingIndexPage";
+import SystemSettingCategory from "./components/top-menu-bar/System/SystemSetting/SystemSettingCategory";
+import SettingDataType from "./components/top-menu-bar/System/SystemSetting/SettingDataType";
+import SettingKeyField from "./components/top-menu-bar/System/SystemSetting/SettingKeyField";
+import SystemSettingForm from "./components/top-menu-bar/System/SystemSetting/SystemSettingForm";
 
 const App = () => {
     return (
@@ -130,6 +136,7 @@ const App = () => {
                         <Route path="/edit-options" element={<EditSystemSettingModal />} />
                         <Route path="/localized-options" element={<LocalizedOptionManager />} />
 
+                        {/**NOVE PUTANJE!!!!!!!!!!!!!!!! */}          
                         {/* DefectPage kao parent route */}
                         <Route path="/defects" element={<DefectPage />}>
                         <Route index element={<DefectList />} /> {/* default */}
@@ -169,7 +176,15 @@ const App = () => {
                             <Route path="opt-list" element={<EditOptList />}/>
                             <Route path="opt-form" element={<EditOptForm />}/>
                             <Route path="opt-list-page" element={<EditOptListPage />}/>
-                        </Route>  
+                        </Route> 
+                        {/**System Setting */}
+                        <Route path="/system-setting" element={<SystemSettingPage />}>
+                            <Route index element={<SystemSettingIndexPage />} />
+                            <Route path="sys-category" element={<SystemSettingCategory />} />
+                            <Route path="sys-data-type" element={<SettingDataType />} />
+                            <Route path="sys-key" element={<SettingKeyField />} />
+                            <Route path="sys-form" element={<SystemSettingForm />} />
+                        </Route>
                         {/**FileOpt page */}
                         <Route path="/file" element={<FilePage />}>
                             <Route index element={<FileOptIndex />}/>

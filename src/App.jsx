@@ -136,7 +136,7 @@ const App = () => {
                         <Route path="/edit-options" element={<EditSystemSettingModal />} />
                         <Route path="/localized-options" element={<LocalizedOptionManager />} />
 
-                        {/**NOVE PUTANJE!!!!!!!!!!!!!!!! */}          
+                        {/**NOVE PUTANJE!!!!!!!!!!!!!!!! koje ce biti sablon za sve ostale buduce putanje */}          
                         {/* DefectPage kao parent route */}
                         <Route path="/defects" element={<DefectPage />}>
                         <Route index element={<DefectList />} /> {/* default */}

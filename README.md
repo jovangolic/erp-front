@@ -49,7 +49,7 @@ The **Defect List** page is part of the **Quality Control** module.
 
 # Edit defect, containing graph with random data
 <img width="1903" height="3694" alt="Defects-edit" src="https://github.com/user-attachments/assets/70829a6e-5459-4664-8fe2-526ef2c09967" />
-
+That error, is because, their is no data
 
 # API integration and validation
 

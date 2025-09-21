@@ -77,6 +77,9 @@ import FileOptForm from "./components/top-menu-bar/File/FileOptForm";
 import FileActionsSelector from "./components/top-menu-bar/File/FileActionsSelector";
 import FileOptIndex from "./components/top-menu-bar/File/FileOptIndex";
 import FileActionsAdvanced from "./components/top-menu-bar/File/FileActionsAdvanced";
+import EditOptListPage from "./components/top-menu-bar/Edit/EditOptListPage";
+import FileOptAdvancedPage from "./components/top-menu-bar/File/FileOptAdvancedPage";
+import FileOptAdvancedPageWrapper from "./components/top-menu-bar/File/FileOptAdvancedPageWrapper";
 
 const App = () => {
     return (
@@ -158,22 +161,26 @@ const App = () => {
                             <Route path="active" element={<IsActive />} />
                         </Route>
                         {/**EditOpt page */}
-                        <Route path="/editOpt" element={<EditPage />}>
+                        <Route path="/edit" element={<EditPage />}>
                             <Route index element={<EditName />} />
                             <Route path="name" element={<EditName />}/>
                             <Route path="value" element={<EditValue />}/>
                             <Route path="opt-type" element={<EditTypeSelect />}/>
                             <Route path="opt-list" element={<EditOptList />}/>
                             <Route path="opt-form" element={<EditOptForm />}/>
+                            <Route path="opt-list-page" element={<EditOptListPage />}/>
                         </Route>  
                         {/**FileOpt page */}
-                        <Route path="/fileOpt" element={<FilePage />}>
+                        <Route path="/file" element={<FilePage />}>
                             <Route index element={<FileOptIndex />}/>
                             <Route path="opt-index" element={<FileOptIndex />}/>
                             <Route path="opt-list" element={<FileOptList />}/>
                             <Route path="opt-form" element={<FileOptForm />}/>
-                            <Route path="opt-advanced-actions" element={<FileActionsAdvanced />}/>
                             <Route path="action-selector" element={<FileActionsSelector />}/>
+                            <Route
+                                path="opt-advanced-actions/:fileOptId"
+                                element={<FileOptAdvancedPageWrapper />}
+                            />
                         </Route>
                         {/*GoTo page */}
                         <Route path="/goto" element={<GoToPage />} >

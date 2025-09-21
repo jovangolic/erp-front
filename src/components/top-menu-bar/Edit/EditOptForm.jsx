@@ -1,28 +1,50 @@
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Card, Form } from "react-bootstrap";
 
 const EditOptForm = ({ option, onChange }) => {
+    if (!option) return null;
+
+    const handleToggle = (field, checked) => {
+        onChange(option.id, field, checked);
+    };
+
+    const handleValueChange = (e) => {
+        onChange(option.id, "value", e.target.value);
+    };
+
     return (
-        <div className="p-3 border rounded bg-light">
-            <h5>{option.name}</h5>
-            <p className="text-muted">{option.type}</p>
-            {/* Visible toggle */}
-            <Form.Check 
+        <Card className="p-3 border rounded bg-light">
+            <Card.Body>
+                <h5>{option.name ?? "—"}</h5>
+                <p className="text-muted">{option.type}</p>
+
+                <Form.Group className="mb-3">
+                <Form.Label>Value</Form.Label>
+                <Form.Control
+                    type="text"
+                    value={option.value ?? ""}
+                    onChange={handleValueChange}
+                    disabled={!option.editable}
+                />
+                </Form.Group>
+
+                <Form.Check
                 type="switch"
                 id={`visible-${option.id}`}
                 label="Visible"
-                checked={option.visible}
-                onChange={(e) => onChange(option.id, "visible", e.target.checked)}
-            />
-            {/* Editable toggle */}
-            <Form.Check 
+                checked={!!option.visible}
+                onChange={(e) => handleToggle("visible", e.target.checked)}
+                />
+
+                <Form.Check
                 type="switch"
                 id={`editable-${option.id}`}
                 label="Editable"
-                checked={option.editable}
-                onChange={(e) => onChange(option.id, "editable", e.target.checked)}
-            />
-        </div>
+                checked={!!option.editable}
+                onChange={(e) => handleToggle("editable", e.target.checked)}
+                />
+            </Card.Body>
+        </Card>
     );
 };
 

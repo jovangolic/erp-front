@@ -13,6 +13,7 @@ import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
 import { logout } from "../utils/AppFunction";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
+import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 
 const DefectList = () => {
     
@@ -247,7 +248,7 @@ const DefectList = () => {
                 <Navbar bg="light" variant="light" className="border-bottom w-100">
                     <Nav className="ms-2">
                         <DefectDropdown handleExit={handleExit} />
-                        <Nav.Link href="#">File</Nav.Link>
+                        <FileOptDropdownPage />
                         <EditOptDropdownPage />
                         <AdminDropdownPage />
                         <GoToDropdownPage />

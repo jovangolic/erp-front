@@ -1,7 +1,7 @@
 import React from "react";
 import { Form } from "react-bootstrap";
 
-const FileActionsSelector = ({ selectedActions, onChange }) => {
+const FileActionsSelector = ({ selectedActions = [], onChange }) => {
     const allActions = ["SAVE", "SAVE_AS", "SAVE_ALL", "EXIT"];
 
     const handleToggle = (action) => {

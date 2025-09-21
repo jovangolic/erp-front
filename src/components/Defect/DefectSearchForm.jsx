@@ -129,6 +129,7 @@ const DefectSearchForm = ({ setResults, setErrorMessage }) => {
               <option value="ALL">All Severities</option>
               <option value="TRIVIAL">Trivial</option>
               <option value="MINOR">Minor</option>
+              <option value="MODERATE">Moderate</option>
               <option value="MAJOR">Major</option>
               <option value="CRITICAL">Critical</option>
             </Form.Select>

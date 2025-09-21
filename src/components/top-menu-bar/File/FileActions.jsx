@@ -20,7 +20,7 @@ const FileActions = ({ fileOpt }) => {
                 availableActions: fileOpt.availableActions,
             };
             const response = await saveFileOpt(requestBody);
-            setMessage(`Akcija "${action}" uspešno izvrsena.`);
+            setMessage(`Akcija "${action}" uspesno izvrsena.`);
             console.log("Response:", response);
         } 
         catch (error) {
@@ -35,25 +35,25 @@ const FileActions = ({ fileOpt }) => {
         <Container>
             <Row className="mb-3">
                 <Col>
-                <ButtonGroup>
-                    {fileOpt.availableActions.map((action) => (
-                    <Button
-                        key={action}
-                        variant="primary"
-                        disabled={loading}
-                        onClick={() => handleAction(action)}
-                    >
-                        {action.replace("_", " ")}
-                    </Button>
-                    ))}
-                </ButtonGroup>
+                    <ButtonGroup>
+                        {fileOpt.availableActions.map((action) => (
+                        <Button
+                            key={action}
+                            variant="primary"
+                            disabled={loading}
+                            onClick={() => handleAction(action)}
+                        >
+                            {action.replace("_", " ")}
+                        </Button>
+                        ))}
+                    </ButtonGroup>
                 </Col>
             </Row>
             {message && (
                 <Row>
-                <Col>
-                    <p>{message}</p>
-                </Col>
+                    <Col>
+                        <p>{message}</p>
+                    </Col>
                 </Row>
             )}
         </Container>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form, Spinner } from "react-bootstrap";
 import { getAll, updateEditOpt } from "../../utils/editOptApi";
 import { Container, Row, Col, Table, Form, Spinner } from "react-bootstrap"; 
 

@@ -6,6 +6,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import DefectDropdown from "./DefectDropdown";
 import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
+import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 
 const DefectPage = () => {
 

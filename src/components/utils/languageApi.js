@@ -73,7 +73,7 @@ export async function findOne(id){
     }
 }
 
-export async function getALL(){
+export async function getAllLanguages(){
     try{
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/get-all`,{
             headers:getHeader()

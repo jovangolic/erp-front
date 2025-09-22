@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { LanguageNameType } from "../../../shared/enums/LanguageNameType";
 
-const LanguageNameTypes =({value, onChange}) => {
+const LanguageNameTypes =({value, onChange = () => {}}) => {
     return(
         <Form.Group controlId="languageName">
             <Form.Label>Language-Name</Form.Label>

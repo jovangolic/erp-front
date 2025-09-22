@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { SystemStatus } from "../../../shared/enums/SystemStatus";
 
-const SystemStatusType = ({value, onChange}) => {
+const SystemStatusType = ({value, onChange = () => {}}) => {
     return(
         <Form.Group controlId="systemStatus">
             <Form.Label>System-Status</Form.Label>

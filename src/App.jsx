@@ -96,6 +96,15 @@ import LanguageForm from "./components/top-menu-bar/System/Language/LanguageForm
 import LanguageListPage from "./components/top-menu-bar/System/Language/LanguageListPage";
 import LanguageNameTypes from "./components/top-menu-bar/System/Language/LanguageNameTypes";
 import LanguageCodeTypes from "./components/top-menu-bar/System/Language/LanguageCodeTypes";
+import LanguagePage from "./components/top-menu-bar/System/Language/LanguagePage";
+import SecuritySettingPage from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingPage";
+import SecuritySettingIndexPage from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingIndexPage";
+import SecuritySettingListPage from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingListPage";
+import SecuritySettingForm from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingForm";
+import LocalizedOptionPage from "./components/top-menu-bar/System/LocalizedOption/localizedOptionPage";
+import LocalizedOptionIndexPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionIndexPage";
+import LocalizedOptionDetailsPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionDetailsPage";
+import LocalizedOptionForm from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionForm";
 
 const App = () => {
     return (
@@ -209,6 +218,19 @@ const App = () => {
                             <Route path="list" element={<LanguageListPage />} />
                             <Route path="name" element={<LanguageNameTypes />}/>
                             <Route path="code" element={<LanguageCodeTypes />}/>
+                        </Route>
+                        {/**Security Settings */}
+                        <Route path="/security-setting" element={<SecuritySettingPage />} >
+                            <Route index element={<SecuritySettingIndexPage />}/>
+                            <Route path="list" element={<SecuritySettingListPage />}/>
+                            <Route path="form" element={<SecuritySettingForm />}/>
+                        </Route>
+                        {/**LocalizedOptions */}
+                        <Route path="/localized-options" element={<LocalizedOptionPage />} >
+                            <Route index element={<LocalizedOptionIndexPage />}/>
+                            <Route path="/localized-option/details/:id" element={<LocalizedOptionDetailsPage />} />
+                            <Route path="/localized-option/create" element={<LocalizedOptionForm />} />
+                            <Route path="/localized-option/edit/:id" element={<LocalizedOptionForm />} />
                         </Route>
                         {/**FileOpt page */}
                         <Route path="/file" element={<FilePage />}>

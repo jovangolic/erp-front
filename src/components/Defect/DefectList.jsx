@@ -17,6 +17,8 @@ import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
 import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdown";
 import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdownPage";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdown";
+import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
 
 const DefectList = () => {
     
@@ -258,7 +260,8 @@ const DefectList = () => {
                         <SystemStateDropdownPage />
                         <SystemSettingDropdownPage />
                         <LanguageDropdownPage />
-                        <Nav.Link href="#">Localized-Option</Nav.Link>
+                        <SecuritySettingDropdownPage />
+                        <LocalizedOptionDropdownPage />
                         <Nav.Link href="#">Permission</Nav.Link>
                         <OptionDropdownPage />
                         <HelpDropdownPage />

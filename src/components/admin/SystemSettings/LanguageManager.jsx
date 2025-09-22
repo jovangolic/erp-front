@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { create, getALL } from "../../utils/languageApi";
+import { create, getAll } from "../../utils/languageApi";
 import { Form, Button, Alert, Table } from 'react-bootstrap';
 
 const LanguageManager = () => {
@@ -15,7 +15,7 @@ const LanguageManager = () => {
 
   const fetchLanguages = async () => {
     try {
-      const data = await getALL();
+      const data = await getAll();
       setLanguages(data);
     } catch (err) {
       setError(err.message);

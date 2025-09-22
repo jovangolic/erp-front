@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { GoToType } from "../../shared/enums/GoToType";
 
-const GoToTypeSelect = ({value, onChange}) => {
+const GoToTypeSelect = ({value, onChange = () => {}}) => {
     return(
         <Form.Group controlId="goToType">
             <Form.Label>Type</Form.Label>

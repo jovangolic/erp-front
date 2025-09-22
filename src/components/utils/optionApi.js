@@ -85,7 +85,7 @@ export async function getOne(id){
     }
 }
 
-export async function getAll(){
+export async function getAllOptions(){
     try{
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/option/get-all`,{
             headers:getHeader()

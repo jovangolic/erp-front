@@ -28,12 +28,29 @@ export async function updateSetting({id, settingName, value}) {
 
 export async function getAllSettings() {
     try {
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/securitySettings`, {
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/get-all`, {
             headers: getHeader()
         });
         return response.data;
     } catch (error) {
         handleApiError(error, "Greška prilikom dobavljanja svih podešavanja");
+    }
+}
+
+export async function saveSecuritySettings({settingName,value}){
+    try{
+        if(!settingName || typeof settingName !== "string" || settingName.trim() === "" ||
+           !value || typeof value !=="string" || value.trim() === ""){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {settingName,value};
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
     }
 }
 

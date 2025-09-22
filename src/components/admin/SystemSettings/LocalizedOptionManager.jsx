@@ -5,7 +5,7 @@ import {
   addTranslationForOption,
 } from "../../utils/localizedOptionApi";
 import { getAll as getAllEditOpts } from "../../utils/editOptApi";
-import { getALL as getAllLanguages } from "../../utils/languageApi";
+import { getAll as getAllLanguages } from "../../utils/languageApi";
 import { Form, Button, Table, Modal } from "react-bootstrap";
 
 const LocalizedOptionManager = () => {

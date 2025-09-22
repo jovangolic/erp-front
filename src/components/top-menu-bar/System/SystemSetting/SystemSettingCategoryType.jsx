@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { SystemSettingCategory } from "../../../shared/enums/SystemSettingCategory";
 
-const SystemSettingCategoryType = ({value, onChange}) => {
+const SystemSettingCategoryType = ({value, onChange = () => {}}) => {
     return(
         <Form.Group controlId="systemSettingCategoryType">
             <Form.Label>Category</Form.Label>

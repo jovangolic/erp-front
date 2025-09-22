@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import {OptionCategory } from "../../shared/enums/OptionCategory";
 
-const OptionCategorySelect = ({value, onChange}) => {
+const OptionCategorySelect = ({value, onChange = () => {}}) => {
     return(
         <Form.Group controlId="optionCategory">
             <Form.Label>Category</Form.Label>

@@ -251,6 +251,23 @@ export async function findByLanguage_LanguageNameType(languageNameType){
     }
 }
 
+export async function saveLozalizedOptions({optionId,languageId, localizedLabel}){
+    try{
+        if(isNaN(optionId) || optionId == null || isNaN(languageId) || languageId == null ||
+           !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim() === ""){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {optionId,languageId, localizedLabel};
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/localizedOptions/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

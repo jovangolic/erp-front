@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import LanguageCodeTypes from "./LanguageCodeTypes";
 import LanguageNameTypes from "./LanguageNameTypes";
 import { saveLanguage } from "../../../utils/languageApi";
@@ -24,7 +24,7 @@ const LanguageForm = () => {
         setLoading(true);
         try {
             const saved = await saveLanguage(formData);
-            setSuccess(`Jezik uspešno sačuvan (ID: ${saved.id})`);
+            setSuccess(`Jezik uspesno sacuvan (ID: ${saved.id})`);
             setFormData({ languageCodeType: "", languageNameType: "" }); // reset forme
         } 
         catch (err) {

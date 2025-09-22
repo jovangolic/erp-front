@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { GoToCategory} from "../../shared/enums/GoToCategory";
 
-const GoToCategorySelect = ({value, onChange}) => {
+const GoToCategorySelect = ({value, onChange = () => {}}) => {
 
     return(
             <Form.Group controlId="goToCategory">

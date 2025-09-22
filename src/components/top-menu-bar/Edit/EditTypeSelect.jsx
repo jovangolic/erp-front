@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { EditOptType } from "../../shared/enums/EditOptType";
 
-const EditTypeSelect = ({value, onChange}) => {
+const EditTypeSelect = ({value, onChange = () => {}}) => {
     return(
         <Form.Group controlId="optionCategory">
             <Form.Label>Type</Form.Label>

@@ -7,6 +7,8 @@ import DefectDropdown from "./DefectDropdown";
 import HelpDropdownPage from "../top-menu-bar/Help/HelpDropdownPage";
 import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
+import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
+import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdownPage";
 
 const DefectPage = () => {
 
@@ -211,7 +213,8 @@ const DefectPage = () => {
                     {/* Ostali glavni meniji (bez dropdowna za sada) */}
                     <EditOptDropdownPage />
                     <GoToDropdownPage />
-                    <Nav.Link as={Link} to="/system">System</Nav.Link>
+                    <SystemSettingDropdownPage />
+                    <LanguageDropdownPage />
                     <HelpDropdownPage />
                 </Nav>
             </Navbar>

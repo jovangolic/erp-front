@@ -115,6 +115,22 @@ export async function findByNameType(nameType){
     }
 }
 
+export async function saveLanguage({languageCodeType, languageNameType}){
+    try{
+        if(!isLanguageCodeTypeValid.includes(languageCodeType?.toUpperCase()) || !isLanguageNameTypeValid.includes(languageNameType?.toUpperCase())){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {languageCodeType, languageNameType};
+        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/language/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

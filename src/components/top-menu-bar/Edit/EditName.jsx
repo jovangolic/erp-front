@@ -1,8 +1,6 @@
 import React from "react";
 import { Form } from "react-bootstrap";
 
-import { Form } from "react-bootstrap";
-
 const EditName = ({name, onChange, error}) => {
 
     return(

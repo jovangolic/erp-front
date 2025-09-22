@@ -15,6 +15,8 @@ import { logout } from "../utils/AppFunction";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
+import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdown";
+import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdownPage";
 
 const DefectList = () => {
     
@@ -253,8 +255,9 @@ const DefectList = () => {
                         <EditOptDropdownPage />
                         <AdminDropdownPage />
                         <GoToDropdownPage />
-                        <Nav.Link href="#">System-Status</Nav.Link>
+                        <SystemStateDropdownPage />
                         <SystemSettingDropdownPage />
+                        <LanguageDropdownPage />
                         <Nav.Link href="#">Localized-Option</Nav.Link>
                         <Nav.Link href="#">Permission</Nav.Link>
                         <OptionDropdownPage />
@@ -263,7 +266,7 @@ const DefectList = () => {
                 </Navbar>
             </Row>
             {/*Toolbar (red ispod – Execute, Track, Cancel, Reports, Search bar...) */}
-            <Row clasclassName="align-items-center bg-light border-bottom p-2 fixed-top" style={{ top: '56px', zIndex: 1000 }}>
+            <Row className="align-items-center bg-light border-bottom p-2 fixed-top" style={{ top: '56px', zIndex: 1000 }}>
                 <Col>
                     <ButtonGroup>
                         <Button variant="primary" onClick={handleExecute} className="me-2">Execute</Button>

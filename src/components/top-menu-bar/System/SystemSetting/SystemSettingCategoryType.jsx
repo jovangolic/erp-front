@@ -2,9 +2,9 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { SystemSettingCategory } from "../../../shared/enums/SystemSettingCategory";
 
-const SystemSettingCategory = ({value, onChange}) => {
+const SystemSettingCategoryType = ({value, onChange}) => {
     return(
-        <Form.Group controlId="systemSettingCategory">
+        <Form.Group controlId="systemSettingCategoryType">
             <Form.Label>Category</Form.Label>
             <Form.Select value={value} onChange={(e) => onChange(e.target.value)}>
                 <option value="">-- Select Category --</option>
@@ -18,4 +18,4 @@ const SystemSettingCategory = ({value, onChange}) => {
     );
 };
 
-export default SystemSettingCategory;
+export default SystemSettingCategoryType;

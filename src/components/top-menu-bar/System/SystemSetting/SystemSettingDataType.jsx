@@ -2,7 +2,7 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import { SettingDataType } from "../../../shared/enums/SettingDataType";
 
-const SettingDataType = ({value, onChange}) => {
+const SystemSettingDataType = ({value, onChange}) => {
     return(
         <Form.Group controlId="settingDataType">
             <Form.Label>Data-Type</Form.Label>
@@ -18,4 +18,4 @@ const SettingDataType = ({value, onChange}) => {
     );
 };
 
-export default SettingDataType;
+export default SystemSettingDataType;

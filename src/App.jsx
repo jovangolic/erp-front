@@ -82,10 +82,20 @@ import FileOptAdvancedPage from "./components/top-menu-bar/File/FileOptAdvancedP
 import FileOptAdvancedPageWrapper from "./components/top-menu-bar/File/FileOptAdvancedPageWrapper";
 import SystemSettingPage from "./components/top-menu-bar/System/SystemSetting/SystemSettingPage";
 import SystemSettingIndexPage from "./components/top-menu-bar/System/SystemSetting/SystemSettingIndexPage";
-import SystemSettingCategory from "./components/top-menu-bar/System/SystemSetting/SystemSettingCategory";
-import SettingDataType from "./components/top-menu-bar/System/SystemSetting/SettingDataType";
+import SystemSettingCategoryType from "./components/top-menu-bar/System/SystemSetting/SystemSettingCategoryType";
+import SystemSettingDataType from "./components/top-menu-bar/System/SystemSetting/SystemSettingDataType";
 import SettingKeyField from "./components/top-menu-bar/System/SystemSetting/SettingKeyField";
 import SystemSettingForm from "./components/top-menu-bar/System/SystemSetting/SystemSettingForm";
+import SystemStatePage from "./components/top-menu-bar/System/SystemState/SystemStatePage";
+import SystemStateIndexPage from "./components/top-menu-bar/System/SystemState/SystemStateIndexPage";
+import SystemStateForm from "./components/top-menu-bar/System/SystemState/SystemStatusForm";
+import SystemStateDetailsPage from "./components/top-menu-bar/System/SystemState/SystemStateDetailsPage";
+import SystemStatusType from "./components/top-menu-bar/System/SystemState/SystemStatusType";
+import LanguageIndexPage from "./components/top-menu-bar/System/Language/LanguageIndexPage";
+import LanguageForm from "./components/top-menu-bar/System/Language/LanguageForm";
+import LanguageListPage from "./components/top-menu-bar/System/Language/LanguageListPage";
+import LanguageNameTypes from "./components/top-menu-bar/System/Language/LanguageNameTypes";
+import LanguageCodeTypes from "./components/top-menu-bar/System/Language/LanguageCodeTypes";
 
 const App = () => {
     return (
@@ -180,10 +190,25 @@ const App = () => {
                         {/**System Setting */}
                         <Route path="/system-setting" element={<SystemSettingPage />}>
                             <Route index element={<SystemSettingIndexPage />} />
-                            <Route path="sys-category" element={<SystemSettingCategory />} />
-                            <Route path="sys-data-type" element={<SettingDataType />} />
+                            <Route path="sys-category" element={<SystemSettingCategoryType />} />
+                            <Route path="sys-data-type" element={<SystemSettingDataType />} />
                             <Route path="sys-key" element={<SettingKeyField />} />
                             <Route path="sys-form" element={<SystemSettingForm />} />
+                        </Route>
+                        {/**SystemState */}
+                        <Route path="/system-state" element={<SystemStatePage />} >
+                            <Route index element={<SystemStateIndexPage />} />
+                            <Route path="form" element={<SystemStateForm />} />
+                            <Route path="status" element={<SystemStatusType />}/>
+                            <Route path="details/:id" element={<SystemStateDetailsPage />} />
+                        </Route>
+                        {/**Language */}
+                        <Route path="/language" element={<LanguagePage />}>
+                            <Route index element={<LanguageIndexPage />} />
+                            <Route path="form" element={<LanguageForm />} />
+                            <Route path="list" element={<LanguageListPage />} />
+                            <Route path="name" element={<LanguageNameTypes />}/>
+                            <Route path="code" element={<LanguageCodeTypes />}/>
                         </Route>
                         {/**FileOpt page */}
                         <Route path="/file" element={<FilePage />}>

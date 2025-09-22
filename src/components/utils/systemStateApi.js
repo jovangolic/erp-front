@@ -41,6 +41,33 @@ export async function updateState({maintenanceMode,registrationEnabled, systemVe
     }
 }
 
+export async function getOneById(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" za system-state, nije pronadjen");
+        }
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/system-states/get-one/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja jednog system-state po "+id+" id-iju");
+    }
+}
+
+export async function getAllSystemStates(){
+    try{
+        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/system-states/get-all`,{
+            headers:getCurrentState()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom trazenja svih system-state");
+    }
+}
+
 export async function restartSystem(){
     try{
         const response = await api.put(url+`/restart`,{

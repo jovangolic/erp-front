@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import SettingDataType from "./SettingDataType";
-import SystemSettingCategory from "./SystemSettingCategory";
-
+import SystemSettingDataType from "./SystemSettingDataType";
+import SystemSettingCategoryType from "./SystemSettingCategoryType";
+import SettingKeyField from "./SettingKeyField";
 
 const SystemSettingForm = ({ initialData = {}, onSubmit }) => {
     const [formData, setFormData] = useState({
@@ -51,12 +51,12 @@ const SystemSettingForm = ({ initialData = {}, onSubmit }) => {
                 />
             </Form.Group>
 
-            <SystemSettingCategory
+            <SystemSettingCategoryType
                 value={formData.category}
                 onChange={(val) => handleChange("category", val)}
             />
 
-            <SettingDataType
+            <SystemSettingDataType
                 value={formData.dataType}
                 onChange={(val) => handleChange("dataType", val)}
             />

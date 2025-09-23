@@ -20,13 +20,13 @@ const LocalizedOptionForm = () => {
 
     useEffect(() => {
         async function loadData() {
-        try {
-            const [opts, langs] = await Promise.all([getAllOptions(), getAllLanguages()]);
-            setOptions(opts || []);
-            setLanguages(langs || []);
-        } catch (err) {
-            setError("Greska prilikom ucitavanja podataka");
-        }
+            try {
+                const [opts, langs] = await Promise.all([getAllOptions(), getAllLanguages()]);
+                setOptions(opts || []);
+                setLanguages(langs || []);
+            } catch (err) {
+                setError("Greska prilikom ucitavanja podataka");
+            }
         }
         loadData();
     }, []);

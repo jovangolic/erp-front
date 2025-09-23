@@ -105,6 +105,12 @@ import LocalizedOptionPage from "./components/top-menu-bar/System/LocalizedOptio
 import LocalizedOptionIndexPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionIndexPage";
 import LocalizedOptionDetailsPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionDetailsPage";
 import LocalizedOptionForm from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionForm";
+import PermissionPage from "./components/top-menu-bar/System/Permission/PermissionPage";
+import PermissionIndexPage from "./components/top-menu-bar/System/Permission/PermissionIndexPage";
+import PermissionListPage from "./components/top-menu-bar/System/Permission/PermissionListPage";
+import PermissionResourceTypes from "./components/top-menu-bar/System/Permission/PermissionResourceTypes";
+import PermissionActionTypes from "./components/top-menu-bar/System/Permission/PermissionActionTypes";
+import PermissionForm from "./components/top-menu-bar/System/Permission/PermissionForm";
 
 const App = () => {
     return (
@@ -218,6 +224,14 @@ const App = () => {
                             <Route path="list" element={<LanguageListPage />} />
                             <Route path="name" element={<LanguageNameTypes />}/>
                             <Route path="code" element={<LanguageCodeTypes />}/>
+                        </Route>
+                        {/**Permission */}
+                        <Route path="/permission" element={<PermissionPage />} >
+                            <Route index element={<PermissionIndexPage />}/>
+                            <Route path="form" element={<PermissionForm />}/>
+                            <Route path="resource-type" element={<PermissionResourceTypes />}/>
+                            <Route path="action-type" element={<PermissionActionTypes />}/>
+                            <Route path="list" element={<PermissionListPage />}/>
                         </Route>
                         {/**Security Settings */}
                         <Route path="/security-setting" element={<SecuritySettingPage />} >

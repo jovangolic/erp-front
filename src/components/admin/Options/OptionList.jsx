@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAll, deleteOption } from "../../utils/optionApi";
+import { getAllOptions, deleteOption } from "../../utils/optionApi";
 import OptionForm from "./OptionForm";
 
 const OptionList = () => {
@@ -7,7 +7,7 @@ const OptionList = () => {
   const [selected, setSelected] = useState(null);
 
   const loadOptions = async () => {
-    const data = await getAll();
+    const data = await getAllOptions();
     setOptions(data || []);
   };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Spinner, Alert } from "react-bootstrap";
-import { saveLocalizedOption } from "../../../utils/localizedOptionApi";
+import { saveLocalizedOptions } from "../../../utils/localizedOptionApi";
 import { getAllLanguages } from "../../../utils/languageApi";
 import { getAllOptions } from "../../../utils/optionApi";
 
@@ -42,7 +42,7 @@ const LocalizedOptionForm = () => {
         setLoading(true);
 
         try {
-            const saved = await saveLocalizedOption(formData);
+            const saved = await saveLocalizedOptions(formData);
             setSuccess(`Localized opcija uspešno sačuvana (ID: ${saved.id})`);
             setFormData({ optionId: "", languageId: "", localizedLabel: "" });
         } 

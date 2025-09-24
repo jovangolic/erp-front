@@ -262,7 +262,7 @@ const DefectList = () => {
                         <LanguageDropdownPage />
                         <SecuritySettingDropdownPage />
                         <LocalizedOptionDropdownPage />
-                        <Nav.Link href="#">Permission</Nav.Link>
+                        <PermissionDropdownPage />
                         <OptionDropdownPage />
                         <HelpDropdownPage />
                     </Nav>

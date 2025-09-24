@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import PermissionForm from "./PermissionForm";
-import PermissionList from "./PermissionList";
+import PermissionListPage from "./PermissionListPage";
 
 const PermissionIndexPage =() => {
     return (
@@ -22,7 +22,7 @@ const PermissionIndexPage =() => {
                     <Card>
                         <Card.Body>
                             <h4>Pregled odobrenja</h4>
-                            <PermissionList />
+                            <PermissionListPage />
                         </Card.Body>
                     </Card>
                 </Col>

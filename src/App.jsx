@@ -242,9 +242,9 @@ const App = () => {
                         {/**LocalizedOptions */}
                         <Route path="/localized-options" element={<LocalizedOptionPage />} >
                             <Route index element={<LocalizedOptionIndexPage />}/>
-                            <Route path="/localized-option/details/:id" element={<LocalizedOptionDetailsPage />} />
-                            <Route path="/localized-option/create" element={<LocalizedOptionForm />} />
-                            <Route path="/localized-option/edit/:id" element={<LocalizedOptionForm />} />
+                            <Route path="details/:id" element={<LocalizedOptionDetailsPage />} />
+                            <Route path="create" element={<LocalizedOptionForm />} />
+                            <Route path="edit/:id" element={<LocalizedOptionForm />} />
                         </Route>
                         {/**FileOpt page */}
                         <Route path="/file" element={<FilePage />}>

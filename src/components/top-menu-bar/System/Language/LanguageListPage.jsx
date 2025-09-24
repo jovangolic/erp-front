@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spinner, Alert, Container } from "react-bootstrap";
-import { getAll } from "../../../utils/languageApi";
+import { getAllLanguages } from "../../../utils/languageApi";
 
 const LanguageListPage = () => {
     const [languages, setLanguages] = useState([]);
@@ -10,7 +10,7 @@ const LanguageListPage = () => {
     useEffect(() => {
         const fetchData = async () => {
         try {
-            const data = await getAll();
+            const data = await getAllLanguages();
             setLanguages(data);
         } catch (err) {
             setError("Greska prilikom ucitavanja jezika.");

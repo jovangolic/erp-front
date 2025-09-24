@@ -4,8 +4,8 @@ import {
   getTranslationsForOption,
   addTranslationForOption,
 } from "../../utils/localizedOptionApi";
-import { getAll as getAllEditOpts } from "../../utils/editOptApi";
-import { getAll as getAllLanguages } from "../../utils/languageApi";
+import { getAll } from "../../utils/editOptApi";
+import {  getAllLanguages } from "../../utils/languageApi";
 import { Form, Button, Table, Modal } from "react-bootstrap";
 
 const LocalizedOptionManager = () => {
@@ -22,7 +22,7 @@ const LocalizedOptionManager = () => {
 
   const loadInitialData = async () => {
     try {
-      const [opts, langs] = await Promise.all([getAllEditOpts(), getAllLanguages()]);
+      const [opts, langs] = await Promise.all([getAll(), getAllLanguages()]);
       setOptions(opts);
       setLanguages(langs);
     } catch (error) {

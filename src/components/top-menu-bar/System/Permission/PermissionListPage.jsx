@@ -4,7 +4,7 @@ import { getAll } from "../../../utils/permissionApi";
 
 const PermissionListPage = () => {
 
-    const [permission, setPermission] = useState([]);
+    const [permission, setPermissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 

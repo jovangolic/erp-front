@@ -10,6 +10,13 @@ import TrackModal from "./TrackModal";
 import ReportsModal from "./ReportsModal";
 import DefectChart from "./DefectChart";
 import { logout } from "../utils/AppFunction";
+import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
+import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
+import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
+import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
+import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdown";
+import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdown";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdown";
 
 const AddDefect = () => {
     const [code, setCode] = useState("");
@@ -166,14 +173,16 @@ const AddDefect = () => {
                 <Navbar bg="light" variant="light" className="border-bottom fixed-top">
                     <Nav className="ms-2">
                         <DefectDropdown handleExit={handleExit} />
-                        <Nav.Link href="#">File</Nav.Link>
-                        <Nav.Link href="#">Edit</Nav.Link>
+                        <FileOptDropdownPage />
+                        <EditOptDropdownPage />
                         <AdminDropdownPage />
                         <GoToDropdownPage />
-                        <Nav.Link href="#">System-Status</Nav.Link>
-                        <Nav.Link href="#">System-Setting</Nav.Link>
-                        <Nav.Link href="#">Localized-Option</Nav.Link>
-                        <Nav.Link href="#">Permission</Nav.Link>
+                        <SystemSettingDropdownPage />
+                        <SystemStateDropdownPage />
+                        <SystemSettingDropdownPage />
+                        <SecuritySettingDropdownPage />
+                        <LocalizedOptionDropdownPage />
+                        <PermissionDropdownPage />
                         <OptionDropdownPage />
                         <HelpDropdownPage />
                     </Nav>

@@ -12,42 +12,74 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/defects`;
 const isSeverityLevelValid = ["TRIVIAL_SEVERITY", "MINOR_SEVERITY", "MODERATE_SEVERITY", "MAJOR_SEVERITY", "CRITICAL_SEVERITY"];
 const isDefectStatusValid = ["All","ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
-export async function createDefect({code,name,description,severity}){
-    try{
-        if(!code || typeof code !== "string" || code.trim() === "" ||
-           !name || typeof name !== "string" || name.trim() === "" ||
-           !description || typeof description !== "string" || description.trim() === "" || 
-           !isSeverityLevelValid.includes(severity?.toUpperCase()) ){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+export async function createDefect({ code, name, description = "", severity, status, confirmed = false }) {
+    try {
+        if (!code?.trim() || !name?.trim()) {
+            throw new Error("Polja 'code' i 'name' moraju biti popunjena i validna");
         }
-        const requestBody = {code,name,description,severity};
-        const response = await api.post(url+`/create/new-defect`,requestBody,{
-            headers:getHeader()
+        const severityUpper = severity?.toUpperCase();
+        const statusUpper = status?.toUpperCase();
+        if (!isSeverityLevelValid.includes(severityUpper)) {
+            throw new Error(`Nevalidan severity level: ${severity}`);
+        }
+        if (!isDefectStatusValid.includes(statusUpper)) {
+            throw new Error(`Nevalidan defect status: ${status}`);
+        }
+        if (typeof confirmed !== "boolean") {
+            throw new Error("Polje 'confirmed' mora biti boolean");
+        }
+        const requestBody = {
+            code: code.trim(),
+            name: name.trim(),
+            description: description.trim(),
+            severity: severityUpper,
+            status: statusUpper,
+            confirmed
+        };
+        const response = await api.post(`${url}/create/new-defect`, requestBody, {
+            headers: getHeader()
         });
         return response.data;
-    }
-    catch(error){
-        handleApiError(error,"Greska prilikom kreiranja");
+    } 
+    catch (error) {
+        handleApiError(error, "Greska prilikom kreiranja defekta");
     }
 }
 
-export async function updateDefect({id,code,name,description,severity}){
-    try{
-        if( id == null || isNaN(id) ||
-           !code || typeof code !== "string" || code.trim() === "" ||
-           !name || typeof name !== "string" || name.trim() === "" ||
-           !description || typeof description !== "string" || description.trim() === "" || 
-           !isSeverityLevelValid.includes(severity?.toUpperCase()) ){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+export async function updateDefect({id, code, name, description = "", severity, status, confirmed = false }) {
+    try {
+        if(isNaN(id) || id == null){
+            throw new Error("Polje 'id' mora biti ceo broj");
         }
-        const requestBody = {code,name,description,severity};
-        const response = await api.put(url+`/update/${id}`,requestBody,{
-            headers:getHeader()
+        if (!code?.trim() || !name?.trim()) {
+            throw new Error("Polja 'code' i 'name' moraju biti popunjena i validna");
+        }
+        const severityUpper = severity?.toUpperCase();
+        const statusUpper = status?.toUpperCase();
+        if (!isSeverityLevelValid.includes(severityUpper)) {
+            throw new Error(`Nevalidan severity level: ${severity}`);
+        }
+        if (!isDefectStatusValid.includes(statusUpper)) {
+            throw new Error(`Nevalidan defect status: ${status}`);
+        }
+        if (typeof confirmed !== "boolean") {
+            throw new Error("Polje 'confirmed' mora biti boolean");
+        }
+        const requestBody = {
+            code: code.trim(),
+            name: name.trim(),
+            description: description.trim(),
+            severity: severityUpper,
+            status: statusUpper,
+            confirmed
+        };
+        const response = await api.put(`${url}/update/${id}`, requestBody, {
+            headers: getHeader()
         });
         return response.data;
-    }
-    catch(error){
-        handleApiError(error,"Greska prilikom azuriranja");
+    } 
+    catch (error) {
+        handleApiError(error, "Greska prilikom azuriranja defekta");
     }
 }
 
@@ -681,5 +713,88 @@ export async function countByCreatedAtBetween({start, end}){
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli broj opsega datuma i vremena "+start+" - "+end+" za kreiranje defekta");
+    }
+}
+
+export async function saveDefects({code, name, description = "", severity, status, confirmed = false }){
+    try{
+        if (!code?.trim() || !name?.trim()) {
+            throw new Error("Polja 'code' i 'name' moraju biti popunjena i validna");
+        }
+        const severityUpper = severity?.toUpperCase();
+        const statusUpper = status?.toUpperCase();
+        if (!isSeverityLevelValid.includes(severityUpper)) {
+            throw new Error(`Nevalidan severity level: ${severity}`);
+        }
+        if (!isDefectStatusValid.includes(statusUpper)) {
+            throw new Error(`Nevalidan defect status: ${status}`);
+        }
+        if (typeof confirmed !== "boolean") {
+            throw new Error("Polje 'confirmed' mora biti boolean");
+        }
+        const requestBody = {
+            code: code.trim(),
+            name: name.trim(),
+            description: description.trim(),
+            severity: severityUpper,
+            status: statusUpper,
+            confirmed
+        };
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,code,name,description}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if (!code?.trim() || !name?.trim()) {
+            throw new Error("Polja 'code' i 'name' moraju biti popunjena i validna");
+        }
+        const requestBody = {
+            code: code.trim(),
+            name: name.trim(),
+            description: description.trim(),
+        };
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska pirlikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((req, index) => {
+            // Validacija obaveznih polja
+            if (!req.code?.trim() || !req.name?.trim() || !req.description?.trim() || !req.severity) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'code', 'name', 'description' i 'severity' su obavezni`);
+            }
+            req.severity = req.severity.toUpperCase();
+            if (req.status) req.status = req.status.toUpperCase();
+            if (typeof req.confirmed !== "boolean") {
+                req.confirmed = false; // default ako nije prosledjeno
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
     }
 }

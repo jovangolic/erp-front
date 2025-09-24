@@ -246,13 +246,24 @@ const DefectList = () => {
             }
     };
 
+    const handleSaveDefect = async() => {};
+
+    const handleSaveAsDefect = async() => {};
+
+    const handleSaveAllDefects = async() => {};
+
     return(
         <Container fluid>
             {/*Top menu-bar */}
             <Row className="bg-light fixed-top">
                 <Navbar bg="light" variant="light" className="border-bottom w-100">
                     <Nav className="ms-2">
-                        <DefectDropdown handleExit={handleExit} />
+                        <DefectDropdown 
+                            handleExit={handleExit} 
+                            onSave={handleSaveDefect}
+                            onSaveAs={handleSaveAsDefect}
+                            onSaveAll={handleSaveAllDefects}
+                        />
                         <FileOptDropdownPage />
                         <EditOptDropdownPage />
                         <AdminDropdownPage />

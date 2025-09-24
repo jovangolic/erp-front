@@ -11,18 +11,23 @@ import TrackModal from "./TrackModal";
 import ReportsModal from "./ReportsModal";
 import DefectChart from "./DefectChart";
 import { logout } from "../utils/AppFunction";
+import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
+import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
+import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
+import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdown";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdown";
 
 const EditDefect =() => {
 
-    const { id } = useParams();
-    const [defect, setDefect] = useState({ inspections: [] });
-    const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
-    const [showTrackModal, setShowTrackModal] = useState(false);
-    const [trackedDefect, setTrackedDefect] = useState(null); 
-    const [showReports, setShowReports] = useState(false);
-    const [monthlyData, setMonthlyData] = useState([]);
-    const navigate = useNavigate();
+        const { id } = useParams();
+        const [defect, setDefect] = useState({ inspections: [] });
+        const [errorMessage, setErrorMessage] = useState("");
+        const [successMessage, setSuccessMessage] = useState("");
+        const [showTrackModal, setShowTrackModal] = useState(false);
+        const [trackedDefect, setTrackedDefect] = useState(null); 
+        const [showReports, setShowReports] = useState(false);
+        const [monthlyData, setMonthlyData] = useState([]);
+        const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDefect = async() => {
@@ -170,19 +175,22 @@ const EditDefect =() => {
 
     return(
         <Container fluid className="p-0">
-{/*Top menu-bar */}
+            {/*Top menu-bar */}
             <Row className="bg-light fixed-top">
                 <Navbar bg="light" variant="light" className="border-bottom fixed-top">
                     <Nav className="ms-2">
                         <DefectDropdown handleExit={handleExit} />
-                        <Nav.Link href="#">File</Nav.Link>
-                        <Nav.Link href="#">Edit</Nav.Link>
+                        <FileOptDropdownPage />
+                        <EditOptDropdownPage />
                         <AdminDropdownPage />
                         <GoToDropdownPage />
-                        <Nav.Link href="#">System-Status</Nav.Link>
-                        <Nav.Link href="#">System-Setting</Nav.Link>
-                        <Nav.Link href="#">Localized-Option</Nav.Link>
-                        <Nav.Link href="#">Permission</Nav.Link>
+                        <SystemStateDropdownPage />
+                        <SystemSettingDropdownPage />
+                        <SecuritySettingDropdownPage />
+                        <LanguageDropdownPage />
+                        <SecuritySettingDropdownPage />
+                        <LocalizedOptionDropdownPage />
+                        <PermissionDropdownPage />
                         <OptionDropdownPage />
                         <HelpDropdownPage />
                     </Nav>

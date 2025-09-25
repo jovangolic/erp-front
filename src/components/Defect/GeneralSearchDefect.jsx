@@ -243,7 +243,10 @@ const GeneralSearchDefect = () => {
             </Col>
           </Row>
         )}
-
+        {/* Footer */}
+        <Row>
+          <Col className="text-center">© ERP G-Soft System 2025</Col>
+        </Row>
         {/* Error message */}
         {errorMessage && (
           <Row className="mt-3">

@@ -42,7 +42,6 @@ import DefectPage from "./components/Defect/DefectPage";
 import DefectList from "./components/Defect/DefectList";
 import AddDefect from "./components/Defect/AddDefect";
 import EditDefect from "./components/Defect/EditDefect";
-import GeneralSearchDefect from "./components/Defect/GeneralSearchDefect";
 import HelpPage from "./components/top-menu-bar/Help/HelpPage";
 import Welcome from "./components/top-menu-bar/Help/Welcome";
 import About from "./components/top-menu-bar/Help/About";
@@ -113,6 +112,7 @@ import PermissionActionTypes from "./components/top-menu-bar/System/Permission/P
 import PermissionForm from "./components/top-menu-bar/System/Permission/PermissionForm";
 import DeleteDefect from "./components/Defect/DeleteDefect";
 import SearchDefect from "./components/Defect/SearchDefect";
+import GeneralSearchDefectPage from "./components/Defect/GeneralSearchDefectPage";
 
 const App = () => {
     return (
@@ -175,7 +175,7 @@ const App = () => {
                         <Route path="lists" element={<DefectList />}/>
                         <Route path="delete" element={<DeleteDefect />} />
                         <Route path="search" element={<SearchDefect />} />
-                        <Route path="general-search" element={<GeneralSearchDefect />} />
+                        <Route path="general-search" element={<GeneralSearchDefectPage />} />
                         <Route path="track-defect" element={<h3>Track Defect (TODO)</h3>} />
                         <Route path="reports" element={<h3>Reports (TODO)</h3>} />
                         </Route>

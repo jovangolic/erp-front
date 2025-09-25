@@ -253,7 +253,7 @@ const SearchDefect =() => {
                 <Col xs={12} md={4}>
                 <Card className="shadow-sm w-100 mb-4">
                     <Card.Body>
-                    <h5 className="text-center mb-4">Traži Defekat</h5>
+                    <h5 className="text-center mb-4">Trazi Defekat</h5>
                     {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
                     <Form>
@@ -310,7 +310,7 @@ const SearchDefect =() => {
                         </Form.Group>
                         <div className="d-flex justify-content-end">
                         <Button onClick={handleGeneralSearch} variant="primary">
-                            Pretraži
+                            Pretrazi
                         </Button>
                         </div>
                     </Form>
@@ -327,12 +327,12 @@ const SearchDefect =() => {
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Šifra</th>
+                            <th>Sifra</th>
                             <th>Naziv</th>
                             <th>Opis</th>
                             <th>Ozbiljnost</th>
                             <th>Status</th>
-                            <th>Potvrđen</th>
+                            <th>Potvrdjen</th>
                             <th>Akcije</th>
                         </tr>
                         </thead>

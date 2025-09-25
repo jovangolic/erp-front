@@ -1,9 +1,9 @@
 import { Container, Navbar, Nav, Row, Col, Form } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import React, { useState } from "react";
-import PermissionDropdownPage from "./PermissionDropdown";
+import PermissionDropdownPage from "./PermissionDropdownPage";
 
-const Permission = () => {
+const PermissionPage = () => {
 
     return(
         <Container fluid>
@@ -17,4 +17,4 @@ const Permission = () => {
     );
 };
 
-export default Permission;
+export default PermissionPage;

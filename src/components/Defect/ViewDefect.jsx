@@ -13,11 +13,20 @@ import OptionDropdownPage from "../top-menu-bar/Option/OptionDropdownPage";
 import GoToDropdownPage from "../top-menu-bar/GoTo/GoToDropdownPage";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
 import { logout } from "../utils/AppFunction";
+import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdownPage";
+import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
+import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdownPage";
+import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
+import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdownPage";
+import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
+import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 
 const ViewDefect = () => {
 
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState("details");
+    const [defects, setDefects] = useState([]);
     const [defect, setDefect] = useState({ inspections: [] });
     const [errorMessage, setErrorMessage] = useState("");
     //state za paginaciju i filter
@@ -211,6 +220,40 @@ const ViewDefect = () => {
             }
     };
 
+    const handleGeneralSearch = async () => {
+            try {
+                // Validacija unosa
+                const idVal = searchId ? parseInt(searchId) : null;
+                const fromVal = rangeStart ? parseInt(rangeStart) : null;
+                const toVal = rangeEnd ? parseInt(rangeEnd) : null;
+                if ((fromVal != null && toVal != null) && fromVal > toVal) {
+                    throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja");
+                }
+                const data = await generalSearch({
+                id: idVal,
+                idFrom: fromVal,
+                idTo: toVal,
+                code: searchCode || null,
+                name: searchName || null,
+                description: searchDescription || null,
+                severity: filterSeverity !== "ALL" ? filterSeverity : null,
+                status: filterStatus !== "ALL" ? filterStatus : null,
+                confirmed: filterConfirmed // true/false/null
+                });
+    
+                if (!data || !Array.isArray(data)) {
+                    throw new Error("Nije vracen validan rezultat pretrage");
+                }
+                setDefects(data);
+                if (data.length > 0) setDefect(data[0]); // default: prvi defekt
+                setErrorMessage("");
+            } 
+            catch (error) {
+                setErrorMessage(error.message);
+                setDefects([]);
+            }
+    };
+
     return(
         <Container fluid>
             {/*Top menu-bar */}
@@ -218,14 +261,16 @@ const ViewDefect = () => {
                 <Navbar bg="light" variant="light" className="border-bottom w-100">
                     <Nav className="ms-2">
                         <DefectDropdown handleExit={handleExit} />
-                        <Nav.Link href="#">File</Nav.Link>
-                        <Nav.Link href="#">Edit</Nav.Link>
+                        <FileOptDropdownPage />
+                        <EditOptDropdownPage />
                         <AdminDropdownPage />
                         <GoToDropdownPage />
-                        <Nav.Link href="#">System-Status</Nav.Link>
-                        <Nav.Link href="#">System-Setting</Nav.Link>
-                        <Nav.Link href="#">Localized-Option</Nav.Link>
-                        <Nav.Link href="#">Permission</Nav.Link>
+                        <SystemStateDropdownPage />
+                        <SystemSettingDropdownPage />
+                        <LanguageDropdownPage />
+                        <SecuritySettingDropdownPage />
+                        <LocalizedOptionDropdownPage />
+                        <PermissionDropdownPage />
                         <OptionDropdownPage />
                         <HelpDropdownPage />
                     </Nav>

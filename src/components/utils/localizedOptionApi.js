@@ -251,7 +251,7 @@ export async function findByLanguage_LanguageNameType(languageNameType){
     }
 }
 
-export async function saveLozalizedOptions({optionId,languageId, localizedLabel}){
+export async function saveLocalizedOptions({optionId,languageId, localizedLabel}){
     try{
         if(isNaN(optionId) || optionId == null || isNaN(languageId) || languageId == null ||
            !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim() === ""){

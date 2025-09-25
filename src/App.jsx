@@ -101,7 +101,7 @@ import SecuritySettingPage from "./components/top-menu-bar/System/SecuritySettin
 import SecuritySettingIndexPage from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingIndexPage";
 import SecuritySettingListPage from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingListPage";
 import SecuritySettingForm from "./components/top-menu-bar/System/SecuritySetting/SecuritySettingForm";
-import LocalizedOptionPage from "./components/top-menu-bar/System/LocalizedOption/localizedOptionPage";
+import LocalizedOptionPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionPage";
 import LocalizedOptionIndexPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionIndexPage";
 import LocalizedOptionDetailsPage from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionDetailsPage";
 import LocalizedOptionForm from "./components/top-menu-bar/System/LocalizedOption/LocalizedOptionForm";
@@ -111,6 +111,8 @@ import PermissionListPage from "./components/top-menu-bar/System/Permission/Perm
 import PermissionResourceTypes from "./components/top-menu-bar/System/Permission/PermissionResourceTypes";
 import PermissionActionTypes from "./components/top-menu-bar/System/Permission/PermissionActionTypes";
 import PermissionForm from "./components/top-menu-bar/System/Permission/PermissionForm";
+import DeleteDefect from "./components/Defect/DeleteDefect";
+import SearchDefect from "./components/Defect/SearchDefect";
 
 const App = () => {
     return (
@@ -167,9 +169,12 @@ const App = () => {
                         <Route index element={<DefectList />} /> {/* default */}
                         <Route path="add" element={<AddDefect />} />
                         <Route path="edit" element={<EditDefect />} />
+                        {/**Da bi se prikazala stranica sa praznom formom */}
+                        <Route path="edit/:id" element={<EditDefect />} />
                         <Route path="view" element={<ViewDefect />}/>
-                        <Route path="delete" element={<h3>Delete Defect (TODO)</h3>} />
-                        <Route path="search" element={<h3>Search Defect (TODO)</h3>} />
+                        <Route path="lists" element={<DefectList />}/>
+                        <Route path="delete" element={<DeleteDefect />} />
+                        <Route path="search" element={<SearchDefect />} />
                         <Route path="general-search" element={<GeneralSearchDefect />} />
                         <Route path="track-defect" element={<h3>Track Defect (TODO)</h3>} />
                         <Route path="reports" element={<h3>Reports (TODO)</h3>} />

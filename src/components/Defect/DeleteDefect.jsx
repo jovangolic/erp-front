@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { deleteDefect,confirmDefect,cancelDefect,trackDefect,findByDescriptionContainingIgnoreCase } from "../utils/defectApi";
+import { findOne, deleteDefect,confirmDefect,cancelDefect,trackDefect,findByDescriptionContainingIgnoreCase } from "../utils/defectApi";
 import { Container, Form, Button, Alert,Row, Col, Navbar, Nav, ButtonGroup, Card } from "react-bootstrap";
 import DefectDropdown from "./DefectDropdown";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
@@ -13,11 +13,18 @@ import { logout } from "../utils/AppFunction";
 import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
-import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdown";
-import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdown";
+import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdownPage";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
+import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
+import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdownPage";
 
 const DeleteDefect = () =>{
     const { id } = useParams();
+    const [code, setCode] = useState("");
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [severity, setSeverity] = useState("TRIVIAL_SEVERITY");  // vrednost iz SeverityLevel
+    const [status, setStatus] = useState("NEW"); // vrednost iz DefectStatus
     const [defect, setDefect] = useState({ inspections: [] });
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -28,28 +35,29 @@ const DeleteDefect = () =>{
 
     useEffect(() => {
         const fetchDefect = async() => {
-            try{
-                const data = await deleteDefect(id);
+            try {
+                const data = await findOne(id); 
                 setDefect(data);
-            }
-            catch(error){
-                setErrorMessage(error.mesasge);
+                setCode(data.code || "");
+                setName(data.name || "");
+                setDescription(data.description || "");
+                setSeverity(data.severity || "TRIVIAL_SEVERITY");
+                setStatus(data.status || "NEW");
+            } catch (error) {
+                setErrorMessage(error.message);
             }
         };
         fetchDefect();
-    },[id]);
+    }, [id]);
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const data = await deleteDefect(id);
+        try {
+            await deleteDefect(id); 
             navigate("/defects", { state: { message: "Defect successfully deleted!" } });
-            setSuccessMessage(`Defekt ${data.id} uspesno obrisan!`);
-            setErrorMessage("");
-        }
-        catch(error){
+        } 
+        catch (error) {
             setErrorMessage(error.message);
-            setSuccessMessage("");
         }
     };
     
@@ -237,59 +245,32 @@ const DeleteDefect = () =>{
                             {successMessage && <Alert variant="success">{successMessage}</Alert>}
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3">
-                                <Form.Label>Sifra</Form.Label>
-                                <Form.Control 
-                                    type="text" 
-                                    value={defect.code} 
-                                    onChange={(e) => setCode(e.target.value)} 
-                                    required 
-                                />
+                                    <Form.Label>Sifra</Form.Label>
+                                    <Form.Control type="text" value={code} disabled />
                                 </Form.Group>
-                            
+
                                 <Form.Group className="mb-3">
-                                <Form.Label>Naziv</Form.Label>
-                                <Form.Control 
-                                    type="text" 
-                                    value={defect.name} 
-                                    onChange={(e) => setName(e.target.value)} 
-                                    required 
-                                />
+                                    <Form.Label>Naziv</Form.Label>
+                                    <Form.Control type="text" value={name} disabled />
                                 </Form.Group>
-                            
+
                                 <Form.Group className="mb-3">
-                                <Form.Label>Opis</Form.Label>
-                                <Form.Control 
-                                    as="textarea" 
-                                    rows={3} 
-                                    value={defect.description} 
-                                    onChange={(e) => setDescription(e.target.value)} 
-                                />
+                                    <Form.Label>Opis</Form.Label>
+                                    <Form.Control as="textarea" rows={3} value={description} disabled />
                                 </Form.Group>
+
                                 <Form.Group className="mb-3">
-                                <Form.Label>Ozbiljnost (Severity)</Form.Label>
-                                <Form.Select value={defect.severity} onChange={(e) => setSeverity(e.target.value)}>
-                                    <option value="TRIVIAL_SEVERITY">Trivial</option>
-                                    <option value="MINOR_SEVERITY">Minor</option>
-                                    <option value="MODERATE_SEVERITY">Moderate</option>
-                                    <option value="MAJOR_SEVERITY">Major</option>
-                                    <option value="CRITICAL_SEVERITY">Critical</option>
-                                </Form.Select>
+                                    <Form.Label>Ozbiljnost</Form.Label>
+                                    <Form.Control type="text" value={severity} disabled />
                                 </Form.Group>
-                                                        
+
                                 <Form.Group className="mb-3">
-                                <Form.Label>Status</Form.Label>
-                                <Form.Select value={defect.status} onChange={(e) => setStatus(e.target.value)}>
-                                    <option value="NEW">New</option>
-                                    <option value="ALL">All</option>
-                                    <option value="ACTIVE">Active</option>
-                                    <option value="CONFIRMED">Confirmed</option>
-                                    <option value="CLOSED">Closed</option>
-                                    <option value="CANCELLED">Cancelled</option>
-                                </Form.Select>
+                                    <Form.Label>Status</Form.Label>
+                                    <Form.Control type="text" value={status} disabled />
                                 </Form.Group>
-                            
+
                                 <div className="d-flex justify-content-end">
-                                    <Button type="submit" variant="primary">Sacuvaj</Button>
+                                    <Button type="submit" variant="danger">Obrisi</Button>
                                 </div>
                             </Form>
                         </Card.Body>

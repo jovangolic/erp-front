@@ -1,7 +1,7 @@
 import { Container, Navbar, Nav, Row, Col, Form } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import React, { useState } from "react";
-import SecuritySettingDropdownPage from "./SecuritySettingDropdown";
+import SecuritySettingDropdownPage from "./SecuritySettingDropdownPage";
 
 const SecuritySettingPage = () => {
     return(

@@ -14,9 +14,9 @@ import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
 import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
-import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdown";
-import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdown";
-import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdown";
+import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdownPage";
+import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdownPage";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
 
 const AddDefect = () => {
     const [code, setCode] = useState("");

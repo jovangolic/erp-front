@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { findAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionContainingIgnoreCase, trackDefect } from "../utils/defectApi";
+import { findAll,saveDefects,saveAs,saveAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionContainingIgnoreCase, trackDefect } from "../utils/defectApi";
 import { Container, Row, Col, Card, Button, Navbar, Nav, ButtonGroup,Form } from "react-bootstrap";
 import ReportsModal from "./ReportsModal";
 import TrackModal from "./TrackModal";
@@ -15,14 +15,16 @@ import { logout } from "../utils/AppFunction";
 import EditOptDropdownPage from "../top-menu-bar/Edit/EditOptDropdownPage";
 import FileOptDropdownPage from "../top-menu-bar/File/FileOptDropdownPage";
 import SystemSettingDropdownPage from "../top-menu-bar/System/SystemSetting/SystemSettingDropdownPage";
-import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdown";
+import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdownPage";
 import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdownPage";
-import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdown";
+import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
 import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
+import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdownPage";
 
 const DefectList = () => {
     
     const [defect, setDefect] = useState({ inspections: [] });
+    const [defects, setDefects] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
     //state za paginaciju i filter
     const [currentPage, setCurrentPage] = useState(1);
@@ -246,11 +248,57 @@ const DefectList = () => {
             }
     };
 
-    const handleSaveDefect = async() => {};
+    // SACUVAJ jedan defekt
+    const handleSaveDefect = async() => {
+        try{
+            if (!defect || !defect.code || !defect.name || !defect.severity) {
+                alert("Popunite obavezna polja (code, name, severity).");
+                return;
+            }
+            const saved = await saveDefects(defect);
+            setDefect(saved);
+            alert(`Defekat ${saved.code} je uspesno sacuvan!`);
+        }
+        catch(error){
+            alert("Greska pri cuvanju defekata ", error.message);
+        }
+    };
 
-    const handleSaveAsDefect = async() => {};
+    // SACUVAJ KAO (kopija postojeceg defekta sa novim vrednostima)
+    const handleSaveAsDefect = async() => {
+        if(!defect || !defect.id){
+            alert("Moras odabrati defekt koji zelis da sacuvas kao novi.");
+            return;
+        }
+        try{
+            const overrides = {
+                sourceId: defect.id,
+                code: defect.code ? defect.code + "_COPY" : null,
+                name: defect.name ? defect.name + " (Copy)" : null,
+                description: defect.description || null,
+            };
+            const saved = await saveAs(overrides);
+            alert(`Defekt sacuvan kao novi: ${saved.code}`);
+        }
+        catch(error){
+            alert("Greska prilikom Save-as ", error.message);
+        }
+    };
 
-    const handleSaveAllDefects = async() => {};
+    // SACUVAJ VISE defekata odjednom
+    const handleSaveAllDefects = async() => {
+        if(!Array.isArray(defects) || defects.length === 0){
+            alert("Nema defekata za Save All.");
+            return;
+        }
+        try{
+            const savedList = await saveAll(defects); // lista requestova ide na backend
+            alert(`Uspesno sacuvano ${savedList.length} defekata!`);
+        }
+        catch(error){
+            alert("Greska prilikom Save-All ",error.message)
+        }
+    };
 
     return(
         <Container fluid>
@@ -358,7 +406,7 @@ const DefectList = () => {
                     <Card>
                         <Card.Header>
                             <Row className="align-items-center">
-                                <Col><h5>Inspections for defect: {defect.code}</h5></Col>
+                                <Col><h5>Inspekcija za Defekat: {defect.code}</h5></Col>
                                 <Col xs="auto">
                                     <Button
                                         variant={filterStatus === "ALL" ? "primary" : "light"}

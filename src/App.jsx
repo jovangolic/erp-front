@@ -113,6 +113,8 @@ import PermissionForm from "./components/top-menu-bar/System/Permission/Permissi
 import DeleteDefect from "./components/Defect/DeleteDefect";
 import SearchDefect from "./components/Defect/SearchDefect";
 import GeneralSearchDefectPage from "./components/Defect/GeneralSearchDefectPage";
+import TrackDefect from "./components/Defect/TrackDefect";
+import ReportsDefect from "./components/Defect/ReportsDefect";
 
 const App = () => {
     return (
@@ -176,8 +178,8 @@ const App = () => {
                         <Route path="delete" element={<DeleteDefect />} />
                         <Route path="search" element={<SearchDefect />} />
                         <Route path="general-search" element={<GeneralSearchDefectPage />} />
-                        <Route path="track-defect" element={<h3>Track Defect (TODO)</h3>} />
-                        <Route path="reports" element={<h3>Reports (TODO)</h3>} />
+                        <Route path="track-defect" element={<TrackDefect />} />
+                        <Route path="reports" element={<ReportsDefect />} />
                         </Route>
                         {/*HelpPage */}
                         <Route path="/help" element={<HelpPage />}>

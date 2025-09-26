@@ -45,7 +45,7 @@ const EditDefect = () => {
     const [code, setCode] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [severity, setSeverity] = useState("NEW");
+    const [severity, setSeverity] = useState("TRIVIAL_SEVERITY");
     const [status, setStatus] = useState("NEW");
 
     // Fetch defect

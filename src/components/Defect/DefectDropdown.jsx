@@ -10,7 +10,7 @@ export default function DefectDropdown({ handleExit, onSave, onSaveAs, onSaveAll
       <NavDropdown.Item as={Link} to="/defects/lists">Lists</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/delete">Delete</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/search">Search</NavDropdown.Item>
-      <NavDropdown.Item as={Link} to="/defects/track">Track-Defects</NavDropdown.Item>
+      <NavDropdown.Item as={Link} to="/defects/track-defect">Track-Defects</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/reports">Reports</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/defects/general-search">General-search</NavDropdown.Item>
       <NavDropdown.Divider />

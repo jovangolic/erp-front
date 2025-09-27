@@ -115,6 +115,7 @@ import SearchDefect from "./components/Defect/SearchDefect";
 import GeneralSearchDefectPage from "./components/Defect/GeneralSearchDefectPage";
 import TrackDefect from "./components/Defect/TrackDefect";
 import ReportsDefect from "./components/Defect/ReportsDefect";
+import DriverPage from "./components/Driver/DriverPage";
 
 const App = () => {
     return (
@@ -180,6 +181,10 @@ const App = () => {
                         <Route path="general-search" element={<GeneralSearchDefectPage />} />
                         <Route path="track-defect" element={<TrackDefect />} />
                         <Route path="reports" element={<ReportsDefect />} />
+                        </Route>
+                        {/**Driver page */}
+                        <Route path="/driver" element={<DriverPage />} >
+
                         </Route>
                         {/*HelpPage */}
                         <Route path="/help" element={<HelpPage />}>

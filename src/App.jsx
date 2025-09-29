@@ -16,24 +16,10 @@ import InventoryList from "./components/Inventory/InventoryList";
 import StorageList from "./components/Storage/StorageList";
 import StorageGoods from "./components/Storage/StorageGoods";
 import StorageShelves from "./components/Storage/StorageShelves";
-import ViewProcurement from "./components/Procurement/ViewProcurement";
-import EditProcurement from "./components/Procurement/EditProcurement";
-import ProcurementList from "./components/Procurement/ProcurementList";
-import AddProcurement from "./components/Procurement/AddProcurement";
-import HelpForm from "./components/admin/Help/HelpForm";
-import HelpList from "./components/admin/Help/HelpList";
-import HelpDetails from "./components/admin/Help/HelpDetails";
-import OptionForm from "./components/admin/Options/OptionForm";
-import OptionList from "./components/admin/Options/OptionList";
-import EditOptManager from "./components/admin/Options/EditOptManager";
-import PermissionManager from "./components/admin/Permissions/PermissionManager";
-import RoleManager from "./components/admin/Permissions/RoleManager";
 import ReportGenerator from "./components/admin/Reports/ReportGenerator";
 import ReportList from "./components/admin/Reports/ReportList";
 import RoleCreateForm from "./components/admin/RoleManagement/RoleCreateForm";
 import RoleList from "./components/admin/RoleManagement/RoleList";
-import EditSystemSettingModal from "./components/admin/SystemSettings/EditSystemSettingModal";
-import LocalizedOptionManager from "./components/admin/SystemSettings/LocalizedOptionManager";
 import AdminSystemPage from "./components/admin/AdminSystemPage";
 import SystemSettings from "./components/admin/SystemSettings/SystemSettings";
 import Sidebar from "./components/layout/Sidebar";
@@ -116,6 +102,7 @@ import GeneralSearchDefectPage from "./components/Defect/GeneralSearchDefectPage
 import TrackDefect from "./components/Defect/TrackDefect";
 import ReportsDefect from "./components/Defect/ReportsDefect";
 import DriverPage from "./components/Driver/DriverPage";
+import AddDriver from "./components/Driver/AddDriver";
 
 const App = () => {
     return (
@@ -143,30 +130,17 @@ const App = () => {
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Registration />} />
-                        <Route path="/procurements" element={<ProcurementList />} />
-                        <Route path="/procurements/view/:procurementId" element={<ViewProcurement />} />
-                        <Route path="/procurements/edit/:procurementId" element={<EditProcurement />} />
-                        <Route path="/procurements/add" element={<AddProcurement />} />
-                        <Route path="/admin/options" element={<OptionList />} />
-                        <Route path="/admin/options/new" element={<OptionForm />} />
-                        <Route path="/admin/options/edit/:id" element={<OptionForm />} />
-                        <Route path="/admin/edit-opts" element={<EditOptManager />} />
                         <Route path="/reports" element={<ReportList />} />
                         <Route path="/reports/generate" element={<ReportGenerator />} />
                         <Route path="/roles" element={<RoleList />} />
                         <Route path="/roles/create" element={<RoleCreateForm />} />
                         <Route path="/roles/edit/:id" element={<RoleCreateForm />} />
                         <Route path="/admin/system" element={<AdminSystemPage />} />
-                        <Route path="/permissions" element={<PermissionManager />} />
-                        <Route path="/role-manager" element={<RoleManager />} />
-                        <Route path="/help" element={<HelpList />} />
-                        <Route path="/create" element={<HelpForm />} />
-                        <Route path="/edit/:id" element={<HelpForm />} />
-                        <Route path="/view/:id" element={<HelpDetails />} />
-                        <Route path="/edit-options" element={<EditSystemSettingModal />} />
-                        <Route path="/localized-options" element={<LocalizedOptionManager />} />
 
-                        {/**NOVE PUTANJE!!!!!!!!!!!!!!!! koje ce biti sablon za sve ostale buduce putanje */}          
+
+
+                        {/**NOVE PUTANJE!!!!!!!!!!!!!!!! koje ce biti sablon za sve ostale buduce putanje */}    
+                        {/**Quality-Control field */}      
                         {/* DefectPage kao parent route */}
                         <Route path="/defects" element={<DefectPage />}>
                         <Route index element={<DefectList />} /> {/* default */}
@@ -182,9 +156,12 @@ const App = () => {
                         <Route path="track-defect" element={<TrackDefect />} />
                         <Route path="reports" element={<ReportsDefect />} />
                         </Route>
+
+
+                        {/**Logistics field */}
                         {/**Driver page */}
                         <Route path="/driver" element={<DriverPage />} >
-
+                            <Route path="add" element={<AddDriver />}/>
                         </Route>
                         {/*HelpPage */}
                         <Route path="/help" element={<HelpPage />}>

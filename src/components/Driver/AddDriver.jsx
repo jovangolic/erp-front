@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { createDefect,confirmDefect,cancelDefect,trackDefect,findByDescriptionContainingIgnoreCase,countDefectsByYearAndMonth } from "../utils/defectApi";
+import { createDriver, cancelDriver, confirmDriver, trackDriver } from "../utils/driverApi";
 import { Container, Form, Button, Alert,Row, Col, Navbar, Nav, ButtonGroup, Card } from "react-bootstrap";
 import DriverDropdown from "./DriverDropdown";
 import AdminDropdownPage from "../top-menu-bar/Admin-page/AdminDropdownPage";
@@ -15,15 +15,15 @@ import PermissionDropdownPage from "../top-menu-bar/System/Permission/Permission
 import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdownPage";
 import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
 import ReportsModal from "./ReportsModal";
-import { confirmDriver, trackDriver } from "../utils/driverApi";
+import { cancelDriver, confirmDriver, trackDriver } from "../utils/driverApi";
 
 const AddDriver = async () => {
 
-    const [driver, setDriver] = useState("");
+    const [driver, setDriver] = useState({trips : []});
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [phone, setPhone] = useState("");
-    const [status, setStatus] = useState("NEW"); // vrednost iz DefectStatus
+    const [status, setStatus] = useState("NEW"); 
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [showTrackModal, setShowTrackModal] = useState(false);
@@ -44,7 +44,7 @@ const AddDriver = async () => {
     };
 
     const handleExecute = async() => {
-        if (!driver || !driver.code) {
+        if (!driver || !driver.id) {
             alert("Nema vozaca za izvrsenje!");
             return;
         }  
@@ -68,7 +68,24 @@ const AddDriver = async () => {
         }
     };
 
-    const handleCancel = async() => {};
+    const handleCancel = async() => {
+        if(!driver || !driver.id){
+            alert("Nema vozaca za izvrsenje!");
+            return;
+        }
+        try{
+            await cancelDriver(driver.id);
+            setDriver({
+                ...driver,
+                status: "CANCELLED",
+                confirmed: false
+            });
+            alert(`Vozac ${driver.id} je otkazan!`);
+        }
+        catch(error){
+            alert("Greska pri otkazivanju ",error.message);
+        }
+    };
 
     const handleReports = async() => {};
 

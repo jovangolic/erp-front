@@ -15,10 +15,11 @@ import PermissionDropdownPage from "../top-menu-bar/System/Permission/Permission
 import SystemStateDropdownPage from "../top-menu-bar/System/SystemState/SystemStateDropdownPage";
 import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
 import ReportsModal from "./ReportsModal";
-import { cancelDriver, confirmDriver, trackDriver } from "../utils/driverApi";
+import { useNavigate } from "react-router-dom";
 
 const AddDriver = async () => {
 
+    const navigate = useNavigate();
     const [driver, setDriver] = useState({trips : []});
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");

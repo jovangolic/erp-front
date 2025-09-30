@@ -103,26 +103,15 @@ import TrackDefect from "./components/Defect/TrackDefect";
 import ReportsDefect from "./components/Defect/ReportsDefect";
 import DriverPage from "./components/Driver/DriverPage";
 import AddDriver from "./components/Driver/AddDriver";
+import ReportsDashboard from "./components/Driver/ReportsDashboard";
+import DriverList from "./components/Driver/DriverList";
 
 const App = () => {
     return (
         <AuthProvider>
             <Router>
                 {/* Navigacija */}
-                <Navbar bg="dark" variant="dark" expand="lg">
-                    <Container>
-                        <Navbar.Brand href="/">Podešavanja Sistema</Navbar.Brand>
-                        <Nav className="me-auto">
-                            <Nav.Link href="/edit-options">Edit Opcije</Nav.Link>
-                            <Nav.Link href="/localized-options">Lokalizovane Opcije</Nav.Link>
-                        </Nav>
-                    </Container>
-                </Navbar>
-
-                <nav className="p-2">
-                    <Link to="/permissions">Permisije</Link> |{" "}
-                    <Link to="/roles">Uloge</Link>
-                </nav>
+                
 
                 <Container className="mt-4">
                     <Routes>
@@ -160,8 +149,10 @@ const App = () => {
 
                         {/**Logistics field */}
                         {/**Driver page */}
-                        <Route path="/driver" element={<DriverPage />} >
+                        <Route path="/drivers" element={<DriverPage />} >
+                            <Route index element={<DriverList />}/>
                             <Route path="add" element={<AddDriver />}/>
+                            <Route path="dashboard" element={<ReportsDashboard />}/>
                         </Route>
                         {/*HelpPage */}
                         <Route path="/help" element={<HelpPage />}>
@@ -333,3 +324,20 @@ const App = () => {
 };
 
 export default App;
+
+/**
+ *<Navbar bg="dark" variant="dark" expand="lg">
+                    <Container>
+                        <Navbar.Brand href="/">Podešavanja Sistema</Navbar.Brand>
+                        <Nav className="me-auto">
+                            <Nav.Link href="/edit-options">Edit Opcije</Nav.Link>
+                            <Nav.Link href="/localized-options">Lokalizovane Opcije</Nav.Link>
+                        </Nav>
+                    </Container>
+                </Navbar>
+
+                <nav className="p-2">
+                    <Link to="/permissions">Permisije</Link> |{" "}
+                    <Link to="/roles">Uloge</Link>
+                </nav>
+ */

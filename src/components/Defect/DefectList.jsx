@@ -49,12 +49,12 @@ const DefectList = () => {
 
     useEffect(() => {
         const fetchAllDefect = async () => {
-        try {
-            const response = await findAll();
-            setDefect(response[0] || { inspections: [] });
-        } catch (error) {
-            setErrorMessage(error.message);
-        }
+            try {
+                const response = await findAll();
+                setDefect(response[0] || { inspections: [] });
+            } catch (error) {
+                setErrorMessage(error.message);
+            }
         };
         fetchAllDefect();
     }, []);
@@ -168,7 +168,7 @@ const DefectList = () => {
     //dugme za brisanje podatka iz tabele inspections
     // Delete dugme
     const handleDeleteItem = async (id) => {
-        if (!window.confirm("Da li ste sigurni da želite da obrišete?")) return;
+        if (!window.confirm("Da li ste sigurni da zelite da obrisete?")) return;
         try {
             await deleteDefect(id); // poziv iz API-ja
             const updatedInspections = defect.inspections.filter((item) => item.id !== id);
@@ -524,7 +524,7 @@ const DefectList = () => {
                         </Card.Footer>
                     </Card>
                 </Col>
-                </Row>
+            </Row>
 
             {/* Footer */}
             <Row>

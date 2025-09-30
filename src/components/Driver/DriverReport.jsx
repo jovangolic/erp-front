@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { cancelDriver, confirmDriver, trackDriver } from "../utils/driverApi";
 import { generateDriverReport, downloadDriverReportExcel,downloadDriverReportPdf } from "../utils/DriverReportApi";
 import { Container, Form, Button, Alert,Row, Col, Navbar, Nav, ButtonGroup, Card } from "react-bootstrap";
@@ -139,12 +139,24 @@ const DriverReport =() => {
             alert("Nema vozaca za izvrsenje");
             return;
         }
+        if(!driver.trips || !driver.trips.length === 0){
+            alert("Vozac nema putovanja")
+            return
+        }
+        const updatedTrips = driver.trips.map((t) => ({
+            ...t,
+            confirmed : true
+        }));
+        setDriver({
+            ...driver,
+            trips : updatedTrips
+        });
         try{
             await confirmDriver(driver.id);
             alert(`Vozac ${driver.id} je potvrdjen`)
         }
         catch(error){
-            alert("Greska pri potvrdi ",error.message);
+                alert("Greska pri potvrdi ",error.message);
         }
     };
 

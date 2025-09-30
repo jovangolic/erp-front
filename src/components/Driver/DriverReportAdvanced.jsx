@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { cancelDriver, confirmDriver, trackDriver } from "../utils/driverApi";
 import { generateDriverReport, downloadDriverReportExcel,downloadDriverReportPdf,generateAdvancedDriverReport } from "../utils/DriverReportApi";
 import { Container, Form, Button, Alert,Row, Col, Navbar, Nav, ButtonGroup, Card } from "react-bootstrap";
@@ -30,7 +30,8 @@ const DriverReportAdvanced = () => {
     const [minRevenue, setMinRevenue] = useState("");
     const [maxDuration, setMaxDuration] = useState("");
     const [reportData, setReportData] = useState(null);
-
+    const [errorMessage, setErrorMessage] = useState("");   
+    const [successMessage, setSuccessMessage] = useState("");
     const [showTrackModal, setShowTrackModal] = useState(false);
     const [trackedDriver, setTrackedDriver] = useState(null); 
     const [showReports, setShowReports] = useState(false);
@@ -231,18 +232,18 @@ const DriverReportAdvanced = () => {
                     <Button variant="primary" type="submit">
                         Generate Report
                     </Button>
-            </Form>
-        </Card>
-
-        {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-        {successMessage && <Alert variant="success">{successMessage}</Alert>}
-
-        {reportData && (
-            <Card className="p-3 shadow-sm">
-            <h5>Rezultat izvestaja</h5>
-            <pre>{JSON.stringify(reportData, null, 2)}</pre>
+                </Form>
             </Card>
-        )}
+
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+            {successMessage && <Alert variant="success">{successMessage}</Alert>}
+
+            {reportData && (
+                <Card className="p-3 shadow-sm">
+                <h5>Rezultat izvestaja</h5>
+                <pre>{JSON.stringify(reportData, null, 2)}</pre>
+                </Card>
+            )}
 
             {/* Footer */}
             {/* Alert poruke */}

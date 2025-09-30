@@ -1,4 +1,4 @@
-import moment, { min } from "moment";
+import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 function handleApiError(error, customMessage) {

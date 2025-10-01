@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { findAllDrivers, saveDriver, saveAs, saveAll, deleteDriver, confirmDriver,cancelDriver,trackDriver } from "../utils/driverApi";
+import { findAllDrivers,findOneById, saveDriver, saveAs, saveAll, deleteDriver, confirmDriver,cancelDriver,trackDriver } from "../utils/driverApi";
 import { Container, Row, Col, Card, Button, Navbar, Nav, ButtonGroup,Form } from "react-bootstrap";
 import TrackModal from "./TrackModal";
 import DriverDropdown from "./DriverDropdown";
@@ -17,7 +17,7 @@ import LanguageDropdownPage from "../top-menu-bar/System/Language/LanguageDropdo
 import SecuritySettingDropdownPage from "../top-menu-bar/System/SecuritySetting/SecuritySettingDropdownPage";
 import LocalizedOptionDropdownPage from "../top-menu-bar/System/LocalizedOption/LocalizedOptionDropdown";
 import PermissionDropdownPage from "../top-menu-bar/System/Permission/PermissionDropdownPage";
-
+import ChooseDriverModal from "./ChooseDriverModal";
 
 const DriverList = () => {
 
@@ -38,6 +38,8 @@ const DriverList = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchParams, setSearchParams] = useState({});  
     const [trackedDriver, setTrackedDriver] = useState(null); 
+
+    const [showChooseModal, setShowChooseModal] = useState(false);
     
     const filteredTrips = driver?.trips.filter(t => {
             if (filterStatus === "ALL") return true;
@@ -156,6 +158,17 @@ const DriverList = () => {
         }
     };
 
+    const handleChooseDriverById = async (driverId) => {
+        try {
+            const data = await findOneById(driverId);
+            console.log("Chosen driver:", data);
+            navigate("/drivers/view");
+        } 
+        catch (error) {
+            setErrorMessage(error.message);
+        }
+    };
+
     // SACUVAJ jedan driver
     const handleSaveDriver = async() => {
         try{
@@ -219,6 +232,12 @@ const DriverList = () => {
                             onSave={handleSaveDriver}
                             onSaveAs={handleSaveAsDriver}
                             onSaveAll={handleSaveAllDrivers}
+                            onOpenChooseDriver={() => setShowChooseModal(true)} 
+                        />
+                        <ChooseDriverModal
+                            show={showChooseModal}
+                            onClose={() => setShowChooseModal(false)}
+                            onConfirm={handleChooseDriverById}
                         />
                         <FileOptDropdownPage />
                         <EditOptDropdownPage />

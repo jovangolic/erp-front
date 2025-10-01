@@ -10,18 +10,18 @@ export default function DriverDropdown({ handleExit, onSave, onSaveAs, onSaveAll
       <NavDropdown.Item as={Link} to="/drivers/lists">Lists</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/drivers/delete">Delete</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/drivers/search">Search</NavDropdown.Item>
-      <NavDropdown.Item as={Link} to="/drivers/ee">Driver-report</NavDropdown.Item>
+      <NavDropdown.Item as={Link} to="/drivers/report">Driver-report</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/drivers/dashboard">Dahboard</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/drivers/drivers-report">Drivers-report</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/drivers/track-defect">Track-Defects</NavDropdown.Item>
       <NavDropdown.Item as={Link} to="/drivers/general-search">General-search</NavDropdown.Item>
       <NavDropdown.Divider />
       {/* Ove stavke ne vode na link, nego pozivaju funkciju za save, saveAs i saveAll */}
+      <NavDropdown.Item onClick={onSelect}>Choose driver's id</NavDropdown.Item>
       <NavDropdown.Item onClick={onSave}>Save</NavDropdown.Item>
       <NavDropdown.Item onClick={onSaveAs}>Save As</NavDropdown.Item>
       <NavDropdown.Item onClick={onSaveAll}>Save All</NavDropdown.Item>
       <NavDropdown.Item onClick={handleExit}>Exit</NavDropdown.Item>
-      <NavDropdown.Item onClick={onSelect}>Choose driver's id</NavDropdown.Item>
       <NavDropdown.Divider />
     </NavDropdown>
   );

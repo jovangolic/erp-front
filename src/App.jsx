@@ -105,6 +105,11 @@ import DriverPage from "./components/Driver/DriverPage";
 import AddDriver from "./components/Driver/AddDriver";
 import ReportsDashboard from "./components/Driver/ReportsDashboard";
 import DriverList from "./components/Driver/DriverList";
+import DriverReport from "./components/Driver/DriverReport";
+import GeneralSearchDriverPage from "./components/Driver/GeneralSearchDriverPage";
+import EditDriver from "./components/Driver/EditDriver";
+import ViewDriver from "./components/Driver/ViewDriver";
+import DeleteDriver from "./components/Driver/DeleteDriver";
 
 const App = () => {
     return (
@@ -132,26 +137,33 @@ const App = () => {
                         {/**Quality-Control field */}      
                         {/* DefectPage kao parent route */}
                         <Route path="/defects" element={<DefectPage />}>
-                        <Route index element={<DefectList />} /> {/* default */}
-                        <Route path="add" element={<AddDefect />} />
-                        <Route path="edit" element={<EditDefect />} />
-                        {/**Da bi se prikazala stranica sa praznom formom */}
-                        <Route path="edit/:id" element={<EditDefect />} />
-                        <Route path="view" element={<ViewDefect />}/>
-                        <Route path="lists" element={<DefectList />}/>
-                        <Route path="delete" element={<DeleteDefect />} />
-                        <Route path="search" element={<SearchDefect />} />
-                        <Route path="general-search" element={<GeneralSearchDefectPage />} />
-                        <Route path="track-defect" element={<TrackDefect />} />
-                        <Route path="reports" element={<ReportsDefect />} />
+                            <Route index element={<DefectList />} /> {/* default */}
+                            <Route path="add" element={<AddDefect />} />
+                            <Route path="edit" element={<EditDefect />} />
+                            {/**Da bi se prikazala stranica sa praznom formom */}
+                            <Route path="edit/:id" element={<EditDefect />} />
+                            <Route path="view" element={<ViewDefect />}/>
+                            <Route path="lists" element={<DefectList />}/>
+                            <Route path="delete" element={<DeleteDefect />} />
+                            <Route path="search" element={<SearchDefect />} />
+                            <Route path="general-search" element={<GeneralSearchDefectPage />} />
+                            <Route path="track-defect" element={<TrackDefect />} />
+                            <Route path="reports" element={<ReportsDefect />} />
                         </Route>
 
 
                         {/**Logistics field */}
                         {/**Driver page */}
                         <Route path="/drivers" element={<DriverPage />} >
-                            <Route index element={<DriverList />}/>
+                            <Route index element={<DriverPage />}/>
                             <Route path="add" element={<AddDriver />}/>
+                            <Route path="edit" element={<EditDriver />}/>
+                            <Route path="edit/:id" element={<EditDriver />} />
+                            <Route path="view" element={<ViewDriver />}/>
+                            <Route path="delete" element={<DeleteDriver />}/>
+                            <Route path="lists" element={<DriverList />}/>
+                            <Route path="general-search" element={<GeneralSearchDriverPage />}/>
+                            <Route path="report" element={<DriverReport />}/>
                             <Route path="dashboard" element={<ReportsDashboard />}/>
                         </Route>
                         {/*HelpPage */}

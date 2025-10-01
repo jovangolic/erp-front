@@ -240,7 +240,7 @@ const DriverList = () => {
                 <Col>
                     <ButtonGroup>
                         <Button variant="primary" onClick={handleExecute} className="me-2">Execute</Button>
-                        <Button variant="secondary" onClick={() => handleTrack(defect.id)} className="me-2">Track Defect</Button>
+                        <Button variant="secondary" onClick={() => handleTrack(defect.id)} className="me-2">Track Driver</Button>
                         <TrackModal
                             show={showTrackModal}
                             onHide={() => setShowTrackModal(false)}

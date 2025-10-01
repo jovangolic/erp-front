@@ -36,7 +36,7 @@ const DriverReport =() => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const report = await generateDriverReport(driver.id); // vraća DriverReportResponse
+            const report = await generateDriverReport(driver.id); // vraca DriverReportResponse
             setDriver({
                 id: report.driverId,
                 firstName: report.fullName.split(" ")[0],
@@ -235,7 +235,7 @@ const DriverReport =() => {
                 <Col md={8} lg={6}>
                     <Card className="shadow-sm">
                     <Card.Body>
-                        <Card.Title>Generisanje izveštaja</Card.Title>
+                        <Card.Title>Generisanje izvestaja</Card.Title>
                         <Card.Text>
                             Izaberi vozaca iz liste i generisi njegov izvestaj u zeljenom formatu.
                         </Card.Text>
@@ -246,13 +246,13 @@ const DriverReport =() => {
                         <div className="mt-3">
                         <ButtonGroup>
                             <Button variant="primary" onClick={handleSubmit}>
-                            Generate Report
+                                Generate Report
                             </Button>
                             <Button variant="success" onClick={handeDownloadDriverPDFReport}>
-                            Download PDF
+                                Download PDF
                             </Button>
                             <Button variant="info" onClick={handleDownloadDriverExcelReport}>
-                            Download Excel
+                                Download Excel
                             </Button>
                         </ButtonGroup>
                         </div>

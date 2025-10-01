@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { findOne } from "../utils/defectApi";
-import { findAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionContainingIgnoreCase, trackDefect } from "../utils/defectApi";
+import { findOne,findAll, deleteDefect, confirmDefect, cancelDefect, findByDescriptionContainingIgnoreCase, trackDefect } from "../utils/defectApi";
 import { Container, Row, Col, Card, Button, Navbar, Nav, ButtonGroup,Form } from "react-bootstrap";
 import ReportsModal from "./ReportsModal";
 import TrackModal from "./TrackModal";
@@ -52,16 +51,16 @@ const ViewDefect = () => {
 
 
     useEffect(() => {
-            const fetchAllDefect = async () => {
+        const fetchAllDefect = async () => {
             try {
                 const response = await findAll();
                 setDefect(response[0] || { inspections: [] });
             } catch (error) {
                 setErrorMessage(error.message);
             }
-            };
-            fetchAllDefect();
-        }, []);
+        };
+        fetchAllDefect();
+    }, []);
     
         //funkcija za paginiranu listu:
         const getPaginatedInspections = () => {
@@ -174,7 +173,7 @@ const ViewDefect = () => {
         //dugme za brisanje podatka iz tabele inspections
         // Delete dugme
         const handleDeleteItem = async (id) => {
-            if (!window.confirm("Da li ste sigurni da želite da obrišete?")) return;
+            if (!window.confirm("Da li ste sigurni da zelite da obrisete?")) return;
             try {
                 await deleteDefect(id); // poziv iz API-ja
                 const updatedInspections = defect.inspections.filter((item) => item.id !== id);

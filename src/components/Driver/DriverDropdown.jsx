@@ -12,8 +12,8 @@ export default function DriverDropdown({ onOpenChooseDriver, handleExit, onSave,
         <NavDropdown.Item as={Link} to="/drivers/search">Search</NavDropdown.Item>
         <NavDropdown.Item as={Link} to="/drivers/report">Driver-report</NavDropdown.Item>
         <NavDropdown.Item as={Link} to="/drivers/dashboard">Dashboard</NavDropdown.Item>
-        <NavDropdown.Item as={Link} to="/drivers/drivers-report">Drivers-report</NavDropdown.Item>
-        <NavDropdown.Item as={Link} to="/drivers/track-defect">Track-Defects</NavDropdown.Item>
+        <NavDropdown.Item as={Link} to="/drivers/drivers-report">Drivers-advanced-report</NavDropdown.Item>
+        <NavDropdown.Item as={Link} to="/drivers/track-driver">Track-Defects</NavDropdown.Item>
         <NavDropdown.Item as={Link} to="/drivers/general-search">General-search</NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item onClick={onOpenChooseDriver}>Choose driver's id</NavDropdown.Item>

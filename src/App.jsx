@@ -110,6 +110,8 @@ import GeneralSearchDriverPage from "./components/Driver/GeneralSearchDriverPage
 import EditDriver from "./components/Driver/EditDriver";
 import ViewDriver from "./components/Driver/ViewDriver";
 import DeleteDriver from "./components/Driver/DeleteDriver";
+import TrackDriver from "./components/Driver/TrackDriver";
+import DriverReportAdvanced from "./components/Driver/DriverReportAdvanced";
 
 const App = () => {
     return (
@@ -162,6 +164,8 @@ const App = () => {
                             <Route path="view" element={<ViewDriver />}/>
                             <Route path="delete" element={<DeleteDriver />}/>
                             <Route path="lists" element={<DriverList />}/>
+                            <Route path="track-driver" element={<TrackDriver />}/>
+                            <Route path="drivers-report" element={<DriverReportAdvanced />}/>
                             <Route path="general-search" element={<GeneralSearchDriverPage />}/>
                             <Route path="report" element={<DriverReport />}/>
                             <Route path="dashboard" element={<ReportsDashboard />}/>

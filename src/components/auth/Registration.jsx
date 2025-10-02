@@ -20,7 +20,7 @@ const Registration = () => {
     const handleRegistration = async (e) => {
     e.preventDefault();
     try {
-        // Prvo obrađujemo roleIds
+        
         const result = await registerUser({
             ...registration,
             roleIds: registration.roleIds.split(",").map(id => parseInt(id.trim()))
@@ -28,7 +28,7 @@ const Registration = () => {
         
         setSuccessMessage(result);
         setErrorMessage("");   
-        // Resetuj formu nakon uspešne registracije
+        
         setRegistration({
             firstName: "",
             lastName: "",

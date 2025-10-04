@@ -249,6 +249,9 @@ export async function saveAll(requests){
                 throw new Error(`Nevalidna longitude vrednost na indexu ${index}: mora biti broj izmedju -180 i 180`);
             }
         });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
         return response.data;
     }
     catch(error){

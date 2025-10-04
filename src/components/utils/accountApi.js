@@ -10,6 +10,7 @@ function handleApiError(error, customMessage) {
 const url = `${import.meta.env.VITE_API_BASE_URL}/accounts`;
 
 const isAccountTypeValid = ["ASSET", "LIABILITY", "EQUITY", "INCOME", "EXPENSE"];
+const isAccountStatusIsValid = ["ALL","ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createAccount({accountNumber,accountName,type,balance}){
     try{
@@ -277,5 +278,235 @@ export async function findByAccountNameAndAccountNumber({accountName, accountNum
     }
     catch(error){
         handleApiError(error,"Greska prilikom trazenja po nazivu "+accountName+" i broju "+accountNumber+" racuna");
+    }
+}
+
+export async function confirmAccount(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje racuna, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje racuna");
+    }
+}
+
+export async function cancelAccount(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje racuna, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje racuna");
+    }
+}
+
+export async function closeAccount(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje racuna, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje racuna");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{    
+        if(isNaN(id) || id == null || !isAccountStatusIsValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status racuna "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status racuna "+status);
+    }
+}
+
+export async function trackAccountSourceTransactions(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" izvornog-racuna za pracenje, nije pronadjen");
+        }
+        const response = await api.post(url+`/track-source/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" izvornog-racuna za pracenje");
+    }
+}
+
+export async function trackAccountTargetTransactions(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" ciljanog-racuna za pracenje, nije pronadjen");
+        }
+        const response = await api.post(url+`/track-target/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" ciljanog-racuna za pracenje");
+    }
+}
+
+export async function generalSearch({id,accountIdFrom,accountIdTo,accountNumber,accountName,type,status,balance,balanceFrom,balanceTo,confirmed}){
+    try{
+        const parseBalance = parseFloat(balance);
+        const parseBalanceFrom = parseFloat(balanceFrom);
+        const parseBalanceTo = parseFloat(balanceTo);
+        if(isNaN(id) || id == null || isNaN(accountIdFrom) || accountIdFrom == null || isNaN(accountIdTo) || accountIdTo == null ||
+           !accountNumber || typeof accountNumber !== "string" || accountNumber.trim() === "" ||
+           !accountName || typeof accountName !== "string" || accountName.trim() === "" ||
+           !isAccountTypeValid.includes(type?.toUpperCase()) || !isAccountStatusIsValid.includes(status?.toUpperCase()) ||
+           isNaN(parseBalance) || parseBalance <= 0 || isNaN(parseBalanceFrom) || parseBalanceFrom <= 0 || isNaN(parseBalanceTo) || parseBalanceTo <= 0 ||
+           typeof confirmed !== "boolean"){
+            throw new Error("Dati parametri za pretragu ne daju ocekivani rezultat: "+id+" ,"+accountIdFrom+" ,"+accountIdTo+" ,"+accountNumber+" ,"+
+            accountName+" ,"+type+" ,"+status+" ,"+balance+" ,"+balanceFrom+" ,"+balanceTo+" ,"+confirmed);
+        }
+        const response = await api.post(url+`/general-search`,{
+            params:{
+                id:id,
+                accountIdFrom: accountIdFrom,
+                accountIdTo :accountIdTo,
+                accountName :accountName,
+                accountNumber : accountNumber,
+                type : (type || "").toUpperCase(),
+                status : (status || "").toUpperCase(),
+                balance : parseBalance,
+                balanceFrom : parseBalanceFrom,
+                balanceTo : parseBalanceTo,
+                confirmed : confirmed 
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Dati parametri za pretragu ne daju ocekivani rezultat: "+id+" ,"+accountIdFrom+" ,"+accountIdTo+" ,"+accountNumber+" ,"+
+            accountName+" ,"+type+" ,"+status+" ,"+balance+" ,"+balanceFrom+" ,"+balanceTo+" ,"+confirmed
+        );
+    }
+}
+
+export async function saveAccount({accountNumber,accountName,balance,type,status,confirmed}){
+    try{
+        const parseBalance = parseFloat(balance);
+        if(!accountNumber?.trim() || !accountName?.trim()){
+            throw new Error("Polja 'account-number' i 'account-name' moraju biti popunjena i validna");
+        }
+        if(isNaN(parseBalance) || parseBalance <= 0){
+            throw new Error("Polje 'balance' mora biti popunjeno i validno");
+        }
+        const typeUpper = type?.toUpperCase();
+        const statusUpper = status?.toUpperCase();
+        if(!isAccountTypeValid.includes(typeUpper)){
+            throw new Error(`Nevalidan tip racuna: ${type}`);
+        }
+        if(!isAccountStatusIsValid.includes(statusUpper)){
+            throw new Error(`Nevalidan status racuna ${status}`);
+        }
+        if (typeof confirmed !== "boolean") {
+            throw new Error("Polje 'confirmed' mora biti boolean");
+        }
+        const requestBody = {
+            accountNumber : accountNumber.trim(),
+            accountName : accountName.trim(),
+            balance : parseBalance,
+            type : typeUpper,
+            status : statusUpper,
+            confirmed : confirmed
+        };
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,accountNumber,accountName}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if(!accountName?.trim() || !accountNumber?.trim()){
+            throw new Error("Polja 'account-number' i 'account-name' moraju biti popunjena i validna");
+        }
+        const requestBody = {
+            accountNumber: accountNumber.trim(),
+            accountName: accountName.trim()
+        };
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((req, index) => {
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            if(!req.accountName?.trim() ){
+                throw new Error(`Nevalidan account-name vrednost na indexu ${index}: 'account-name' je obavezan`);
+            }
+            if(!req.accountNumber?.trim()){
+                throw new Error(`Nevalidan account-number vrednost na indexu ${index}: 'account-number' je obavezan`);
+            }
+            const parseBalance = parseFloat(req.balance);
+            if(isNaN(parseBalance) || parseBalance <= 0){
+                throw new Error(`Nevalidan balans vrednost na indexu ${index}: 'balans' je obavezan`);
+            }
+            const typeUpper = type?.toUpperCase();
+            const statusUpper = status?.toUpperCase();
+            if(!isAccountTypeValid.includes(typeUpper)){
+                throw new Error(`Nevalidan tip racuna: ${type}`);
+            }
+            if(!isAccountStatusIsValid.includes(statusUpper)){
+                throw new Error(`Nevalidan status racuna ${status}`);
+            }
+            if (typeof confirmed !== "boolean") {
+                throw new Error("Polje 'confirmed' mora biti boolean");
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
     }
 }

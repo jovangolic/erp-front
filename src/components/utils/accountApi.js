@@ -371,6 +371,21 @@ export async function trackAccountTargetTransactions(id){
     }
 }
 
+export async function trackAll(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" za precenje racuna, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-all/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za pracenje racuna");
+    }
+}
+
 export async function generalSearch({id,accountIdFrom,accountIdTo,accountNumber,accountName,type,status,balance,balanceFrom,balanceTo,confirmed}){
     try{
         const parseBalance = parseFloat(balance);

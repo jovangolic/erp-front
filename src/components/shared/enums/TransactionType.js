@@ -6,5 +6,6 @@ export const TransactionType = Object.freeze({
     PAYMENT : "PAYMENT",
     REFUND : "REFUND",
     CASH : "CASH",
-    DEBIT : "DEBIT"
+    DEBIT : "DEBIT",
+    CARD_PAYMENT : "CARD_PAYMENT"
 });

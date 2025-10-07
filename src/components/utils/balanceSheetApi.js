@@ -11,6 +11,7 @@ function handleApiError(error, customMessage) {
 const url = `${import.meta.env.VITE_API_BASE_URL}/balanceSheets`;
 const isFiscalYearStatusValid = ["OPEN", "CLOSED", "ARCHIVED"];
 const isFiscalQuarterStatusValid = ["Q1", "Q2", "Q3", "Q4"];
+const isBalanceSheetStatusValid = ["ALL","ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createBalanceSheet(date, totalAssets, totalLiabilities, totalEquity, fiscalYearId) {
     try {

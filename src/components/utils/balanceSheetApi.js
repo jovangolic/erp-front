@@ -461,3 +461,247 @@ export async function findFirstByOrderByDateDesc() {
         handleApiError(error, "Trenutno nismo pronasli datum po opadajucem redosledu");
     }
 }
+
+export async function trackBalanceSheet(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" balance-sheet za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" balance-sheet za pracenje");
+    }
+}
+
+export async function confirmBalanceSheet(id){
+    try{    
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu balance-sheet, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu balance-sheet");
+    }
+}
+
+export async function closeBalanceSheet(id){
+    try{    
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje balance-sheet, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje balance-sheet");
+    }
+}
+
+export async function cancelBalanceSheet(id){
+    try{    
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje balance-sheet, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje balance-sheet");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isBalanceSheetStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status balance-sheet "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status balance-sheet "+status);
+    }
+}
+
+export async function saveBalanceSheet({date,totalAssets,totalLiabilities,totalEquity,fiscalYearId,confirmed,status}){
+    try{
+        const parseTotalAsset = parseFloat(totalAssets);
+        const parseTotalEquity = parseFloat(totalEquity);
+        const parseTotalLiabilities = parseFloat(totalLiabilities);
+        if(!moment(date,"YYYY-MM-DD",true).isValid() || isNaN(parseTotalAsset) || parseTotalAsset <= 0 ||
+           isNaN(parseTotalEquity) || parseTotalEquity <= 0 || isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0 ||
+           isNaN(fiscalYearId) || fiscalYearId == null || typeof confirmed !== "boolean" || !isBalanceSheetStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {date,totalAssets,totalLiabilities,totalEquity,fiscalYearId,confirmed,status};    
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,totalAssets,totalEquity,totalLiabilities,fiscalYearId}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        const parseTotalAsset = parseFloat(totalAssets);
+        const parseTotalEquity = parseFloat(totalEquity);
+        const parseTotalLiabilities = parseFloat(totalLiabilities);
+        if(isNaN(parseTotalAsset) || parseTotalAsset <= 0 || isNaN(parseTotalEquity) || parseTotalEquity <= 0 || isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0){
+            throw new Error("Imovina "+parseTotalAsset+" ,kapital "+parseTotalEquity+" i odgovornost "+parseTotalLiabilities+" motaju biti brojevi");
+        }
+        if(isNaN(fiscalYearId) || fiscalYearId == null){
+            throw new Error("ID za fiskalnu godinu "+fiscalYearId+" mora biti ceo broj");
+        }
+        const requestBody = {totalAssets,totalEquity,totalLiabilities,fiscalYearId};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((index, req) => {
+            const parseAssets = parseFloat(req.totalAssets);
+            const parseEquity = parseFloat(req.totalEquity);
+            const parseLiability = parseFloat(req.totalLiabilities);
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            if (req.fiscalYearId == null || isNaN(req.fiscalYearId)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'fiscalYearId' je obavezan i mora biti broj`);
+            }
+            if(isNaN(parseAssets) || parseAssets <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'imovina' mora biti broj`);
+            }
+            if(isNaN(parseEquity) || parseEquity <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kapital' mora biti broj`);
+            }
+            if(isNaN(parseLiability) || parseLiability <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'odgovornost/liability' mora biti broj`);
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/sava-all");
+    }
+}
+
+export async function generalSearch({id,idFrom,idTo,fiscalYearId,fiscalYearIdFrom,fiscalYearIdTo,date,dateBefore,dateAfter,dateFrom,dateTo,
+    totalAssets,totalAssetsFrom,totalAssetsTo,totalAssetsLessThan,totalAssetsGreater,totalLiabilities,totalLiabilitiesFrom, totalLiabilitiesTo,
+    totalLiabilitiesLess,totalLiabilitiesGreater,totalEquity,totalEquityFrom,totalEquityTo,totalEquityLess,totalEquityGreater,year,yearFrom,yearTo,
+    yearStatus,quarterStatus,startDate,startDateAfter,startDateBefore,endDate,endDateAfter,endDateBefore,confirmed
+}){
+    try{
+        const parseTotalAsset = parseFloat(totalAssets);
+        const parseTotalAssetFrom = parseFloat(totalAssetsFrom);
+        const parseTotalAssetTo = parseFloat(totalAssetsTo);
+        const parseTotalAssetLessThan = parseFloat(totalAssetsLessThan);
+        const parseTotalAssetGreater = parseFloat(totalAssetsGreater);
+        const parseTotalLiabilities = parseFloat(totalLiabilities);
+        const parseTotalLiabilitiesFrom = parseFloat(totalLiabilitiesFrom);
+        const parseTotalLiabilitiesTo = parseFloat(totalLiabilitiesTo);
+        const parseTotalLiabilitiesLess = parseFloat(totalLiabilitiesLess);
+        const parseTotalLiabilitiesGreater = parseFloat(totalLiabilitiesGreater);
+        const parseTotalEquity = parseFloat(totalEquity);
+        const parseTotalEquityFrom = parseFloat(totalEquityFrom);
+        const parseTotalEquityTo = parseFloat(totalEquityTo);
+        const parseTotalEquityLess = parseFloat(totalEquityLess);
+        const parseTotalEquityGreater = parseFloat(totalEquityGreater);
+        const parseYear = parseInt(year,10)
+        const parseYearFrom = parseInt(yearFrom,10);
+        const parseYearTo = parseInt(yearTo, 10);
+        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null || isNaN(fiscalYearId) || fiscalYearId == null || isNaN(fiscalYearIdFrom) ||
+           fiscalYearIdFrom == null || isNaN(fiscalYearIdTo) || fiscalYearIdTo == null || !moment(date,"YYYY-MM-DD",true).isValid() || !moment(dateBefore,"YYYY-MM-DD",true).isValid() ||
+           !moment(dateAfter,"YYYY-MM-DD",true).isValid() || !moment(dateFrom,"YYYY-MM-DD",true).isValid() || !moment(dateTo,"YYYY-MM-DD",true).isValid() ||
+           !isFiscalYearStatusValid.includes(yearStatus?.toUpperCase()) || !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) || !moment(startDate,"YYYY-MM-DD",true).isValid() ||
+           !moment(startDateAfter,"YYYY-MM-DD",true).isValid() || !moment(startDateBefore,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
+           !moment(endDate,"YYYY-MM-DD",true).isValid() || !moment(endDateAfter,"YYYY-MM-DD",true).isValid() || !moment(endDateBefore,"YYYY-MM-DD",true).isValid() || typeof confirmed !== "boolean" ||
+           isNaN(parseTotalAsset) || parseTotalAsset <= 0 || isNaN(parseTotalAssetFrom) || parseTotalAssetFrom <= 0 || isNaN(parseTotalAssetTo) || parseTotalAssetTo <= 0 ||
+           isNaN(parseTotalAssetLessThan) || parseTotalAssetLessThan <= 0 || isNaN(parseTotalAssetGreater) || parseTotalAssetGreater <= 0 || isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0 ||
+           isNaN(parseTotalLiabilitiesFrom) || parseTotalLiabilitiesFrom <= 0 || isNaN(parseTotalLiabilitiesTo) || parseTotalLiabilitiesTo <= 0 || isNaN(parseTotalLiabilitiesLess) || parseTotalLiabilitiesLess <= 0 ||
+           isNaN(parseTotalLiabilitiesGreater) || parseTotalLiabilitiesGreater <= 0 || isNaN(parseTotalEquity) || parseTotalEquity <= 0 || isNaN(parseTotalEquityFrom) || parseTotalEquityFrom <= 0 ||
+           isNaN(parseTotalEquityTo) || parseTotalEquityTo <= 0 || isNaN(parseTotalEquityLess) || parseTotalEquityLess <= 0 || isNaN(parseTotalEquityGreater) || parseTotalEquityGreater <= 0 ||
+           isNaN(parseYear) || parseYear <= 0 || isNaN(parseYearFrom) || parseYearFrom <= 0 || isNaN(parseYearTo) || parseYearTo <= 0){
+            throw new Error("Dati parametri ne daju ocekivani razultat: ");
+        }
+        const response = await api.post(url+`/general-search`,{
+            params:{
+                id:id,
+                idFrom:idFrom,
+                idTo:idTo,
+                fiscalYearId:fiscalYearId,
+                fiscalYearIdFrom:fiscalYearIdFrom,
+                fiscalYearIdTo:fiscalYearIdTo,
+                date:moment(date).format("YYYY-MM-DD"),
+                dateFrom:moment(dateFrom).format("YYYY-MM-DD"),
+                dateTo:moment(dateTo).format("YYYY-MM-DD"),
+                dateAfter:moment(dateAfter).format("YYYY-MM-DD"),
+                dateBefore:moment(dateBefore).format("YYYY-MM-DD"),
+                totalAssets:parseTotalAsset,
+                totalAssetsFrom:parseTotalAssetFrom,
+                totalAssetsTo:parseTotalAssetTo,
+                totalAssetsLessThan:parseTotalAssetLessThan,
+                totalAssetsGreater:parseTotalAssetGreater,
+                totalLiabilities:parseTotalLiabilities,
+                totalLiabilitiesFrom:parseTotalLiabilitiesFrom,
+                totalLiabilitiesTo: parseTotalLiabilitiesTo,
+                totalLiabilitiesLess:parseTotalLiabilitiesLess,
+                totalLiabilitiesGreater:parseTotalLiabilitiesGreater,
+                totalEquity:parseTotalEquity,
+                totalEquityFrom:parseTotalEquityFrom,
+                totalEquityTo:parseTotalEquityTo,
+                totalEquityLess:parseTotalEquityLess,
+                totalEquityGreater:parseTotalEquityGreater,
+                year:parseYear,
+                yearFrom:parseYearFrom,
+                yearTo:parseYearTo,
+                yearStatus:(yearStatus || "").toUpperCase(),
+                quarterStatus:(quarterStatus || "").toUpperCase(),
+                startDate:moment(startDate).format("YYYY-MM-DD"),
+                startDateAfter:moment(startDateAfter).format("YYYY-MM-DD"),
+                startDateBefore:moment(startDateBefore).format("YYYY-MM-DD"),
+                endDate:moment(endDate).format("YYYY-MM-DD"),
+                endDateAfter:moment(endDateAfter).format("YYYY-MM-DD"),
+                endDateBefore:moment(endDateBefore).format("YYYY-MM-DD"),
+                confirmed:confirmed
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ocekivani rezultat prema datim parametrima: ");
+    }
+}

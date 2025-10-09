@@ -14,6 +14,7 @@ const isSupplierTypeValid = ["RAW_MATERIAL","MANUFACTURER","WHOLESALER","DISTRIB
 const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 const isStorageStatusValid = ["ACTIVE","UNDER_MAINTENANCE","DECOMMISSIONED","RESERVED","TEMPORARY","FULL"];
 const isGoodsTypeValid = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODUCT","WRITE_OFS","CONSTRUCTION_MATERIAL","BULK_GOODS","PALLETIZED_GOODS"];
+const isBatchStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createBatch({code,productId,quantityProduced,productionDate,expiryDate}){
     try{
@@ -1159,5 +1160,205 @@ export async function findByColsAndStorageId({cols, storageId}){
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli raf "+cols+" i id "+storageId+" skladista");
+    }
+}
+
+export async function countBatchesByStatus(){
+    try{
+        const response = await api.get(url+`/count/batches-status`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan broj batch-eva po statusu");
+    }
+}
+
+export async function countBatchesByConfirmed(){
+    try{
+        const response = await api.get(url+`/count/batches-confirmed`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan broj batch-va po 'Confirmed'");
+    }
+}
+
+export async function countBatchesByYearAndMonth(){
+    try{
+        const response = await api.get(url+`/count/batches-year-and-month`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj batch-eva po godini i mesecu");
+    }
+}
+
+export async function trackBatch(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" batch-a za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" batch-a za pracenje");
+    }
+}
+
+export async function confirmBatch(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu batch-a, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu batch-a");
+    }
+}
+
+export async function closeBatch(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje batch-a, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje batch-a");
+    }
+}
+
+export async function cancelBatch(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje batch-a, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje batch-a");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isBatchStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status batch-a "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status batch-a "+status);
+    }
+}
+
+export async function saveBatch({code,productId,quantityProduced,productionDate,expiryDate,status, confirmed = false}){
+    try{
+        const parseQuantityProduced = parseFloat(quantityProduced);
+        if(!code?.trim() || isNaN(productId) || productId == null || isNaN(parseQuantityProduced) || parseQuantityProduced <= 0 || !moment(productionDate,"YYYY-MM-DD",true).isValid() ||
+           !moment(expiryDate,"YYYY-MM-DD",true).isValid() || !isBatchStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {code,productId,quantityProduced,productionDate,expiryDate,status, confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,code,quantityProduced,productId,productionDate,expiryDate}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        const parseQuantityProduced = parseFloat(quantityProduced);
+        if(isNaN(parseQuantityProduced) || parseQuantityProduced <= 0){
+            throw new Error("Proizvedena kolicina "+parseQuantityProduced+" mora biti ceo broj");
+        }
+        if(isNaN(productId) || productId == null){
+            throw new Error("ID proizvoda "+productId+" mora biti ceo broj");
+        }
+        if(!code || typeof code !== "string" || code.trim() === ""){
+            throw new Error("Dati kod "+code+" mora biti string");
+        }
+        if(!moment(productionDate,"YYYY-MM-DD",true).isValid() || !moment(expiryDate,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Datum proizvodnje "+productionDate+" i datum isticanja "+expiryDate+" moraju biti uneti");
+        }
+        const requestBody = {code,quantityProduced,productId,productionDate,expiryDate};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((index, req) => {
+            const parseQuantityProduced = parseFloat(req.quantityProduced);
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            if(isNaN(parseQuantityProduced) || parseQuantityProduced <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'proizvedena-kolicina' mora biti ceo broj`);
+            }
+            if(!req.code?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kod' mora biti string`);
+            }
+            if(req.productId == null || isNaN(req.productId)){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'product-id' je obavezan i mora biti broj`);
+            }
+            if(!moment(req.productionDate,"YYYY-MM-DD",true).isValid()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum-proizvodnje' je obavezan`);
+            }
+            if(!moment(req.expiryDate,"YYYY-MM-DD",true).isValid()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum-isticanja' je obavezan`);
+            }
+            if(!isBatchStatusValid(req.status?.toUpperCase())){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan`);
+            }
+            if(typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' polje je obavezno`);
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
     }
 }

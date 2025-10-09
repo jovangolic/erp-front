@@ -683,6 +683,9 @@ export async function findByCreatedDateBetween({start, end}){
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Opseg datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
         }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");
+        }
         const response = await api.get(url+`/created-date-between`,{
             params:{
                 start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
@@ -701,6 +704,9 @@ export async function countByCreatedAtBetween({start, end}){
     try{
         if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
             throw new Error("Broj opsega datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
+        }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/count/created-date-between`,{
             params:{

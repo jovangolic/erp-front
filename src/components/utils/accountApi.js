@@ -400,6 +400,12 @@ export async function generalSearch({id,accountIdFrom,accountIdTo,accountNumber,
             throw new Error("Dati parametri za pretragu ne daju ocekivani rezultat: "+id+" ,"+accountIdFrom+" ,"+accountIdTo+" ,"+accountNumber+" ,"+
             accountName+" ,"+type+" ,"+status+" ,"+balance+" ,"+balanceFrom+" ,"+balanceTo+" ,"+confirmed);
         }
+        if(accountIdFrom > accountIdTo){
+            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
+        }
+        if(parseBalanceFrom > parseBalanceTo){
+            throw new Error("Minimalni balans ne sme biti veci od maksimalnog balansa");
+        }
         const response = await api.post(url+`/general-search`,{
             params:{
                 id:id,
@@ -504,8 +510,8 @@ export async function saveAll(requests){
             if(isNaN(parseBalance) || parseBalance <= 0){
                 throw new Error(`Nevalidan balans vrednost na indexu ${index}: 'balans' je obavezan`);
             }
-            const typeUpper = type?.toUpperCase();
-            const statusUpper = status?.toUpperCase();
+            const typeUpper = req.type?.toUpperCase();
+            const statusUpper = req.status?.toUpperCase();
             if(!isAccountTypeValid.includes(typeUpper)){
                 throw new Error(`Nevalidan tip racuna: ${type}`);
             }

@@ -656,6 +656,33 @@ export async function generalSearch({id,idFrom,idTo,fiscalYearId,fiscalYearIdFro
            isNaN(parseYear) || parseYear <= 0 || isNaN(parseYearFrom) || parseYearFrom <= 0 || isNaN(parseYearTo) || parseYearTo <= 0){
             throw new Error("Dati parametri ne daju ocekivani razultat: ");
         }
+        if(idFrom > idTo){
+            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
+        }
+        if(fiscalYearIdFrom > fiscalYearIdTo){
+            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
+        }
+        if(parseYearTo > parseYearFrom){
+            throw new Error("Godina za kraj ne sme biti ispred godine za pocetak");
+        }
+        if(parseTotalAssetFrom > parseTotalAssetTo){
+            throw new Error("Total-assets min ne sme biti veci od total-assets max");
+        }
+        if(moment(dateTo).isBefore(dateFrom)){
+            throw new Error("Datum za kraj ne sme biti pre datuma za pocetak");
+        }
+        if(parseTotalEquityLess > parseTotalEquityGreater){
+            throw new Error("Total-equity maniji ne sme biti veci od total-equity veci");
+        }
+        if(parseTotalLiabilitiesLess > parseTotalLiabilitiesGreater){
+            throw new Error("Total-liabilities manji ne sme biti veci od total-liabilities veci");
+        }
+        if(moment(startDateBefore).isBefore(moment(startDateAfter))){
+            throw new Error("Datum kraja ne sme biti ispred datuma za pocetak");
+        }
+        if(moment(endDateBefore).isBefore(moment(endDateAfter))){
+            throw new Error("Datum kraja ne sme biti ispred datuma za pocetak");
+        }
         const response = await api.post(url+`/general-search`,{
             params:{
                 id:id,

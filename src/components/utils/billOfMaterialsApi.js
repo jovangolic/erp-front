@@ -12,6 +12,7 @@ const isGoodsTypeValid = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRO
 const isSupplierTypeValid = ["RAW_MATERIAL","MANUFACTURER","WHOLESALER","DISTRIBUTOR","SERVICE_PROVIDER","AGRICULTURE","FOOD_PROCESSING","LOGISTICS","PACKAGING","MAINTENANCE"];
 const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
+const isBillOfMaterialsStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 const url = `${import.meta.env.VITE_API_BASE_URL}/billOfMaterials`;
 
 export async function createBillOfMaterial({parentProductId,componentId,quantity}){
@@ -815,5 +816,200 @@ export async function findAllOrderByQuantityAsc(){
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli svu kolicinu po rastucem poretku");
+    }
+}
+
+export async function trackParentProduct(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" parent-product za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-product/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" parent-product za pracenje");
+    }
+}
+
+export async function trackComponent(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" component za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-component/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" component za pracenje");
+    }
+}
+
+export async function confirmBOM(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu bom, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu bom");
+    }
+}
+
+export async function cancelBOM(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje bom, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu otkazivanje bom");
+    }
+}
+
+export async function closeBOM(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje bom, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu zatvaranje bom");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isBillOfMaterialsStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status bom "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status bom "+status);
+    }
+}
+
+export async function saveBOM({parentProductId,componentId,quantity,status,confirmed = false}){
+    try{
+        const parseQuantity = parseFloat(quantity);
+        if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null || isNaN(parseQuantity) || parseQuantity <= 0 ||
+           !isBillOfMaterialsStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {parentProductId,componentId,quantity,status,confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,newParentProductId,newParentProductName,newComponentId,newComponentName,quantity,confirmed = false, status}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        const parseQuantity = parseFloat(quantity);
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
+            throw new Error("Kolicina "+parseQuantity+" mora biti broj");
+        }
+        if(isNaN(newParentProductId) || newParentProductId == null || isNaN(newComponentId) || newComponentId == null){
+            throw new Error("ID za parent "+newParentProductId+ " i ID za komponentu"+newComponentId+" mora biti ceo broj");
+        }
+        if(!newComponentName?.trim() || !newParentProductName?.trim()){
+            throw new Error("Novi naziv proizvoda "+newParentProductName+" i novi naziv komponente "+newComponentName+" moraju biti uneti");
+        }
+        if(!isBillOfMaterialsStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Status "+status+" treba izabrati");
+        }
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Potvrdu "+confirmed+" treba izabrata");
+        }
+        const requestBody = {newParentProductId,newParentProductName,newComponentId,newComponentName,quantity,confirmed, status};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((index, req) => {
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            const parseQuantity = parseFloat(req.quantity);
+            if(isNaN(parseQuantity) || parseQuantity <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kolicina' mora biti broj`);
+            }
+            if(req.parentProductId == null || isNaN(req.parentProductId)){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'parent-product-id' je obavezan i mora biti broj`);
+            }
+            if(req.componentId == null || isNaN(req.componentId)){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'component-id' je obavezan i mora biti broj`);
+            }
+            if(!isBillOfMaterialsStatusValid.includes(req.status?.toUpperCase())){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+            }
+            if(typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/sava-all");
+    }
+}
+
+function cleanFilters(filters) {
+  return Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+  );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

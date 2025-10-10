@@ -357,63 +357,21 @@ export async function saveAll(requests){
     }
 }
 
-export async function generalSearch({id,idFrom,idTo,code,scannedAt,scannedAtBefore,scannedAtAfter,scannedAtStart,scannedAtEnd,userId, userIdFrom,userIdTo,
-    firstName,lastName,goodsId,goodsIdFrom,goodsIdTo,goodsName,unitMeasure,supplierType,storageType,goodsType,storageId,storageIdFrom,storageIdTo,
-    supplyId,supplyIdFrom,supplyIdTo,shelfId,shelfIdFrom,shelfIdTo,status,confirmed
-}){
+function cleanFilters(filters) {
+  return Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+  );
+}
+
+export async function generalSearch(filters = {}){
     try{
-        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null || !code || typeof code !== "string" || code.trim() === "" ||
-           !moment(scannedAt,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(scannedAtAfter,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(scannedAtBefore,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-           !moment(scannedAtStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(scannedAtEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid() || isNaN(userId) || userId == null || 
-           isNaN(userIdFrom) || userIdFrom == null || isNaN(userIdTo) || userIdTo == null || !firstName?.trim() || !lastName?.trim() || isNaN(goodsId) || goodsId == null ||
-           isNaN(goodsIdFrom) || goodsIdFrom == null || isNaN(goodsIdTo) || goodsIdTo == null || !goodsName?.trim() || !isUnitMeasureValid.includes(unitMeasure?.toUpperCase()) ||
-           !isSupplierTypeValid.includes(supplierType?.toUpperCase()) || !isStorageTypeValid.includes(storageType?.toUpperCase()) || !isGoodsTypeValid.includes(goodsType?.toUpperCase()) ||
-           isNaN(storageId) || storageId == null || isNaN(storageIdFrom) || storageIdFrom == null || isNaN(storageIdTo) || storageIdTo == null || isNaN(supplyId) || supplyId == null ||
-           isNaN(supplyIdFrom) || supplyIdFrom == null || isNaN(supplyIdTo) || supplyIdTo == null || isNaN(shelfId) || shelfId == null || isNaN(shelfIdFrom) || shelfIdFrom == null ||
-           isNaN(shelfIdTo) || shelfIdTo == null || !isBarCodeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
-            throw new Error("Dati parametri za pretragu ne daju ocekivani rezultat");
-        }
-        const response = await api.post(url+`/general-search`,{
-            params:{
-                id:id,
-                idFrom:idFrom,
-                idTo:idTo,
-                code:code,
-                scannedAt:moment(scannedAt).format("YYYY-MM-DDTHH:mm:ss"),
-                scannedAtBefore:moment(scannedAtBefore).format("YYYY-MM-DDTHH:mm:ss"),
-                scannedAtAfter:moment(scannedAtAfter).format("YYYY-MM-DDTHH:mm:ss"),
-                scannedAtStart:moment(scannedAtStart).format("YYYY-MM-DDTHH:mm:ss"),
-                scannedAtEnd:moment(scannedAtEnd).format("YYYY-MM-DDTHH:mm:ss"),
-                userId:userId,
-                userIdFrom:userIdFrom,
-                userIdTo:userIdTo,
-                firstName:firstName,
-                lastName:lastName,
-                goodsId:goodsId,
-                goodsIdFrom:goodsIdFrom,
-                goodsIdTo:goodsIdTo,
-                goodsName:goodsName,
-                unitMeasure:(unitMeasure || "").toUpperCase(),
-                supplierType:(supplierType || "").toUpperCase(),
-                storageType:(storageType || "").toUpperCase(),
-                goodsType:(goodsType || "").toUpperCase(),
-                storageId:storageId,
-                storageIdFrom:storageIdFrom,
-                storageIdTo:storageIdTo,
-                supplyId:supplyId,
-                supplyIdFrom:supplyIdFrom,
-                supplyIdTo:supplyIdTo,
-                shelfId:shelfId,
-                shelfIdFrom:shelfIdFrom,
-                shelfIdTo:shelfIdTo,
-                status:(status || "").toUpperCase(),
-                confirmed:confirmed
-            },
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
             headers:getHeader()
         });
         return response.data;
-    }
+    }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli rezultat pretrage po datim parametrima");
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

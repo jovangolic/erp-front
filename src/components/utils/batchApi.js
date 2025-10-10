@@ -1363,107 +1363,22 @@ export async function saveAll(requests){
     }
 }
 
-export async function generalSearch({id,idFrom,idTo,code,productId,productIdFrom,productIdTo,currentQuantity,currentQuantityMin,currentQuantityMax,
-    productName,unitMeasure,supplierType,storageType,goodsType,storageId,storageIdFrom,storageIdTo,supplyId,supplyIdFrom,supplyIdTo,shelfId,shelfIdFrom,shelfIdTo,
-    quantityProduced,quantityProducedMin,quantityProducedMax,productionDate,productionDateBefore,productionDateAfter,productionDateStart,productionDateEnd,expiryDate,
-    expiryDateAfter,expiryDateBefore,expiryDateStart,expiryDateEnd,status,confirmed
-}){
+function cleanFilters(filters) {
+  return Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+  );
+}
+
+export async function generalSearch(filters = {}){
     try{
-        const parseCurrentQuantity = parseFloat(currentQuantity);
-        const parseCurrentQuantityMin = parseFloat(currentQuantityMin);
-        const parseCurrentQuantityMax = parseFloat(currentQuantityMax);
-        const parseQuantityProduced = parseInt(quantityProduced,10);
-        const parseQuantityProducedMin = parseInt(quantityProducedMin,10);
-        const parseQuantityProducedMax = parseInt(quantityProducedMax,10);
-        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null || !code?.trim() || !isUnitMeasureValid.includes(unitMeasure?.toUpperCase()) ||
-           !isSupplierTypeValid.includes(supplierType?.toUpperCase()) || !isStorageStatusValid.includes(storageType?.toUpperCase()) || !isGoodsTypeValid.includes(goodsType?.toUpperCase()) ||
-           isNaN(storageId) || storageId == null || isNaN(storageIdFrom) || storageIdFrom == null || isNaN(storageIdTo) || storageIdTo == null || isNaN(supplyId) || supplyId == null ||
-           isNaN(supplyIdFrom) || supplyIdFrom == null || isNaN(supplyIdTo) || supplyIdTo == null || isNaN(shelfId) || shelfId == null || isNaN(shelfIdFrom) || shelfIdFrom == null ||
-           isNaN(shelfIdTo) || shelfIdTo == null || isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0 || isNaN(parseCurrentQuantityMin) || parseCurrentQuantityMin <= 0 ||
-           isNaN(parseCurrentQuantityMax) || parseCurrentQuantityMax <= 0 || isNaN(parseQuantityProduced) || parseQuantityProduced == null || isNaN(parseQuantityProducedMin) ||
-           parseQuantityProducedMin <= 0 || isNaN(parseQuantityProducedMax) || parseQuantityProducedMax <= 0 || isNaN(productId) || productId == null || isNaN(productIdFrom) ||
-           productIdFrom == null || isNaN(productIdTo) || productIdTo == null || !productName?.trim() || !moment(productionDate,"YYYY-MM-DD",true).isValid() ||
-           !moment(productionDateBefore,"YYYY-MM-DD",true).isValid() || !moment(productionDateAfter,"YYYY-MM-DD",true).isValid() || !moment(productionDateStart,"YYYY-MM-DD",true).isValid() ||
-           !moment(productionDateEnd,"YYYY-MM-DD",true).isValid() || !moment(expiryDate,"YYYY-MM-DD",true).isValid() || !moment(expiryDateAfter,"YYYY-MM-DD",true).isValid() ||
-           !moment(expiryDateBefore,"YYYY-MM-DD",true).isValid() || !moment(expiryDateStart,"YYYY-MM-DD",true).isValid() || !moment(expiryDateEnd,"YYYY-MM-DD",true).isValid() ||
-           !isBatchStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
-            throw new Error("Dati parametri ne daju ocekivani rezultat ");
-        }
-        if(parseCurrentQuantityMin > parseCurrentQuantityMax){
-            throw new Error("Minimalna kolicina ne sme biti veca od maksimalne kolicine");
-        }
-        if(parseQuantityProducedMin > parseQuantityProducedMax){
-            throw new Error("Minimalna proizvedena kolicina ne sme biti veca od maksimalne proizvedene kolicine");
-        }
-        if(moment(productionDateAfter).isBefore(moment(productionDateBefore))){
-            throw new Error("Datum za kraj proizvodnje, ne sme biti ispred datuma za pocetak proizvodnje");
-        }
-        if(idFrom > idTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(productIdFrom > productIdTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(supplyIdFrom > supplyIdTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(shelfIdFrom > shelfIdTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(storageIdFrom > storageIdTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(moment(expiryDateEnd).isBefore(moment(expiryDateStart))){
-            throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");
-        }
-        const response = await api.post(url+`/general-search`,{
-            params:{
-                id:id,
-                idFrom:idFrom,
-                idTo:idTo,
-                productId:productId,
-                productIdFrom:productIdFrom,
-                productIdTo:productIdTo,
-                code:code,
-                currentQuantity:parseCurrentQuantity,
-                currentQuantityMin:parseCurrentQuantityMin,
-                currentQuantityMax:parseCurrentQuantityMax,
-                productName:productName,
-                unitMeasure:(unitMeasure || "").toUpperCase(),
-                supplierType:(supplierType || "").toUpperCase(),
-                storageType:(storageType || "").toUpperCase(),
-                goodsType:(goodsType || "").toUpperCase(),
-                storageId:storageId,
-                storageIdFrom:storageIdFrom,
-                storageIdTo:storageIdTo,
-                supplyId:supplyId,
-                supplyIdFrom:supplyIdFrom,
-                supplyIdTo:supplyIdTo,
-                shelfId:shelfId,
-                shelfIdFrom:shelfIdFrom,
-                shelfIdTo:shelfIdTo,
-                quantityProduced:parseQuantityProduced,
-                quantityProducedMax:parseCurrentQuantityMax,
-                quantityProducedMin:parseCurrentQuantityMin,
-                productionDate : moment(productionDate).format("YYYY-MM-DD"),
-                productionDateAfter:moment(productionDateAfter).format("YYYY-MM-DD"),
-                productionDateBefore:moment(productionDateBefore).format("YYYY-MM-DD"),
-                productionDateStart:moment(productionDateStart).format("YYYY-MM-DD"),
-                productionDateEnd:moment(productionDateEnd).format("YYYY-MM-DD"),
-                expiryDate : moment(expiryDate).format("YYYY-MM-DD"),
-                expiryDateBefore:moment(expiryDateBefore).format("YYY-MM-DD"),
-                expiryDateAfter:moment(expiryDateAfter).format("YYYY-MM-DD"),
-                expiryDateStart:moment(expiryDateStart).format("YYYY-MM-DD"),
-                expiryDateEnd:moment(expiryDateEnd).format("YYYY-MM-DD"),
-                confirmed:confirmed,
-                status:(status || "").toUpperCase()
-            },
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli rezultat za datu pretragu: ");
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }
 

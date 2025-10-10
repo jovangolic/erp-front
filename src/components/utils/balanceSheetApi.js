@@ -618,117 +618,21 @@ export async function saveAll(requests){
     }
 }
 
-export async function generalSearch({id,idFrom,idTo,fiscalYearId,fiscalYearIdFrom,fiscalYearIdTo,date,dateBefore,dateAfter,dateFrom,dateTo,
-    totalAssets,totalAssetsFrom,totalAssetsTo,totalAssetsLessThan,totalAssetsGreater,totalLiabilities,totalLiabilitiesFrom, totalLiabilitiesTo,
-    totalLiabilitiesLess,totalLiabilitiesGreater,totalEquity,totalEquityFrom,totalEquityTo,totalEquityLess,totalEquityGreater,year,yearFrom,yearTo,
-    yearStatus,quarterStatus,startDate,startDateAfter,startDateBefore,endDate,endDateAfter,endDateBefore,confirmed
-}){
+function cleanFilters(filters) {
+  return Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+  );
+}
+
+export async function generalSearch(filters = {}){
     try{
-        const parseTotalAsset = parseFloat(totalAssets);
-        const parseTotalAssetFrom = parseFloat(totalAssetsFrom);
-        const parseTotalAssetTo = parseFloat(totalAssetsTo);
-        const parseTotalAssetLessThan = parseFloat(totalAssetsLessThan);
-        const parseTotalAssetGreater = parseFloat(totalAssetsGreater);
-        const parseTotalLiabilities = parseFloat(totalLiabilities);
-        const parseTotalLiabilitiesFrom = parseFloat(totalLiabilitiesFrom);
-        const parseTotalLiabilitiesTo = parseFloat(totalLiabilitiesTo);
-        const parseTotalLiabilitiesLess = parseFloat(totalLiabilitiesLess);
-        const parseTotalLiabilitiesGreater = parseFloat(totalLiabilitiesGreater);
-        const parseTotalEquity = parseFloat(totalEquity);
-        const parseTotalEquityFrom = parseFloat(totalEquityFrom);
-        const parseTotalEquityTo = parseFloat(totalEquityTo);
-        const parseTotalEquityLess = parseFloat(totalEquityLess);
-        const parseTotalEquityGreater = parseFloat(totalEquityGreater);
-        const parseYear = parseInt(year,10)
-        const parseYearFrom = parseInt(yearFrom,10);
-        const parseYearTo = parseInt(yearTo, 10);
-        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null || isNaN(fiscalYearId) || fiscalYearId == null || isNaN(fiscalYearIdFrom) ||
-           fiscalYearIdFrom == null || isNaN(fiscalYearIdTo) || fiscalYearIdTo == null || !moment(date,"YYYY-MM-DD",true).isValid() || !moment(dateBefore,"YYYY-MM-DD",true).isValid() ||
-           !moment(dateAfter,"YYYY-MM-DD",true).isValid() || !moment(dateFrom,"YYYY-MM-DD",true).isValid() || !moment(dateTo,"YYYY-MM-DD",true).isValid() ||
-           !isFiscalYearStatusValid.includes(yearStatus?.toUpperCase()) || !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) || !moment(startDate,"YYYY-MM-DD",true).isValid() ||
-           !moment(startDateAfter,"YYYY-MM-DD",true).isValid() || !moment(startDateBefore,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
-           !moment(endDate,"YYYY-MM-DD",true).isValid() || !moment(endDateAfter,"YYYY-MM-DD",true).isValid() || !moment(endDateBefore,"YYYY-MM-DD",true).isValid() || typeof confirmed !== "boolean" ||
-           isNaN(parseTotalAsset) || parseTotalAsset <= 0 || isNaN(parseTotalAssetFrom) || parseTotalAssetFrom <= 0 || isNaN(parseTotalAssetTo) || parseTotalAssetTo <= 0 ||
-           isNaN(parseTotalAssetLessThan) || parseTotalAssetLessThan <= 0 || isNaN(parseTotalAssetGreater) || parseTotalAssetGreater <= 0 || isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0 ||
-           isNaN(parseTotalLiabilitiesFrom) || parseTotalLiabilitiesFrom <= 0 || isNaN(parseTotalLiabilitiesTo) || parseTotalLiabilitiesTo <= 0 || isNaN(parseTotalLiabilitiesLess) || parseTotalLiabilitiesLess <= 0 ||
-           isNaN(parseTotalLiabilitiesGreater) || parseTotalLiabilitiesGreater <= 0 || isNaN(parseTotalEquity) || parseTotalEquity <= 0 || isNaN(parseTotalEquityFrom) || parseTotalEquityFrom <= 0 ||
-           isNaN(parseTotalEquityTo) || parseTotalEquityTo <= 0 || isNaN(parseTotalEquityLess) || parseTotalEquityLess <= 0 || isNaN(parseTotalEquityGreater) || parseTotalEquityGreater <= 0 ||
-           isNaN(parseYear) || parseYear <= 0 || isNaN(parseYearFrom) || parseYearFrom <= 0 || isNaN(parseYearTo) || parseYearTo <= 0){
-            throw new Error("Dati parametri ne daju ocekivani razultat: ");
-        }
-        if(idFrom > idTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(fiscalYearIdFrom > fiscalYearIdTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(parseYearTo > parseYearFrom){
-            throw new Error("Godina za kraj ne sme biti ispred godine za pocetak");
-        }
-        if(parseTotalAssetFrom > parseTotalAssetTo){
-            throw new Error("Total-assets min ne sme biti veci od total-assets max");
-        }
-        if(moment(dateTo).isBefore(dateFrom)){
-            throw new Error("Datum za kraj ne sme biti pre datuma za pocetak");
-        }
-        if(parseTotalEquityLess > parseTotalEquityGreater){
-            throw new Error("Total-equity maniji ne sme biti veci od total-equity veci");
-        }
-        if(parseTotalLiabilitiesLess > parseTotalLiabilitiesGreater){
-            throw new Error("Total-liabilities manji ne sme biti veci od total-liabilities veci");
-        }
-        if(moment(startDateBefore).isBefore(moment(startDateAfter))){
-            throw new Error("Datum kraja ne sme biti ispred datuma za pocetak");
-        }
-        if(moment(endDateBefore).isBefore(moment(endDateAfter))){
-            throw new Error("Datum kraja ne sme biti ispred datuma za pocetak");
-        }
-        const response = await api.post(url+`/general-search`,{
-            params:{
-                id:id,
-                idFrom:idFrom,
-                idTo:idTo,
-                fiscalYearId:fiscalYearId,
-                fiscalYearIdFrom:fiscalYearIdFrom,
-                fiscalYearIdTo:fiscalYearIdTo,
-                date:moment(date).format("YYYY-MM-DD"),
-                dateFrom:moment(dateFrom).format("YYYY-MM-DD"),
-                dateTo:moment(dateTo).format("YYYY-MM-DD"),
-                dateAfter:moment(dateAfter).format("YYYY-MM-DD"),
-                dateBefore:moment(dateBefore).format("YYYY-MM-DD"),
-                totalAssets:parseTotalAsset,
-                totalAssetsFrom:parseTotalAssetFrom,
-                totalAssetsTo:parseTotalAssetTo,
-                totalAssetsLessThan:parseTotalAssetLessThan,
-                totalAssetsGreater:parseTotalAssetGreater,
-                totalLiabilities:parseTotalLiabilities,
-                totalLiabilitiesFrom:parseTotalLiabilitiesFrom,
-                totalLiabilitiesTo: parseTotalLiabilitiesTo,
-                totalLiabilitiesLess:parseTotalLiabilitiesLess,
-                totalLiabilitiesGreater:parseTotalLiabilitiesGreater,
-                totalEquity:parseTotalEquity,
-                totalEquityFrom:parseTotalEquityFrom,
-                totalEquityTo:parseTotalEquityTo,
-                totalEquityLess:parseTotalEquityLess,
-                totalEquityGreater:parseTotalEquityGreater,
-                year:parseYear,
-                yearFrom:parseYearFrom,
-                yearTo:parseYearTo,
-                yearStatus:(yearStatus || "").toUpperCase(),
-                quarterStatus:(quarterStatus || "").toUpperCase(),
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                startDateAfter:moment(startDateAfter).format("YYYY-MM-DD"),
-                startDateBefore:moment(startDateBefore).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD"),
-                endDateAfter:moment(endDateAfter).format("YYYY-MM-DD"),
-                endDateBefore:moment(endDateBefore).format("YYYY-MM-DD"),
-                confirmed:confirmed
-            },
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
             headers:getHeader()
         });
         return response.data;
-    }
+    }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli ocekivani rezultat prema datim parametrima: ");
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

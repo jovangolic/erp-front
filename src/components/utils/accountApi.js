@@ -386,50 +386,25 @@ export async function trackAll(id){
     }
 }
 
-export async function generalSearch({id,accountIdFrom,accountIdTo,accountNumber,accountName,type,status,balance,balanceFrom,balanceTo,confirmed}){
+function cleanFilters(filters) {
+  return Object.fromEntries(
+    Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+  );
+}
+
+export async function generalSearch(filters = {}){
     try{
-        const parseBalance = parseFloat(balance);
-        const parseBalanceFrom = parseFloat(balanceFrom);
-        const parseBalanceTo = parseFloat(balanceTo);
-        if(isNaN(id) || id == null || isNaN(accountIdFrom) || accountIdFrom == null || isNaN(accountIdTo) || accountIdTo == null ||
-           !accountNumber || typeof accountNumber !== "string" || accountNumber.trim() === "" ||
-           !accountName || typeof accountName !== "string" || accountName.trim() === "" ||
-           !isAccountTypeValid.includes(type?.toUpperCase()) || !isAccountStatusIsValid.includes(status?.toUpperCase()) ||
-           isNaN(parseBalance) || parseBalance <= 0 || isNaN(parseBalanceFrom) || parseBalanceFrom <= 0 || isNaN(parseBalanceTo) || parseBalanceTo <= 0 ||
-           typeof confirmed !== "boolean"){
-            throw new Error("Dati parametri za pretragu ne daju ocekivani rezultat: "+id+" ,"+accountIdFrom+" ,"+accountIdTo+" ,"+accountNumber+" ,"+
-            accountName+" ,"+type+" ,"+status+" ,"+balance+" ,"+balanceFrom+" ,"+balanceTo+" ,"+confirmed);
-        }
-        if(accountIdFrom > accountIdTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        if(parseBalanceFrom > parseBalanceTo){
-            throw new Error("Minimalni balans ne sme biti veci od maksimalnog balansa");
-        }
-        const response = await api.post(url+`/general-search`,{
-            params:{
-                id:id,
-                accountIdFrom: accountIdFrom,
-                accountIdTo :accountIdTo,
-                accountName :accountName,
-                accountNumber : accountNumber,
-                type : (type || "").toUpperCase(),
-                status : (status || "").toUpperCase(),
-                balance : parseBalance,
-                balanceFrom : parseBalanceFrom,
-                balanceTo : parseBalanceTo,
-                confirmed : confirmed 
-            },
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Dati parametri za pretragu ne daju ocekivani rezultat: "+id+" ,"+accountIdFrom+" ,"+accountIdTo+" ,"+accountNumber+" ,"+
-            accountName+" ,"+type+" ,"+status+" ,"+balance+" ,"+balanceFrom+" ,"+balanceTo+" ,"+confirmed
-        );
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }
+
 
 export async function saveAccount({accountNumber,accountName,balance,type,status,confirmed}){
     try{

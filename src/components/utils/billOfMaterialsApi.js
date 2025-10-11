@@ -996,9 +996,9 @@ export async function saveAll(requests){
 }
 
 function cleanFilters(filters) {
-  return Object.fromEntries(
-    Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
-  );
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
 }
 
 export async function generalSearch(filters = {}){

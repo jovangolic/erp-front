@@ -310,4 +310,192 @@ export async function searchBuyers({companyName, email}){
     }
 }
 
+export async function trackBuyer(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" kupca za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" kupca za pracenje");
+    }
+}
+
+export async function confirmBuyer(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu kupca, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nimso pronasli id "+id+" kupca za potvrdjivanje");
+    }
+}
+
+export async function closeBuyer(id){
+    try{
+        if(isNaN(id) || id == null){
+                    throw new Error("ID "+id+" za zatvaranje bom, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+             headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje kupca");
+    }
+}
+
+export async function cancelBuyer(id){
+    try{
+        if(isNaN(id) || id == null){
+                throw new Error("ID "+id+" za otkazivanje kupca, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+             headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu otkazivanje kupca");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isBuyerStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status kupca "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status kupca "+status);
+    }    
+}
+
+export async function saveBuyer({companyName,pib,address,contactPerson,email,phoneNumber,status, confirmed = false}){
+    try{
+        if(!companyName?.trim() || !pib?.trim() || !address?.trim() || !email?.trim() || !phoneNumber?.trim() || !isBuyerStatusValid.includes(status?.toUpperCase()) ||
+           typeof confirmed !== "boolean"){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {companyName,pib,address,contactPerson,email,phoneNumber,status, confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.address;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,companyName,pib,address,contactPerson,email,phoneNumber}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if(!companyName?.trim()){
+            throw new Error("Naziv kompanije "+companyName+" je obavezan");
+        }
+        if(!pib?.trim()){
+            throw new Error("PIB "+pib+" je obavezan");
+        }
+        if(!address?.trim()){
+            throw new Error("Adresa "+address+" je obavezna");
+        }
+        if(!contactPerson?.trim()){
+            throw new Error("Kontakt-osoba "+contactPerson+" je obabvezna");
+        }
+        if(!email?.trim()){
+            throw new Error("Email "+email+" je obavezan");
+        }
+        if(!phoneNumber?.trim()){
+            throw new Error("Broj-telefona "+phoneNumber+" je obavezan");
+        }
+        const requestBody = {companyName,pib,address,contactPerson,email,phoneNumber};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((index, req) => {
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            if(!req.companyName?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'naziv-kompanije' je obavezan`);
+            }
+            if(!req.pib?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'pib' je obavezan`);
+            }
+            if(!req.address?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'adresa' je obavezan`);
+            }
+            if(!req.contactPerson?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'konakt-osoba' je obavezna`);
+            }
+            if(!req.email?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'email' je obavezan`);
+            }
+            if(!req.phoneNumber?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'broj-telefona' je obavezan`);
+            }
+            if(!isBuyerStatusValid.includes(req.status?.toUpperCase())){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+            }
+            if(typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
+    }
+}
 

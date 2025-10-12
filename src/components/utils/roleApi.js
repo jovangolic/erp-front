@@ -108,19 +108,6 @@ export async function assignUserToRole({roleId, userId}){
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {
         throw new Error(error.response.data);

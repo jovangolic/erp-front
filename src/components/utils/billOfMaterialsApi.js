@@ -824,7 +824,7 @@ export async function trackParentProduct(id){
         if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" parent-product za pracenje, nije pronadjen");
         }
-        const response = await api.get(url+`/track-product/${id}`,{
+        const response = await api.get(url+`/track-parent-product/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -875,7 +875,7 @@ export async function cancelBOM(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu otkazivanje bom");
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje bom");
     }
 }
 
@@ -890,7 +890,7 @@ export async function closeBOM(id){
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu zatvaranje bom");
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje bom");
     }
 }
 

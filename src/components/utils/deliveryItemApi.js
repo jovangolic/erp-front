@@ -1,6 +1,13 @@
 import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 const url = `${import.meta.env.VITE_API_BASE_URL}/delivery-items`;
 const validateUnitMeasure = ["KOM", "KG", "LITAR", "METAR", "M2"];
 const validateSupplierType = ["RAW_MATERIAL","MANUFACTURER","WHOLESALER","DISTRIBUTOR","SERVICE_PROVIDER","AGRICULTURE","FOOD_PROCESSING","LOGISTICS","PACKAGING","MAINTENANCE"];
@@ -8,6 +15,7 @@ const validateStorageType = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERI
 const validateGoodsType = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRODUCT", "WRITE_OFS","CONSTRUCTION_MATERIAL","BULK_GOODS","PALLETIZED_GOODS"];
 const validateStorageStatus = ["ACTIVE","UNDER_MAINTENANCE","DECOMMISSIONED","RESERVED","TEMPORARY","FULL"];
 const validateDeliveryStatus = ["PENDING", "IN_TRANSIT", "DELIVERED", "CANCELLED"];
+const isDeliveryItemStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createinboundDeliveryId({productId,quantity,inboundDeliveryId,outboundDeliveryId}){
     if(!productId || !inboundDeliveryId || !outboundDeliveryId || quantity == null || quantity <= 0){
@@ -905,10 +913,233 @@ export async function findByOutboundDelivery_BuyerContactPersonContainingIgnoreC
     }
 }
 
-
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
+export async function trackDeliveryItem(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" delivery-item za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-delivery-item/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
     }
-    throw new Error(`${customMessage}: ${error.message}`);
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" delivery-item za pracenje");
+    }
+}
+
+export async function trackByProduct(productId){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" proizvoda od delivery-item za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-product/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" proizvoda od delivery-itema za pracenje");
+    }
+}
+
+export async function trackByInboundDelivery(deliveryId){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" nadolazece stavke od delivery-item za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-inbound-delivery/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" nadolazece stavke od delivery-itema za pracenje");
+    }
+}
+
+export async function trackByOutboundDelivery(deliveryId){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" odlazece stavke od delivery-item za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-outbound-delivery/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" odlazece stavke od delivery-itema za pracenje");
+    }
+}
+
+export async function confirmDeliveryItem(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu delivery-itema, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(err){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu delivery-itema");
+    }
+}
+
+export async function closeDeliveryItem(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje delivery-itema, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje delivery-itema");
+    }
+}
+
+export async function cancelDelvieryItem(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje delivery-itema, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje delivery-itema");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isDeliveryItemStatusValid.includes(status?.toUpperCase())){
+                throw new Error("ID "+id+" i status delivery-item "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status delivery-item "+status);
+    }
+}
+
+export async function saveDeliveryItem({productId,inboundDeliveryId,outboundDeliveryId,quantity,status,confirmed = false}){
+    try{
+        const parseQuantity = parseFloat(quantity);
+        if(isNaN(productId) || productId == null || isNaN(inboundDeliveryId) || inboundDeliveryId == null || isNaN(outboundDeliveryId) || outboundDeliveryId <= 0 ||
+           isNaN(parseQuantity) || parseQuantity <= 0 || !isDeliveryItemStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {productId,inboundDeliveryId,outboundDeliveryId,quantity,status,confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,productId,inboundDeliveryId,outboundDeliveryId,quantity,status,confirmed}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        const parseQuantity = parseFloat(quantity);
+        if(isNaN(parseQuantity) || parseQuantity <= 0 ){
+            throw new Error("Kolicina "+parseQuantity+" mora biti broj");
+        }
+        if(isNaN(productId) || productId == null){
+            throw new Error("Product-Id "+productId+" mora biti ceo broj");
+        }
+        if(isNaN(inboundDeliveryId) || inboundDeliveryId == null){
+            throw new Error("Inbound-delivery Id "+inboundDeliveryId+" mora biti ceo broj");
+        }
+        if(isNaN(outboundDeliveryId) || outboundDeliveryId == null){
+            throw new Error("Outbound-delivery Id "+outboundDeliveryId+" mora biti ceo broj");
+        }
+        if(!isDeliveryItemStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Status "+status+" treba izabrati");
+        }
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Potvrdu "+confirmed+" treba izabrata");
+        }
+        const requestBody = {productId,inboundDeliveryId,outboundDeliveryId,quantity,status,confirmed};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((index, req) => {
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            const parseQuantity = parseFloat(req.quantity);
+            if(isNaN(parseQuantity) || parseQuantity <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kolicina' mora biti broj`);
+            }
+            if (req.productId == null || isNaN(req.productId)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'product-id' je obavezan i mora biti broj`);
+            }
+            if (req.inboundDeliveryId == null || isNaN(req.inboundDeliveryId)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'inboundDelivery-id' je obavezan i mora biti broj`);
+            }
+            if (req.outboundDeliveryId == null || isNaN(req.outboundDeliveryId)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'outboundDelivery-Id' je obavezan i mora biti broj`);
+            }
+            if(!isDeliveryItemStatusValid.includes(req.status?.toUpperCase())){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+            }
+            if(typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
+    }
 }

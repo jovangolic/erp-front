@@ -445,6 +445,54 @@ export async function countCapacityPlanningByAvailableCapacity(){
     }
 }
 
+export async function getTotalAvailableCapacity(){
+    try{
+        const response = await api.get(url+`/total-available-capacity`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan rezultat dosupnog kapaciteta");
+    }
+}
+
+export async function getTotalPlannedLoad(){
+    try{
+        const response = await api.get(url+`/total-planned-load`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan rezultat planirane kolicine");
+    }
+}
+
+export async function getTotalRemainingCapacity(){
+    try{
+        const response = await api.get(url+`/total-remaining-capacity`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan rezultat preostalog kapaciteta");
+    }
+}
+
+export async function getAverageRemainingCapacity(){
+    try{
+        const response = await api.get(url+`/average-remaining-capacity`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli prosek preostale kolicine");
+    }
+}
+
 export async function countCapacityPlanningsByYearAndMonth(){
     try{
         const response = await api.get(url+`/count/by-year-and-month"`,{

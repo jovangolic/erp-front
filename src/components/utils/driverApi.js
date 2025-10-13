@@ -149,40 +149,22 @@ export async function findByPhoneLikeIgnoreCase(phone){
     }
 }
 
-export async function generalSearch({id, idFrom, idTo, firstName, lastName, phone, status, confirmed}){
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
     try{
-        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null ||
-          !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
-          !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
-          !phone || typeof phone !== "string" || phone.trim() === "" ||
-          !isDriverStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean") {
-            throw new Error("Dati parametri: id "+id+" ,opseg id-ijeva "+idFrom+" - "+idTo+" ,ime "+firstName+" ,prezime "+lastName+" broj-telefona, "+phone+
-                " ,status "+status+" ,confirmed "+confirmed+" ne daju ocekivani rezultat"
-            );
-        }
-        if(idFrom > idTo){
-            throw new Error("Pocetak opsega id-ija ne sme biti veci od kraja id-ja : idFrom - idTo, ne obrnuto");
-        }
-        const response = await api.get(url+`/general-search`,{
-            params:{
-                id:id,
-                idFrom:idFrom,
-                idTo:idTo,
-                firstName:firstName,
-                lastName:lastName,
-                phone:phone,
-                status :(status || "").toUpperCase(),
-                confirmed : confirmed
-            },
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
             headers:getHeader()
         });
         return response.data;
-    }
+    }   
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli rezultat za unesene/uneti parametar/parametre: id "+
-            id+" ,opseg id-ijeva "+idFrom+" - "+idTo+",ime "+firstName+" ,prezime "+lastName+" ,broj-telefona "+phone+" ,status "+
-            status+" ,confirmed "+confirmed+" ."
-        );
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }
 

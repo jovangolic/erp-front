@@ -929,7 +929,7 @@ export async function saveBOM({parentProductId,componentId,quantity,status,confi
 
 export async function saveAs({sourceId,newParentProductId,newParentProductName,newComponentId,newComponentName,quantity,confirmed = false, status}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        if(sourceId === undefined || sourceId == null || Number.isNaN(Number(sourceId))){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         const parseQuantity = parseFloat(quantity);
@@ -964,18 +964,18 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((index, req) => {
-            if (req.id == null || isNaN(req.id)) {
+        requests.forEach((req, index) => {
+            if (req.id == null || req.id === undefined || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
             const parseQuantity = parseFloat(req.quantity);
             if(isNaN(parseQuantity) || parseQuantity <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'kolicina' mora biti broj`);
             }
-            if(req.parentProductId == null || isNaN(req.parentProductId)){
+            if(req.parentProductId == null || req.parentProductId === undefined || Number.isNaN(Number(req.parentProductId))){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'parent-product-id' je obavezan i mora biti broj`);
             }
-            if(req.componentId == null || isNaN(req.componentId)){
+            if(req.componentId == null || req.componentId === undefined || Number.isNaN(Number(req.componentId))){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'component-id' je obavezan i mora biti broj`);
             }
             if(!isBillOfMaterialsStatusValid.includes(req.status?.toUpperCase())){

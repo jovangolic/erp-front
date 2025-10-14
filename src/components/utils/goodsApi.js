@@ -214,6 +214,25 @@ export const getGoodsByStorageId = async (storageId) => {
     }
 };
 
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
+    }
+}
+
 
 function handleApiError(error, customMessage) {
     if (error.response && error.response.data) {

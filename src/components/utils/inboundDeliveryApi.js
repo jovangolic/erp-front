@@ -13,6 +13,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/inboundDeliveries`;
 const isStorageTypeValid = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 const isStorageStatusValid = ["ACTIVE","UNDER_MAINTENANCE","DECOMMISSIONED","RESERVED","TEMPORARY","FULL"];
 const validateStatus = ["PENDING","IN_TRANSIT","DELIVERED","CANCELLED"];
+const isInboundDeliveryStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export function isValidInboundDelivery({
   deliveryDate,
@@ -728,5 +729,201 @@ export async function findBySupply_UpdatesBetween({updatesFrom, updatesTo}){
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli datum opsega "+updatesFrom+" - "+updatesTo+" dobavljaca za inbound-delivery");
+    }
+}
+
+export async function trackInboundDelivery(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" nadolazece-dostave za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" nadolazece-dostave za pracenje");
+    }
+}
+
+export async function confirmInboundDelivery(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu nadolazece-dostave, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu nadolazece-dostave");
+    }
+}
+
+export async function cancelInboundDelivery(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje nadolazece-dostave, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje nadolazece-dostave");
+    }
+}
+
+export async function closeInboundDelivery(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje nadolazece-dostave, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje nadolazece-dostave");
+    }                  
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isInboundDeliveryStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status nadolazece-dostave "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status nadolazece-dostave "+status);
+    }
+}
+
+export async function saveInboundDelivery({deliveryDate,supplyId,status,itemRequest}){
+    try{
+        //Validacija datuma
+        const validDate = moment.isMoment(deliveryDate) || moment(deliveryDate, "YYYY-MM-DD", true).isValid();
+        if (!validDate) throw new Error("Datum isporuke nije ispravan");
+        //Validacija ID-a dobavljaca
+        if (supplyId === null || supplyId === undefined || Number.isNaN(Number(supplyId))) {
+            throw new Error("Neispravan ID dobavljača");
+        }
+        //Validacija statusa
+        if (!status || !validateStatus.includes(status.toUpperCase())) {
+            throw new Error("Neispravan status isporuke");
+        }
+        //Validacija stavki
+        if (!Array.isArray(itemRequest) || itemRequest.length === 0) {
+            throw new Error("Lista stavki ne sme biti prazna");
+        }
+        for (const item of itemRequest) {
+            if (!item.productId || item.quantity == null || item.quantity <= 0) {
+                throw new Error("Neispravna stavka u listi itemRequest");
+            }
+        }
+        const requestBody = {deliveryDate,supplyId,status,itemRequest};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,supplyId,status,inboundStatus,confirmed = false}){
+    try{
+        if(sourceId === undefined || sourceId == null || Number.isNaN(Number(sourceId))){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if(supplyId === undefined || supplyId == null || Number.isNaN(Number(supplyId))){
+            throw new Error("Supply-Id "+supplyId+" mora biti ceo broj");
+        }
+        if(!validateStatus.includes(status?.toUpperCase())){
+            throw new Error("Neispravan status isporuke");
+        }
+        if(!isInboundDeliveryStatusValid.includes(inboundStatus?.toUpperCase())){
+            throw new Error("Neispravan inbound-status isporuke");
+        }
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Potvrdu "+confirmed+" treba izabrata");
+        }
+        const requestBody = {supplyId,status,inboundStatus,confirmed};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if (!Array.isArray(requests) || requests.length === 0) {
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+            }
+            for (let i = 0; i < requests.length; i++) {
+            const req = requests[i];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
+            }
+            if (req.supplyId == null || Number.isNaN(Number(req.supplyId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'supplyId' je obavezan i mora biti broj`);
+            }
+            if (!req.status || !validateStatus.includes(req.status.toUpperCase())) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'status' nije ispravan`);
+            }
+            const validDate =
+                moment.isMoment(req.deliveryDate) ||
+                moment(req.deliveryDate, "YYYY-MM-DD", true).isValid();
+            if (!validDate) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'deliveryDate' mora biti validan datum`);
+            }
+            if (!Array.isArray(req.itemRequest) || req.itemRequest.length === 0) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: lista 'itemRequest' ne sme biti prazna`);
+            }
+            for (const item of req.itemRequest) {
+                if (!item.productId || item.quantity == null || item.quantity <= 0) {
+                throw new Error(`Neispravna stavka u itemRequest za zahtev ${i}`);
+                }
+            }
+        }
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"greska prilikom sveobuvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

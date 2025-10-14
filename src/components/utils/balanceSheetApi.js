@@ -588,7 +588,7 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((index, req) => {
+        requests.forEach((req, index) => {
             const parseAssets = parseFloat(req.totalAssets);
             const parseEquity = parseFloat(req.totalEquity);
             const parseLiability = parseFloat(req.totalLiabilities);

@@ -1326,7 +1326,7 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((index, req) => {
+        requests.forEach((req, index) => {
             const parseQuantityProduced = parseInt(req.quantityProduced,10);
             if (req.id == null || isNaN(req.id)) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);

@@ -11,6 +11,7 @@ function handleApiError(error, customMessage) {
 const url =`${import.meta.env.VITE_API_BASE_URL}/fiscalQuarters`;
 const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
 const isFiscalYearStatusValid = ["OPEN", "CLOSED", "ARCHIVED"];
+const isFiscalQuarterTypeStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createFiscalQarter({quarterStatus,startDate,endDate,fiscalYearId}){
     try{
@@ -546,5 +547,185 @@ export async function findByFiscalYearBetweenYears({start, end}){
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli opseg "+start+" - "+end+" za fiskalnu godinu");
+    }
+}
+
+export async function trackFiscalQuarter(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" fiskal-kvartala za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" fiskal-kvartala za pracenje");
+    }
+}
+
+export async function confirmFiscalQuarter(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za potvrdu fiskal-kvartala, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+             headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu fiskal-kvartala");
+    }
+}
+
+export async function cancelFiscalQuarter(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za otkazivanje fiskal-kvartala, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+             headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje fiskal-kvartala");
+    }
+}
+
+export async function closeFiscalQuarter(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje fiskal-kvartala, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+             headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje fiskal-kvartala");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status fiskal-kvartala "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+             headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" i status fiskal-kvartala "+status);
+    }
+}
+
+export async function saveFiscalQuarter({quarterStatus,startDate,endDate,fiscalYearId,status,confirmed = false}){
+    try{
+        if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) || !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
+           isNaN(fiscalYearId) || fiscalYearId == null || !isFiscalQuarterTypeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {quarterStatus,startDate,endDate,fiscalYearId,status,confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,quarterStatus,endDate,fiscalYearId,status,confirmed = false}){
+    try{
+        if(isNaN(sourceId) || sourceId == null){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if(isNaN(fiscalYearId) || fiscalYearId == null){
+            throw new Error("Id "+fiscalYearId+" mora biti ceo broj");
+        }
+        if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase())){
+            throw new Error("Kvartalni status "+quarterStatus+" se mora uneti");
+        }
+        if(!isFiscalQuarterTypeStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Tip kvartalnog statusa "+status+" se mora uneti");
+        }
+        if(!moment(endDate,"YYYY-MM-DD",true).isValid()){
+            throw new Error("Datum za kraj "+endDate+" se mora uneti");
+        }
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Potvrdu "+confirmed+" treba izabrata");
+        }
+        const requestBody = {quarterStatus,endDate,fiscalYearId,status,};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if(!Array.isArray(requests) || requests.length === 0){
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        requests.forEach((index, req) => {
+            if (req.id == null || isNaN(req.id)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+            }
+            if (req.fiscalYearId == null || isNaN(req.fiscalYearId)) {
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'fiscalYearId' je obavezan i mora biti broj`);
+            }
+            if(moment(req.startDate,"YYYY-MM-DD",true).isValid()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum pocetka' je obavezan`);
+            }
+            if(moment(req.endDate,"YYYY-MM-DD",true).isValid()){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum kraja' je obavezan`);
+            }
+            if(!isFiscalQuarterStatusValid(req.quarterStatus?.toUpperCase())){
+                throw new Error(`Nevalisan zahtev na indexu ${index}: 'Kvartalni status' je obavezan`);
+            }
+            if(!isFiscalQuarterTypeStatusValid(req.status?.toUpperCase())){
+                throw new Error(`Nevalisan zahtev na indexu ${index}: 'Kvartalni tip statusa' je obavezan`);
+            }
+            if(typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+            }
+        });
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

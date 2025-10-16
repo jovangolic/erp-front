@@ -48,7 +48,7 @@ export async function createDefect({ code, name, description = "", severity, sta
 
 export async function updateDefect({id, code, name, description = "", severity, status, confirmed = false }) {
     try {
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Polje 'id' mora biti ceo broj");
         }
         if (!code?.trim() || !name?.trim()) {
@@ -85,7 +85,7 @@ export async function updateDefect({id, code, name, description = "", severity, 
 
 export async function deleteDefect(id){
     try{
-        if(id == null || isNaN(id)){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati ID "+id+" za defekt, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -100,7 +100,7 @@ export async function deleteDefect(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati ID "+id+" za defekt, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -401,7 +401,7 @@ try{
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isDefectStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isDefectStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status defekta "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -416,7 +416,7 @@ export async function changeStatus({id, status}){
 
 export async function confirmDefect(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu defekta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -431,7 +431,7 @@ export async function confirmDefect(id){
 
 export async function closeDefect(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje defekta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -446,7 +446,7 @@ export async function closeDefect(id){
 
 export async function cancelDefect(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje defekta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -461,9 +461,10 @@ export async function cancelDefect(id){
 
 export async function searchDefects({severity, descPart, status, confirmed}){
     try{
-        if(!isSeverityLevelValid.includes(severity?.toUpperCase()) || !descPart || typeof descPart !== "string" || descPart.trim() === "" || 
-          !isDefectStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
-            throw new Error("Dati parametri pretrage "+severity+" ,"+descPart+" ,"+status+" ,"+confirmed+" ne daju ocekivani rezultat");
+        if(
+            !isSeverityLevelValid.includes(severity?.toUpperCase()) || !descPart || typeof descPart !== "string" || descPart.trim() === "" || 
+            !isDefectStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+                throw new Error("Dati parametri pretrage "+severity+" ,"+descPart+" ,"+status+" ,"+confirmed+" ne daju ocekivani rezultat");
         }
         const response = await api.get(url+`/search-defects`,{
             params:{
@@ -483,7 +484,7 @@ export async function searchDefects({severity, descPart, status, confirmed}){
 
 export async function trackDefect(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" defekta za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track/${id}`,{
@@ -498,7 +499,7 @@ export async function trackDefect(id){
 
 export async function generalSearch({id, idFrom, idTo, code, name, description, severity, status, confirmed}){
     try{
-        if(isNaN(id) || id == null || isNaN(idFrom) || idFrom == null || isNaN(idTo) || idTo == null ||
+        if(Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(idFrom)) || idFrom == null || Number.isNaN(Number(idTo)) || idTo == null ||
           !code || typeof code !== "string" || code.trim() === "" || 
           !name || typeof name !== "string" || name.trim() === "" || !description || typeof description !== "string" || description.trim === "" ||
           !isSeverityLevelValid.includes(severity?.toUpperCase()) || !isDefectStatusValid.includes(status?.toUpperCase()) ||
@@ -548,7 +549,8 @@ export async function getReports({ id = null, description = null }) {
 
 export async function searchByDateOnly(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
+        const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validDate){
             throw new Error("Uneti datum "+date+" ne daje ocekivani rezultat");
         }
         const response = await api.get(url+`/search/by-date`,{
@@ -626,7 +628,8 @@ export async function countDefectsByYearAndMonth(){
 
 export async function findByCreatedDate(createdDate){
     try{
-        if(!moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+        const validDate = moment.isMoment(dcreatedDateate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validDate){
             throw new Error("Datum-vreme "+createdDate+" kreiranja datog defekta, nije pronadjeno");
         }
         const response = await api.get(url+`/created-date`,{
@@ -644,7 +647,8 @@ export async function findByCreatedDate(createdDate){
 
 export async function findByCreatedDateAfter(createdDate){
     try{
-        if(!moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+        const validDate = moment.isMoment(dcreatedDateate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validDate){
             throw new Error("Datum-vreme posle "+createdDate+" kreiranja datog defekta, nije pronadjeno");
         }
         const response = await api.get(url+`/created-date-after`,{
@@ -662,7 +666,8 @@ export async function findByCreatedDateAfter(createdDate){
 
 export async function findByCreatedDateBefore(createdDate){
     try{
-        if(!moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+        const validDate = moment.isMoment(dcreatedDateate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validDate){
             throw new Error("Datum-vreme pre "+createdDate+" kreiranja datog defekta, nije pronadjeno");
         }
         const response = await api.get(url+`/created-date-before`,{
@@ -680,10 +685,12 @@ export async function findByCreatedDateBefore(createdDate){
 
 export async function findByCreatedDateBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+        const validDateStart = moment.isMoment(sta) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validDateStart || !validDateEnd){
             throw new Error("Opseg datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(validDateEnd).isBefore(moment(validDateStart))){
             throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/created-date-between`,{
@@ -702,10 +709,12 @@ export async function findByCreatedDateBetween({start, end}){
 
 export async function countByCreatedAtBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+        const validDateStart = moment.isMoment(sta) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validDateEnd || !validDateEnd){
             throw new Error("Broj opsega datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(validDateEnd).isBefore(moment(validDateStart))){
             throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/count/created-date-between`,{
@@ -758,7 +767,7 @@ export async function saveDefects({code, name, description = "", severity, statu
 
 export async function saveAs({sourceId,code,name,description}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         if (!code?.trim() || !name?.trim()) {
@@ -784,17 +793,20 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            // Validacija obaveznih polja
+        for(i = 0; i < requests.length; i++){
+            const req = requests[i];
+            if(!req.id == null || Number.isNaN(Number(req.id))){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' mora biti ceo broj`);
+            }
             if (!req.code?.trim() || !req.name?.trim() || !req.description?.trim() || !req.severity) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'code', 'name', 'description' i 'severity' su obavezni`);
+                throw new Error(`Nevalidan zahtev na indexu : 'code', 'name', 'description' i 'severity' su obavezni`);
             }
             req.severity = req.severity.toUpperCase();
             if (req.status) req.status = req.status.toUpperCase();
             if (typeof req.confirmed !== "boolean") {
                 req.confirmed = false; // default ako nije prosledjeno
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

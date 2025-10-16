@@ -1358,33 +1358,33 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             const parseQuantityProduced = parseInt(req.quantityProduced,10);
             const prodDate = moment.isMoment(req.productionDate) || moment(req.productionDate,"YYYY-MM-DD",true).isValid();
             const expDate = moment.isMoment(req.expiryDate) || moment(req.expiryDate,"YYYY-MM-DD",true).isValid();
             if (req.id == null || Number.sNaN(Number(req.id))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if(Number.isNaN(Number(parseQuantityProduced)) || parseQuantityProduced <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'proizvedena-kolicina' mora biti ceo broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'proizvedena-kolicina' mora biti ceo broj`);
             }
             if(!req.code?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kod' mora biti string`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'kod' mora biti string`);
             }
             if(req.productId == null || Number.isNaN(Number(req.productId))){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'product-id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'product-id' je obavezan i mora biti broj`);
             }
             if(!prodDate){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum-proizvodnje' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum-proizvodnje' je obavezan`);
             }
             if(!expDate){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum-isticanja' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum-isticanja' je obavezan`);
             }
             if(!isBatchStatusValid(req.status?.toUpperCase())){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'status' je obavezan`);
             }
             if(typeof req.confirmed !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' polje je obavezno`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' polje je obavezno`);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

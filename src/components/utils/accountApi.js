@@ -477,22 +477,22 @@ export async function saveAll(requests){
                 throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if(!req.accountName?.trim() ){
-                throw new Error(`Nevalidan account-name vrednost na indexu ${index}: 'account-name' je obavezan`);
+                throw new Error(`Nevalidan account-name vrednost na indexu ${i}: 'account-name' je obavezan`);
             }
             if(!req.accountNumber?.trim()){
-                throw new Error(`Nevalidan account-number vrednost na indexu ${index}: 'account-number' je obavezan`);
+                throw new Error(`Nevalidan account-number vrednost na indexu ${i}: 'account-number' je obavezan`);
             }
             const parseBalance = parseFloat(req.balance);
             if(isNaN(parseBalance) || parseBalance <= 0){
-                throw new Error(`Nevalidan balans vrednost na indexu ${index}: 'balans' je obavezan`);
+                throw new Error(`Nevalidan balans vrednost na indexu ${i}: 'balans' je obavezan`);
             }
             const typeUpper = req.type?.toUpperCase();
             const statusUpper = req.status?.toUpperCase();
             if(!isAccountTypeValid.includes(typeUpper)){
-                throw new Error(`Nevalidan tip racuna: ${type}`);
+                throw new Error(`Nevalidan tip racuna: ${req.type}`);
             }
             if(!isAccountStatusIsValid.includes(statusUpper)){
-                throw new Error(`Nevalidan status racuna ${status}`);
+                throw new Error(`Nevalidan status racuna ${req.status}`);
             }
             if (typeof confirmed !== "boolean") {
                 throw new Error("Polje 'confirmed' mora biti boolean");

@@ -31,7 +31,7 @@ export async function createEditOpt({name,value,type,editable,visible}){
 export async function updateEditOpt({id,name,value,type,editable,visible}){
     try{
         if(
-            id == null || isNaN(id) ||
+            id == null || Number.isNaN(Number(id)) ||
             !name || typeof name !=="string" || name.trim() === "" ||
             !value || typeof value !=="string" || value.trim() === "" ||
             !isEditOptTypeValid.includes(type?.toUpperCase()) ||
@@ -57,7 +57,7 @@ export async function updateEditOpt({id,name,value,type,editable,visible}){
 
 export async function deleteEditOpt(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za editOpt nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/delete/${id}`,{
@@ -73,7 +73,7 @@ export async function deleteEditOpt(id){
 
 export async function getById(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za editOpt nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/edit-opt/get-one/${id}`,{

@@ -654,30 +654,30 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             const validDate = moment.isMoment(req.data) || moment(req.data,"YYYY-MM-DD",true).isValid();
             if (req.id == null || Number.isNaN(Number(req.id))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if (req.workCenterId == null || Number.isNaN(Number(req.workCenterId))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'workCenterId' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'workCenterId' je obavezan i mora biti broj`);
             }
             const parseAvailableCapacity = parseFloat(req.availableCapacity);
             const parsePlannedLoad = parseFloat(req.plannedLoad);
             if(Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'dostupna-kolicina' mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'dostupna-kolicina' mora biti broj`);
             }
             if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'planirana-kolicina' mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'planirana-kolicina' mora biti broj`);
             }
             if(!validDate){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum' se mora uneti`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum' se mora uneti`);
             }
             if(!isCapacityPlanningStatusValid.includes(req.status?.toUpperCase())){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'status' je obavezan `);
             }
             if(typeof req.confirmed !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' je obavezan `);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

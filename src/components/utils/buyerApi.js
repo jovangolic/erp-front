@@ -442,33 +442,33 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             if (req.id == null || Number.isNaN(Number(req.id))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if(!req.companyName?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'naziv-kompanije' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'naziv-kompanije' je obavezan`);
             }
             if(!req.pib?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'pib' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'pib' je obavezan`);
             }
             if(!req.address?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'adresa' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'adresa' je obavezan`);
             }
             if(!req.contactPerson?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'konakt-osoba' je obavezna`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'konakt-osoba' je obavezna`);
             }
             if(!req.email?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'email' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'email' je obavezan`);
             }
             if(!req.phoneNumber?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'broj-telefona' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'broj-telefona' je obavezan`);
             }
             if(!isBuyerStatusValid.includes(req.status?.toUpperCase())){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'status' je obavezan `);
             }
             if(typeof req.confirmed !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' je obavezan `);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

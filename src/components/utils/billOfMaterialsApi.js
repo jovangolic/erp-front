@@ -966,25 +966,25 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             if (req.id == null || Number.isNaN(Number(req.id))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             const parseQuantity = parseFloat(req.quantity);
             if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kolicina' mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'kolicina' mora biti broj`);
             }
             if(req.parentProductId == null || Number.isNaN(Number(req.parentProductId))){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'parent-product-id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'parent-product-id' je obavezan i mora biti broj`);
             }
             if(req.componentId == null || Number.isNaN(Number(req.componentId))){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'component-id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'component-id' je obavezan i mora biti broj`);
             }
             if(!isBillOfMaterialsStatusValid.includes(req.status?.toUpperCase())){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'status' je obavezan `);
             }
             if(typeof req.confirmed !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' je obavezan `);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

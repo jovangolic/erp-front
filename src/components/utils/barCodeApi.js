@@ -328,28 +328,28 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             if (req.id == null || Number.isNaN(Number(req.id))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if(req.code?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'code' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'code' je obavezan`);
             }
             const dateVal = moment.isMoment(req.scannedAt) || moment(req.scannedAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
             if(!dateVal){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum-vreme' skeniranja, je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum-vreme' skeniranja, je obavezan`);
             }
             if(req.scannedById == null || Number.isNaN(Number(req.scannedById))){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' korisnika je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' korisnika je obavezan i mora biti broj`);
             }
             if(req.goodsId == null || Number.isNaN(Numner(req.goodsId))){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' robe je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' robe je obavezan i mora biti broj`);
             }
             if(!isBarCodeStatusValid.includes(req.status?.toUpperCase())){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' status je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'status' status je obavezan`);
             }
             if(typeof req.confirmBarCode !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' je obavezan`);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

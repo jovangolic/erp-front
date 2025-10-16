@@ -15,10 +15,12 @@ const isFiscalQuarterTypeStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CAN
 
 export async function createFiscalQarter({quarterStatus,startDate,endDate,fiscalYearId}){
     try{
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
         if( 
-            fiscalYearId == null || isNaN(parseInt(fiscalYearId)) ||
+            fiscalYearId == null || Number.isNaN(Number(fiscalYearId)) ||
             !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) ||
-            !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()
+            !validateStart || !validateEnd
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -35,10 +37,13 @@ export async function createFiscalQarter({quarterStatus,startDate,endDate,fiscal
 
 export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate,fiscalYearId}){
     try{
-        if(
-            id == null || isNaN(id) || fiscalYearId == null || isNaN(parseInt(fiscalYearId)) ||
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if( 
+            Number.isNaN(Number(id)) || id == null ||
+            fiscalYearId == null || Number.isNaN(Number(fiscalYearId)) ||
             !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) ||
-            !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()
+            !validateStart || !validateEnd
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -55,7 +60,7 @@ export async function updateFiscalQuarter({id,quarterStatus,startDate,endDate,fi
 
 export async function deleteFiscalQuarter(id){
     try{
-        if(id == null || isNaN(id)){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati ID "+id+" za fiskalni kvartal nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -70,7 +75,7 @@ export async function deleteFiscalQuarter(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati ID "+id+" za fiskalni kvartal nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -97,7 +102,7 @@ export async function findAll(){
 
 export async function findByFiscalYear_Id(fiscalYearId) {
     try {
-        if (fiscalYearId == null || isNaN(fiscalYearId) || isNaN(parseInt(fiscalYearId))) {
+        if (fiscalYearId == null || Number.isNaN(Number(fiscalYearId))) {
             throw new Error("Neispravan ID "+fiscalYearId+" fiskalne godine");
         }
         const response = await api.get(url+`/by-fiscalYear/${fiscalYearId}`, {
@@ -127,8 +132,13 @@ export async function findByQuarterStatus(status){
 
 export async function findByStartDateBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati opseg datuma "+start+" - "+end+" je pogresan ili ne-validan");
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" je pogresan ili ne-validan");
+        }
+        if(moment(validateEnd).isAfter(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/startDateBetween`,{
             params:{
@@ -146,7 +156,7 @@ export async function findByStartDateBetween({start, end}){
 
 export async function findByFiscalYearIdAndQuarterStatus({fiscalYearId,status}){
     try{
-        if(fiscalYearId == null || isNaN(fiscalYearId) || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
+        if(fiscalYearId == null ||Number. isNaN(Number(fiscalYearId)) || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
             throw new Error("Dati ID "+fiscalYearId+" za fiskalnu godinu i stastus "+status+" nisu pronadjeni");
         }
         const response = await api.get(url+`/fiscalYear/${fiscalYearId}/quarters`,{
@@ -165,8 +175,9 @@ export async function findByFiscalYearIdAndQuarterStatus({fiscalYearId,status}){
 
 export async function findByStartDateAfter(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati start-date-after "+date+" nije pronadjen");
+        const validateStart = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati start-date-after "+validateStart+" nije pronadjen");
         }
         const response = await api.get(url+`/startDateAfter`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -181,8 +192,9 @@ export async function findByStartDateAfter(date){
 
 export async function findByStartDateBefore(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati start-date-before "+date+" nije pronadjen");
+        const validateStart = moment.isMoment(date) || moment(datr,"YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati start-date-before "+validateStart+" nije pronadjen");
         }
         const response = await api.get(url+`/startDateBefore`,{
             params:{date:moment(date).format("YYYY-MM-DD")},
@@ -198,8 +210,8 @@ export async function findByStartDateBefore(date){
 export async function findByFiscalYear_Year(year){
     try{
         const parsedYear = parseInt(year);
-        if (isNaN(parsedYear) || parsedYear <= 0) {
-            throw new Error("Data godina "+year+" nije pronadjena");
+        if (Number.isNaN(Number(parsedYear)) || parsedYear <= 0) {
+            throw new Error("Data godina "+parsedYear+" nije pronadjena");
         }
         const response = await api.get(url+`/specific-fiscalYear`,{
             params:{ year: parsedYear },
@@ -230,8 +242,9 @@ export async function findByFiscalYear_YearStatus(yearStatus){
 
 export async function findByEndDate(endDate){
     try{
-        if(!moment(endDate,"YYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum za kraj "+endDate+" nije pronadjen");
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(!validateEnd){
+            throw new Error("Dati datum za kraj "+validateEnd+" nije pronadjen");
         }
         const response = await api.get(url+`/by-end-date`,{
             params:{endDate:moment(endDate).format("YYYY-MM-DD")},
@@ -246,10 +259,15 @@ export async function findByEndDate(endDate){
 
 export async function findByFiscalYear_StartDateBetween({start, end}){
     try{
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(
-            !moment(start,"YYY-MM-DD",true).isValid() || !moment(end,"YYY-MM-DD",true).isValid()
+            !validateStart || !validateEnd
         ){
-            throw new Error("Dati opseg datuma "+start+" - "+end+" za start i end nije pronadjen");
+            throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" za start i end nije pronadjen");
+        }
+        if(moment(validateEnd).isAfter(moment(validateStart))){
+            throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/fiscalYear-start-date-range`,{
             params:{
@@ -350,9 +368,10 @@ export async function findByFiscalYearStatusArchived(){
 }
 
 export async function findByFiscalYearStartDate(startDate){
-    try{    
-        if(!moment(startDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati pocetni datum "+startDate+" za fiskalnu godinu nije pronadjen");
+    try{   
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati pocetni datum "+validateStart+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/year-start-date`,{
             params:{
@@ -369,8 +388,9 @@ export async function findByFiscalYearStartDate(startDate){
 
 export async function findByFiscalYearStartDateAfter(startDate){
     try{    
-        if(!moment(startDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati pocetni datum posle "+startDate+" za fiskalnu godinu nije pronadjen");
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati pocetni datum posle "+validateStart+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/year-start-date-after`,{
             params:{
@@ -387,8 +407,9 @@ export async function findByFiscalYearStartDateAfter(startDate){
 
 export async function findByFiscalYearStartDateBefore(startDate){
     try{    
-        if(!moment(startDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati pocetni datum pre "+startDate+" za fiskalnu godinu nije pronadjen");
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati pocetni datum pre "+validateStart+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/year-start-date-before`,{
             params:{
@@ -404,9 +425,10 @@ export async function findByFiscalYearStartDateBefore(startDate){
 }
 
 export async function findByFiscalYearEndDate(endDate){
-    try{    
-        if(!moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati kraj datuma "+endDate+" za fiskalnu godinu nije pronadjen");
+    try{ 
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();   
+        if(!validateEnd){
+            throw new Error("Dati kraj datuma "+validateEnd+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/year-end-date`,{
             params:{
@@ -423,9 +445,13 @@ export async function findByFiscalYearEndDate(endDate){
 
 export async function findByFiscalYearStartDateBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid() ||
-            !moment(end,"YYYY-MM-DD",true).isValid(0)){
-            throw new Error("Dati pocetni opseg "+start+" - "+end+" datuma za fiskalnu godinu, nije pronadjen");
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati pocetni opseg "+validateStart+" - "+validateEnd+" datuma za fiskalnu godinu, nije pronadjen");
+        }
+        if(moment(validateEnd).isAfter(moment(validateStart))){
+            throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/search/year-start-date-range`,{
             params:{
@@ -443,9 +469,13 @@ export async function findByFiscalYearStartDateBetween({start, end}){
 
 export async function findByFiscalYearEndDateBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid() ||
-            !moment(end,"YYYY-MM-DD",true).isValid(0)){
-            throw new Error("Dati end opseg "+start+" - "+end+" datuma za fiskalnu godinu, nije pronadjen");
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati end opseg "+validateStart+" - "+validateEnd+" datuma za fiskalnu godinu, nije pronadjen");
+        }
+        if(moment(validateEnd).isAfter(moment(validateStart))){
+            throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/search/year-end-date-range`,{
             params:{
@@ -493,8 +523,9 @@ export async function findActiveQuarters(){
 
 export async function findQuartersEndingSoon(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum "+date+" koji se zavrsavaju uskoro, nisu pronadjeni");
+        const validateStart = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati datum "+validateStart+" koji se zavrsavaju uskoro, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/quarters-end-soon`,{
             params:{
@@ -512,7 +543,7 @@ export async function findQuartersEndingSoon(date){
 export async function findByFiscalYear_YearAndQuarterStatus({year, status}){
     try{
         const parsedYear = parseInt(year,10);
-        if(isNaN(parsedYear) || parsedYear <= 0 || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(parsedYear)) || parsedYear <= 0 || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
             throw new Error("Data fiskalna godina "+year+" i kvartalni status "+status+", nisu pronadjeni");
         }
         const response = await api.get(url+`/search/year-and-quarter-status`,{
@@ -533,8 +564,8 @@ export async function findByFiscalYearBetweenYears({start, end}){
     try{
         const parseStart = parseInt(start,10);
         const parseEnd = parseInt(end,10);
-        if(isNaN(parseStart) || parseStart <= 0 || isNaN(parseEnd) || parseEnd <= 0){
-            throw new Error("Dati opseg "+start+" - "+end+" za fiskalnu godinu nije pronadjen");
+        if(Number.isNaN(Number(parseStart)) || parseStart <= 0 || Number.isNaN(Number(parseEnd)) || parseEnd <= 0){
+            throw new Error("Dati opseg "+parseStart+" - "+parseEnd+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/year-range`,{
             params:{
@@ -552,7 +583,7 @@ export async function findByFiscalYearBetweenYears({start, end}){
 
 export async function trackFiscalQuarter(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" fiskal-kvartala za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track/${id}`,{
@@ -567,7 +598,7 @@ export async function trackFiscalQuarter(id){
 
 export async function confirmFiscalQuarter(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu fiskal-kvartala, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -582,7 +613,7 @@ export async function confirmFiscalQuarter(id){
 
 export async function cancelFiscalQuarter(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje fiskal-kvartala, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -597,7 +628,7 @@ export async function cancelFiscalQuarter(id){
 
 export async function closeFiscalQuarter(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje fiskal-kvartala, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -612,7 +643,7 @@ export async function closeFiscalQuarter(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isFiscalQuarterStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status fiskal-kvartala "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -627,9 +658,15 @@ export async function changeStatus({id, status}){
 
 export async function saveFiscalQuarter({quarterStatus,startDate,endDate,fiscalYearId,status,confirmed = false}){
     try{
-        if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) || !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
-           isNaN(fiscalYearId) || fiscalYearId == null || !isFiscalQuarterTypeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(
+            !isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) || !validateStart  || !validateEnd ||
+            Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null || !isFiscalQuarterTypeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+                throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        if(moment(validateEnd).isAfter(moment(validateStart))){
+            throw new Error("Datum za kraj nse sme biti ispred datuma za pocetak");
         }
         const requestBody = {quarterStatus,startDate,endDate,fiscalYearId,status,confirmed};
         const response = await api.post(url+`/save`,requestBody,{
@@ -644,10 +681,12 @@ export async function saveFiscalQuarter({quarterStatus,startDate,endDate,fiscalY
 
 export async function saveAs({sourceId,quarterStatus,endDate,fiscalYearId,status,confirmed = false}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
-        if(isNaN(fiscalYearId) || fiscalYearId == null){
+        if(Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null){
             throw new Error("Id "+fiscalYearId+" mora biti ceo broj");
         }
         if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase())){
@@ -656,11 +695,14 @@ export async function saveAs({sourceId,quarterStatus,endDate,fiscalYearId,status
         if(!isFiscalQuarterTypeStatusValid.includes(status?.toUpperCase())){
             throw new Error("Tip kvartalnog statusa "+status+" se mora uneti");
         }
-        if(!moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum za kraj "+endDate+" se mora uneti");
+        if(!validateEnd){
+            throw new Error("Datum za kraj "+validateEnd+" se mora uneti");
         }
         if(typeof confirmed !== "boolean"){
             throw new Error("Potvrdu "+confirmed+" treba izabrata");
+        }
+        if(moment(validateEnd).isAfter(moment(validateStart))){
+            throw new Error("Datum za kraj nse sme biti ispred datuma za pocetak");
         }
         const requestBody = {quarterStatus,endDate,fiscalYearId,status,};
         const response = await api.post(url+`/save-as`,requestBody,{
@@ -678,29 +720,32 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || isNaN(req.id)) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+        for(let i = 0 ; i < requests.length; i++){
+            const req = requests[i];
+            const validateDateStart = moment.isMoment(req.startDate) || moment(req.startDate,"YYYY-MM-DD",true).isValid();
+            const validateDateEnd = moment.isMoment(req.endDate) || moment(req.endDate,"YYYY-MM-DD",true).isValid();
+            if (req.id == null || Number.isNaN(Number(req.id))) {
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.fiscalYearId == null || isNaN(req.fiscalYearId)) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'fiscalYearId' je obavezan i mora biti broj`);
+            if (req.fiscalYearId == null || Number.isNaN(Number(req.fiscalYearId))) {
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'fiscalYearId' je obavezan i mora biti broj`);
             }
-            if(moment(req.startDate,"YYYY-MM-DD",true).isValid()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum pocetka' je obavezan`);
+            if(!validateDateStart){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum pocetka' je obavezan`);
             }
-            if(moment(req.endDate,"YYYY-MM-DD",true).isValid()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum kraja' je obavezan`);
+            if(!validateDateEnd){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum kraja' je obavezan`);
             }
             if(!isFiscalQuarterStatusValid(req.quarterStatus?.toUpperCase())){
-                throw new Error(`Nevalisan zahtev na indexu ${index}: 'Kvartalni status' je obavezan`);
+                throw new Error(`Nevalisan zahtev na indexu ${i}: 'Kvartalni status' je obavezan`);
             }
             if(!isFiscalQuarterTypeStatusValid(req.status?.toUpperCase())){
-                throw new Error(`Nevalisan zahtev na indexu ${index}: 'Kvartalni tip statusa' je obavezan`);
+                throw new Error(`Nevalisan zahtev na indexu ${i}: 'Kvartalni tip statusa' je obavezan`);
             }
             if(typeof req.confirmed !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' je obavezan `);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

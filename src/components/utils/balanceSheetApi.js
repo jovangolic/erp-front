@@ -600,24 +600,24 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             const parseAssets = parseFloat(req.totalAssets);
             const parseEquity = parseFloat(req.totalEquity);
             const parseLiability = parseFloat(req.totalLiabilities);
             if (Number.isNaN(Number(req.id)) || req.id == null) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if (req.fiscalYearId == null || Number.isNaN(Number(req.fiscalYearId))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'fiscalYearId' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'fiscalYearId' je obavezan i mora biti broj`);
             }
             if(Number.isNaN(Number(parseAssets)) || parseAssets <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'imovina' mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'imovina' mora biti broj`);
             }
             if(Number.isNaN(Number(parseEquity)) || parseEquity <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'kapital' mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'kapital' mora biti broj`);
             }
             if(Number.isNaN(Number(parseLiability)) || parseLiability <= 0){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'odgovornost/liability' mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'odgovornost/liability' mora biti broj`);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

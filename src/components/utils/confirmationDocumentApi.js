@@ -230,25 +230,25 @@ export async function saveAll(requests){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
         for(let i = 0; i < requests.length; i++){
-            const req = requests[0];
+            const req = requests[i];
             const validDate = moment.isMoment(req.createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
             if (req.id == null || Number.isNaN(Number(req.id))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if (req.userId == null || Number.isNaN(Number(req.userId))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'userId' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'userId' je obavezan i mora biti broj`);
             }
             if (req.shiftId == null || Number.isNaN(Number(req.shiftId))) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'shiftId' je obavezan i mora biti broj`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'shiftId' je obavezan i mora biti broj`);
             }
             if(!req.filePath?.trim()){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'file-path' je obavezan`);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'file-path' je obavezan`);
             }
             if(!isConfirmationDocumentValid.includes(req.status?.toUpperCase())){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'status' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'status' je obavezan `);
             }
             if(typeof req.confirmed !== "boolean"){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' je obavezan `);
             }
         }
         const response = await api.post(url+`/save-all`,requests,{

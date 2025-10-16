@@ -60,10 +60,12 @@ export async function downloadDriverReportPdf(driverId){
 export async function generateAdvancedDriverReport({startDate, endDate, tripStatuses, driverGroupIds, driverStatuses, confirmed}) {
     try {
         // Validacija datuma
-        if(!moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid()){
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
             throw new Error(`Datum za pocetak ${startDate} i kraj ${endDate} moraju biti ispravni`);
         }
-        if(moment(startDate).isAfter(moment(endDate))){
+        if(moment(validateStart).isAfter(moment(validateEnd))){
             throw new Error("Datum za pocetak ne sme biti posle datuma za kraj");
         }
         // Validacija tripStatuses

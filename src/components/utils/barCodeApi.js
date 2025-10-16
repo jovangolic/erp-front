@@ -19,7 +19,7 @@ export async function createBarCode({code,scannedById, goodsId}){
     try{
         if(
             !code || typeof code !== "string" || code.trim() === "" || 
-            goodsId == null || isNaN(goodsId) || scannedById == null || isNaN(scannedById)
+            goodsId == null || Number.isNaN(Number(goodsId)) || scannedById == null || Number.isNaN(Number(scannedById))
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -42,9 +42,9 @@ export async function createBarCode({code,scannedById, goodsId}){
 export async function updateBarCode({id,code, goodsId }){
     try{
         if(
-            id == null || isNaN(id) ||
+            id == null || Number.isNaN(Number(id)) ||
             !code || typeof code !== "string" || code.trim() === "" || 
-            goodsId == null || isNaN(goodsId) || scannedById == null || isNaN(scannedById)
+            goodsId == null || isNaN(goodsId) || scannedById == null || Number.isNaN(Number(scannedById))
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -66,7 +66,7 @@ export async function updateBarCode({id,code, goodsId }){
 
 export async function deleteBarCode(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id)) ){
             throw new Error("Dati ID "+id+" za barCode nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -81,7 +81,7 @@ export async function deleteBarCode(id){
 
 export async function getOneBarCode(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id)) ){
             throw new Error("Dati ID "+id+" za barCode nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
@@ -126,7 +126,7 @@ export async function getByCode(code){
 
 export async function getByGoodsId(goodsId){
     try{
-        if(goodsId == null || isNaN(goodsId)){
+        if(goodsId == null || Number.isNaN(Number(goodsId))){
             throw new Error("ID "+goodsId+" za robu ne sme biti null");
         }
         const response = await api.get(url+`/goods/${goodsId}`,{
@@ -178,7 +178,7 @@ export async function findByScannedBy_FirstNameContainingIgnoreCaseAndScannedBy_
 
 export async function findByScannedBy_Id(scannedById){
     try{
-        if(scannedById == null || isNaN(scannedById)){
+        if(scannedById == null || Number.isNaN(Number(scannedById))){
             throw new Error("Dati ID "+scannedById+" za osobu koja je vrsila skeniranje nije pronadjen");
         }
         const response = await api.get(url+`/scannedBy/${scannedById}`,{
@@ -193,7 +193,9 @@ export async function findByScannedBy_Id(scannedById){
 
 export async function getByScannedAtBetween({from, to}){
     try{
-        if(!moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+        const validDateFrom = moment.isMoment(from) || moment(from, "YYYY-MM-DDTHH:mm:ss", true).isValid();
+        const validDateTo = moment.isMoment(to) || moment(to, "YYYY-MM-DDTHH:mm:ss", true).isValid();
+        if(!validDateFrom || !validDateTo){
             throw new Error("Opseg skeniranog datuma "+from+" - "+to+" nije validan");
         }
         const response = await api.get(url+`/get-by-date-between`,{
@@ -212,7 +214,7 @@ export async function getByScannedAtBetween({from, to}){
 
 export async function trackBarCode(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" bar-kod za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track/${id}`,{
@@ -227,7 +229,7 @@ export async function trackBarCode(id){
 
 export async function confirmBarCode(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu bar-koda, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -242,7 +244,7 @@ export async function confirmBarCode(id){
 
 export async function closeBarCode(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje bar-koda, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -257,7 +259,7 @@ export async function closeBarCode(id){
 
 export async function cancelBarCode(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje bar-koda, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -272,7 +274,7 @@ export async function cancelBarCode(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isBarCodeStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isBarCodeStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status bar-koda "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -287,8 +289,9 @@ export async function changeStatus({id, status}){
 
 export async function saveBarCode({code,scannedAt,scannedById,goodsId,status,confirmed = false}){
     try{
-        if(!code || typeof code !== "string" || !moment(scannedAt ,"YYYY-MM-DDTHH:mm:ss",true).isValid() || isNaN(scannedById) || scannedById == null ||
-           isNaN(goodsId) || goodsId == null || !isBarCodeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+        const validDate = moment.isMoment(scannedAt) || moment(scannedAt, "YYYY-MM-DDTHH:mm:ss", true).isValid();
+        if(!code || typeof code !== "string" || !validDate || Number.isNaN(Number(scannedById)) || scannedById == null ||
+           Number.isNaN(Number(goodsId)) || goodsId == null || !isBarCodeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {code,scannedAt,scannedById,goodsId,status,confirmed};
@@ -304,7 +307,7 @@ export async function saveBarCode({code,scannedAt,scannedById,goodsId,status,con
 
 export async function saveAs({sourceId, code}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         if(!code || typeof code !== "string" || code.trim() === ""){
@@ -324,20 +327,22 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || isNaN(req.id)) {
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[0];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
             if(req.code?.trim()){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'code' je obavezan`);
             }
-            if(!moment(req.scannedAt,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
+            const dateVal = moment.isMoment(req.scannedAt) || moment(req.scannedAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+            if(!dateVal){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum-vreme' skeniranja, je obavezan`);
             }
-            if(req.scannedById == null || isNaN(req.scannedById)){
+            if(req.scannedById == null || Number.isNaN(Number(req.scannedById))){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' korisnika je obavezan i mora biti broj`);
             }
-            if(req.goodsId == null || isNaN(req.goodsId)){
+            if(req.goodsId == null || Number.isNaN(Numner(req.goodsId))){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' robe je obavezan i mora biti broj`);
             }
             if(!isBarCodeStatusValid.includes(req.status?.toUpperCase())){
@@ -346,7 +351,7 @@ export async function saveAll(requests){
             if(typeof req.confirmBarCode !== "boolean"){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan`);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });
@@ -356,6 +361,7 @@ export async function saveAll(requests){
         handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
     }
 }
+
 
 function cleanFilters(filters) {
   return Object.fromEntries(

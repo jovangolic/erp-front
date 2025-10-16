@@ -15,8 +15,9 @@ const isBalanceSheetStatusValid = ["ALL","ACTIVE","NEW","CONFIRMED","CLOSED","CA
 
 export async function createBalanceSheet(date, totalAssets, totalLiabilities, totalEquity, fiscalYearId) {
     try {
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if (
-            !moment(date, "YYYY-MM-DD", true).isValid() ||
+            !validateDate ||
             isNaN(parseFloat(totalAssets)) || parseFloat(totalAssets) <= 0 ||
             isNaN(parseFloat(totalLiabilities)) || parseFloat(totalLiabilities) <= 0 ||
             isNaN(parseFloat(totalEquity)) || parseFloat(totalEquity) <= 0 ||
@@ -37,8 +38,8 @@ export async function createBalanceSheet(date, totalAssets, totalLiabilities, to
 
 export async function updateBalanceSheet(id, date, totalAssets, totalLiabilities, totalEquity, fiscalYearId) {
     try {
-        if (id == null || isNaN(id) ||
-            !moment(date, "YYYY-MM-DD", true).isValid() ||
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if (id == null || Number.isNaN(id) || !validateDate ||
             isNaN(parseFloat(totalAssets)) || parseFloat(totalAssets) <= 0 ||
             isNaN(parseFloat(totalLiabilities)) || parseFloat(totalLiabilities) <= 0 ||
             isNaN(parseFloat(totalEquity)) || parseFloat(totalEquity) <= 0 ||
@@ -59,7 +60,7 @@ export async function updateBalanceSheet(id, date, totalAssets, totalLiabilities
 
 export async function deleteBalanceSheet(id) {
     try {
-        if (id == null || isNaN(id)) {
+        if (id == null || Number.isNaN(id)) {
             throw new Error("Dati ID "+id+" za balanceSheet nije pronadjen");
         }
         const response = await api.delete(url + `/delete/${id}`, {
@@ -74,7 +75,7 @@ export async function deleteBalanceSheet(id) {
 
 export async function findOne(id) {
     try {
-        if (id == null || isNaN(id)) {
+        if (id == null || Number.isNaN(id)) {
             throw new Error("Dati ID "+id+"za balanceSheet nije pronadjen");
         }
         const response = await api.get(url + `/find-one/${id}`, {
@@ -101,7 +102,8 @@ export async function findAll() {
 
 export async function findByDate(date) {
     try {
-        if (!moment(date, "YYYY-MM-DD", true).isValid()) {
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-DD-MM",true).isValid();
+        if (!validateDate) {
             throw new Error("Dati datum "+date+" nije pronadjen");
         }
         const response = await api.get(url + `/by-date`, {
@@ -119,8 +121,10 @@ export async function findByDate(date) {
 
 export async function findByDateBetween({ start, end }) {
     try {
-        if (!moment(start, "YYYY-MM-DD", true).isValid() || !moment(end, "YYYY-MM-DD", true).isValid()) {
-            throw new Error("Dati opseg "+start+" - "+end+" datuma nije pronadjen");
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-DD-MM",true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-DD-MM",true).isValid();
+        if (!validateDateStart || !validateDateEnd) {
+            throw new Error(`Dati opseg ${start} - ${end} datuma nije validan`);
         }
         const response = await api.get(url + `/date-between`, {
             params: {
@@ -138,7 +142,8 @@ export async function findByDateBetween({ start, end }) {
 
 export async function findByTotalLiabilities(totalLiabilities) {
     try {
-        if (isNaN(parseFloat(totalLiabilities)) || parseFloat(totalLiabilities) <= 0) {
+        const parseTotalLiabilities = parseFloat(totalLiabilities);
+        if (Number.isNaN(Number(parseTotalLiabilities)) || totalLiabilities <= 0) {
             throw new Error("Dati "+totalLiabilities+" totalLiabilities nije pronadjen");
         }
         const response = await api.get(url + `/totalLiabilities`, {
@@ -156,7 +161,8 @@ export async function findByTotalLiabilities(totalLiabilities) {
 
 export async function findByTotalEquity(totalEquity) {
     try {
-        if (isNaN(parseFloat(totalEquity)) || parseFloat(totalEquity) <= 0) {
+        const parseTotalEquity = parseFloat(totalEquity);
+        if (Number.isNaN(Number(parseTotalEquity)) || totalEquity <= 0) {
             throw new Error("Dati "+totalEquity+" totalEquity nije pronadjen");
         }
         const response = await api.get(url + `/totalEquity`, {
@@ -174,7 +180,8 @@ export async function findByTotalEquity(totalEquity) {
 
 export async function findByTotalAssets(totalAssets) {
     try {
-        if (isNaN(parseFloat(totalAssets)) || parseFloat(totalAssets) <= 0) {
+        const parseTotalAsset = parseFloat(totalAssets);
+        if (Number.isNaN(Number(parseTotalAsset)) || parseTotalAsset <= 0) {
             throw new Error("Dati "+totalAssets+" totalAssets nije pronadjen");
         }
         const response = await api.get(url + `/totalAssets`, {
@@ -192,7 +199,7 @@ export async function findByTotalAssets(totalAssets) {
 
 export async function findByFiscalYear_Id(id) {
     try {
-        if (id == null || isNaN(id)) {
+        if (id == null || Number.isNaN(Number(id))) {
             throw new Error("Dati ID "+id+" za fiscalYear nije pronadjen");
         }
         const response = await api.get(url + `/fiscalYear/${id}`, {
@@ -208,7 +215,7 @@ export async function findByFiscalYear_Id(id) {
 export async function findByFiscalYear_Year(year) {
     try {
         const parsedYear = parseInt(year);
-        if (isNaN(parsedYear) || parsedYear <= 0) {
+        if (Number.isNaN(Number(parsedYear)) || parsedYear <= 0) {
             throw new Error("Data "+year+" godina nije pronadjena");
         }
         const response = await api.get(url + `/fiscalYear-year`, {
@@ -259,8 +266,9 @@ export async function findByFiscalYear_QuarterStatus(quarterStatus) {
 
 export async function findByStatusAndDateRange({ status, start, end }) {
     try {
-        if (!isFiscalYearStatusValid.includes(status?.toUpperCase()) ||
-            !moment(start, "YYYY-MM-DD", true).isValid() || !moment(end, "YYYY-MM-DD", true).isValid()) {
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-DD-MM",true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-DD-MM",true).isValid();
+        if (!isFiscalYearStatusValid.includes(status?.toUpperCase()) || !validateDateStart || !validateDateEnd) {
             throw new Error("Dati godisnji status "+status+" i opseg datuma "+start+" - "+end+" nisu pronadjeni");
         }
         const response = await api.get(url + `/by-statu-dateRange`, {
@@ -281,7 +289,7 @@ export async function findByStatusAndDateRange({ status, start, end }) {
 export async function findByTotalAssetsGreaterThan(totalAssets) {
     try {
         const parseTotalAsset = parseFloat(totalAssets)
-        if (isNaN(parseTotalAsset || parseTotalAsset < 0)) {
+        if (Number.isNaN(Number(parseTotalAsset)) || parseTotalAsset <= 0) {
             throw new Error("Ukupna imovina (totalAssets) "+totalAssets+" mora biti pozitvan broj");
         }
         const response = await api.get(url + `/totalAssets-greater-than`, {
@@ -300,7 +308,7 @@ export async function findByTotalAssetsGreaterThan(totalAssets) {
 export async function findByTotalAssetsLessThan(totalAssets) {
     try {
         const parseTotalAsset = parseFloat(totalAssets)
-        if (isNaN(parseTotalAsset || parseTotalAsset < 0)) {
+        if (Number.isNaN(Number(parseTotalAsset)) || parseTotalAsset < 0) {
             throw new Error("Ukupna imovina (totalAssets) "+totalAssets+" mora biti pozitvan broj");
         }
         const response = await api.get(url + `/totalAssets-less-than`, {
@@ -319,7 +327,7 @@ export async function findByTotalAssetsLessThan(totalAssets) {
 export async function findByTotalEquityGreaterThan(totalEquity) {
     try {
         const parseTotalEquity = parseFloat(totalEquity);
-        if (isNaN(parseTotalEquity) || parseTotalEquity < 0) {
+        if (Number.isNaN(Number(parseTotalEquity)) || parseTotalEquity < 0) {
             throw new Error("totalEquity "+totalEquity+" mora biti pozitivan broj");
         }
         const response = await api.get(url + `/totalEquity-greater-than`, {
@@ -338,7 +346,7 @@ export async function findByTotalEquityGreaterThan(totalEquity) {
 export async function findByTotalAssetsLessThan(totalEquity) {
     try {
         const parseTotalEquity = parseFloat(totalEquity);
-        if (isNaN(parseTotalEquity) || parseTotalEquity < 0) {
+        if (Number.isNaN(Number(parseTotalEquity)) || parseTotalEquity <= 0) {
             throw new Error("totalEquity "+totalEquity+" mora biti pozitivan broj");
         }
         const response = await api.get(url + `/totalEquity-less-than`, {
@@ -359,10 +367,11 @@ export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, mi
         const parseMinAssets = parseFloat(minAssets);
         const parseMinEquity = parseFloat(minEquity);
         const parseMiLiabilities = parseFloat(minLiabilities);
-        if (isNaN(parseMinAssets) || parseMinAssets <= 0 || isNaN(parseMinEquity) || parseMinEquity <= 0 ||
-            isNaN(parseMiLiabilities) || parseMiLiabilities <= 0 || typeof onlySolvent !== "boolean" ||
-            isNaN(Number(fiscalYearId)) || fiscalYearId == null ||
-            !moment(startDate, "YYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid()) {
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-DD-MM",true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-DD-MM",true).isValid();
+        if (Number.isNaN(Number(parseMinAssets)) || parseMinAssets <= 0 || Number.isNaN(Number(parseMinEquity)) || parseMinEquity <= 0 ||
+            Number.isNaN(Numer(parseMiLiabilities)) || parseMiLiabilities <= 0 || typeof onlySolvent !== "boolean" ||
+            Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null ||!validateDateStart || !validateDateEnd) {
             throw new Error("Dati parametri za pretragu: "+startDate+" ,"+endDate+" ,"+fiscalYearId+" ,"+minAssets+" ,"+minEquity+" ,"+minLiabilities+" ,"+onlySolvent+" nisu pronasli ocekivani rezultat");
         }
         if (moment(startDate).isAfter(moment(endDate))) {
@@ -382,7 +391,7 @@ export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, mi
 export async function findByTotalLiabilitiesLessThan(totalLiabilities) {
     try {
         const parseTotalLiabilities = parseFloat(totalLiabilities);
-        if (isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0) {
+        if (Number.isNaN(Number(parseTotalLiabilities)) || parseTotalLiabilities <= 0) {
             throw new Error("Dati ukupan trosak manji od "+totalLiabilities+", nije pronadjen");
         }
         const response = await api.get(url + `/by-total-liabilities-less-than`, {
@@ -399,7 +408,7 @@ export async function findByTotalLiabilitiesLessThan(totalLiabilities) {
 export async function findByTotalLiabilitiesGreaterThan(totalLiabilities) {
     try {
         const parseTotalLiabilities = parseFloat(totalLiabilities);
-        if (isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0) {
+        if (Number.isNaN(Number(parseTotalLiabilities)) || parseTotalLiabilities <= 0) {
             throw new Error("Dati ukupan trosak veci od "+totalLiabilities+", nije pronadjen");
         }
         const response = await api.get(url + `/by-total-liabilities-greater-than`, {
@@ -415,10 +424,11 @@ export async function findByTotalLiabilitiesGreaterThan(totalLiabilities) {
 
 export async function searchBalanceSheets({ startDate, endDate, fiscalYearId, minAssets }) {
     try {
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-DD-MM",true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-DD-MM",true).isValid();
         const parseMinAssets = parseFloat(minAssets);
-        if (isNaN(fiscalYearId) || fiscalYearId == null ||
-            !moment(startDate, "YYY-MM-DD", true).isValid() || !moment(endDate, "YYYY-MM-DD", true).isValid() ||
-            isNaN(parseMinAssets) || parseMinAssets <= 0) {
+        if (Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null ||
+            !validateDateStart || !validateDateEnd ||Number.isNaN(Number(parseMinAssets)) || parseMinAssets <= 0) {
             throw new Error("Dati parametri za pretragu BalanceSheet-a:"+startDate+" , "+endDate+" , "+fiscalYearId+" ,"+minAssets+" ne pronalazi ocekivani rezultat");
         }
         const response = await api.get(url + `/filter-balance-sheet`, {
@@ -464,7 +474,7 @@ export async function findFirstByOrderByDateDesc() {
 
 export async function trackBalanceSheet(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" balance-sheet za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track/${id}`,{
@@ -479,7 +489,7 @@ export async function trackBalanceSheet(id){
 
 export async function confirmBalanceSheet(id){
     try{    
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu balance-sheet, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -494,7 +504,7 @@ export async function confirmBalanceSheet(id){
 
 export async function closeBalanceSheet(id){
     try{    
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje balance-sheet, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -509,7 +519,7 @@ export async function closeBalanceSheet(id){
 
 export async function cancelBalanceSheet(id){
     try{    
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje balance-sheet, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -524,7 +534,7 @@ export async function cancelBalanceSheet(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isBalanceSheetStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isBalanceSheetStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status balance-sheet "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -542,9 +552,10 @@ export async function saveBalanceSheet({date,totalAssets,totalLiabilities,totalE
         const parseTotalAsset = parseFloat(totalAssets);
         const parseTotalEquity = parseFloat(totalEquity);
         const parseTotalLiabilities = parseFloat(totalLiabilities);
-        if(!moment(date,"YYYY-MM-DD",true).isValid() || isNaN(parseTotalAsset) || parseTotalAsset <= 0 ||
-           isNaN(parseTotalEquity) || parseTotalEquity <= 0 || isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0 ||
-           isNaN(fiscalYearId) || fiscalYearId == null || typeof confirmed !== "boolean" || !isBalanceSheetStatusValid.includes(status?.toUpperCase())){
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-DD-MM",true).isValid();
+        if(!validateDate || Number.isNaN(Number(parseTotalAsset)) || parseTotalAsset <= 0 ||
+           Number.isNaN(Number(parseTotalEquity)) || parseTotalEquity <= 0 || Number.isNaN(Number(parseTotalLiabilities)) || parseTotalLiabilities <= 0 ||
+           Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null || typeof confirmed !== "boolean" || !isBalanceSheetStatusValid.includes(status?.toUpperCase())){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {date,totalAssets,totalLiabilities,totalEquity,fiscalYearId,confirmed,status};    
@@ -560,16 +571,16 @@ export async function saveBalanceSheet({date,totalAssets,totalLiabilities,totalE
 
 export async function saveAs({sourceId,totalAssets,totalEquity,totalLiabilities,fiscalYearId}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         const parseTotalAsset = parseFloat(totalAssets);
         const parseTotalEquity = parseFloat(totalEquity);
         const parseTotalLiabilities = parseFloat(totalLiabilities);
-        if(isNaN(parseTotalAsset) || parseTotalAsset <= 0 || isNaN(parseTotalEquity) || parseTotalEquity <= 0 || isNaN(parseTotalLiabilities) || parseTotalLiabilities <= 0){
+        if(Number.isNaN(Number(parseTotalAsset)) || parseTotalAsset <= 0 || Number.isNaN(Number(parseTotalEquity)) || parseTotalEquity <= 0 || Number.isNaN(Number(parseTotalLiabilities)) || parseTotalLiabilities <= 0){
             throw new Error("Imovina "+parseTotalAsset+" ,kapital "+parseTotalEquity+" i odgovornost "+parseTotalLiabilities+" motaju biti brojevi");
         }
-        if(isNaN(fiscalYearId) || fiscalYearId == null){
+        if(Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null){
             throw new Error("ID za fiskalnu godinu "+fiscalYearId+" mora biti ceo broj");
         }
         const requestBody = {totalAssets,totalEquity,totalLiabilities,fiscalYearId};
@@ -588,26 +599,27 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[0];
             const parseAssets = parseFloat(req.totalAssets);
             const parseEquity = parseFloat(req.totalEquity);
             const parseLiability = parseFloat(req.totalLiabilities);
-            if (req.id == null || isNaN(req.id)) {
+            if (Number.isNaN(Number(req.id)) || req.id == null) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.fiscalYearId == null || isNaN(req.fiscalYearId)) {
+            if (req.fiscalYearId == null || Number.isNaN(Number(req.fiscalYearId))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'fiscalYearId' je obavezan i mora biti broj`);
             }
-            if(isNaN(parseAssets) || parseAssets <= 0){
+            if(Number.isNaN(Number(parseAssets)) || parseAssets <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'imovina' mora biti broj`);
             }
-            if(isNaN(parseEquity) || parseEquity <= 0){
+            if(Number.isNaN(Number(parseEquity)) || parseEquity <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'kapital' mora biti broj`);
             }
-            if(isNaN(parseLiability) || parseLiability <= 0){
+            if(Number.isNaN(Number(parseLiability)) || parseLiability <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'odgovornost/liability' mora biti broj`);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

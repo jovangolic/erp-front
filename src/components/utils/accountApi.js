@@ -36,7 +36,7 @@ export async function createAccount({accountNumber,accountName,type,balance}){
 export async function updateAccount({id,accountNumber,accountName,type,balance}){
     try{
         if(
-            id == null || isNaN(id) ||
+            id == null || Number.isNaN(Number(id)) ||
             !accountNumber || typeof accountNumber !=="string" || accountNumber.trim()==="" ||
             !accountName || typeof accountName !=="string" || accountName.trim()==="" ||
             !isAccountTypeValid.includes(type?.toUpperCase()) ||
@@ -57,7 +57,7 @@ export async function updateAccount({id,accountNumber,accountName,type,balance})
 
 export async function deleteAccount(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za account nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -72,7 +72,7 @@ export async function deleteAccount(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za account nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -99,7 +99,7 @@ export async function findAll(){
 
 export async function findOneWithTransactions(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za detaljan-racun sa transakcijama, nije pronadjen");
         }
         const response = await api.get(url+`/detailed-account/${id}`,{
@@ -283,7 +283,7 @@ export async function findByAccountNameAndAccountNumber({accountName, accountNum
 
 export async function confirmAccount(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("ID "+id+" za zatvaranje racuna, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -298,7 +298,7 @@ export async function confirmAccount(id){
 
 export async function cancelAccount(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("ID "+id+" za otkazivanje racuna, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -313,7 +313,7 @@ export async function cancelAccount(id){
 
 export async function closeAccount(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("ID "+id+" za zatvaranje racuna, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -328,7 +328,7 @@ export async function closeAccount(id){
 
 export async function changeStatus({id, status}){
     try{    
-        if(isNaN(id) || id == null || !isAccountStatusIsValid.includes(status?.toUpperCase())){
+        if(id == null || Number.isNaN(Number(id)) || !isAccountStatusIsValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status racuna "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -343,7 +343,7 @@ export async function changeStatus({id, status}){
 
 export async function trackAccountSourceTransactions(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" izvornog-racuna za pracenje, nije pronadjen");
         }
         const response = await api.post(url+`/track-source/${id}`,{
@@ -358,7 +358,7 @@ export async function trackAccountSourceTransactions(id){
 
 export async function trackAccountTargetTransactions(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" ciljanog-racuna za pracenje, nije pronadjen");
         }
         const response = await api.post(url+`/track-target/${id}`,{
@@ -373,7 +373,7 @@ export async function trackAccountTargetTransactions(id){
 
 export async function trackAll(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" za precenje racuna, nije pronadjen");
         }
         const response = await api.get(url+`/track-all/${id}`,{
@@ -446,7 +446,7 @@ export async function saveAccount({accountNumber,accountName,balance,type,status
 
 export async function saveAs({sourceId,accountNumber,accountName}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        if(Number.isNaN(sourceId) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         if(!accountName?.trim() || !accountNumber?.trim()){
@@ -471,9 +471,10 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || isNaN(req.id)) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[i];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
             }
             if(!req.accountName?.trim() ){
                 throw new Error(`Nevalidan account-name vrednost na indexu ${index}: 'account-name' je obavezan`);
@@ -496,7 +497,7 @@ export async function saveAll(requests){
             if (typeof confirmed !== "boolean") {
                 throw new Error("Polje 'confirmed' mora biti boolean");
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

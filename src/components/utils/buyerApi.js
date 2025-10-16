@@ -68,7 +68,7 @@ export async function updateBuyer({pib, companyName, address, contactPerson, ema
 
 export async function deleteBuyer(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za kupca nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -83,7 +83,7 @@ export async function deleteBuyer(id){
 
 export async function getBuyerById(id) {
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/buyer/${id}`,{
@@ -312,7 +312,7 @@ export async function searchBuyers({companyName, email}){
 
 export async function trackBuyer(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" kupca za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track/${id}`,{
@@ -327,7 +327,7 @@ export async function trackBuyer(id){
 
 export async function confirmBuyer(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("ID "+id+" za potvrdu kupca, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -342,8 +342,8 @@ export async function confirmBuyer(id){
 
 export async function closeBuyer(id){
     try{
-        if(isNaN(id) || id == null){
-                    throw new Error("ID "+id+" za zatvaranje bom, nije pronadjen");
+        if(id == null || Number.isNaN(Number(id))){
+            throw new Error("ID "+id+" za zatvaranje bom, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
              headers:getHeader()
@@ -357,8 +357,8 @@ export async function closeBuyer(id){
 
 export async function cancelBuyer(id){
     try{
-        if(isNaN(id) || id == null){
-                throw new Error("ID "+id+" za otkazivanje kupca, nije pronadjen");
+        if(id == null || Number.isNaN(Number(id))){
+            throw new Error("ID "+id+" za otkazivanje kupca, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
              headers:getHeader()
@@ -372,7 +372,7 @@ export async function cancelBuyer(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isBuyerStatusValid.includes(status?.toUpperCase())){
+        if(id == null || Number.isNaN(Number(id)) || !isBuyerStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status kupca "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -404,7 +404,7 @@ export async function saveBuyer({companyName,pib,address,contactPerson,email,pho
 
 export async function saveAs({sourceId,companyName,pib,address,contactPerson,email,phoneNumber}){
     try{
-        if(isNaN(sourceId) || sourceId == null){
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         if(!companyName?.trim()){
@@ -441,8 +441,9 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || isNaN(req.id)) {
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[0];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
             if(!req.companyName?.trim()){
@@ -469,7 +470,7 @@ export async function saveAll(requests){
             if(typeof req.confirmed !== "boolean"){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

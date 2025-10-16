@@ -105,7 +105,7 @@ export const downloadConfirmationDocument = async (id) => {
 
 export async function trackConfirmationDoc(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
           throw new Error("Dati id "+id+" za pracenje dokumenta, nije pronadjen");
         }
         const response = await api.get(url+`/track-confirmation-doc/${id}`,{
@@ -120,7 +120,7 @@ export async function trackConfirmationDoc(id){
 
 export async function confirmConfDoc(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id))  || id == null){
             throw new Error("Dati id "+id+" za potvrdjivanje dokumenta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -135,7 +135,7 @@ export async function confirmConfDoc(id){
 
 export async function cancelConfirmationDoc(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id))  || id == null){
             throw new Error("ID "+id+" za otkazivanje dokumenta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -150,7 +150,7 @@ export async function cancelConfirmationDoc(id){
 
 export async function closeConfirmationDoc(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id))  || id == null){
             throw new Error("ID "+id+" za zatvaranje dokumenta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -165,7 +165,7 @@ export async function closeConfirmationDoc(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isConfirmationDocumentValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id))  || id == null || !isConfirmationDocumentValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status dokumenta "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -179,16 +179,17 @@ export async function changeStatus({id, status}){
 }
 
 export async function saveConfirmationDoc({filePath,createdAt,userId,shiftId,status, confirmed = false}){
-    try{  
-      if(!filePath?.trim() || !moment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid() || isNaN(userId) || userId == null || isNaN(shiftId) || shiftId == null ||
-         !isConfirmationDocumentValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
-        throw new Error("Sva polja moraju biti popunjena i validna");
-      }
-      const requestBody = {filePath,createdAt,userId,shiftId,status, confirmed};
-      const response = await api.post(url+`/save`,requestBody,{
-          headers:getHeader()
-      });
-      return response.data;
+    try{ 
+        const validDate = moment.isMoment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!filePath?.trim() || !validDate || Number.isNaN(Number(userId)) || userId == null || Number.isNaN(Number(shiftId)) || shiftId == null ||
+            !isConfirmationDocumentValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        const requestBody = {filePath,createdAt,userId,shiftId,status, confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
     }
     catch(error){
         handleApiError(error,"Greska prilikom memorisanja/save");
@@ -197,13 +198,13 @@ export async function saveConfirmationDoc({filePath,createdAt,userId,shiftId,sta
 
 export async function saveAs({sourceId, filePath,userId,shiftId,status,confirmed = false}){
     try{  
-        if(isNaN(sourceId) || sourceId == null){
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
-        if(isNaN(userId) || userId == null){
+        if(Number.isNaN(Number(userId)) || userId == null){
             throw new Error("Id "+userId+" mora biti ceo broj");
         }
-        if(isNaN(shiftId) || shiftId == null){
+        if(Number.isNaN(Number(shiftId)) || shiftId == null){
             throw new Error("Id "+shiftId+" mora biti ceo broj");
         }
         if(!isConfirmationDocumentValid.includes(status?.toUpperCase())){
@@ -222,20 +223,22 @@ export async function saveAs({sourceId, filePath,userId,shiftId,status,confirmed
         handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
     }
 }
-
+ const validDate = moment.isMoment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
 export async function saveAll(requests){
     try{
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || isNaN(req.id)) {
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[0];
+            const validDate = moment.isMoment(req.createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+            if (req.id == null || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.userId == null || isNaN(req.userId)) {
+            if (req.userId == null || Number.isNaN(Number(req.userId))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'userId' je obavezan i mora biti broj`);
             }
-            if (req.shiftId == null || isNaN(req.shiftId)) {
+            if (req.shiftId == null || Number.isNaN(Number(req.shiftId))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'shiftId' je obavezan i mora biti broj`);
             }
             if(!req.filePath?.trim()){
@@ -247,7 +250,7 @@ export async function saveAll(requests){
             if(typeof req.confirmed !== "boolean"){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

@@ -1,4 +1,4 @@
-import moment, { min } from "moment";
+import moment, { isMoment, min } from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 function handleApiError(error, customMessage) {
@@ -15,9 +15,11 @@ export async function createCapacityPlanning({workCenterId,date,availableCapacit
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(workCenterId) || workCenterId == null || !moment(date,"YYYY-MM-DD",true).isValid() ||
-            isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0 ||
-            isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+        const planDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(
+            Number.isNaN(Number(workCenterId)) || workCenterId == null || !planDate ||
+            Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0 ||
+            Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
             throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {workCenterId,date,availableCapacity,plannedLoad};
@@ -35,10 +37,12 @@ export async function updateCapacityPlanning({id,workCenterId,date,availableCapa
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(id) || id == null ||
-            isNaN(workCenterId) || workCenterId == null || !moment(date,"YYYY-MM-DD",true).isValid() ||
-            isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0 ||
-            isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+        const planDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(
+            Number.isNaN(Number(id)) || id == null ||
+            Number.isNaN(Number(workCenterId)) || workCenterId == null || !planDate ||
+            Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0 ||
+            Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
             throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {workCenterId,date,availableCapacity,plannedLoad};
@@ -54,7 +58,7 @@ export async function updateCapacityPlanning({id,workCenterId,date,availableCapa
 
 export async function deleteCapacityPlanning(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -69,7 +73,7 @@ export async function deleteCapacityPlanning(id){
 
 export async function findOne(id){
     try{
-       if(isNaN(id) || id == null){
+       if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati ID "+id+" nije pronadjen");
         } 
         const response = await api.get(url+`/find-one/${id}`,{
@@ -96,7 +100,7 @@ export async function findAll(){
 
 export async function findByWorkCenter_Id(workCenterId){
     try{
-        if(isNaN(workCenterId) || workCenterId == null){
+        if(Number.isNaN(Number(workCenterId)) || workCenterId == null){
             throw new Error("Dati id "+workCenterId+" za radni centar, nije pronadjen");
         }
         const response = await api.get(url+`/workCenter/${workCenterId}`,{
@@ -147,9 +151,13 @@ export async function findByWorkCenter_LocationContainingIgnoreCase(location){
 
 export async function findByDateBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid() || 
-            !moment(end,"YYYY-MM-DD",true).isValid()){
+        const dateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        const dateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
+        if(!dateStart || !dateEnd ){
             throw new Error("Dati opseg datuma "+start+" - "+end+" za planiranje kapaciteta nije pronadjen");
+        }
+        if(moment(dateEnd).isBefore(moment(dateStart))){
+            throw new Error("Datum kraja ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/date-range`,{
             params:{
@@ -167,7 +175,8 @@ export async function findByDateBetween({start, end}){
 
 export async function findByDate(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
+        const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validDate){
             throw new Error("Dati datuma "+date+" za kapacitet planiranja, nije pronadjen");
         }
         const response = await api.get(url+`/by-date`,{
@@ -185,7 +194,8 @@ export async function findByDate(date){
 
 export async function findByDateGreaterThanEqual(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
+        const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validDate){
             throw new Error("Dati datum "+date+" za kapacitet planiranja, nije pronadjen");
         }
         const response = await api.get(url+`/date-greater-than`,{
@@ -204,7 +214,7 @@ export async function findByDateGreaterThanEqual(date){
 export async function findByAvailableCapacity(availableCapacity){
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
-        if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
+        if(Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
             throw new Error("Dati slobodni kapacitet "+parseAvailableCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/by-available-capacity`,{
@@ -223,7 +233,7 @@ export async function findByAvailableCapacity(availableCapacity){
 export async function findByAvailableCapacityGreaterThan(availableCapacity){
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
-        if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
+        if(Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
             throw new Error("Dati slobodni kapacitet veci od "+parseAvailableCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/available-capacity-greater-than`,{
@@ -242,7 +252,7 @@ export async function findByAvailableCapacityGreaterThan(availableCapacity){
 export async function findByAvailableCapacityLessThan(availableCapacity){
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
-        if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
+        if(Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
             throw new Error("Dati slobodni kapacitet manji od "+parseAvailableCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/available-capacity-less-than`,{
@@ -261,7 +271,7 @@ export async function findByAvailableCapacityLessThan(availableCapacity){
 export async function findByPlannedLoad(plannedLoad){
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+        if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
             throw new Error("Data planirana kolicina "+parsePlannedLoad+" za kapacitet planiranja, nije pronadjena");
         }
         const response = await api.get(url+`/by-planned-load`,{
@@ -280,7 +290,7 @@ export async function findByPlannedLoad(plannedLoad){
 export async function findByPlannedLoadGreaterThan(plannedLoad){
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+        if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
             throw new Error("Data planirana kolicina veca od "+parsePlannedLoad+", za kapacitet planiranja, nije pronadjena");
         }
         const response = await api.get(url+`/planned-load-greater-than`,{
@@ -299,7 +309,7 @@ export async function findByPlannedLoadGreaterThan(plannedLoad){
 export async function findByPlannedLoadLessThan(plannedLoad){
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+        if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
             throw new Error("Data planirana kolicina manja od "+parsePlannedLoad+", za kapacitet planiranja, nije pronadjena");
         }
         const response = await api.get(url+`/planned-load-less-than`,{
@@ -319,7 +329,7 @@ export async function findByPlannedLoadAndAvailableCapacity({plannedLoad, availa
     try{
         const parsePlannedLoad = parseFloat(plannedLoad);
         const parseAvailableCapacity = parseFloat(availableCapacity);
-        if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0 || isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
+        if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0 || Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
             throw new Error("Data planirana "+parsePlannedLoad+" i dostupna "+parseAvailableCapacity+" kolicina za planiranje kapaciteta, nije pronadjena");
         }
         const response = await api.get(url+`/planned-load-available-capacity`,{
@@ -339,7 +349,7 @@ export async function findByPlannedLoadAndAvailableCapacity({plannedLoad, availa
 export async function findByRemainingCapacity(remainingCapacity){
     try{
         const parseRemainingCapacity = parseFloat(remainingCapacity);
-        if(isNaN(parseRemainingCapacity) || parseRemainingCapacity <= 0){
+        if(Number.isNaN(Number(parseRemainingCapacity)) || parseRemainingCapacity <= 0){
             throw new Error("Data preostala "+parseRemainingCapacity+" kolicina nije pronadjena");
         }
         const response = await api.get(url+`/remaining-capacity`,{
@@ -405,7 +415,7 @@ export async function findWhereLoadExceedsCapacity(){
 
 export async function findByUtilizationGreaterThan(threshold){
     try{
-        if(isNaN(threshold) || threshold == null){
+        if(Number.isNaN(Number(threshold)) || threshold == null){
             throw new Error("Dati prag "+threshold+" za upotrebu vecu od, nije pronadjen");
         }
         const response = await api.get(url+`/utilization-greater-than`,{
@@ -507,7 +517,7 @@ export async function countCapacityPlanningsByYearAndMonth(){
 
 export async function trackCapacityPlanning(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" planiranja-kapaciteta za pracenje, nije pronadjen");
         }
         const response = await api.post(url+`/track/${id}`,{
@@ -522,7 +532,7 @@ export async function trackCapacityPlanning(id){
 
 export async function confirmCapacityPlanning(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu planiranja-kapaciteta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -537,7 +547,7 @@ export async function confirmCapacityPlanning(id){
 
 export async function closeCapacityPlanning(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje planiranja-kapaciteta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -552,7 +562,7 @@ export async function closeCapacityPlanning(id){
 
 export async function cancelCapacityPlanning(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje planiranja-kapaciteta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -567,7 +577,7 @@ export async function cancelCapacityPlanning(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isCapacityPlanningStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isCapacityPlanningStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status planiranja-kapaciteta "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -584,9 +594,11 @@ export async function saveCapacityPlanning({workCenterId,date,availableCapacity,
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(workCenterId) || workCenterId == null || !moment(date,"YYYY-MM-DD",true).isValid() || isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0 ||
-           isNaN(parsePlannedLoad) || parsePlannedLoad <= 0 || !isCapacityPlanningStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean") {
-            throw new Error("Sva polja moraju biti popunjena i validna");
+        const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(
+            Number.isNaN(Number(workCenterId)) || workCenterId == null || !validDate || Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0 ||
+            Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0 || !isCapacityPlanningStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean") {
+                throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {workCenterId,date,availableCapacity,plannedLoad,status,confirmed};
         const response = await api.post(url+`/save`,requestBody,{
@@ -603,19 +615,20 @@ export async function saveAs({sourceId, workCenterId,date,availableCapacity,plan
     try{
         const parseAvailableCapacity = parseFloat(availableCapacity);
         const parsePlannedLoad = parseFloat(plannedLoad);
-        if(isNaN(sourceId) || sourceId == null){
+        const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(Number.isNaN(Number(sourceId)) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
-        if(isNaN(workCenterId) || workCenterId == null){
+        if(Number.isNaN(Number(workCenterId)) || workCenterId == null){
             throw new Error("Id "+workCenterId+" mora biti ceo broj");
         }
-        if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
+        if(Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
             throw new Error("Dostupna kolicina "+parseAvailableCapacity+" nora biti broj");
         }
-        if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+        if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
             throw new Error("Planirana kolicina "+parsePlannedLoad+" mora biti broj");
         }
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
+        if(!validDate){
             throw new Error("Datum "+date+" mora biti unet");
         }
         if(!isCapacityPlanningStatusValid.includes(status?.toUpperCase())){
@@ -640,22 +653,24 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || isNaN(req.id)) {
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[0];
+            const validDate = moment.isMoment(req.data) || moment(req.data,"YYYY-MM-DD",true).isValid();
+            if (req.id == null || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.workCenterId == null || isNaN(req.workCenterId)) {
+            if (req.workCenterId == null || Number.isNaN(Number(req.workCenterId))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'workCenterId' je obavezan i mora biti broj`);
             }
             const parseAvailableCapacity = parseFloat(req.availableCapacity);
             const parsePlannedLoad = parseFloat(req.plannedLoad);
-            if(isNaN(parseAvailableCapacity) || parseAvailableCapacity <= 0){
+            if(Number.isNaN(Number(parseAvailableCapacity)) || parseAvailableCapacity <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'dostupna-kolicina' mora biti broj`);
             }
-            if(isNaN(parsePlannedLoad) || parsePlannedLoad <= 0){
+            if(Number.isNaN(Number(parsePlannedLoad)) || parsePlannedLoad <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'planirana-kolicina' mora biti broj`);
             }
-            if(!moment(date,"YYYY-MM-DD",true).isValid()){
+            if(!validDate){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'datum' se mora uneti`);
             }
             if(!isCapacityPlanningStatusValid.includes(req.status?.toUpperCase())){
@@ -664,7 +679,7 @@ export async function saveAll(requests){
             if(typeof req.confirmed !== "boolean"){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

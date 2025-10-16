@@ -18,8 +18,8 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/billOfMaterials`;
 export async function createBillOfMaterial({parentProductId,componentId,quantity}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null ||
-            isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(componentId)) || componentId == null ||
+           Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {parentProductId,componentId,quantity};
@@ -36,9 +36,9 @@ export async function createBillOfMaterial({parentProductId,componentId,quantity
 export async function updateBillOfMaterial({id,parentProductId,componentId,quantity}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(id == null || isNaN(id) ||
-            isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null ||
-            isNaN(parseQuantity) || parseQuantity <= 0){
+        if( id == null || Number.isNaN(Number(id)) ||
+            Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(componentId)) || componentId == null ||
+            Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ){
             throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {parentProductId,componentId,quantity};
@@ -54,7 +54,7 @@ export async function updateBillOfMaterial({id,parentProductId,componentId,quant
 
 export async function deleteBillOfMaterial(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za billOfMaterial nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -69,7 +69,7 @@ export async function deleteBillOfMaterial(id){
 
 export async function findOne(id){
     try{
-        if(isNaN(id) || id == null){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za billOfMaterial nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -96,7 +96,7 @@ export async function findAll(){
 
 export async function findByParentProductId(parentProductId){
     try{
-        if(isNaN(parentProductId) || parentProductId == null){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null){
             throw new Error("Dati ID "+parentProductId+" za parent-product nije pronadjen");
         }
         const response = await api.get(url+`/by-parent/${parentProductId}`,{
@@ -111,7 +111,7 @@ export async function findByParentProductId(parentProductId){
 
 export async function findByComponentId(componentId){
     try{
-        if(isNaN(componentId) || componentId == null){
+        if(Number.isNaN(Number(componentId)) || componentId == null){
             throw new Error("Dati ID "+componentId+" za komponentu, nije pronadjen");
         }
         const response = await api.get(url+`/by-component/${componentId}`,{
@@ -127,7 +127,7 @@ export async function findByComponentId(componentId){
 export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina veca od "+parseQuantity+", nije pronadjena za bill-of-material");
         }
         const response = await api.get(url+`/quantity-greater-than`,{
@@ -144,7 +144,7 @@ export async function findByQuantityGreaterThan(quantity){
 export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina "+parseQuantity+", nije pronadjena za bill-of-material");
         }
         const response = await api.get(url+`/by-quantity`,{
@@ -161,7 +161,7 @@ export async function findByQuantity(quantity){
 export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina manja od "+parseQuantity+", nije pronadjena za bill-of-material");
         }
         const response = await api.get(url+`/quantity-less-than`,{
@@ -179,8 +179,9 @@ export async function filterBOMs({parentProductId, componentId, minQuantity, max
     try{
         const parseMinQuantity = parseFloat(minQuantity);
         const parseMaxQuantity = parseFloat(maxQuantity);
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null ||
-            isNaN(parseMinQuantity) || parseMinQuantity <= 0 || isNaN(parseMaxQuantity) || parseMaxQuantity <= 0){
+        if(
+            Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(componentId)) || componentId == null ||
+            Number.isNaN(Number(parseMinQuantity)) || parseMinQuantity <= 0 || Number.isNaN(Number(parseMaxQuantity)) || parseMaxQuantity <= 0){
             throw new Error("Parametri za pretragu bill-of-material,: "+parentProductId+" ,"+componentId+" ,"+parseMinQuantity+" ,"+parseMaxQuantity+" ne daju rezultat");
         }
         const response = await api.get(url+`/filter-boms`,{
@@ -202,7 +203,7 @@ export async function filterBOMs({parentProductId, componentId, minQuantity, max
 export async function findByParentProduct_CurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina "+parseCurrentQuantity+" za parent-product, nije pronadjena");
         }
         const response = await api.get(url+`/search/parent-product-current-quantity`,{
@@ -219,7 +220,7 @@ export async function findByParentProduct_CurrentQuantity(currentQuantity){
 export async function findByParentProduct_CurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina manja od "+parseCurrentQuantity+", za parent-product, nije pronadjena");
         }
         const response = await api.get(url+`/search/parent-product-current-quantity-less-than`,{
@@ -236,7 +237,7 @@ export async function findByParentProduct_CurrentQuantityLessThan(currentQuantit
 export async function findByParentProduct_CurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina veca od "+parseCurrentQuantity+", za parent-product, nije pronadjena");
         }
         const response = await api.get(url+`/search/parent-product-current-quantity-greater-than`,{
@@ -253,7 +254,7 @@ export async function findByParentProduct_CurrentQuantityGreaterThan(currentQuan
 export async function findByComponent_CurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina za komponent "+parseCurrentQuantity+", nije pronadjena");
         }
         const response = await api.get(url+`/search/component-current-quantity`,{
@@ -270,7 +271,7 @@ export async function findByComponent_CurrentQuantity(currentQuantity){
 export async function findByComponent_CurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina manja od "+parseCurrentQuantity+", za komponent, nije pronadjena");
         }
         const response = await api.get(url+`/search/component-current-quantity-less-than`,{
@@ -287,7 +288,7 @@ export async function findByComponent_CurrentQuantityLessThan(currentQuantity){
 export async function findByComponent_CurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina veca od "+parseCurrentQuantity+", za komponent, nije pronadjena");
         }
         const response = await api.get(url+`/search/component-current-quantity-greater-than`,{
@@ -304,7 +305,7 @@ export async function findByComponent_CurrentQuantityGreaterThan(currentQuantity
 export async function findByParentProductIdAndQuantityGreaterThan({parentProductId, quantity}){
     try{
         const parseCurrentQuantity = parseFloat(quantity);
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Dati id "+parentProductId+" za parent-product i kolicinu vecu od "+parseCurrentQuantity+", nije pronadjena");
         }
         const response = awaitapi.get(url+`/search/by-parent-and-quantity-greater-than`,{
@@ -324,7 +325,7 @@ export async function findByParentProductIdAndQuantityGreaterThan({parentProduct
 export async function findByParentProductIdAndQuantityLessThan({parentProductId, quantity}){
     try{
         const parseCurrentQuantity = parseFloat(quantity);
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
             throw new Error("Dati id  "+parentProductId+"za parent-product i kolicinu manju od "+parseCurrentQuantity+", nije pronadjena");
         }
         const response = awaitapi.get(url+`/search/by-parent-and-quantity-less-than`,{
@@ -343,7 +344,7 @@ export async function findByParentProductIdAndQuantityLessThan({parentProductId,
 
 export async function findByParentProductIdAndComponentId({parentProductId, componentId}){
     try{
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(componentId)) || componentId == null){
             throw new Error("Dati ID "+parentProductId+" za parent-product i komponent "+componentId+", nisu pronadjeni");
         }
         const response = await api.get(url+`/parent-product/${parentProductId}/component/${componentId}`,{
@@ -358,7 +359,7 @@ export async function findByParentProductIdAndComponentId({parentProductId, comp
 
 export async function existsByParentProductIdAndComponentId({parentProductId, componentId}){
     try{
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(componentId)) || componentId == null){
             throw new Error("Dati ID "+parentProductId+" za parent-product i komponent "+componentId+", nisu pronadjeni");
         }
         const response = await api.get(url+`/exists-by-parent-component`,{
@@ -377,7 +378,7 @@ export async function existsByParentProductIdAndComponentId({parentProductId, co
 
 export async function deleteByParentProductId(parentProductId){
     try{
-        if(isNaN(parentProductId) || parentProductId == null){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null){
             throw new Error("Dati ID "+parentProductId+" za parent-product, nije pronadjen");
         }
         const response = await api.delete(url+`/delete-parent/${parentProductId}`,{
@@ -392,7 +393,7 @@ export async function deleteByParentProductId(parentProductId){
 
 export async function findByParentProductIdOrderByQuantityDesc(parentProductId){
     try{
-        if(isNaN(parentProductId) || parentProductId == null){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null){
             throw new Error("Dati ID "+parentProductId+" za parent-product, nije pronadjen");
         }
         const response = await api.get(url+`/parent-product-by-quantity-desc`,{
@@ -408,7 +409,7 @@ export async function findByParentProductIdOrderByQuantityDesc(parentProductId){
 
 export async function findByParentProductIdOrderByQuantityAsc(parentProductId){
     try{
-        if(isNaN(parentProductId) || parentProductId == null){
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null){
             throw new Error("Dati ID "+parentProductId+" za parent-product, nije pronadjen");
         }
         const response = await api.get(url+`/parent-product-by-quantity-asc`,{
@@ -426,7 +427,7 @@ export async function findByQuantityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
+        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
             throw new Error("Dati opseg "+min+" - "+max+" za kolicinu, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-between`,{
@@ -445,7 +446,7 @@ export async function findByQuantityBetween({min, max}){
 
 export async function findComponentsByProductIdAndComponentNameContaining({productId, name}){
     try{
-        if(isNaN(productId) || productId == null ||
+        if(Number.isNaN(Number(productId)) || productId == null ||
             !name || typeof name !== "string" || name.trim() === ""){
             throw new Error("Dati id "+productId+" za parent-product i njegov naziv "+name+", nisu pronadjeni");
         }
@@ -548,7 +549,7 @@ export async function findByParentProduct_UnitMeasure(unitMeasure){
 
 export async function findByComponent_Shelf_Id(shelfId){
     try{
-        if(isNaN(shelfId) || shelfId == null){
+        if(Number.isNaN(Number(shelfId)) || shelfId == null){
             throw new Error("Dati id  "+shelfId+"za policu, nije pronadjen");
         }
         const response = await api.get(url+`/component/shelf/${shelfId}`,{
@@ -563,7 +564,7 @@ export async function findByComponent_Shelf_Id(shelfId){
 
 export async function findByParentProduct_Storage_Id(storageId){
     try{
-        if(isNaN(storageId) || storageId == null){
+        if(Number.isNaN(Number(storageId)) || storageId == null){
             throw new Error("Dati ID "+storageId+" skladista, nije pronadjen");
         }
         const response = await api.get(url+`/parent-product/storage/${storageId}`,{
@@ -578,7 +579,7 @@ export async function findByParentProduct_Storage_Id(storageId){
 
 export async function findByParentProduct_Shelf_Id(shelfId){
     try{
-        if(isNaN(shelfId) || shelfId == null){
+        if(Number.isNaN(Number(shelfId)) || shelfId == null){
             throw new Error("Dati id "+shelfId+" za policu, nije pronadjen");
         }
         const response = await api.get(url+`/parent-product/shelf/${shelfId}`,{
@@ -593,7 +594,7 @@ export async function findByParentProduct_Shelf_Id(shelfId){
 
 export async function findByComponent_Storage_Id(storageId){
     try{
-        if(isNaN(storageId) || storageId == null){
+        if(Number.isNaN(Number(storageId)) || storageId == null){
             throw new Error("Dati ID "+storageId+" skladista, nije pronadjen");
         }
         const response = await api.get(url+`/component/storage/${storageId}`,{
@@ -662,7 +663,7 @@ export async function findByComponent_UnitMeasure(unitMeasure){
 
 export async function findByParentProduct_Supply_Id(supplyId){
     try{
-        if(isNaN(supplyId) || supplyId == null){
+        if(Number.isNaN(Number(supplyId)) || supplyId == null){
             throw new Error("Dati id "+supplyId+" dobavljaca za parent-product, nije pronadjen");
         }
         const response = await api.get(url+`/parent-product/supply/${supplyId}`,{
@@ -677,7 +678,7 @@ export async function findByParentProduct_Supply_Id(supplyId){
 
 export async function findByComponent_Supply_Id(supplyId){
     try{
-        if(isNaN(supplyId) || supplyId == null){
+        if(Number.isNaN(Number(supplyId)) || supplyId == null){
             throw new Error("Dati id "+supplyId+" dobavljaca za komponent, nije pronadjen");
         }
         const response = await api.get(url+`/component/supply/${supplyId}`,{
@@ -728,7 +729,7 @@ export async function findByParentProduct_StorageType(type){
 
 export async function findByParentProduct_Storage_IdAndComponent_GoodsType({storageId, goodsType}){
     try{
-        if(isNaN(storageId) || storageId == null || !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
+        if(Number.isNaN(Number(storageId)) || storageId == null || !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
             throw new Error("Dati id "+storageId+" skladista i tip "+goodsType+" robe, za parent-product, nije pronadjen");
         }
         const response = await api.get(url+`/parent-product/storage/${storageId}/goods-type`,{
@@ -759,7 +760,7 @@ export async function findWhereParentAndComponentShareSameStorage(){
 export async function findByMinQuantityAndComponentGoodsType({minQuantity, goodsType}){
     try{
         const parseMinQuantity = parseFloat(minQuantity);
-        if(parseMinQuantity <= 0 || isNaN(parseMinQuantity) || !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
+        if(parseMinQuantity <= 0 || Number.isNaN(Number(parseMinQuantity)) || !isGoodsTypeValid.includes(goodsType?.toUpperCase())){
             throw new Error("Data minimalna "+parseMinQuantity+" kolicina i tip "+goodsType+" robe za komponentu, nije pronadjena");
         }
         const response = await api.get(url+`/search/min-quantity-component-goods-type`,{
@@ -778,7 +779,7 @@ export async function findByMinQuantityAndComponentGoodsType({minQuantity, goods
 
 export async function findByComponentStorageAndUnitMeasure({storageId, unitMeasure}){
     try{
-        if(isNaN(storageId) || storageId == null || !isUnitMeasureValid.includes(unitMeasure?.toUpperCase())){
+        if(Number.isNaN(Number(storageId)) || storageId == null || !isUnitMeasureValid.includes(unitMeasure?.toUpperCase())){
             throw new Error("Dati id "+storageId+" skladista i jedinica mere "+unitMeasure+" za komponentu, nije pronadjena");
         }
         const response = await api.get(url+`/search/by-component-storage-and-unit`,{
@@ -821,7 +822,7 @@ export async function findAllOrderByQuantityAsc(){
 
 export async function trackParentProduct(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" parent-product za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track-parent-product/${id}`,{
@@ -836,7 +837,7 @@ export async function trackParentProduct(id){
 
 export async function trackComponent(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" component za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track-component/${id}`,{
@@ -851,7 +852,7 @@ export async function trackComponent(id){
 
 export async function confirmBOM(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu bom, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -866,7 +867,7 @@ export async function confirmBOM(id){
 
 export async function cancelBOM(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje bom, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -881,7 +882,7 @@ export async function cancelBOM(id){
 
 export async function closeBOM(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje bom, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -896,7 +897,7 @@ export async function closeBOM(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(isNaN(id) || id == null || !isBillOfMaterialsStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isBillOfMaterialsStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status bom "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -912,7 +913,7 @@ export async function changeStatus({id, status}){
 export async function saveBOM({parentProductId,componentId,quantity,status,confirmed = false}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parentProductId) || parentProductId == null || isNaN(componentId) || componentId == null || isNaN(parseQuantity) || parseQuantity <= 0 ||
+        if(Number.isNaN(Number(parentProductId)) || parentProductId == null || Number.isNaN(Number(componentId)) || componentId == null || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
            !isBillOfMaterialsStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
@@ -929,14 +930,14 @@ export async function saveBOM({parentProductId,componentId,quantity,status,confi
 
 export async function saveAs({sourceId,newParentProductId,newParentProductName,newComponentId,newComponentName,quantity,confirmed = false, status}){
     try{
-        if(sourceId === undefined || sourceId == null || Number.isNaN(Number(sourceId))){
+        if(sourceId == null || Number.isNaN(Number(sourceId))){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Kolicina "+parseQuantity+" mora biti broj");
         }
-        if(isNaN(newParentProductId) || newParentProductId == null || isNaN(newComponentId) || newComponentId == null){
+        if(Number.isNaN(Number(newParentProductId)) || newParentProductId == null || Number.isNaN(Number(newComponentId)) || newComponentId == null){
             throw new Error("ID za parent "+newParentProductId+ " i ID za komponentu"+newComponentId+" mora biti ceo broj");
         }
         if(!newComponentName?.trim() || !newParentProductName?.trim()){
@@ -964,18 +965,19 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if (req.id == null || req.id === undefined || Number.isNaN(Number(req.id))) {
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[0];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
             const parseQuantity = parseFloat(req.quantity);
-            if(isNaN(parseQuantity) || parseQuantity <= 0){
+            if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'kolicina' mora biti broj`);
             }
-            if(req.parentProductId == null || req.parentProductId === undefined || Number.isNaN(Number(req.parentProductId))){
+            if(req.parentProductId == null || Number.isNaN(Number(req.parentProductId))){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'parent-product-id' je obavezan i mora biti broj`);
             }
-            if(req.componentId == null || req.componentId === undefined || Number.isNaN(Number(req.componentId))){
+            if(req.componentId == null || Number.isNaN(Number(req.componentId))){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'component-id' je obavezan i mora biti broj`);
             }
             if(!isBillOfMaterialsStatusValid.includes(req.status?.toUpperCase())){
@@ -984,7 +986,7 @@ export async function saveAll(requests){
             if(typeof req.confirmed !== "boolean"){
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'confirmed' je obavezan `);
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });

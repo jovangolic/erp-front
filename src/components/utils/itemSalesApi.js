@@ -10,14 +10,19 @@ const isOrderStatusValid = ["CREATED", "PAID", "SHIPPED", "CANCELLED", "PENDING"
 
 export async function createItemSales({goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice}){
     try{
+        const parseQuantity = parseInt(quantity, 10);
+        const parseUnitPrice = parseFloat(unitPrice);
         if(
-            !goodsId || !salesId || !procurementId || !salesOrderId ||
-            isNaN(quantity) || parseInt(quantity) <= 0 ||
-            isNaN(unitPrice) || parseFloat(unitPrice) <= 0
+            goodsId == null || Number.isNaN(Number(goodsId)) || 
+            salesId == null || Number.isNaN(Number(salesId)) || 
+            procurementId == null || Number.isNaN(Number(procurementId)) || 
+            salesOrderId == null || Number.isNaN(Number(salesOrderId)) ||
+            Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            Number.isNaN(Number(parseUnitPrice)) || parseUnitPrice <= 0
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {goodsId, salesId, procurementId, salesOrderId, quantity:parseInt(quantity), unitPrice:parseFloat(unitPrice)};
+        const requestBody = {goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice};
         const response = await api.post(url+`/create/new-item-sales`,requestBody,{
             headers:getHeader()
         });
@@ -28,22 +33,27 @@ export async function createItemSales({goodsId, salesId, procurementId, salesOrd
             throw new Error(error.response.data);
         }
         else{
-            throw new Error(`Greška prilikom kreiranja stavke-placanja: ${error.message}`);
+            throw new Error(`Greska prilikom kreiranja stavke-placanja: ${error.message}`);
         }
     }
 }
 
 export async function updateItemSales({id, goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice}){
     try{
+        const parseQuantity = parseInt(quantity, 10);
+        const parseUnitPrice = parseFloat(unitPrice);
         if(
-            id == null || isNaN(id) ||
-            !goodsId || !salesId || !procurementId || !salesOrderId ||
-            isNaN(quantity) || parseInt(quantity) <= 0 ||
-            isNaN(unitPrice) || parseFloat(unitPrice) <= 0
+            id == null || Number.isNaN(Number(id))  || 
+            goodsId == null || Number.isNaN(Number(goodsId)) || 
+            salesId == null || Number.isNaN(Number(salesId)) || 
+            procurementId == null || Number.isNaN(Number(procurementId)) || 
+            salesOrderId == null || Number.isNaN(Number(salesOrderId)) ||
+            Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            Number.isNaN(Number(parseUnitPrice)) || parseUnitPrice <= 0
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {goodsId, salesId, procurementId, salesOrderId, quantity:parseInt(quantity), unitPrice:parseFloat(unitPrice)};
+        const requestBody = {goodsId, salesId, procurementId, salesOrderId, quantity, unitPrice};
         const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });
@@ -54,14 +64,14 @@ export async function updateItemSales({id, goodsId, salesId, procurementId, sale
             throw new Error(error.response.data);
         }
         else{
-            throw new Error(`Greška prilikom azuriranja stavke-placanja: ${error.message}`);
+            throw new Error(`Greska prilikom azuriranja stavke-placanja: ${error.message}`);
         }
     }
 }
 
 export async function deleteItemSales(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za itemSales ne postoji");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -76,7 +86,7 @@ export async function deleteItemSales(id){
 
 export async function getOneItemSales(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za itemSales ne postoji");
         }
         const response = await api.get(url+`/item/${id}`,{
@@ -103,7 +113,7 @@ export async function getAllItemSales(){
 
 export async function findByGoods_Id(goodsId){
     try{
-        if(goodsId == null || isNaN(goodsId)){
+        if(goodsId == null || Number.isNaN(Number(goodsId))){
             throw new Error("Dati ID "+goodsId+" za robu nije pronadjen");
         }
         const response = await api.get(utl+`/itemSale/by-goods/${goodsId}`,{
@@ -199,7 +209,7 @@ export async function findByGoods_GoodsType(goodsType){
 
 export async function findByGoods_Storage_Id(storageId){
     try{
-        if(storageId == null || isNaN(storageId)){
+        if(storageId == null || Number.isNaN(Number(storageId))){
             throw new Error("Dati ID "+storageId+" za skladiste robe nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-storage/${storageId}`,{
@@ -214,7 +224,7 @@ export async function findByGoods_Storage_Id(storageId){
 
 export async function findByGoods_Supply_Id(supplyId){
     try{
-        if(supplyId == null || isNaN(supplyId)){
+        if(supplyId == null || Number.isNaN(Number(supplyId))){
             throw new Error("Dati ID "+supplyId+" za dobavljaca nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-supply/${supplyId}`,{
@@ -229,7 +239,7 @@ export async function findByGoods_Supply_Id(supplyId){
 
 export async function findByGoods_Shelf_Id(shelfId){
     try{
-        if(shelfId == null || isNaN(shelfId)){
+        if(shelfId == null || Number.isNaN(Number(shelfId))){
             throw new Error("Dati ID "+shelfId+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-shelf/${shelfId}`,{
@@ -245,7 +255,7 @@ export async function findByGoods_Shelf_Id(shelfId){
 export async function findByGoods_Shelf_RowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount);
-        if(isNaN(parseRowCount) || parseRowCount <= 0){
+        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0){
             throw new Error("Dati red "+parseRowCount+" police nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-shelf-row`,{
@@ -262,7 +272,7 @@ export async function findByGoods_Shelf_RowCount(rowCount){
 export async function findByGoods_Shelf_Cols(cols){
     try{
         const parseCols = parseInt(cols);
-        if(isNaN(cols) || parseCols <= 0){
+        if(Number.isNaN(Number(cols)) || parseCols <= 0){
             throw new Error("Data kolona "+parseCols+" za policu nije pronadjena");
         }
         const response = await api.get(url+`/itemSale/by-shelf-cols`,{
@@ -278,7 +288,7 @@ export async function findByGoods_Shelf_Cols(cols){
 
 export async function findBySales_Id(salesId){
     try{
-        if(isNaN(salesId) || salesId == null){
+        if(Number.isNaN(Number(salesId)) || salesId == null){
             throw new Error("Dati ID "+salesId+" za prodaju nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-sales/id/${salesId}`,{
@@ -293,7 +303,7 @@ export async function findBySales_Id(salesId){
 
 export async function findBySales_Buyer_Id(buyerId){
     try{
-        if(buyerId == null || isNaN(buyerId)){
+        if(buyerId == null || Number.isNaN(Number(buyerId))){
             throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-sales/buyer/${buyerId}`,{
@@ -308,11 +318,12 @@ export async function findBySales_Buyer_Id(buyerId){
 
 export async function findBySales_CreatedAt(createdAt){
     try{
-        if(!moment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum "+createdAt+" kreiranja nije pronadjen");
+        const validateDate = moment.isMoment(createdAt) || moment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum "+validateDate+" kreiranja nije pronadjen");
         }
         const response = await api.get(url+`/itemSale-by-createdAt`,{
-            params:{createdAt:moment(createdAt).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{createdAt:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -324,16 +335,20 @@ export async function findBySales_CreatedAt(createdAt){
 
 export async function findBySales_CreatedAtBetween({createdAtStart, createdAtEnd}){
     try{
+        const validateDateStart = moment.isMoment(createdAtStart) || moment(createdAtStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(createdAtEnd) || moment(createdAtEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            !moment(createdAtStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(createdAtEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+            !validateDateStart || !validateDateEnd
         ){
-            throw new Error("Dati opseg datuma "+createdAtStart+" - "+createdAtEnd+" nije pronadjen");
+            throw new Error("Dati opseg datuma "+validateDateStart+" - "+validateDateEnd+" nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/itemSale-created-range`,{
             params:{
-                createdAtStart:moment(createdAtStart).format("YYYY-MM-DDTHH:mm:ss"),
-                createdAtEnd:moment(createdAtEnd).format("YYYY-MM-DDTHH:mm:ss")
+                createdAtStart:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                createdAtEnd:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -347,7 +362,7 @@ export async function findBySales_CreatedAtBetween({createdAtStart, createdAtEnd
 export async function findBySales_TotalPrice(totalPrice){
     try{
         const parseTotalPrice = parseFloat(totalPrice);
-        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
+        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-price`,{
@@ -364,7 +379,7 @@ export async function findBySales_TotalPrice(totalPrice){
 export async function findBySales_TotalPriceGreaterThan(totalPrice){
     try{
         const parseTotalPrice = parseFloat(totalPrice);
-        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
+        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena veca od "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-price-greate-than`,{
@@ -381,7 +396,7 @@ export async function findBySales_TotalPriceGreaterThan(totalPrice){
 export async function findBySales_TotalPriceLessThan(totalPrice){
     try{
         const parseTotalPrice = parseFloat(totalPrice);
-        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
+        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena manja od "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-price-less-than`,{
@@ -413,7 +428,7 @@ export async function findBySales_SalesDescription(salesDescription){
 
 export async function findByProcurement_Id(procurementId){
     try{
-        if(procurementId == null || isNaN(procurementId)){
+        if(procurementId == null || Number.isNaN(Number(procurementId))){
             throw new Error("Dati ID "+procurementId+" za procurement nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-procurement/${procurementId}`,{
@@ -428,11 +443,12 @@ export async function findByProcurement_Id(procurementId){
 
 export async function findByProcurement_Date(date){
     try{
-        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum "+date+" za procurement nije pronadjen");
+        const validateDateStart = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart){
+            throw new Error("Dati datum "+validateDateStart+" za procurement nije pronadjen");
         }
         const response = await api.get(url+`/itemSale-date`,{
-            params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -444,16 +460,20 @@ export async function findByProcurement_Date(date){
 
 export async function findByProcurement_DateBetween({dateStart, dateEnd}){
     try{
+        const validateDateStart = moment.isMoment(dateStart) || moment(dateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(dateEnd) || moment(dateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            !moment(dateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(dateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+            !validateDateStart || !validateDateEnd
         ){
-            throw new Error("Dati opseg datuma "+dateStart+" - "+dateEnd+" za procurement nije pronadjen");
+            throw new Error("Dati opseg datuma "+validateDateStart+" - "+validateDateEnd+" za procurement nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/itemSale-date-range`,{
             params:{
-                dateStart:moment(dateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                dateEnd:moment(dateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                dateStart:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                dateEnd:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -467,7 +487,7 @@ export async function findByProcurement_DateBetween({dateStart, dateEnd}){
 export async function findByProcurement_TotalCost(totalCost){
     try{
         const parseTotalCost = parseFloat(totalCost);
-        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+        if(Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0){
             throw new Error("Data ukupna cena "+parseTotalCost+" za procurement nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-cost`,{
@@ -484,7 +504,7 @@ export async function findByProcurement_TotalCost(totalCost){
 export async function findByProcurement_TotalCostGreaterThan(totalCost){
     try{
         const parseTotalCost = parseFloat(totalCost);
-        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+        if(Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0){
             throw new Error("Data ukupna cena veca od "+parseTotalCost+" za procurement nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-cost-greater-than`,{
@@ -501,7 +521,7 @@ export async function findByProcurement_TotalCostGreaterThan(totalCost){
 export async function findByProcurement_TotalCostLessThan(totalCost){
     try{
         const parseTotalCost = parseFloat(totalCost);
-        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+        if(Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0){
             throw new Error("Data ukupna cena manaj od "+parseTotalCost+" za procurement nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-cost-less-than`,{
@@ -517,7 +537,7 @@ export async function findByProcurement_TotalCostLessThan(totalCost){
 
 export async function findBySalesOrder_Id(salesOrderId){
     try{
-        if(salesOrderId == null || isNaN(salesOrderId)){
+        if(salesOrderId == null || Number.isNaN(Number(salesOrderId))){
             throw new Error("Dati ID "+salesOrderId+" za salesOrder nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-salesOrder/id/${salesOrderId}`,{
@@ -548,13 +568,12 @@ export async function findBySalesOrder_OrderNumber(orderNumber){
 
 export async function findBySalesOrder_OrderDate(orderDate){
     try{
-        if(
-            !moment(orderDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati datum-naloga "+date+" za SalesOrder nije pronadjen");
+        const validateDateStart = moment.isMoment(orderDate) || moment(orderDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart){
+            throw new Error("Dati datum-naloga "+validateDateStart+" za SalesOrder nije pronadjen");
         }
         const response = await api.get(url+`/itemSale-order-date`,{
-            params:{orderDate:moment(orderDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{orderDate:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -566,16 +585,18 @@ export async function findBySalesOrder_OrderDate(orderDate){
 
 export async function findBySalesOrder_OrderDateBetween({orderDateStart, orderDateEnd}){
     try{
-        if(
-            !moment(orderDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(orderDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati opseg "+orderDateStart+" - "+orderDateEnd+" datuma za SalesOrder nije pronadjen");
+        const validateDateStart = moment.isMoment(orderDateStart) || moment(orderDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(orderDateEnd) || moment(orderDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dati opseg "+validateDateStart+" - "+validateDateEnd+" datuma za SalesOrder nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/itemSale-order-date`,{
             params:{
-                orderDateStart:moment(orderDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                orderDateEnd:moment(orderDateEnd).format("YYYY-MM-DDTHH:mm:ss")},
+                orderDateStart:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                orderDateEnd:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -588,7 +609,7 @@ export async function findBySalesOrder_OrderDateBetween({orderDateStart, orderDa
 export async function findBySalesOrder_TotalAmount(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
+        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
             throw new Error("Data ukupna kolicina "+parseTotalAmount+" za SalesOrder nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-amount`,{
@@ -605,7 +626,7 @@ export async function findBySalesOrder_TotalAmount(totalAmount){
 export async function findBySalesOrder_TotalAmountGreaterThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
+        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
             throw new Error("Data ukupna kolicina veca od "+parseTotalAmount+" za SalesOrder nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-amount-greater-than`,{
@@ -622,7 +643,7 @@ export async function findBySalesOrder_TotalAmountGreaterThan(totalAmount){
 export async function findBySalesOrder_TotalAmountLessThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
+        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
             throw new Error("Data ukupna kolicina manja od "+parseTotalAmount+" za SalesOrder nije pronadjena");
         }
         const response = await api.get(url+`/itemSale-total-amount-less-than`,{
@@ -638,7 +659,7 @@ export async function findBySalesOrder_TotalAmountLessThan(totalAmount){
 
 export async function findBySalesOrder_Buyer_Id(buyerId){
     try{
-        if(buyerId == null || isNaN(buyerId)){
+        if(buyerId == null || Number.isNaN(Number(buyerId))){
             throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-salesOrder/buyer/${buyerId}`,{
@@ -669,7 +690,7 @@ export async function findBySalesOrder_OrderStatus(status){
 
 export async function findBySalesOrder_Invoice_Id(invoiceId){
     try{
-        if(invoiceId == null || isNaN(invoiceId)){
+        if(invoiceId == null || Number.isNaN(Number(invoiceId))){
             throw new Error("Dati ID "+invoiceId+" za fakturu nije pronadjen");
         }
         const response = await api.get(url+`/itemSale/by-salesOrder/invoice/${invoiceId}`,{
@@ -685,7 +706,7 @@ export async function findBySalesOrder_Invoice_Id(invoiceId){
 export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina "+parseQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity`,{
@@ -702,7 +723,7 @@ export async function findByQuantity(quantity){
 export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina manja od "+parseQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity-less-than`,{
@@ -719,7 +740,7 @@ export async function findByQuantityLessThan(quantity){
 export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina veca od "+parseQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity-greater-than`,{
@@ -736,7 +757,7 @@ export async function findByQuantityGreaterThan(quantity){
 export async function findByUnitPrice(unitPrice){
     try{
         const parseUnitPrice = parseFloat(unitPrice);
-        if(isNaN(parseUnitPrice) || parseUnitPrice <= 0){
+        if(Number.isNaN(Number(parseUnitPrice)) || parseUnitPrice <= 0){
             throw new Error("Data jedinicna "+parseUnitPrice+" cena nije pronadjena");
         }
         const response = await api.get(url+`/by-unit-price`,{
@@ -753,7 +774,7 @@ export async function findByUnitPrice(unitPrice){
 export async function findByUnitPriceGreaterThan(unitPrice){
     try{
         const parseUnitPrice = parseFloat(unitPrice);
-        if(isNaN(parseUnitPrice) || parseUnitPrice <= 0){
+        if(Number.isNaN(Number(parseUnitPrice)) || parseUnitPrice <= 0){
             throw new Error("Data jedinicna cena veca od  "+parseUnitPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/by-unit-price-greater-than`,{
@@ -770,7 +791,7 @@ export async function findByUnitPriceGreaterThan(unitPrice){
 export async function findByUnitPriceLessThan(unitPrice){
     try{
         const parseUnitPrice = parseFloat(unitPrice);
-        if(isNaN(parseUnitPrice) || parseUnitPrice <= 0){
+        if(Number.isNaN(Number(parseUnitPrice)) || parseUnitPrice <= 0){
             throw new Error("Data jedinicna cena manja od "+parseUnitPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/by-unit-price-less-than`,{

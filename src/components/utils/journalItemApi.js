@@ -15,7 +15,9 @@ export async function createJournalItem({accountId, debit,credit}){
     try{
         const parsedDebit = parseFloat(debit);
         const parsedCredit = parseFloat(credit);
-        if(accountId == null || isNaN(accountId) || isNaN(parsedDebit) || parsedDebit <= 0 || isNaN(parsedCredit) || parsedCredit <= 0){
+        if(accountId == null || Number.isNaN(Number(accountId)) || 
+           Number.isNaN(Number(parsedDebit)) || parsedDebit <= 0 || 
+           Number.isNaN(Number(parsedCredit)) || parsedCredit <= 0){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
         const requestBody = {accountId,debit,credit};
@@ -33,8 +35,12 @@ export async function updateJournalItem({id,accountId,debit,credit}){
     try{
         const parsedDebit = parseFloat(debit);
         const parsedCredit = parseFloat(credit);
-        if(id == null || isNaN(id) || accountId == null || isNaN(accountId) || isNaN(parsedDebit) || parsedDebit < 0 || isNaN(parsedCredit) || parsedCredit < 0){
-            throw new Error("Sva polja moraju biti validna i popunjena");
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            accountId == null || Number.isNaN(Number(accountId)) || 
+            Number.isNaN(Number(parsedDebit)) || parsedDebit <= 0 || 
+            Number.isNaN(Number(parsedCredit)) || parsedCredit <= 0){
+                throw new Error("Sva polja moraju biti validna i popunjena");
         }
         const requestBody = {accountId,debit,credit};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -49,7 +55,7 @@ export async function updateJournalItem({id,accountId,debit,credit}){
 
 export async function deleteJournalItem(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za JournalItem nije pronadjen");
         }
         const response = await api.delete(url+`/delete'/${id}`,{
@@ -64,7 +70,7 @@ export async function deleteJournalItem(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za JournalItem nije pronadjen");
         }
         const response = await api.delete(url+`/find-one'/${id}`,{
@@ -91,7 +97,7 @@ export async function findAll(){
 
 export async function findByAccount_Id(id){
     try{
-        if(!id){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za racun nije pronadjen");
         }
         const response =await api.get(url+`/account/${id}`,{
@@ -155,7 +161,7 @@ export async function findByAccount_Type(type){
 export async function findByDebitGreaterThan(amount){
     try{
         const parsedAmount = parseFloat(amount);
-        if(isNaN(parsedAmount) || parsedAmount <= 0){
+        if(Number.isNaN(Number(parsedAmount)) || parsedAmount <= 0){
             throw new Error("Data kolicina veca od "+parsedAmount+" nije pronadjena");
         }
         const response = await api.get(url+`/debit-greaterThan`,{
@@ -172,7 +178,7 @@ export async function findByDebitGreaterThan(amount){
 export async function findByDebitLessThan(amount){
     try{
         const parsedAmount = parseFloat(amount);
-        if(isNaN(parsedAmount) || parsedAmount <= 0){
+        if(Number.isNaN(Number(parsedAmount)) || parsedAmount <= 0){
             throw new Error("Data kolicina manja od "+parsedAmount+" nije pronadjena");
         }
         const response = await api.get(url+`/debit-lessThan`,{
@@ -189,7 +195,7 @@ export async function findByDebitLessThan(amount){
 export async function findByCreditGreaterThan(amount){
     try{
         const parsedAmount = parseFloat(amount);
-        if(isNaN(parsedAmount) || parsedAmount <= 0){
+        if(Number.isNaN(Number(parsedAmount)) || parsedAmount <= 0){
             throw new Error("Data kolicina veca od "+parsedAmount+" nije pronadjena");
         }
         const response = await api.get(url+`/credit-greaterThan`,{
@@ -206,7 +212,7 @@ export async function findByCreditGreaterThan(amount){
 export async function findByCreditLessThan(amount){
     try{
         const parsedAmount = parseFloat(amount);
-        if(isNaN(parsedAmount) || parsedAmount <= 0){
+        if(Number.isNaN(Number(parsedAmount)) || parsedAmount <= 0){
             throw new Error("Data kolicina manja od "+parsedAmount+" nije pronadjena");
         }
         const response = await api.get(url+`/credit-lessThan`,{
@@ -223,7 +229,7 @@ export async function findByCreditLessThan(amount){
 export async function findByDebit(debit){
     try{
         const parseDebit = parseFloat(debit);
-        if(isNaN(parseDebit) || parseDebit < 0){
+        if(Number.isNaN(Number(parseDebit)) || parseDebit < 0){
             throw new Error("Dati Debit "+debit+" nije pronadjen");
         }
         const response =await api.get(url+`/by-debit`,{
@@ -240,7 +246,7 @@ export async function findByDebit(debit){
 export async function findByCredit(credit){
     try{
         const parseCredit = parseFloat(credit);
-        if(isNaN(parseCredit) || parseCredit < 0){
+        if(Number.isNaN(Number(parseCredit)) || parseCredit < 0){
             throw new Error("Dati Credit "+credit+" nije pronadjen");
         }
         const response =await api.get(url+`/by-credit`,{
@@ -256,7 +262,7 @@ export async function findByCredit(credit){
 
 export async function findByJournalEntry_Id(journalEntryId){
     try{
-        if(journalEntryId == null || isNaN(journalEntryId)){
+        if(journalEntryId == null || Number.isNaN(Number(journalEntryId))){
             throw new Error("Dati ID "+journalEntryId+" za JournalEntry nije pronadjen");
         }
         const response = await api.get(url+`/journalEntry/${journalEntryId}`,{
@@ -273,22 +279,26 @@ export async function search({ debit, credit, accountId, fromDate, toDate }) {
     try {
         const parsedDebit = parseFloat(debit);
         const parsedCredit = parseFloat(credit);
+        const validateStart = moment.isMoment(fromDate) || moment(fromDate,"YYYY-MM-DDTHH:mm:ss").isValid();
+        const validateEnd = moment.isMoment(toDate) || moment(toDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if (
-            isNaN(parsedDebit) || parsedDebit < 0 ||
-            isNaN(parsedCredit) || parsedCredit < 0 ||
-            accountId == null || isNaN(accountId) ||
-            !moment(fromDate, "YYYY-MM-DDTHH:mm:ss", true).isValid() ||
-            !moment(toDate, "YYYY-MM-DDTHH:mm:ss", true).isValid()
+            Number.isNaN(Number(parsedDebit)) || parsedDebit < 0 ||
+            Number.isNaN(Number(parsedCredit)) || parsedCredit < 0 ||
+            accountId == null || Number.isNaN(Number(accountId)) ||
+            !validateStart || !validateEnd
         ) {
-            throw new Error("Dati pretraga "+debit+" ,"+credit+" ,"+accountId+" ,"+fromDate+" ,"+toDate+" po unesenim parametrima nije pronadjena");
+            throw new Error("Dati pretraga "+debit+" ,"+credit+" ,"+accountId+" ,"+validateStart+" ,"+validateEnd+" po unesenim parametrima nije pronadjena");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url + `/search`, {
             params: {
                 debit: parsedDebit,
                 credit: parsedCredit,
                 accountId: accountId,
-                fromDate: moment(fromDate).format("YYYY-MM-DDTHH:mm:ss"),
-                toDate: moment(toDate).format("YYYY-MM-DDTHH:mm:ss")
+                fromDate: moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                toDate: moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers: getHeader()
         });
@@ -300,13 +310,12 @@ export async function search({ debit, credit, accountId, fromDate, toDate }) {
 
 export async function findByJournalEntry_EntryDate(entryDate){
     try{
-        if(
-            !moment(entryDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati datum "+entryDate+" unosa nije pronadjen");
+        const validateDate = moment.isMoment(entryDate) || moment(entryDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum "+validateDate+" unosa nije pronadjen");
         }
         const response = await api.get(url+`/by-entry-date`,{
-            params:{entryDate:moment(entryDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{entryDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -318,16 +327,20 @@ export async function findByJournalEntry_EntryDate(entryDate){
 
 export async function findByJournalEntry_EntryDateBetween({entryDateStart, entryDateEnd}){
     try{
+        const validateDateStart = moment.isMoment(entryDateStart) || moment(entryDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(entryDateEnd) || moment(entryDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            !moment(entryDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(entryDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+            !validateDateStart || !validateDateEnd
         ){
-            throw new Error("Dati opseg unosa "+entryDateStart+" - "+entryDateEnd+" datuma nije pronadjen");
+            throw new Error("Dati opseg unosa "+validateDateStart+" - "+validateDateEnd+" datuma nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/by-date-range`,{
             params:{
-                entryDateStart:moment(entryDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                entryDateEnd:moment(entryDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                entryDateStart:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                entryDateEnd:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });

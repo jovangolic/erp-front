@@ -7,21 +7,25 @@ const isOrderStatusValid = ["CREATED", "PAID", "SHIPPED", "CANCELLED", "PENDING"
 
 export async function createInvoice({invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById}){
     try{
+        const validateIssueDate = moment.isMoment(issueDate) || moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDueDate = moment.isMoment(dueDate) || moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const parseAmout = parseFloat(amount);
         if(
             !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
-            !moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !validateIssueDate ||
+            !validateDueDate ||
             !isInvoiceStatusValid.includes(status?.toUpperCase()) ||
-            isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
-            !buyerId || !salesId || !paymentId ||
+            Number.isNaN(Number(parseAmout)) || parseAmout <= 0 ||
+            buyerId == null ||Number.isNaN(Number(buyerId)) || 
+            salesId == null || Number.isNaN(Number(salesId)) || 
+            paymentId == null || Number.isNaN(Number(paymentId)) ||
             !note || typeof note !== "string" || note.trim() === "" ||
-            !salesOrderId || !createdById
+            salesOrderId == null || Number.isNaN(Number(salesOrderId)) || 
+            createdById == null || Number.isNaN(Number(createdById))
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {invoiceNumber, issueDate:moment(issueDate).format("YYYY-MM-DDTHH:mm:ss"), dueDate:moment(dueDate).format("YYYY-MM-DDTHH:mm:ss"),
-            status:status.toUpperCase(), totalAmount:parseFloat(totalAmount),buyerId,salesId,paymentId,note,
-            salesOrderId, createdById
+        const requestBody = {invoiceNumber, issueDate, dueDate,status, totalAmount,buyerId,salesId,paymentId,note,salesOrderId, createdById
         };
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/invoices/create/new-invoice`,requestBody,{
             headers:getHeader()
@@ -40,22 +44,26 @@ export async function createInvoice({invoiceNumber,issueDate,dueDate,status,tota
 
 export async function updateInvoice({invoiceId,invoiceNumber,issueDate,dueDate,status,totalAmount,buyerId,salesId,paymentId,note,salesOrderId,createdById} ){
     try{
+        const validateIssueDate = moment.isMoment(issueDate) || moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDueDate = moment.isMoment(dueDate) || moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const parseAmout = parseFloat(amount);
         if(
-            invoiceId == null || isNan(invoiceId) ||
+            invoiceId == null || Number.isNaN(Number(invoiceId)) ||
             !invoiceNumber || typeof invoiceNumber !=="string" || invoiceNumber.trim() === "" ||
-            !moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
+            !validateIssueDate ||
+            !validateDueDate ||
             !isInvoiceStatusValid.includes(status?.toUpperCase()) ||
-            isNaN(totalAmount) || parseFloat(totalAmount) <= 0 ||
-            !buyerId || !salesId || !paymentId ||
+            Number.isNaN(Number(parseAmout)) || parseAmout <= 0 ||
+            buyerId == null ||Number.isNaN(Number(buyerId)) || 
+            salesId == null || Number.isNaN(Number(salesId)) || 
+            paymentId == null || Number.isNaN(Number(paymentId)) ||
             !note || typeof note !== "string" || note.trim() === "" ||
-            !salesOrderId || !createdById
+            salesOrderId == null || Number.isNaN(Number(salesOrderId)) || 
+            createdById == null || Number.isNaN(Number(createdById))
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {invoiceNumber, issueDate:moment(issueDate).format("YYYY-MM-DDTHH:mm:ss"), dueDate:moment(dueDate).format("YYYY-MM-DDTHH:mm:ss"),
-            status:status.toUpperCase(), totalAmount:parseFloat(totalAmount),buyerId,salesId,paymentId,note,
-            salesOrderId, createdById
+        const requestBody = {invoiceNumber, issueDate, dueDate,status, totalAmount,buyerId,salesId,paymentId,note,salesOrderId, createdById
         };
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/invoices/update/${invoiceId}`,requestBody,{
             headers:getHeader()
@@ -74,7 +82,7 @@ export async function updateInvoice({invoiceId,invoiceNumber,issueDate,dueDate,s
 
 export async function deleteInvoice(invoiceId){
     try{
-        if(invoiceId == null || isNan(invoiceId)){
+        if(invoiceId == null || Number.isNan(Number(invoiceId))){
             throw new Error("Dati Id "+invoiceId+" za Invoice nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/invoices/delete/${invoiceId}`,{
@@ -89,7 +97,7 @@ export async function deleteInvoice(invoiceId){
 
 export async function getInvoiceById(id){
     try{
-        if(invoiceId == null || isNan(invoiceId)){
+        if(invoiceId == null || Number.isNan(Number(invoiceId))){
             throw new Error("Dati Id "+invoiceId+" za Invoice nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/${id}`,{
@@ -134,7 +142,7 @@ export async function getByInvoiceStatus(status){
 
 export async function getByBuyerAndStatus({buyerId, status}){
     try{
-        if(buyerId == null ||isNaN(buyerId) || !isInvoiceStatusValid.includes(status?.toUpperCase())){
+        if(buyerId == null || Number.isNaN(Number(buyerId)) || !isInvoiceStatusValid.includes(status?.toUpperCase())){
             throw new Error("Dati id za kupca "+buyerId+" i status "+status+" nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer-status`,{
@@ -152,12 +160,13 @@ export async function getByBuyerAndStatus({buyerId, status}){
 
 export async function getByTotalAmount(totalAmount){
     try{
-        if(isNaN(totalAmount) || parseFloat(totalAmount) <= 0){
-            throw new Error("Ukupan iznos "+totalAmount+" mora biti pozitivan");
+        const parseAmout = parseFloat(totalAmount);
+        if(Number.isNaN(Number(parseAmout)) || parseAmout <= 0){
+            throw new Error("Ukupan iznos "+parseAmout+" mora biti pozitivan");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/total-amount`,{
             params:{
-                totalAmount:parseFloat(totalAmount)
+                totalAmount:parseAmout
             },
             headers:getHeader()
         });
@@ -170,7 +179,7 @@ export async function getByTotalAmount(totalAmount){
 
 export async function getByBuyerId(buyerId){
     try{
-        if(buyerId == null || isNaN(buyerId)){
+        if(buyerId == null || Number.isNaN(Number(buyerId))){
             throw new Error("Dati id "+buyerId+" za buyer nije pornadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/buyer/${buyerId}`,{
@@ -185,7 +194,7 @@ export async function getByBuyerId(buyerId){
 
 export async function getBySalesId(salesId){
     try{
-        if(salesId == null || isNaN(salesId)){
+        if(salesId == null || Number.isNaN(Number(salesId))){
             throw new Error("Dati id "+salesId+" za sales nije pornadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/sales/${salesId}`,{
@@ -200,7 +209,7 @@ export async function getBySalesId(salesId){
 
 export async function getByPaymentId(paymentId){
     try{
-        if(paymentId == null || isNaN(paymentId)){
+        if(paymentId == null || Number.isNaN(Number(paymentId))){
             throw new Error("Dati id "+paymentId+" za payment nije pornadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/payment/${paymentId}`,{
@@ -215,16 +224,20 @@ export async function getByPaymentId(paymentId){
 
 export async function getByIssueDateBetween({startDate,endDate}){
     try{
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+            !validateStart||!validateEnd
         ){
-            throw new Error("Dti datumski opseg "+startDate+" - "+endDate+" nije pronadjen");
+            throw new Error("Dti datumski opseg "+validateStart+" - "+validateEnd+" nije pronadjen");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/issue-date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -237,12 +250,13 @@ export async function getByIssueDateBetween({startDate,endDate}){
 
 export async function getByDueDateBefore(date){
     try{
-        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum "+date+" mora biti validan");
+        const validateStart = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Datum "+validateStart+" mora biti validan");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/due-date-before`,{
             params:{
-                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
+                date:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -288,7 +302,7 @@ export async function existsByInvoiceNumber(invoiceNumber){
 
 export async function getInvoicesByBuyerSortedByIssueDate(buyerId){
     try{
-        if(buyerId ==  null || isNaN(buyerId)){
+        if(buyerId ==  null || Number.isNaN(Number(buyerId))){
             throw new Error("Dati id "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/invoice/sorted-buyer/${buyerId}`,{
@@ -382,7 +396,7 @@ export async function findByNoteContainingIgnoreCase(note){
 
 export async function findByRelatedSales_Id(relatedSalesId){
     try{
-        if(relatedSalesId == null || isNaN(relatedSalesId)){
+        if(relatedSalesId == null || Number.isNaN(Number(relatedSalesId))){
             throw new Error("Dati ID "+relatedSalesId+" za relatedSales nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/relatedSales/${relatedSalesId}`,{
@@ -397,8 +411,8 @@ export async function findByRelatedSales_Id(relatedSalesId){
 
 export async function findByRelatedSales_TotalPrice(totalPrice){
     try{
-        const parseTotalPrice =parseFloat(totalPrice);
-        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
+        const parseTotalPrice = parseFloat(totalPrice);
+        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/relatedSales-totalPrice`,{
@@ -415,7 +429,7 @@ export async function findByRelatedSales_TotalPrice(totalPrice){
 export async function findByRelatedSales_TotalPriceGreaterThan(totalPrice){
     try{
         const parseTotalPrice =parseFloat(totalPrice);
-        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
+        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/relatedSales-totalPrice-greate-than`,{
@@ -432,7 +446,7 @@ export async function findByRelatedSales_TotalPriceGreaterThan(totalPrice){
 export async function findByRelatedSales_TotalPriceLessThan(totalPrice){
     try{
         const parseTotalPrice =parseFloat(totalPrice);
-        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
+        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/relatedSales-totalPrice-less-than`,{
@@ -449,7 +463,7 @@ export async function findByRelatedSales_TotalPriceLessThan(totalPrice){
 export async function findByPayment_Amount(amount){
     try{
         const parseAmout = parseFloat(amount);
-        if(isNaN(parseAmout) || parseAmout <= 0){
+        if(Number.isNaN(Number(parseAmout)) || parseAmout <= 0){
             throw new Error("Data kolicina "+parseAmout+" za Payment nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/payment-amount`,{
@@ -465,11 +479,12 @@ export async function findByPayment_Amount(amount){
 
 export async function findByPayment_PaymentDate(paymentDate){
     try{
-        if(moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum "+paymentDate+" placanja nije pronadjen");
+        const validateStart = moment.isMoment(paymentDate) || moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati datum "+validateStart+" placanja nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/payment-date`,{
-            params:{paymentDate:moment(paymentDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{paymentDate:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -481,13 +496,18 @@ export async function findByPayment_PaymentDate(paymentDate){
 
 export async function findByPayment_PaymentDateBetween(paymentDateStart, paymentDateEnd){
     try{
-        if(moment(paymentDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() || moment(paymentDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opseg datuma "+paymentDateStart+" - "+paymentDateEnd+" za placanje nije pronadjen");
+        const validateStart = moment.isMoment(paymentDateStart) || moment(paymentDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(paymentDateEnd) || moment(paymentDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" za placanje nije pronadjen");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/payment-date-range`,{
             params:{
-                paymentDateStart:moment(paymentDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                paymentDateEnd:moment(paymentDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                paymentDateStart:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                paymentDateEnd:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -531,7 +551,7 @@ export async function findByPayment_ReferenceNumberContainingIgnoreCase(referenc
 
 export async function findBySalesOrder_Id(salesOrderId){
     try{
-        if(salesOrderId == null || isNaN(salesOrderId)){
+        if(salesOrderId == null || Number.isNaN(Number(salesOrderId))){
             throw new Error("Dati ID "+salesOrderId+" za SalesOrder nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/salesOrder/${salesOrderId}`,{
@@ -546,11 +566,12 @@ export async function findBySalesOrder_Id(salesOrderId){
 
 export async function findBySalesOrder_OrderDate(orderDate){
     try{
-        if(!moment(orderDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati datum "+orderDate+" narudzbine nije pronadjen");
+        const validateStart = moment.isMoment(orderDate) || moment(orderDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati datum "+validateStart+" narudzbine nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/salesOrder-date`,{
-            params:{orderDate:moment(orderDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{orderDate:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -562,13 +583,18 @@ export async function findBySalesOrder_OrderDate(orderDate){
 
 export async function findBySalesOrder_OrderDateBetween(orderDateStart, orderDateEnd){
     try{
-        if(!moment(orderDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(orderDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati opseg datuma "+orderDateStart+" - "+orderDateEnd+" za SalesOrder nije pronadjen");
+        const validateStart = moment.isMoment(orderDateStart) || moment(orderDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(orderDateEnd) || moment(orderDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" za SalesOrder nije pronadjen");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/salesOrder-date-range`,{
             params:{
-                orderDateStart:moment(orderDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                orderDateEnd:moment(orderDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                orderDateStart:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                orderDateEnd:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -582,7 +608,7 @@ export async function findBySalesOrder_OrderDateBetween(orderDateStart, orderDat
 export async function findBySalesOrder_TotalAmount(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
+        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
             throw new Error("Data ukupna kolicina "+parseTotalAmount+" za SalesOrder nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/salesOrder-total-amount`,{
@@ -599,7 +625,7 @@ export async function findBySalesOrder_TotalAmount(totalAmount){
 export async function findBySalesOrder_TotalAmountGreaterThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
+        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
             throw new Error("Data ukupna kolicina veca od "+parseTotalAmount+" za SalesOrder nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/salesOrder-total-amount-greater-than`,{
@@ -616,7 +642,7 @@ export async function findBySalesOrder_TotalAmountGreaterThan(totalAmount){
 export async function findBySalesOrder_TotalAmountLessThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
+        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
             throw new Error("Data ukupna kolicina manja od "+parseTotalAmount+" za SalesOrder nije pronadjena");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/salesOrder-total-amount-less-than`,{
@@ -664,7 +690,7 @@ export async function findBySalesOrder_NoteContainingIgnoreCase(note){
 
 export async function findByCreatedBy_Id(createdById){
     try{
-        if(createdById == null || isNaN(createdById)){
+        if(createdById == null || Number.isNaN(Number(createdById))){
             throw new Error("Dati ID "+createdById+" za korisnika koji je napravio nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/invoices/createdBy/${createdById}`,{

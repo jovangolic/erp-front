@@ -4,17 +4,26 @@ import moment from "moment";
 const isInventoryValid = ["PENDING","IN_PROGRESS","COMPLETED","CANCELLED","RECONCILED","PARTIALLY_COMPLETED","PENDING_APPROVAL","APPROVED"];
 const url = `${import.meta.env.VITE_API_BASE_URL}/inventories/`;
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 export async function createInventory({storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status}){
     try{
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(
-            !storageEmployeeId || !storageForemanId ||
-            !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
+            storageEmployeeId == null || Number.isNaN(Number(storageEmployeeId)) || storageForemanId == null ||
+            Number.isNaN(Number(storageForemanId)) ||
+            !validateDate || typeof aligned !=="boolean" ||
             !Array.isArray(inventoryItems) || inventoryItems.length === 0||
             !isInventoryValid.includes(status?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {storageEmployeeId,storageForemanId,date:moment(date).format("YYYY-MM-DD"), aligned,inventoryItems,status:status.toUpperCase()};
+        const requestBody = {storageEmployeeId,storageForemanId,date, aligned,inventoryItems,status};
         const response = await api.post(url+`create/new-inventory`,requestBody,{
             headers:getHeader()
         });
@@ -32,16 +41,18 @@ export async function createInventory({storageEmployeeId, storageForemanId, date
 
 export async function updateInventory({id,storageEmployeeId, storageForemanId, date,aligned, inventoryItems, status} ){
     try{
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(
-            id == null || isNaN(id) ||
-            !storageEmployeeId || !storageForemanId ||
-            !moment(date,"YYYY-MM-DD",true).isValid() || typeof aligned !=="boolean" ||
+            id == null || Number.isNaN(Number(id)) ||
+            storageEmployeeId == null || Number.isNaN(Number(storageEmployeeId)) || storageForemanId == null ||
+            Number.isNaN(Number(storageForemanId)) ||
+            !validateDate || typeof aligned !=="boolean" ||
             !Array.isArray(inventoryItems) || inventoryItems.length === 0||
             !isInventoryValid.includes(status?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {storageEmployeeId,storageForemanId,date:moment(date).format("YYYY-MM-DD"), aligned,inventoryItems,status:status.toUpperCase()};
+        const requestBody = {storageEmployeeId,storageForemanId,date, aligned,inventoryItems,status};
         const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });
@@ -59,7 +70,7 @@ export async function updateInventory({id,storageEmployeeId, storageForemanId, d
 
 export async function deleteInventory(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za Inventory nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -92,7 +103,7 @@ export async function findInventoryByStatus(status){
 
 export async function findByStorageEmployeeId(storageEmployeeId){
     try{
-        if(storageEmployeeId == null || isNaN(storageEmployeeId)){
+        if(storageEmployeeId == null || Number.isNaN(Number(storageEmployeeId))){
             throw new Error("Dati ID "+storageEmployeeId+" za storageEmployee nije pronadjen");
         }
         const response = await api.get(url+`/by-storageEmployeeId`,{
@@ -110,14 +121,14 @@ export async function findByStorageEmployeeId(storageEmployeeId){
 
 export async function findByStorageForemanId(storageForemanId){
     try{
-        if(storageForemanId == null || isNaN(storageForemanId)){
+        if(storageForemanId == null || Number.isNaN(Number(storageForemanId))){
             throw new Error("Dati ID "+storageForemanId+" za storageForeman nije pronadjen");
         }
-    const response = await api.get(url+`/by-storageForemanId`,{
-        params:{
-            storageForemanId
-        },
-        headers:getHeader()
+        const response = await api.get(url+`/by-storageForemanId`,{
+            params:{
+                storageForemanId
+            },
+            headers:getHeader()
     });
     return response.data;
     }
@@ -128,7 +139,7 @@ export async function findByStorageForemanId(storageForemanId){
 
 export async function findOneInventory(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za Inventory nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -155,12 +166,13 @@ export async function findAllInventories(){
 
 export async function findByDate(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum "+date+" mora biti ispravan i validan");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Datum "+validateDate+" mora biti ispravan i validan");
         }
         const response = await api.get(url+`/find-by-date`,{
             params:{
-                date:moment(date).format("YYYY-MM-DD")
+                date:moment(validateDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -173,14 +185,18 @@ export async function findByDate(date){
 
 export async function findByDateRange({startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DD",true).isValid() ||
-           !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati opseg datuma "+start+"- "+end+" nije pronadjen");
-           }
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dati opseg datuma "+validateDateStart+"- "+validateDateEnd+" nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
         const response = await api.get(url+`/find-by-date-range`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD")
+                startDate:moment(validateDateStart).format("YYYY-MM-DD"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -193,7 +209,8 @@ export async function findByDateRange({startDate, endDate}){
 
 export async function changeStatus({inventoryId, newStatusStr}){
     try{
-        if(inventoryId == null || isNaN(inventoryId) || !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
+        if(inventoryId == null || Number.isNaN(Number(inventoryId)) || 
+           !newStatusStr || typeof newStatusStr !== "string" || newStatusStr.trim() === ""){
             throw new Error("Nepoznat inventoryId "+inventoryId+" i newStatusStr "+newStatusStr);
         }
         const response = await api.post(url+`/changeStatus/${inventoryId}`,{
@@ -223,12 +240,13 @@ export async function findPendingInventories(){
 
 export async function findByDateAfter(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum posle "+date+" za inventar nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum posle "+validateDate+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/date-after`,{
             params:{
-                date:moment(date).format("YYYY-MM-DD")
+                date:moment(validateDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -241,12 +259,13 @@ export async function findByDateAfter(date){
 
 export async function findByDateBefore(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum pre "+date+" za inventar nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum pre "+validateDate+" za inventar nije pronadjen");
         }
         const response = await api.get(url+`/date-before`,{
             params:{
-                date:moment(date).format("YYYY-MM-DD")
+                date:moment(validateDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -451,15 +470,20 @@ export async function findByStatusAndStorageForemanFullNameContainingIgnoreCase(
 
 export async function findInventoryByStorageForemanIdAndDateRange({foremanId, startDate, endDate}){
     try{
-        if(isNaN(foremanId) || foremanId == null || 
-            !moment(startDate,"YYYY-MM-DD",true).isValid() ||
-            !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati id "+foremanId+" smenovodje i datumski opseg "+startDate+" - "+endDate+" inventara nije pronadjen");
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(
+            Number.isNaN(Number(foremanId)) || foremanId == null || 
+            !validateDateStart || !validateDateEnd){
+            throw new Error("Dati id "+foremanId+" smenovodje i datumski opseg "+validateDateStart+" - "+validateDateEnd+" inventara nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/foreman/${foremanId}/inventory-date-range`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD")
+                startDate:moment(validateDateStart).format("YYYY-MM-DD"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -473,7 +497,7 @@ export async function findInventoryByStorageForemanIdAndDateRange({foremanId, st
 
 export async function findByStorageEmployeeIdAndStatus({employeeId, status}){
     try{
-        if(isNaN(employeeId) || employeeId == null || !isInventoryValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(employeeId)) || employeeId == null || !isInventoryValid.includes(status?.toUpperCase())){
             throw new Error("Dati id "+employeeId+" magacionera i status "+status+" inventara nije pronadjen");
         }
         const response = await api.get(url+`/search/employee/${employeeId}/status`,{
@@ -491,7 +515,7 @@ export async function findByStorageEmployeeIdAndStatus({employeeId, status}){
 
 export async function findByStorageForemanIdAndStatus({foremanId, status}){
     try{
-        if(isNaN(foremanId) || foremanId == null || !isInventoryValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(foremanId)) || foremanId == null || !isInventoryValid.includes(status?.toUpperCase())){
             throw new Error("Dati id "+foremanId+" smenovodje i status "+status+" inventara nije pronadjen");
         }
         const response = await api.get(url+`/search/foreman/${foremanId}/status`,{
@@ -509,15 +533,19 @@ export async function findByStorageForemanIdAndStatus({foremanId, status}){
 
 export async function findByStorageEmployeeIdAndDateBetween({employeeId, startDate, endDate}){
     try{
-        if(isNaN(employeeId) || employeeId == null ||
-            !moment(startDate,"YYYY-MM-DD",true).isValid() ||
-            !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati id "+employeeId+" magacionera i datumski "+startDate+" - "+endDate+" opseg za inventar nisu pronadjeni");
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(Number.isNaN(Number(employeeId)) || employeeId == null ||
+            !validateDateStart || !validateDateEnd){
+            throw new Error("Dati id "+employeeId+" magacionera i datumski "+validateDateStart+" - "+validateDateEnd+" opseg za inventar nisu pronadjeni");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/employee/${employeeId}/date-range`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD")
+                startDate:moment(validateDateStart).format("YYYY-MM-DD"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -530,15 +558,19 @@ export async function findByStorageEmployeeIdAndDateBetween({employeeId, startDa
 
 export async function findByStorageForemanIdAndDateBetween({foremanId, startDate, endDate}){
     try{
-        if(isNaN(foremanId) || foremanId == null ||
-            !moment(startDate,"YYYY-MM-DD",true).isValid() ||
-            !moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati id "+foremanId+" smenovodje i datumski opseg "+startDate+" - "+endDate+" za inventar nisu pronadjeni");
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
+        if(Number.isNaN(Number(foremanId)) || foremanId == null ||
+            !validateDateStart || !validateDateEnd){
+            throw new Error("Dati id "+foremanId+" smenovodje i datumski opseg "+validateDateStart+" - "+validateDateEnd+" za inventar nisu pronadjeni");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/foreman/${foremanId}/date-range`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD")
+                startDate:moment(validateDateStart).format("YYYY-MM-DD"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -551,7 +583,7 @@ export async function findByStorageForemanIdAndDateBetween({foremanId, startDate
 
 export async function countByStorageForemanId(foremanId){
     try{
-        if(isNaN(foremanId) || foremanId == null){
+        if(Number.isNaN(Number(foremanId)) || foremanId == null){
             throw new Error("Dati id "+foremanId+" za smenovodju nije pronadjen");
         }
         const response = await api.get(url+`/count-by/${foremanId}`,{
@@ -583,9 +615,3 @@ export async function existsByStatus(status){
 }
 
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

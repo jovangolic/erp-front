@@ -151,14 +151,18 @@ export async function findByBalance(balance){
 
 export async function findByBalanceBetween({min, max}){
     try{
-        if(isNaN(parseFloat(min)) || parseFloat(min) < 0 ||
-            isNaN(parseFloat(max)) || parseFloat(max) <= 0){
-                throw new Error("Dati opseg balansa za min "+min+" i max "+max+" nisu pronadjeni");
-            } 
+        const parseMin = parseFloat(min);
+        const parseMax = parseFloat(max);
+        if(Number.isNaN(Number(parseMin)) || parseMin < 0 || Number.isNaN(Number(parseMax) || parseMax <= 0)){
+            throw new Error("Dati opseg balansa za min "+parseMin+" i max "+parseMax+" nisu pronadjeni");
+        } 
+        if(parseMin > parseMax){
+            throw new Error("Manji balans ne sme biti veci od veceg balansa");
+        }
         const response = await api.get(url+`/balance-between`,{
             params:{
-                min:parseFloat(min),
-                max:parseFloat(max)
+                min:parseMin,
+                max:parseMax
             },
             headers:getHeader()
         });    
@@ -171,12 +175,13 @@ export async function findByBalanceBetween({min, max}){
 
 export async function findByBalanceGreaterThan(amount){
     try{
-        if(isNaN(parseFloat(amount)) || parseFloat(amount) <= 0){
-            throw new Error("Dati amount "+amount+" nije pronadjen");
+        const parseAmount = parseFloat(amount);
+        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+            throw new Error("Dati amount "+parseAmount+" nije pronadjen");
         }
         const response = await api.get(url+`/balance-greater-than`,{
             params:{
-                amount:parseFloat(amount)
+                amount:parseAmount
             },
             headers:getHeader()
         });
@@ -189,12 +194,13 @@ export async function findByBalanceGreaterThan(amount){
 
 export async function findByBalanceLessThan(amount){
     try{
-        if(isNaN(parseFloat(amount)) || parseFloat(amount) <= 0){
-            throw new Error("Dati amount "+amount+" nije pronadjen");
+        const parseAmount = parseFloat(amount);
+        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+            throw new Error("Dati amount "+parseAmount+" nije pronadjen");
         }
         const response = await api.get(url+`/balance-less-than`,{
             params:{
-                amount:parseFloat(amount)
+                amount:parseAmount
             },
             headers:getHeader()
         });

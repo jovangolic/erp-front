@@ -154,7 +154,7 @@ export async function findByDateBetween({start, end}){
         const dateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const dateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!dateStart || !dateEnd ){
-            throw new Error("Dati opseg datuma "+start+" - "+end+" za planiranje kapaciteta nije pronadjen");
+            throw new Error("Dati opseg datuma "+dateStart+" - "+dateEnd+" za planiranje kapaciteta nije pronadjen");
         }
         if(moment(dateEnd).isBefore(moment(dateStart))){
             throw new Error("Datum kraja ne sme biti ispred datuma za pocetak");
@@ -177,7 +177,7 @@ export async function findByDate(date){
     try{
         const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validDate){
-            throw new Error("Dati datuma "+date+" za kapacitet planiranja, nije pronadjen");
+            throw new Error("Dati datuma "+validDate+" za kapacitet planiranja, nije pronadjen");
         }
         const response = await api.get(url+`/by-date`,{
             params:{
@@ -196,7 +196,7 @@ export async function findByDateGreaterThanEqual(date){
     try{
         const validDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validDate){
-            throw new Error("Dati datum "+date+" za kapacitet planiranja, nije pronadjen");
+            throw new Error("Dati datum "+validDate+" za kapacitet planiranja, nije pronadjen");
         }
         const response = await api.get(url+`/date-greater-than`,{
             params:{

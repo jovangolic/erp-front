@@ -184,6 +184,9 @@ export async function filterBOMs({parentProductId, componentId, minQuantity, max
             Number.isNaN(Number(parseMinQuantity)) || parseMinQuantity <= 0 || Number.isNaN(Number(parseMaxQuantity)) || parseMaxQuantity <= 0){
             throw new Error("Parametri za pretragu bill-of-material,: "+parentProductId+" ,"+componentId+" ,"+parseMinQuantity+" ,"+parseMaxQuantity+" ne daju rezultat");
         }
+        if(parseMinQuantity > parseMaxQuantity){
+            throw new Error("Minimalna kolicina ne sme biti veca od maksimalne kolicine");
+        }
         const response = await api.get(url+`/filter-boms`,{
             params:{
                 parentProductId : parentProductId,
@@ -428,7 +431,10 @@ export async function findByQuantityBetween({min, max}){
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
         if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
-            throw new Error("Dati opseg "+min+" - "+max+" za kolicinu, nije pronadjen");
+            throw new Error("Dati opseg "+parseMin+" - "+parseMax+" za kolicinu, nije pronadjen");
+        }
+        if(parseMin > parseMax){
+            throw new Error("Minimalna kolicina ne sme biti veca od maksimalne kolicine");
         }
         const response = await api.get(url+`/quantity-between`,{
             params:{

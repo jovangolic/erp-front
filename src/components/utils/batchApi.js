@@ -21,10 +21,11 @@ export async function createBatch({code,productId,quantityProduced,productionDat
         const prodDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         const expDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         const parseQuantityProduced = parseInt(quantityProduced,10);
-        if(!code || typeof code !== "string" || code.trim() === "" ||
-           Number.isNaN(Number(productId)) || productId == null || Number.isNaN(Number(parseQuantityProduced)) || parseQuantityProduced <= 0 ||
-           !prodDate || !expDate){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+        if(
+            !code || typeof code !== "string" || code.trim() === "" ||
+            Number.isNaN(Number(productId)) || productId == null || Number.isNaN(Number(parseQuantityProduced)) || parseQuantityProduced <= 0 ||
+            !prodDate || !expDate){
+                throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {code,productId,quantityProduced,productionDate,expiryDate};
         const response = await api.post(url+`/create/new-batch`,requestBody,{
@@ -129,7 +130,7 @@ export async function getUpcomingBatches(daysAhead){
         if(Number.isNaN(Number(parseDaysAhead)) || parseDaysAhead <= 0){
             throw new Error("Dati datum "+parseDaysAhead+" za nadolazece batch-eve, nije pronadjen");
         }
-        const response = await api.get(url+`/upcoming/${daysAhead}`,{
+        const response = await api.get(url+`/upcoming/${parseDaysAhead}`,{
             headers:getHeader()
         });
         return response.data;
@@ -144,9 +145,9 @@ export async function getBatchesProducedBetween({start, end}){
         const startDate = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const endDate = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!startDate || !endDate){
-            throw new Error("Dati vremenski opseg "+start+" - "+end+" za proizvedene batche-eve, nije pronadjen");
+            throw new Error("Dati vremenski opseg "+startDate+" - "+endDate+" za proizvedene batche-eve, nije pronadjen");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj proizvodnje batch-eva ne sme biti ispred datuma za pocetak proizvodnje batch-eva");
         }
         const response = await api.get(url+`/produced-between`,{
@@ -168,9 +169,9 @@ export async function getBatchesExpiringBetween({start, end}){
         const startDate = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const endDate = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!startDate || !endDate){
-            throw new Error("Dati vremenski opseg "+start+" - "+end+" za batche-eve koji isticu, nije pronadjeni");
+            throw new Error("Dati vremenski opseg "+startDate+" - "+endDate+" za batche-eve koji isticu, nije pronadjeni");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj isticanja batch-eva ne sme biti ispred datuma za pocetak isticanje batch-eva");
         }
         const response = await api.get(url+`/expiring-between`,{
@@ -280,11 +281,11 @@ export async function findByProductionDate(productionDate){
     try{
         const prodDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!prodDate){
-            throw new Error("Dati datum proizvodnje "+productionDate+" za batch, nije pronadjen");
+            throw new Error("Dati datum proizvodnje "+prodDate+" za batch, nije pronadjen");
         }
         const response = await api.get(url+`/by-production-date`,{
             params:{
-                productionDate:moment(productionDate).format("YYYY-MM-DD")
+                productionDate:moment(prodDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -299,11 +300,11 @@ export async function findByProductionDateBefore(productionDate){
     try{
         const prodDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!prodDate){
-            throw new Error("Dati datum proizvodnje pre "+productionDate+" za batch, nije pronadjen");
+            throw new Error("Dati datum proizvodnje pre "+prodDate+" za batch, nije pronadjen");
         }
         const response = await api.get(url+`/by-production-date-before`,{
             params:{
-                productionDate:moment(productionDate).format("YYYY-MM-DD")
+                productionDate:moment(prodDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -318,11 +319,11 @@ export async function findByProductionDateAfter(productionDate){
     try{
         const prodDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!prodDate){
-            throw new Error("Dati datum proizvodnje posle "+productionDate+" za batch, nije pronadjen");
+            throw new Error("Dati datum proizvodnje posle "+prodDate+" za batch, nije pronadjen");
         }
         const response = await api.get(url+`/by-production-date-after`,{
             params:{
-                productionDate:moment(productionDate).format("YYYY-MM-DD")
+                productionDate:moment(prodDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -338,15 +339,15 @@ export async function findByProductionDateBetween({startDate, endDate}){
         const start = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
         const end = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
         if(!start || !end){
-            throw new Error("Datum opsega "+startDate+" - "+endDate+" proizvodnje, za dati batch, nije pronadjen");
+            throw new Error("Datum opsega "+start+" - "+end+" proizvodnje, za dati batch, nije pronadjen");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj prozivodnje batch-eva ne sme biti ispred datuma za pocetak proizvodnje batch-eva");
         }
         const response = await api.get(url+`/by-production-date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD")
+                startDate:moment(start).format("YYYY-MM-DD"),
+                endDate:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -361,11 +362,11 @@ export async function findByExpiryDate(expiryDate){
     try{
         const expDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!expDate){
-            throw new Error("Datum isteka "+expiryDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum isteka "+expDate+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/by-expiry-date`,{
             params:{
-                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
+                expiryDate:moment(expDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -380,11 +381,11 @@ export async function findByExpiryDateBefore(expiryDate){
     try{
         const expDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!expDate){
-            throw new Error("Datum isteka pre "+expiryDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum isteka pre "+expDate+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/by-expiry-date-before`,{
             params:{
-                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
+                expiryDate:moment(expDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -399,11 +400,11 @@ export async function findByExpiryDateAfter(expiryDate){
     try{
         const expDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!expDate){
-            throw new Error("Datum isteka posle "+expiryDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum isteka posle "+expDate+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/by-expiry-date-after`,{
             params:{
-                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
+                expiryDate:moment(expDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -419,15 +420,15 @@ export async function findByExpiryDateBetween({expiryDateStart, expiryDateEnd}){
         const startDate = moment.isMoment(expiryDateStart) || moment(expiryDateStart,"YYYY-MM-DD",true).isValid();
         const endDate = moment.isMoment(expiryDateEnd) || moment(expiryDateEnd,"YYYY-MM-DD",true).isValid();
         if(!startDate || !endDate){
-            throw new Error("Datum opsega "+expiryDateStart+" - "+expiryDateEnd+" isteka, za dati batch, nije pronadjen");
+            throw new Error("Datum opsega "+startDate+" - "+endDate+" isteka, za dati batch, nije pronadjen");
         }
-        if(moment(expiryDateEnd).isBefore(moment(expiryDateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj isticanja batch-eva ne sme biti ispred datuma za pocetak isticanja batch-eva");
         }
         const response = await api.get(url+`/by-expiry-date-between`,{
             params:{
-                expiryDateStart:moment(expiryDateStart).format("YYYY-MM-DD"),
-                expiryDateEnd:moment(expiryDateEnd).format("YYYY-MM-DD")
+                expiryDateStart:moment(startDate).format("YYYY-MM-DD"),
+                expiryDateEnd:moment(endDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -442,11 +443,11 @@ export async function findByProductionDateEquals(today){
     try{
         const todaysDay = moment.isMoment(today) || moment(today,"YYYY-MM-DD",true).isValid();
         if(!todaysDay){
-            throw new Error("Datum proizvodnje jedank danasnjem "+today+" datumu za batch, nije pronadjen");
+            throw new Error("Datum proizvodnje jedank danasnjem "+todaysDay+" datumu za batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/production-date-equal`,{
             params:{
-                today:moment(today).format("YYYY-MM-DD")
+                today:moment(todaysDay).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -461,11 +462,11 @@ export async function findByExpiryDateLessThanEqual(today){
     try{
         const todaysDay = moment.isMoment(today) || moment(today,"YYYY-MM-DD",true).isValid();
         if(!todaysDay){
-            throw new Error("Datum isteka do danasnjeg datuma "+today+" za dati batch, nije pronadjen");
+            throw new Error("Datum isteka do danasnjeg datuma "+todaysDay+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/expiry-date-less-than-equal`,{
             params:{
-                today:moment(today).format("YYYY-MM-DD")
+                today:moment(todaysDay).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -480,11 +481,11 @@ export async function findByProductionDateGreaterThanEqual(today){
     try{
         const todaysDay = moment.isMoment(today) || moment(today,"YYYY-MM-DD",true).isValid();
         if(!todaysDay){
-            throw new Error("Datum proizvodnje od danasnjeg datuma "+today+" pa na dalje, za dati batch, nije pronadjen");
+            throw new Error("Datum proizvodnje od danasnjeg datuma "+todaysDay+" pa na dalje, za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/production-date-greater-than-equal`,{
             params:{
-                today:moment(today).format("YYYY-MM-DD")
+                today:moment(todaysDay).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -499,11 +500,11 @@ export async function findByExpiryDateGreaterThanEqual(expiryDate){
     try{
         const expDay = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!expDay){
-            throw new Error("Datum isteka od danasnjeg datuma "+expiryDate+" pa na dalje, za dati batch, nije pronadjen");
+            throw new Error("Datum isteka od danasnjeg datuma "+expDay+" pa na dalje, za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/expiry-date-greater-than-equal`,{
             params:{
-                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
+                expiryDate:moment(expDay).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -518,11 +519,11 @@ export async function findByProductionDateLessThanEqual(productionDate){
     try{
         const prodDay = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!prodDay){
-            throw new Error("Datum proizvodnje do danasnjeg datuma "+productionDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum proizvodnje do danasnjeg datuma "+prodDay+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/production-date-less-than-equal`,{
             params:{
-                productionDate:moment(productionDate).format("YYYY-MM-DD")
+                productionDate:moment(prodDay).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -537,11 +538,11 @@ export async function findByExpiryDateGreaterThan(today){
     try{
         const todaysDay = moment.isMoment(today) || moment(today,"YYYY-MM-DD",true).isValid();
         if(!todaysDay){
-            throw new Error("Datum isteka batcha do danasnjeg "+today+" datuma, nije pronadjen");
+            throw new Error("Datum isteka batcha do danasnjeg "+todaysDay+" datuma, nije pronadjen");
         }
         const response = await api.get(url+`/search/expiry-date-greater-than`,{
             params:{
-                today:moment(today).format("YYYY-MM-DD")
+                today:moment(todaysDay).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -604,11 +605,11 @@ export async function findByExpiryDateAfterAndProductId({date, productId}){
     try{
         const prodDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(Number.isNaN(Number(productId)) || productId == null || !prodDate){
-            throw new Error("Datum isteka posle "+date+" za batch i id "+productId+" proizvoda, nisu pronadjeni");
+            throw new Error("Datum isteka posle "+prodDate+" za batch i id "+productId+" proizvoda, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/expiry-date-after/product/${productId}`,{
             params:{
-                date:moment(date).format("YYYY-MM-DD")
+                date:moment(prodDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -698,6 +699,9 @@ export async function findByProductCurrentQuantityBetween({min, max}){
         if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
             throw new Error("Opseg "+parseMin+" - "+parseMax+" trenutne kolicine, za dati proizvod, nije pornadjena");
         }
+        if(parseMin > parseMax){
+            throw new Error("Mnimalna kolicina ne sme biti veca od maksimalne kolicine");
+        }
         const response = await api.get(url+`/search/product-current-quantity-between`,{
             params:{
                 min:parseMin,
@@ -716,11 +720,11 @@ export async function findByProductIdAndExpiryDateLessThanEqual({productId, toda
     try{
         const todaysDate = moment.isMoment(today) || moment(today,"YYYY-MM-DD",true).isValid();
         if(Number.isNaN(Number(productId)) || productId == null || !todaysDate){
-            throw new Error("Dati id "+productId+" proizvoda i datum isteka do danasnjeg "+today+" datuma, nije pronadjen");
+            throw new Error("Dati id "+productId+" proizvoda i datum isteka do danasnjeg "+todaysDate+" datuma, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/${productId}/expiry-date-less-than-equal`,{
             params:{
-                today:moment(today).format("YYYY-MM-DD")
+                today:moment(todaysDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -735,11 +739,11 @@ export async function findByProductIdAndProductionDateAfter({productId, date}){
     try{
         const prodDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(Number.isNaN(Number(productId)) || productId == null || !prodDate){
-            throw new Error("Dati id "+productId+" proizvoda i datum proizvodnje posle datog "+date+" datuma, nije pronadjen");
+            throw new Error("Dati id "+productId+" proizvoda i datum proizvodnje posle datog "+prodDate+" datuma, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/${productId}/product-date-after`,{
             params:{
-                date:moment(date).format("YYYY-MM-DD")
+                date:moment(prodDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -756,15 +760,15 @@ export async function findByProductIdAndExpiryDateBetween({productId, startDate,
         const expEnd =  moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
         if(Number.isNaN(Number(productId)) || productId == null ||
            !expStart || expEnd){
-                throw new Error("Dati id "+productId+" proizvoda i opseg isticanja "+startDate+" - "+endDate+" datuma, nije pronadjen");
+                throw new Error("Dati id "+productId+" proizvoda i opseg isticanja "+expStart+" - "+expEnd+" datuma, nije pronadjen");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(expEnd).isBefore(moment(expStart))){
             throw new Error("Datum za kraj isticanja batch-eva ne sme biti ispred datuma za pocetak isticanja batch-eva");
         }
         const response = await api.get(url+`/search/product/${productId}/expiry-date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD")
+                startDate:moment(expStart).format("YYYY-MM-DD"),
+                endDate:moment(expEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });

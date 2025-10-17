@@ -133,7 +133,7 @@ export async function findByStorageName(storageName){
 
 export async function findBySupplyId(supplyId){
     try{
-        if(supplyId == null || isNaN(supplyId)){
+        if(supplyId == null || Number.isNaN(Number(supplyId))){
             throw new Error("Dati ID "+supplyId+" za dobavljaca nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/supply/${supplyId}`,{
@@ -167,7 +167,7 @@ export async function findByBarCodeAndGoodsType({barCode, goodsType}){
 
 export async function findByBarCodeAndStorageId({barCode, storageId}){
     try{
-        if(!barCode || typeof barCode !== "string" || barCode.trim() === "" || storageId){
+        if(!barCode || typeof barCode !== "string" || barCode.trim() === "" || storageId == null || Number.isNaN(Number(storageId))){
             throw new Error("Dati barCode "+barCode+" i ID "+storageId+" skladista nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/goods/by-barCode-and-storageId`,{
@@ -203,7 +203,7 @@ export async function findSingleByBarCode(barCode){
 
 export const getGoodsByStorageId = async (storageId) => {
     try{
-        if(storageId == null || isNaN(storageId)){
+        if(storageId == null || Number.isNaN(Number(storageId))){
             throw new Error("Dati ID "+storageId+" sa skladiste nije pronadjen");
         }
         const response = await api.get(`/goods/by-storage/${storageId}`);

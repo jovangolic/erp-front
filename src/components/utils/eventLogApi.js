@@ -162,7 +162,7 @@ export async function findByTimestampBetween({start, end}){
         if(!validateStart || !validateEnd){
             throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" za event-log nije pronadjen");
         }
-        if(moment(validateStart).isAfter(moment(validateEnd))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/timestamp-between`,{
@@ -206,7 +206,7 @@ export async function findByShipmentIdAndTimestampBetween({shipmentId, from, to}
             !validateStart || !validateEnd){
             throw new Error("Dati id "+shipmentId+" za dostavu i datumski opseg "+validateStart+" - "+validateEnd+" za event-log, nije pronadjen");
         }
-        if(moment(validateStart).isAfter(moment(validateEnd))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/search/${shipmentId}/timestamp-between`,{

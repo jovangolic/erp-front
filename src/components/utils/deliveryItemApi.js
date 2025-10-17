@@ -950,16 +950,16 @@ export async function trackDeliveryItem(id){
 
 export async function trackByProduct(productId){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
-            throw new Error("Dati id "+id+" proizvoda od delivery-item za pracenje, nije pronadjen");
+        if(Number.isNaN(Number(productId)) || productId == null){
+            throw new Error("Dati id "+productId+" proizvoda od delivery-item za pracenje, nije pronadjen");
         }
-        const response = await api.get(url+`/track-product/${id}`,{
+        const response = await api.get(url+`/track-product/${productId}`,{
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id "+id+" proizvoda od delivery-itema za pracenje");
+        handleApiError(error,"Trenutno nismo pronasli id "+productId+" proizvoda od delivery-itema za pracenje");
     }
 }
 
@@ -968,13 +968,13 @@ export async function trackByInboundDelivery(deliveryId){
         if(Number.isNaN(Number(deliveryId)) || deliveryId == null){
             throw new Error("Dati id "+deliveryId+" nadolazece stavke od delivery-item za pracenje, nije pronadjen");
         }
-        const response = await api.get(url+`/track-inbound-delivery/${id}`,{
+        const response = await api.get(url+`/track-inbound-delivery/${deliveryId}`,{
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id "+id+" nadolazece stavke od delivery-itema za pracenje");
+        handleApiError(error,"Trenutno nismo pronasli id "+deliveryId+" nadolazece stavke od delivery-itema za pracenje");
     }
 }
 
@@ -983,13 +983,13 @@ export async function trackByOutboundDelivery(deliveryId){
         if(Number.isNaN(Number(deliveryId)) || deliveryId == null){
             throw new Error("Dati id "+deliveryId+" odlazece stavke od delivery-item za pracenje, nije pronadjen");
         }
-        const response = await api.get(url+`/track-outbound-delivery/${id}`,{
+        const response = await api.get(url+`/track-outbound-delivery/${deliveryId}`,{
             headers:getHeader()
         });
         return response.data;
     }
     catch(error){
-        handleApiError(error,"Trenutno nismo pronasli id "+id+" odlazece stavke od delivery-itema za pracenje");
+        handleApiError(error,"Trenutno nismo pronasli id "+deliveryId+" odlazece stavke od delivery-itema za pracenje");
     }
 }
 

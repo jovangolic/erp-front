@@ -26,7 +26,7 @@ export async function createFiscalYear({year, startDate, endDate, yearStatus, qu
         ) {
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        if(moment(validateEnd).isAfter(moment(validateStart))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error("Datum za kraj ne sme biti ispred datum za pocetak");
         }
         // Validacija svakog kvartala
@@ -69,7 +69,7 @@ export async function updateFiscalYear({id,year, startDate, endDate, yearStatus,
         ) {
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        if(moment(validateEnd).isAfter(moment(validateStart))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error("Datum za kraj ne sme biti ispred datum za pocetak");
         }
         // Validacija svakog kvartala
@@ -149,7 +149,7 @@ export async function findBetweenStartAndEndDates({start, end}){
         if(!validateStart || !validateEnd){
             throw new Error("Dati opseg "+validateStart+" - "+validateEnd+" godina je ne-validan");
         }
-        if(moment(validateEnd).isAfter(moment(validateStart))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/date-range`,{
@@ -438,6 +438,9 @@ export async function saveFiscalYear({year,startDate,endDate,yearStatus,quarterS
             !isFiscalYearTypeStatusValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datm za kraj ne sme biti ispred datuma za pocetak");
+        }
         const requestBody = {year,startDate,endDate,yearStatus,quarterStatus,status,confirmed};
         const response = await api.post(url+`/save`,requestBody,{
             headers:getHeader()
@@ -501,6 +504,9 @@ export async function saveAll(requests){
             }
             if(!validateEnd){
                 throw new Error(`Nevalidan zahtev na indexu ${i}: 'datum-kraja' mora biti ceo broj`);
+            }
+            if(moment(validateEnd).isBefore(moment(validateStart))){
+                throw new Error("Datm za kraj ne sme biti ispred datuma za pocetak");
             }
             if(!isFiscalQuarterStatusValid.includes(req.quarterStatus?.toUpperCase())){
                 throw new Error(`Nevalidan zahtev na indexu ${i}: 'kvartalni-status' se mora izabrati`);

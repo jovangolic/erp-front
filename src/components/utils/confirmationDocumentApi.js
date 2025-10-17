@@ -84,15 +84,18 @@ export const generateAndSaveDocument = async (goodsDispatchDTO) => {
 
 export async function updateConfirmationDocument({id, filePath, createdAt, userId, shiftId}){
     try{
-      const requestBody = {filePath, createdAt: moment(createdAt).format("YYYY-MM-DDTHH:mm:ss"),userId,shiftId};
-      const response = await api.put(url+`/update/${id}`,requestBody,{
-        headers:getHeader()
-      });
-      return response.data;
+        const validateUserId = Number.isNaN(Number(userId)) || userId == null;
+        const validateShiftId = Number.isNaN(Number(shiftId)) || shiftId == null;
+        const validateDate = moment.isMoment(createdAt) || moment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const requestBody = {filePath, validDate,validateUserId,validateShiftId};
+        const response = await api.put(url+`/update/${id}`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
     }
     catch(error){
-      console.error("Greška prilikom azuriranja dokumenta:", error);
-      throw error;
+        console.error("Greška prilikom azuriranja dokumenta:", error);
+        throw error;
     }
 }
 
@@ -223,7 +226,7 @@ export async function saveAs({sourceId, filePath,userId,shiftId,status,confirmed
         handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
     }
 }
- const validDate = moment.isMoment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+
 export async function saveAll(requests){
     try{
         if(!Array.isArray(requests) || requests.length === 0){

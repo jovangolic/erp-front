@@ -196,12 +196,15 @@ export async function getByScannedAtBetween({from, to}){
         const validDateFrom = moment.isMoment(from) || moment(from, "YYYY-MM-DDTHH:mm:ss", true).isValid();
         const validDateTo = moment.isMoment(to) || moment(to, "YYYY-MM-DDTHH:mm:ss", true).isValid();
         if(!validDateFrom || !validDateTo){
-            throw new Error("Opseg skeniranog datuma "+from+" - "+to+" nije validan");
+            throw new Error("Opseg skeniranog datuma "+validDateFrom+" - "+validDateTo+" nije validan");
+        }
+        if(moment(validDateTo).isBefore(moment(validDateFrom))){
+            throw new Error("Datum za kraj ne sme biti veci od datuma za pocetak");
         }
         const response = await api.get(url+`/get-by-date-between`,{
             params:{
-                from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
-                to:moment(to).format("YYYY-MM-DDTHH:mm:ss")
+                from:moment(validDateFrom).format("YYYY-MM-DDTHH:mm:ss"),
+                to:moment(validDateTo).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });

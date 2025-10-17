@@ -628,9 +628,9 @@ export async function countDefectsByYearAndMonth(){
 
 export async function findByCreatedDate(createdDate){
     try{
-        const validDate = moment.isMoment(dcreatedDateate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validDate = moment.isMoment(createdDate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validDate){
-            throw new Error("Datum-vreme "+createdDate+" kreiranja datog defekta, nije pronadjeno");
+            throw new Error("Datum-vreme "+validDate+" kreiranja datog defekta, nije pronadjeno");
         }
         const response = await api.get(url+`/created-date`,{
             params:{
@@ -647,9 +647,9 @@ export async function findByCreatedDate(createdDate){
 
 export async function findByCreatedDateAfter(createdDate){
     try{
-        const validDate = moment.isMoment(dcreatedDateate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validDate = moment.isMoment(createdDate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validDate){
-            throw new Error("Datum-vreme posle "+createdDate+" kreiranja datog defekta, nije pronadjeno");
+            throw new Error("Datum-vreme posle "+validDate+" kreiranja datog defekta, nije pronadjeno");
         }
         const response = await api.get(url+`/created-date-after`,{
             params:{
@@ -666,9 +666,9 @@ export async function findByCreatedDateAfter(createdDate){
 
 export async function findByCreatedDateBefore(createdDate){
     try{
-        const validDate = moment.isMoment(dcreatedDateate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validDate = moment.isMoment(createdDate) || moment(createdDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validDate){
-            throw new Error("Datum-vreme pre "+createdDate+" kreiranja datog defekta, nije pronadjeno");
+            throw new Error("Datum-vreme pre "+validDate+" kreiranja datog defekta, nije pronadjeno");
         }
         const response = await api.get(url+`/created-date-before`,{
             params:{
@@ -688,7 +688,7 @@ export async function findByCreatedDateBetween({start, end}){
         const validDateStart = moment.isMoment(sta) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validDateStart || !validDateEnd){
-            throw new Error("Opseg datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
+            throw new Error("Opseg datuma i vremena "+validDateStart+" - "+validDateEnd+" kreiranja defekta, nije pronadjen");
         }
         if(moment(validDateEnd).isBefore(moment(validDateStart))){
             throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");
@@ -712,7 +712,7 @@ export async function countByCreatedAtBetween({start, end}){
         const validDateStart = moment.isMoment(sta) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validDateEnd || !validDateEnd){
-            throw new Error("Broj opsega datuma i vremena "+start+" - "+end+" kreiranja defekta, nije pronadjen");
+            throw new Error("Broj opsega datuma i vremena "+validDateStart+" - "+validDateEnd+" kreiranja defekta, nije pronadjen");
         }
         if(moment(validDateEnd).isBefore(moment(validDateStart))){
             throw new Error("Datum za kraj, ne sme biti ispred datuma za pocetak");

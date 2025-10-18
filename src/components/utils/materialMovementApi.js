@@ -15,12 +15,14 @@ const isStorageStatusValid = ["ACTIVE","UNDER_MAINTENANCE","DECOMMISSIONED","RES
 
 export async function createMaterialMovement({materialId,movementDate,type,quantity,fromStorageId,toStorageId}){
     try{
+        const validateDate = moment.isMoment(movementDate) || moment(movementDate,"YYYY-MM-DD",true).isValid();
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(materialId) || materialId == null || 
-            !moment(movementDate,"YYYY-MM-DD",true).isValid() ||
-            !isMovementTypeValid.includes(type?.toUpperCase() || isNaN(parseQuantity) || parseQuantity <= 0 ||
-            isNaN(fromStorageId) || fromStorageId == null || isNaN(toStorageId) || toStorageId == null)){
-            throw new Error("Sva polja moraju biti popunjena i valididrana");
+        if(
+            Number.isNaN(Number(materialId)) || materialId == null || 
+            !validateDate ||
+            !isMovementTypeValid.includes(type?.toUpperCase() || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            Number.isNaN(Number(fromStorageId)) || fromStorageId == null || Number.isNaN(Number(toStorageId)) || toStorageId == null)){
+                throw new Error("Sva polja moraju biti popunjena i valididrana");
         }
         const requestBody = {materialId,movementDate,type,quantity,fromStorageId,toStorageId};
         const response = await api.post(url+`/create/new-materialMovement`,requestBody,{
@@ -35,13 +37,15 @@ export async function createMaterialMovement({materialId,movementDate,type,quant
 
 export async function updateMaterialMovement({id,materialId,movementDate,type,quantity,fromStorageId,toStorageId}){
     try{
+        const validateDate = moment.isMoment(movementDate) || moment(movementDate,"YYYY-MM-DD",true).isValid();
         const parseQuantity = parseFloat(quantity);
-        if( id == null || isNaN(id) ||
-            isNaN(materialId) || materialId == null || 
-            !moment(movementDate,"YYYY-MM-DD",true).isValid() ||
-            !isMovementTypeValid.includes(type?.toUpperCase() || isNaN(parseQuantity) || parseQuantity <= 0 ||
-            isNaN(fromStorageId) || fromStorageId == null || isNaN(toStorageId) || toStorageId == null)){
-            throw new Error("Sva polja moraju biti popunjena i valididrana");
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            Number.isNaN(Number(materialId)) || materialId == null || 
+            !validateDate ||
+            !isMovementTypeValid.includes(type?.toUpperCase() || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            Number.isNaN(Number(fromStorageId)) || fromStorageId == null || Number.isNaN(Number(toStorageId)) || toStorageId == null)){
+                throw new Error("Sva polja moraju biti popunjena i valididrana");
         }
         const requestBody = {materialId,movementDate,type,quantity,fromStorageId,toStorageId};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -56,7 +60,7 @@ export async function updateMaterialMovement({id,materialId,movementDate,type,qu
 
 export async function deleteMaterialMovement(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -71,7 +75,7 @@ export async function deleteMaterialMovement(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -117,7 +121,7 @@ export async function findByType(type){
 export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina "+parseQuantity+" za material-movement nije pronadjen");
         }
         const response = await api.get(url+`/by-quantity`,{
@@ -136,7 +140,7 @@ export async function findByQuantity(quantity){
 export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina za material-movement veca od "+parseQuantity+", nije pronadjen");
         }
         const response = await api.get(url+`/quantity-greater-than`,{
@@ -155,7 +159,7 @@ export async function findByQuantityGreaterThan(quantity){
 export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina za material-movement manja od "+parseQuantity+", nije pronadjen");
         }
         const response = await api.get(url+`/quantity-less-than`,{
@@ -173,7 +177,7 @@ export async function findByQuantityLessThan(quantity){
 
 export async function findByFromStorage_Id(fromStorageId){
     try{
-        if(isNaN(fromStorageId) || fromStorageId == null){
+        if(Number.isNaN(Number(fromStorageId)) || fromStorageId == null){
             throw new Error("Dati id "+fromStorageId+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/fromStorage/${fromStorageId}`,{
@@ -188,7 +192,7 @@ export async function findByFromStorage_Id(fromStorageId){
 
 export async function findByToStorage_Id(toStorageId){
     try{
-        if(isNaN(toStorageId) || toStorageId == null){
+        if(Number.isNaN(Number(toStorageId)) || toStorageId == null){
             throw new Error("Dati id "+toStorageId+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/toStorage/${toStorageId}`,{
@@ -276,7 +280,7 @@ export async function findByToStorage_LocationContainingIgnoreCase(toStorageLoca
 export async function findByFromStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet "+parseCapacity+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/from-storage-capacity`,{
@@ -293,7 +297,7 @@ export async function findByFromStorage_Capacity(capacity){
 export async function findByToStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet "+parseCapacity+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/to-storage-capacity`,{
@@ -309,12 +313,13 @@ export async function findByToStorage_Capacity(capacity){
 
 export async function findByMovementDate(movementDate){
     try{
-        if(!moment(movementDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum kretanja "+movementDate+" za material-movement, nije pronadjen");
+        const validateDate = moment.isMoment(movementDate) || moment(movementDate,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum kretanja "+validateDate+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/by-movement-date`,{
             params:{
-                movementDate:moment(movementDate).format("YYYY-MM-DD")
+                movementDate:moment(validateDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -327,14 +332,18 @@ export async function findByMovementDate(movementDate){
 
 export async function findByMovementDateBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid() || 
-            !moment(end,"YYYY-MM-DD",true).isValid()){
-                throw new Error("Dati datumski opseg "+start+" - "+end+" za material-movement, nije pronadjen");
-            }
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dati datumski opseg "+validateDateStart+" - "+validateDateEnd+" za material-movement, nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
         const response = await api.get(url+`/between-dates`,{
             params:{
-                start:moment(start).format("YYYY-MM-DD"),
-                end:moment(end).format("YYYY-MM-DD")
+                start:moment(validateDateStart).format("YYYY-MM-DD"),
+                end:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -347,12 +356,13 @@ export async function findByMovementDateBetween({start, end}){
 
 export async function findByMovementDateGreaterThanEqual(date){
     try{
-        if(!moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum veci od "+date+" za material-movement, nije pronadjen");
+        const validateDateStart = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart){
+            throw new Error("Dati datum veci od "+validateDateStart+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/date-greater-than-equal`,{
             params:{
-                date:moment(date).format("YYYY-MM-DD")
+                date:moment(validateDateStart).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -365,12 +375,13 @@ export async function findByMovementDateGreaterThanEqual(date){
 
 export async function findByMovementDateAfterOrEqual(movementDate){
     try{
-        if(!moment(movementDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum posle "+movementDate+" za material-movement, nije pronadjen");
+        const validateDateStart = moment.isMoment(movementDate) || moment(movementDate,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart){
+            throw new Error("Dati datum posle "+validateDateStart+" za material-movement, nije pronadjen");
         }
         const response = await api.get(url+`/by-movement-date-after-equal`,{
             params:{
-                movementDate:moment(movementDate).format("YYYY-MM-DD")
+                movementDate:moment(validateDateStart).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -383,7 +394,7 @@ export async function findByMovementDateAfterOrEqual(movementDate){
 
 export async function countAvailableCapacityFromStorage(fromStorageId){
     try{
-        if(isNaN(fromStorageId) || fromStorageId == null){
+        if(Number.isNaN(Number(fromStorageId)) || fromStorageId == null){
             throw new Error("Dati id "+fromStorageId+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/from-storage/${fromStorageId}/available-capacity`,{
@@ -399,7 +410,7 @@ export async function countAvailableCapacityFromStorage(fromStorageId){
 export async function allocateCapacityFromStorage({fromStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(fromStorageId) || fromStorageId == null){
+        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(fromStorageId)) || fromStorageId == null){
             throw new Error("Dati id "+fromStorageId+" za from-storage i njegova kolicina "+parseAmount+" za alociranje, nisu pronadjeni");
         }
         const response = await api.get(url+`/from-storage/${fromStorageId}/allocate`,{
@@ -416,7 +427,7 @@ export async function allocateCapacityFromStorage({fromStorageId, amount}){
 export async function releaseCapacityFromStorage({fromStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(fromStorageId) || fromStorageId == null){
+        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(fromStorageId)) || fromStorageId == null){
             throw new Error("Dati id "+fromStorageId+" i kolicina za oslobadjanje "+parseAmount+", nisu pronadjeni");
         }
         const response = await api.get(url+`/from-storage/${fromStorageId}/release`,{
@@ -432,7 +443,7 @@ export async function releaseCapacityFromStorage({fromStorageId, amount}){
 
 export async function countAvailableCapacityToStorage(toStorageId){
     try{
-        if(isNaN(toStorageId) || toStorageId == null){
+        if(Number.isNaN(Number(toStorageId)) || toStorageId == null){
             throw new Error("Dati id "+toStorageId+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/to-storage/${toStorageId}/available-capacity`,{
@@ -448,7 +459,7 @@ export async function countAvailableCapacityToStorage(toStorageId){
 export async function allocateCapacityToStorage({toStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(toStorageId) || toStorageId == null){
+        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(toStorageId)) || toStorageId == null){
             throw new Error("Dati id "+toStorageId+" za to-storage i njegova kolicina "+parseAmount+" za alociranje, nisu pronadjeni");
         }
         const response = await api.get(url+`/to-storage/${toStorageId}/allocate`,{
@@ -465,7 +476,7 @@ export async function allocateCapacityToStorage({toStorageId, amount}){
 export async function releaseCapacityToStorage({toStorageId, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(isNaN(parseAmount) || parseAmount <= 0 || isNaN(toStorageId) || toStorageId == null){
+        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(toStorageId)) || toStorageId == null){
             throw new Error("Dati id "+toStorageId+" i kolicina "+parseAmount+" za oslobadjanje, nisu pronadjeni");
         }
         const response = await api.get(url+`/to-storage/${toStorageId}/release`,{
@@ -482,7 +493,7 @@ export async function releaseCapacityToStorage({toStorageId, amount}){
 export async function findByFromStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/from-storage-capacity-greater-than`,{
@@ -501,7 +512,7 @@ export async function findByFromStorage_CapacityGreaterThan(capacity){
 export async function findByToStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/to-storage-capacity-greater-than`,{
@@ -520,7 +531,7 @@ export async function findByToStorage_CapacityGreaterThan(capacity){
 export async function findByFromStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet manji od "+parseCapacity+" za from-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/from-storage-capacity-less-than`,{
@@ -539,7 +550,7 @@ export async function findByFromStorage_CapacityLessThan(capacity){
 export async function findByToStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet manji od "+parseCapacity+" za to-storage, nije pronadjen");
         }
         const response = await api.get(url+`/search/to-storage-capacity-less-than`,{

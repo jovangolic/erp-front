@@ -1,6 +1,15 @@
  import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
+const url = `${import.meta.env.VITE_API_BASE_URL}/products`;
+
 const isSupplierTypeValidated = ["RAW_MATERIAL","MANUFACTURER","WHOLESALER","DISTRIBUTOR","SERVICE_PROVIDER","AGRICULTURE","FOOD_PROCESSING","LOGISTICS","PACKAGING","MAINTENANCE"];
 const isStorageTypeValidated = ["PRODUCTION","DISTRIBUTION","OPEN","CLOSED","INTERIM","AVAILABLE","SILO","YARD","COLD_STORAGE"];
 const isGoodsTypeValidated = ["RAW_MATERIAL", "SEMI_FINISHED_PRODUCT", "FINISHED_PRODUCT", "WRITE_OFS","CONSTRUCTION_MATERIAL","BULK_GOODS","PALLETIZED_GOODS"];
@@ -8,20 +17,21 @@ const isUnitMeasureValid = ["KOM", "KG", "LITAR", "METAR", "M2"];
 
 export async function createProduct({name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes}){
     try{
+        const parseCurrentQuantity = parseFloat(currentQuantity);
         if(
             !nama || typeof name !=="string" || name.trim()==="" ||
             !unitMeasure || typeof unitMeasure !=="string" ||unitMeasure.trim() === ""||
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
             !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
-            !storageId || isNaN(currentQuantity) || parseInt(currentQuantity) <= 0 ||
+            storageId == null || Number.isNaN(Number(storageId)) || 
+            Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0 ||
             !Array.isArray(barCodes) || barCodes.length === 0
         ){
             throw new Error("Sva polja moraju biti validirana i popunjena");
         }
-        const requestBody = {name, unitMeasure,supplierType:supplierType.toUpperCase(),storageType:storageType.toUpperCase(),
-            goodsType: goodsType.toUpperCase(),storageId, currentQuantity,barCodes};
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/products/create/new-product`,requestBody,{
+        const requestBody = {name,unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes};
+        const response = await api.post(url+`/create/new-product`,requestBody,{
             headers:getHeader()
         });    
         return response.data;
@@ -38,21 +48,22 @@ export async function createProduct({name, unitMeasure,supplierType,storageType,
 
 export async function updateProduct({id,name, unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes}){
     try{
+        const parseCurrentQuantity = parseFloat(currentQuantity);
         if(
-            id == null || isNaN(id) ||
+            id == null || Number.isNaN(Number(id)) ||
             !nama || typeof name !=="string" || name.trim()==="" ||
             !unitMeasure || typeof unitMeasure !=="string" ||unitMeasure.trim() === ""||
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
             !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
-            !storageId || isNaN(currentQuantity) || parseInt(currentQuantity) <= 0 ||
+            storageId == null || Number.isNaN(Number(storageId)) || 
+            Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0 ||
             !Array.isArray(barCodes) || barCodes.length === 0
         ){
             throw new Error("Sva polja moraju biti validirana i popunjena");
         }
-        const requestBody = {name, unitMeasure,supplierType:supplierType.toUpperCase(),storageType:storageType.toUpperCase(),
-            goodsType: goodsType.toUpperCase(),storageId, currentQuantity,barCodes};
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/products/update/${id}`,requestBody,{
+        const requestBody = {name,unitMeasure,supplierType,storageType,goodsType,storageId, currentQuantity,barCodes};
+        const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });    
         return response.data;
@@ -69,10 +80,10 @@ export async function updateProduct({id,name, unitMeasure,supplierType,storageTy
 
 export async function deleteProduct(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Proizvod sa datim "+id+" ID-om nije pronadjen");
         }
-        const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/products/delete/${id}`,{
+        const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -84,10 +95,10 @@ export async function deleteProduct(id){
 
 export async function getOneProduct(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Proizvod sa datim "+id+" ID-om nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product/${id}`,{
+        const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -99,7 +110,7 @@ export async function getOneProduct(id){
 
 export async function getAllProducts(){
     try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/get-all`,{
+        const response = await api.get(url+`/get-all`,{
             headers:getHeader()
         });
         return response.data;
@@ -114,7 +125,7 @@ export async function findByBarCode(barCode){
         if(!barCode || typeof barCode !== "string" || barCode.trim()=== ""){
             throw new Error("BarCode "+barCode+" nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-barCode`,{
+        const response = await api.get(url+`/product-by-barCode`,{
             params:{
                 barCode
             },
@@ -129,12 +140,13 @@ export async function findByBarCode(barCode){
 
 export async function findByCurrentQuantityLessThan(quantity){
     try{
-        if(isNaN(quantity) || parseFloat(quantity) <= 0){
-            throw new Error("Data kolicina "+quantity+" za proizvod, nije pronadjena");
+        const parseQuantity = parseFloat(quantity);
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+            throw new Error("Data kolicina "+parseQuantity+" za proizvod, nije pronadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-quantity`,{
+        const response = await api.get(url+`/product-by-quantity`,{
             params:{
-                quantity:parseFloat(quantity)
+                quantity:parseQuantity
             },
             headers:getHeader()
         });
@@ -150,7 +162,7 @@ export async function findByName(name){
         if(!nama || typeof name !=="string" || name.trim()===""){
             throw new Error("Naziv "+name+" proizvoda nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-name`,{
+        const response = await api.get(url+`/product-by-name`,{
             params:{
                 name
             },
@@ -165,10 +177,10 @@ export async function findByName(name){
 
 export async function findByStorageId(storageId){
     try{
-        if(storageId == null || isNaN(storageId)){
+        if(storageId == null || Number.isNaN(Number(storageId))){
             throw new Error("Dati storageId "+storageId+"  za proizvod, ne postoji");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-storage/${storageId}`,{
+        const response = await api.get(url+`/product-by-storage/${storageId}`,{
             headers:getHeader()
         });
         return response.data;
@@ -183,7 +195,7 @@ export async function findBySupplierType(supplierType){
         if(!isSupplierTypeValidated.includes(supplierType?.toUpperCase())){
             throw new Error("Dati tip "+supplierType+" dobavljaca za proizvod, nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-supplier-type`,{
+        const response = await api.get(url+`/product-by-supplier-type`,{
             params:{
                 supplierType:supplierType.toUpperCase()
             },
@@ -201,7 +213,7 @@ export async function findByStorageType(storageType){
         if(!isStorageTypeValidated.includes(storageType?.toUpperCase())){
             throw new Error("Tip "+storageType+" skladista nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-storage-type`,{
+        const response = await api.get(url+`/product-by-storage-type`,{
             params:{
                 storageType:storageType.toUpperCase()
             },
@@ -219,7 +231,7 @@ export async function findByGoodsType(goodsType){
         if(!isGoodsTypeValidated.includes(goodsType?.toUpperCase())){
             throw new Error("Tip "+goodsType+" robe nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/product-by-goods-type`,{
+        const response = await api.get(url+`/product-by-goods-type`,{
             params:{
                 goodsType:goodsType.toUpperCase()
             },
@@ -237,7 +249,7 @@ export async function findByUnitMeasure(unitMeasure){
         if(!isUnitMeasureValid.includes(unitMeasure?.toUpperCase())){
             throw new Error("Data jedinica mere "+unitMeasure+" nije pronadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/by-unitMeasure`,{
+        const response = await api.get(url+`/by-unit-measure`,{
             params:{unitMeasure:(unitMeasure || "").toUpperCase()},
             headers:getHeader()
         });
@@ -258,7 +270,7 @@ export async function findByShelfRowColAndStorage(row, col, storageId){
         ){
             throw new Error("Dati red "+parseRow+",kolona "+parseCol+" i "+storageId+" ID za skladiste nisu prnadjeni");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/storage/${storageId}/shelf`,{
+        const response = await api.get(url+`/storage/${storageId}/shelf`,{
             params:{
                 row:parseRow, col:parseCol, storageId:parseStorageId
             },
@@ -274,10 +286,10 @@ export async function findByShelfRowColAndStorage(row, col, storageId){
 export async function findByShelfRow(row){
     try{
         const parseRow = parseInt(row,10);
-        if(isNaN(parseRow) || parseRow <= 0){
+        if(Number.isNaN(Number(parseRow)) || parseRow <= 0){
             throw new Error("Dati red "+parseRow+" za policu nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/shelf/row`,{
+        const response = await api.get(url+`/shelf/row`,{
             params:{row:parseRow},
             headers:getHeader()
         });
@@ -291,10 +303,10 @@ export async function findByShelfRow(row){
 export async function findByShelfColumn(col){
     try{
         const parseCol = parseInt(col,10);
-        if(isNaN(parseCol) || parseCol <= 0){
+        if(Number.isNaN(Number(parseCol)) || parseCol <= 0){
             throw new Error("Data kolona "+parseCol+" za policu nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/shelf/col`,{
+        const response = await api.get(url+`/shelf/col`,{
             params:{col:parseCol},
             headers:getHeader()
         });
@@ -308,10 +320,10 @@ export async function findByShelfColumn(col){
 export async function findBySupplyMinQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data minimalna kolicina "+parseQuantity+" za dobavljaca nije pronadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/supply-min-quantity`,{
+        const response = await api.get(url+`/supply-min-quantity`,{
             params:{quantity:parseQuantity},
             headers:getHeader()
         });
@@ -324,16 +336,18 @@ export async function findBySupplyMinQuantity(quantity){
 
 export async function findBySupplyUpdateRange(from, to){
     try{
-        if(
-            !moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati opseg "+from+" - "+to+" datuma za dobavljaca nije pronadjen");
+        const validateFrom = moment.isMoment(from) || moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateTo = moment.isMoment(to) || moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateFrom || !validateTo){
+            throw new Error("Dati opseg "+validateFrom+" - "+validateTo+" datuma za dobavljaca nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/supply/updated`,{
+        if(moment(validateTo).isBefore(moment(validateFrom))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
+        const response = await api.get(url+`/supply/updated`,{
             params:{
-                from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
-                to:moment(to).format("YYYY-MM-DDTHH:mm:ss")
+                from:moment(validateFrom).format("YYYY-MM-DDTHH:mm:ss"),
+                to:moment(validateTo).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -346,10 +360,10 @@ export async function findBySupplyUpdateRange(from, to){
 
 export async function findBySupplyStorageId(storageId){
     try{
-        if(storageId == null || isNaN(storageId)){
+        if(storageId == null || Number.isNaN(Number(storageId))){
             throw new Error("Dati ID "+storageId+" za skaldiste nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/storage/${storageId}`,{
+        const response = await api.get(url`/supply/storage/${storageId}`,{
             headers:getHeader()
         });
         return response.data;
@@ -362,10 +376,10 @@ export async function findBySupplyStorageId(storageId){
 export async function countByShelfRowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(isNaN(parseRowCount) || parseRowCount <= 0){
+        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0){
             throw new Error("Dati broj redova "+parseRowCount+" za policu nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/count/shelf/rows`,{
+        const response = await api.get(url+`/count/shelf/rows`,{
             params:{rowCount:parseRowCount},
             headers:getHeader()
         });
@@ -379,10 +393,10 @@ export async function countByShelfRowCount(rowCount){
 export async function countByShelfCols(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(isNaN(parseCols) || parseCols <= 0){
+        if(Number.isNaN(Number(parseCols)) || parseCols <= 0){
             throw new Error("Dati broj kolona "+parseCols+" za policu nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/products/count/shelf/cols`,{
+        const response = await api.get(url+`/count/shelf/cols`,{
             params:{cols:parseCols},
             headers:getHeader()
         });
@@ -393,9 +407,3 @@ export async function countByShelfCols(cols){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

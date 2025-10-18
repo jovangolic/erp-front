@@ -1,18 +1,28 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+const url = `${import.meta.env.VITE_API_BASE_URL}/procurements`;
+
 export async function createProcurement({date, totalCost, itemSalesIds, supplyItemIds}){
     try{
+        const parseTotalCost = parseFloat(totalCost);
+        const validateDate = moment.isMoment(date) || moment(date, "YYYY-MM-DDTHH:mm:ss", true).isValid();
         if(
-            !moment(date, "YYYY-MM-DDTHH:mm:ss", true).isValid() ||
-            isNaN(totalCost) || parseFloat(totalCost) <= 0 ||
+            !validateDate ||
+            Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0 ||
             !Array.isArray(itemSalesIds) || itemSalesIds.length === 0 ||
             !Array.isArray(supplyItemIds) || supplyItemIds.length === 0
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {date:moment(date).format("YYYY-MM-DDTHH:mm:ss"), totalCost:parseFloat(totalCost), itemSalesIds, supplyItemIds};
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/procurements/create/new-procurement`,requestBody,{
+        const requestBody = {date, totalCost, itemSalesIds, supplyItemIds};
+        const response = await api.post(url+`/create/new-procurement`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -22,24 +32,26 @@ export async function createProcurement({date, totalCost, itemSalesIds, supplyIt
             throw new Error(error.response.data);
         }
         else{
-            throw new Error("Greška prilikom kreiranja nabavke: " + error.message);
+            throw new Error("Greska prilikom kreiranja nabavke: " + error.message);
         }
     }
 }
 
 export async function updateProcurement({id, date, totalCost, itemSalesIds, supplyItemIds}){
     try{
+        const parseTotalCost = parseFloat(totalCost);
+        const validateDate = moment.isMoment(date) || moment(date, "YYYY-MM-DDTHH:mm:ss", true).isValid();
         if(
-            id == null || isNaN(id) ||
-            !moment(date, "YYYY-MM-DDTHH:mm:ss", true).isValid() ||
-            isNaN(totalCost) || parseFloat(totalCost) <= 0 ||
+            Number.isNaN(Number(id)) || id == null ||
+            !validateDate ||
+            Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0 ||
             !Array.isArray(itemSalesIds) || itemSalesIds.length === 0 ||
             !Array.isArray(supplyItemIds) || supplyItemIds.length === 0
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {date:moment(date).format("YYYY-MM-DDTHH:mm:ss"), totalCost:parseFloat(totalCost), itemSalesIds, supplyItemIds};
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/procurements/update/${id}`,requestBody,{
+        const requestBody = {date, totalCost, itemSalesIds, supplyItemIds};
+        const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -49,17 +61,17 @@ export async function updateProcurement({id, date, totalCost, itemSalesIds, supp
             throw new Error(error.response.data);
         }
         else{
-            throw new Error("Greška prilikom auriranja nabavke: " + error.message);
+            throw new Error("Greska prilikom auriranja nabavke: " + error.message);
         }
     }
 }
 
 export async function deleteProcurement(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" za procurement nije pronadjen");
         }
-        const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/procurements/delete/${id}`,{
+        const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -71,10 +83,10 @@ export async function deleteProcurement(id){
 
 export async function getByProcurementId(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" za procurement nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/procurement/${id}`,{
+        const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -86,7 +98,7 @@ export async function getByProcurementId(id){
 
 export async function getAllProcurement(){
     try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/all-procurement`,{
+        const response = await api.get(url+`/find-all`,{
             headers:getHeader()
         });
         return response.data;
@@ -98,12 +110,13 @@ export async function getAllProcurement(){
 
 export async function getByTotalCost(totalCost){
     try{
-        if(isNaN(totalCost) || parseFloat(totalCost) <= 0){
-            throw new Error("Ukupna-cena "+totalCost+" za nabavku, nije pronadjena");
+        const parseTotalCost = parseFloat(totalCost);
+        if(Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0){
+            throw new Error("Ukupna-cena "+parseTotalCost+" za nabavku, nije pronadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/procurement/total-cost`,{
+        const response = await api.get(url+`/total-cost`,{
             params:{
-                totalCost:parseFloat(totalCost)
+                totalCost:parseTotalCost
             },
             headers:getHeader()
         });
@@ -116,13 +129,18 @@ export async function getByTotalCost(totalCost){
 
 export async function getByDateBetween({startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss", true).isValid()){
-            throw new Error("Dati opseg datuma "+startDate+" - "+endDate+" nije pronadjen");
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/procurement/date-between`,{
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
+        const response = await api.get(url+`/date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -135,12 +153,18 @@ export async function getByDateBetween({startDate, endDate}){
 
 export async function getByTotalCostBetween({min, max}){
     try{
-        if(isNaN(min) || parseFloat(min) < 0 || isNaN(max) || parseFloat(max) <= 0){
-            throw new Error("Dati opseg ukupne cene "+min+" - "+max+" nije pronadjen");
+        const parseMin = parseFloat(min);
+        const parseMax = parseFloat(max);
+        if(Number.isNaN(Number(parseMin)) || parseMin < 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+            throw new Error("Dati opseg ukupne cene "+parseMin+" - "+parseMax+" nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/procurement/cost/min-max`,{
+        if(parseMin > parseMax){
+            throw new Error("Minimalna ukupna cena ne sme biti veca od maksimalne ukupne cene");
+        }
+        const response = await api.get(url+`/total-cost-range`,{
             params:{
-                min:parseFloat(min), max:parseFloat(max)
+                min:parseMin,
+                 max:parseMax
             },
             headers:getHeader()
         });
@@ -154,10 +178,10 @@ export async function getByTotalCostBetween({min, max}){
 export async function getByTotalCostGreaterThan(totalCost){
     try{
         const parseTotalCost = parseFloat(totalCost);
-        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+        if(Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0){
             throw new Error("Data ukupna cena veca od "+parseTotalCost+" nije prtonadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/total-cost-greater-than`,{
+        const response = await api.get(url+`/total-cost-greater-than`,{
             params:{totalCost:parseTotalCost},
             headers:getHeader()
         });
@@ -171,10 +195,10 @@ export async function getByTotalCostGreaterThan(totalCost){
 export async function getByTotalCostLessThan(totalCost){
  try{
         const parseTotalCost = parseFloat(totalCost);
-        if(isNaN(parseTotalCost) || parseTotalCost <= 0){
+        if(Number.isNaN(Number(parseTotalCost)) || parseTotalCost <= 0){
             throw new Error("Data ukupna cena manja od "+parseTotalCost+" nije prtonadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/procurements/total-cost-less-than`,{
+        const response = await api.get(url+`/total-cost-less-than`,{
             params:{totalCost:parseTotalCost},
             headers:getHeader()
         });
@@ -185,9 +209,21 @@ export async function getByTotalCostLessThan(totalCost){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
+export async function findByDate(date){
+    try{
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Datum "+date+" za nabavku nije pronadjen");
+        }
+        const response = await api.get(url+`/payment-date`,{
+            params:{
+                date : moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+            },
+            headers:getHeader()
+        });
+        return response.data;
     }
-    throw new Error(`${customMessage}: ${error.message}`);
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli nabavku po datumu "+date);
+    }
 }

@@ -16,13 +16,15 @@ const isUnitOfMeasureValid = ["KG","METER","PCS","LITER","BOX","PALLET"];
 export async function createMaterialTransactionRequest({materialId,quantity,type,transactionDate,vendorId,documentReference,notes,status,createdByUserId}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(materialId) || materialId == null || isNaN(parseQuantity) || parseQuantity <= 0 ||
-           !isTransactionTypeValid.includes(type?.toUpperCase()) || !moment(transactionDate,"YYYY-MM-DD",true).isValid() ||
-           isNaN(vendorId) || vendorId == null || 
-           !documentReference || typeof documentReference !== "string" || documentReference.trim() === "" ||
-           !notes || typeof notes !== "string" || notes.trim() === "" ||
-           !isMaterialTransactionStatusValid.includes(status?.toUpperCase()) || isNaN(createdByUserId) || createdByUserId == null){
-            throw new Error("Sva polja moraju biti popunjena i validirana");
+        const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DD",true).isValid();
+        if(
+            Number.isNaN(Number(materialId)) || materialId == null || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            !isTransactionTypeValid.includes(type?.toUpperCase()) || !validateTransactionDate ||
+            Number.isNaN(Number(vendorId)) || vendorId == null || 
+            !documentReference || typeof documentReference !== "string" || documentReference.trim() === "" ||
+            !notes || typeof notes !== "string" || notes.trim() === "" ||
+            !isMaterialTransactionStatusValid.includes(status?.toUpperCase()) || Number.isNaN(Number(createdByUserId)) || createdByUserId == null){
+                throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {materialId,quantity,type,transactionDate,vendorId,documentReference,notes,status,createdByUserId};
         const response = await api.post(url+`/create/new-materialTransaction`,requestBody,{
@@ -38,14 +40,16 @@ export async function createMaterialTransactionRequest({materialId,quantity,type
 export async function updateMaterialTransactionRequest({id,materialId,quantity,type,transactionDate,vendorId,documentReference,notes,status,createdByUserId}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if( id == null || isNaN(id) ||
-            isNaN(materialId) || materialId == null || isNaN(parseQuantity) || parseQuantity <= 0 ||
-           !isTransactionTypeValid.includes(type?.toUpperCase()) || !moment(transactionDate,"YYYY-MM-DD",true).isValid() ||
-           isNaN(vendorId) || vendorId == null || 
-           !documentReference || typeof documentReference !== "string" || documentReference.trim() === "" ||
-           !notes || typeof notes !== "string" || notes.trim() === "" ||
-           !isMaterialTransactionStatusValid.includes(status?.toUpperCase()) || isNaN(createdByUserId) || createdByUserId == null){
-            throw new Error("Sva polja moraju biti popunjena i validirana");
+        const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DD",true).isValid();
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            Number.isNaN(Number(materialId)) || materialId == null || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            !isTransactionTypeValid.includes(type?.toUpperCase()) || !validateTransactionDate ||
+            Number.isNaN(Number(vendorId)) || vendorId == null || 
+            !documentReference || typeof documentReference !== "string" || documentReference.trim() === "" ||
+            !notes || typeof notes !== "string" || notes.trim() === "" ||
+            !isMaterialTransactionStatusValid.includes(status?.toUpperCase()) || Number.isNaN(Number(createdByUserId)) || createdByUserId == null){
+                throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {materialId,quantity,type,transactionDate,vendorId,documentReference,notes,status,createdByUserId};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -60,7 +64,7 @@ export async function updateMaterialTransactionRequest({id,materialId,quantity,t
 
 export async function deleteMaterialTransactionRequest(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" za material-transaction, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -75,7 +79,7 @@ export async function deleteMaterialTransactionRequest(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati id "+id+" za material-transaction, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -102,7 +106,7 @@ export async function findAll(){
 
 export async function findByMaterial_Id(materialId){
     try{
-        if(isNaN(materialId) || materialId == null){
+        if(Number.isNaN(Number(materialId)) || materialId == null){
             throw new Error("Dati id "+materialId+"za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material/${materialId}`,{
@@ -172,7 +176,7 @@ export async function findByMaterial_Unit(unit){
 export async function findByMaterial_CurrentStock(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
+        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
             throw new Error("Trenutna zaliha "+parseCurrentStock+" materijala, nije pronadjena");
         }
         const response = await api.get(url+`/material-current-stock`,{
@@ -191,7 +195,7 @@ export async function findByMaterial_CurrentStock(currentStock){
 export async function findByMaterial_CurrentStockGreaterThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
+        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
             throw new Error("Trenutna zaliha materijala veca od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`/material-current-stock-greater-than`,{
@@ -210,7 +214,7 @@ export async function findByMaterial_CurrentStockGreaterThan(currentStock){
 export async function findByMaterial_CurrentStockLessThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
+        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
             throw new Error("Trenutna zaliha materijala manja od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`/material-current-stock-less-than`,{
@@ -228,7 +232,7 @@ export async function findByMaterial_CurrentStockLessThan(currentStock){
 
 export async function findByMaterial_Storage_Id(storageId){
     try{
-        if(isNaN(storageId) || storageId == null){
+        if(Number.isNaN(Number(storageId)) || storageId == null){
             throw new Error("Dati id "+storageId+" skladista za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material/storage/${storageId}`,{
@@ -244,7 +248,7 @@ export async function findByMaterial_Storage_Id(storageId){
 export async function findByMaterial_ReorderLevel(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
-        if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
+        if(Number.isNaN(Number(parseReorderLevel)) || parseReorderLevel <= 0){
             throw new Error("Dati reorder-level "+parseReorderLevel+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level`,{
@@ -263,7 +267,7 @@ export async function findByMaterial_ReorderLevel(reorderLevel){
 export async function findByMaterial_ReorderLevelGreaterThan(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
-        if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
+        if(Number.isNaN(Number(parseReorderLevel)) || parseReorderLevel <= 0){
             throw new Error("Dati reorder-level za materijal veci od "+parseReorderLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level-greater-than`,{
@@ -282,7 +286,7 @@ export async function findByMaterial_ReorderLevelGreaterThan(reorderLevel){
 export async function findByMaterial_ReorderLevelLessThan(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
-        if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
+        if(Number.isNaN(Number(parseReorderLevel)) || parseReorderLevel <= 0){
             throw new Error("Dati reorder-level za materijal manji od "+parseReorderLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level-less-than`,{
@@ -301,7 +305,7 @@ export async function findByMaterial_ReorderLevelLessThan(reorderLevel){
 export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina "+parseQuantity+" za materijal, nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity`,{
@@ -320,7 +324,7 @@ export async function findByQuantity(quantity){
 export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina za materijal veca od "+parseQuantity+", nije pronadjena");
         }
         const response = await api.get(url+`/quantity-greater-than`,{
@@ -339,7 +343,7 @@ export async function findByQuantityGreaterThan(quantity){
 export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(isNaN(parseQuantity) || parseQuantity <= 0){
+        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
             throw new Error("Data kolicina za materijal manja od "+parseQuantity+", nije pronadjena");
         }
         const response = await api.get(url+`/quantity-less-than`,{
@@ -375,12 +379,13 @@ export async function findByType(type){
 
 export async function findByTransactionDate(transactionDate){
     try{
-        if(!moment(transactionDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Datum transakcije "+transactionDate+" za materijal, nije pronadjen");
+        const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DD",true).isValid();
+        if(!validateTransactionDate){
+            throw new Error("Datum transakcije "+validateTransactionDate+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/by-transaction-date`,{
             params:{
-                transactionDate:moment(transactionDate).format("YYYY-MM-DD")
+                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -393,14 +398,18 @@ export async function findByTransactionDate(transactionDate){
 
 export async function findByTransactionDateBetween({transactionDateStart, transactionDateEnd}){
     try{
-        if(!moment(transactionDateStart,"YYYY-MM-DD",true).isValid() || 
-          !moment(transactionDateEnd,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati opseg datuma "+transactionDateStart+" - "+transactionDateEnd+" za transakciju materijala, nije pronadjen");
-          }
+        const validateTransactionDateStart = moment.isMoment(transactionDateStart) || moment(transactionDateStart,"YYYY-MM-DD",true).isValid();
+        const validateTransactionDateEnd = moment.isMoment(transactionDateEnd) || moment(transactionDateEnd,"YYYY-MM-DD",true).isValid();
+        if(!validateTransactionDateStart || !validateTransactionDateEnd){
+            throw new Error("Dati opseg datuma "+validateTransactionDateStart+" - "+validateTransactionDateEnd+" za transakciju materijala, nije pronadjen");
+        }
+        if(moment(transactionDateEnd).isBefore(moment(validateTransactionDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
         const response = await api.get(url+`/transaction-date-range`,{
             params:{
-                transactionDateStart:moment(transactionDateStart).format("YYYY-MM-DD"),
-                transactionDateEnd:moment(transactionDateEnd).format("YYYY-MM-DD")
+                transactionDateStart:moment(validateTransactionDateStart).format("YYYY-MM-DD"),
+                transactionDateEnd:moment(validateTransactionDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -413,12 +422,13 @@ export async function findByTransactionDateBetween({transactionDateStart, transa
 
 export async function findByTransactionDateGreaterThanEqual(transactionDate){
     try{    
-        if(!moment(transactionDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum transakcije za materijale veci od "+transactionDate+", nije pronadjen");
+        const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DD",true).isValid();
+        if(!validateTransactionDate){
+            throw new Error("Dati datum transakcije za materijale veci od "+validateTransactionDate+", nije pronadjen");
         }
         const response = await api.get(url+`/transaction-date-greater-than-equal`,{
             params:{
-                transactionDate:moment(transactionDate).format("YYYY-MM-DD")
+                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -431,7 +441,7 @@ export async function findByTransactionDateGreaterThanEqual(transactionDate){
 
 export async function findByVendor_Id(vendorId){
     try{
-        if(isNaN(vendorId) || vendorId == null){
+        if(Number.isNaN(Number(vendorId)) || vendorId == null){
             throw new Error("Dati ID "+vendorId+" za prodavca, nije pronadjen");
         }
         const response = await api.get(url+`/vendor/${vendorId}`,{
@@ -572,7 +582,7 @@ export async function findByStatus(status){
 
 export async function findByCreatedByUser_Id(userId){
     try{
-        if(isNaN(userId) || userId == null){
+        if(Number.isNaN(Number(userId)) || userId == null){
             throw new Error("Dati id "+userId+" korisnika za materijal transakciju, nije pronadjen");
         }
         const response = await api.get(url+`/createdByUser/${userId}`,{

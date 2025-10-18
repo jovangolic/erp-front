@@ -17,11 +17,12 @@ export async function createMaterial({code,name,unit,currentStock,storageId,reor
     try{
         const parseCurrentStock = parseFloat(currentStock);
         const parseReorderlLevel = parseFloat(reorderLevel);
-        if(!code || typeof code !== "string" || code.trim() === "" || 
+        if(
+            !code || typeof code !== "string" || code.trim() === "" || 
             !name || typeof name !== "string" || name.trim() === "" ||
-            isNaN(storageId) || storageId == null || !isUnitOfMeasureValid.includes(unit?.toUpperCase()) ||
-            isNaN(parseCurrentStock) || parseCurrentStock <= 0 || isNaN(parseReorderlLevel) || parseReorderlLevel <= 0){
-            throw new Error("Sva polja moraju biti popunjena i validirana");
+            Number.isNaN(Number(storageId)) || storageId == null || !isUnitOfMeasureValid.includes(unit?.toUpperCase()) ||
+            Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0 || Number.isNaN(Number(parseReorderlLevel)) || parseReorderlLevel <= 0){
+                throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {code,name,unit,currentStock,storageId,reorderLevel};
         const response = await api.post(url+`/create/new-material`,requestBody,{
@@ -38,12 +39,13 @@ export async function updateMaterial({id,code,name,unit,currentStock,storageId,r
     try{
         const parseCurrentStock = parseFloat(currentStock);
         const parseReorderlLevel = parseFloat(reorderLevel);
-        if( isNaN(id) || id == null ||
+        if(
+            id == null || Number.isNaN(Number(id)) ||
             !code || typeof code !== "string" || code.trim() === "" || 
             !name || typeof name !== "string" || name.trim() === "" ||
-            isNaN(storageId) || storageId == null || !isUnitOfMeasureValid.includes(unit?.toUpperCase()) ||
-            isNaN(parseCurrentStock) || parseCurrentStock <= 0 || isNaN(parseReorderlLevel) || parseReorderlLevel <= 0){
-            throw new Error("Sva polja moraju biti popunjena i validirana");
+            Number.isNaN(Number(storageId)) || storageId == null || !isUnitOfMeasureValid.includes(unit?.toUpperCase()) ||
+            Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0 || Number.isNaN(Number(parseReorderlLevel)) || parseReorderlLevel <= 0){
+                throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {code,name,unit,currentStock,storageId,reorderLevel};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -58,7 +60,7 @@ export async function updateMaterial({id,code,name,unit,currentStock,storageId,r
 
 export async function deleteMaterial(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za materijal nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -73,7 +75,7 @@ export async function deleteMaterial(id){
 
 export async function findOne(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za materijal nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -102,10 +104,12 @@ export async function searchMaterials({name, code, unit, currentStock, storageId
     try{
         const parseCurrentStock = parseFloat(currentStock);
         const parseReorderlLevel = parseFloat(reorderLevel);
-        if(!code || typeof code !== "string" || code.trim() === "" || 
+        if(
+            !code || typeof code !== "string" || code.trim() === "" || 
             !name || typeof name !== "string" || name.trim() === "" ||
-            isNaN(storageId) || storageId == null || !isUnitOfMeasureValid.includes(unit?.toUpperCase()) ||
-            isNaN(parseCurrentStock) || parseCurrentStock <= 0 || isNaN(parseReorderlLevel) || parseReorderlLevel <= 0){
+            Number.isNaN(Number(storageId)) || storageId == null || !isUnitOfMeasureValid.includes(unit?.toUpperCase()) ||
+            Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0 || 
+            Number.isNaN(Number(parseReorderlLevel)) || parseReorderlLevel <= 0){
             throw new Error("Dati parametri za pretragu materijala, "+name+" ,"+code+" ,"+unit+" ,"+parseCurrentStock+" ,"+storageId+" ,"+parseReorderlLevel+" nisu pronasli rezultat");
         }
         const response = await api.get(url+`/search`,{
@@ -128,7 +132,7 @@ export async function searchMaterials({name, code, unit, currentStock, storageId
 
 export async function findByStorage_Id(storageId){
     try{
-        if(isNaN(storageId) || storageId == null){
+        if(Number.isNaN(Number(storageId)) || storageId == null){
             throw new Error("Dati id "+storageId+" skladista nije pronadjen");
         }
         const response = await api.get(url+`/storage/${storageId}`,{
@@ -232,7 +236,7 @@ export async function findByStorage_Name(storageName){
 export async function findByStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet "+parseCapacity+" skladista za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/by-storage-capacity`,{
@@ -269,7 +273,7 @@ export async function findByStorage_Type(type){
 export async function findByCurrentStock(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
+        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
             throw new Error("Data trenutna kolicina "+parseCurrentStock+" materijala, nije pronadjena");
         }
         const response = await api.get(url+`/by-current-stock`,{
@@ -288,7 +292,7 @@ export async function findByCurrentStock(currentStock){
 export async function findByReorderLevel(reorderLevel){
     try{
         const parseReorderlLevel = parseFloat(reorderLevel);
-        if(isNaN(parseReorderlLevel) || parseReorderlLevel <= 0){
+        if(Number.isNaN(Number(parseReorderlLevel)) || parseReorderlLevel <= 0){
             throw new Error("Dati reorder-level "+parseReorderlLevel+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/by-reorder-level`,{
@@ -307,7 +311,7 @@ export async function findByReorderLevel(reorderLevel){
 export async function findByCurrentStockGreaterThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
+        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
             throw new Error("Data trenutna kolicina materijala veca od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`/current-stock-greater-than`,{
@@ -326,7 +330,7 @@ export async function findByCurrentStockGreaterThan(currentStock){
 export async function findByCurrentStockLessThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
+        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
             throw new Error("Data trenutna kolicina materijala manja od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`/current-stock-less-than`,{
@@ -344,7 +348,7 @@ export async function findByCurrentStockLessThan(currentStock){
 
 export async function countAvailableCapacity(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" skladista nije pronadjen");
         }
         const response = await api.get(url+`/${id}/available-capacity`,{
@@ -360,7 +364,7 @@ export async function countAvailableCapacity(id){
 export async function allocateCapacity({id, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(isNaN(id) || id == null || isNaN(parseAmount) || parseAmount <= 0){
+        if(Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
             throw new Error("Dati id "+id+" skladista i kolicina "+parseAmount+", nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/allocate`,{
@@ -377,7 +381,7 @@ export async function allocateCapacity({id, amount}){
 export async function releaseCapacity({id, amount}){
 try{
         const parseAmount = parseFloat(amount);
-        if(isNaN(id) || id == null || isNaN(parseAmount) || parseAmount <= 0){
+        if(Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
             throw new Error("Dati id "+id+" skladista i kolicina "+parseAmount+", nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/release`,{
@@ -394,7 +398,7 @@ try{
 export async function findByReorderLevelGreaterThan(reorderLevel){
     try{
         const parseReorderlLevel = parseFloat(reorderLevel);
-        if(isNaN(parseReorderlLevel) || parseReorderlLevel <= 0){
+        if(Number.isNaN(Number(parseReorderlLevel)) || parseReorderlLevel <= 0){
             throw new Error("Dati reorder-level za materijal veci od "+parseReorderlLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/reorder-level-greater-than`,{
@@ -413,7 +417,7 @@ export async function findByReorderLevelGreaterThan(reorderLevel){
 export async function findByReorderLevelLessThan(reorderLevel){
     try{
         const parseReorderlLevel = parseFloat(reorderLevel);
-        if(isNaN(parseReorderlLevel) || parseReorderlLevel <= 0){
+        if(Number.isNaN(Number(parseReorderlLevel)) || parseReorderlLevel <= 0){
             throw new Error("Dati reorder-level za materijal manji od "+parseReorderlLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/reorder-level-less-than`,{
@@ -450,7 +454,7 @@ export async function findByStorage_LocationContainingIgnoreCase(storageLocation
 export async function findByStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skladista za materijal veci od "+parseCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-capacity-greater-than`,{
@@ -469,7 +473,7 @@ export async function findByStorage_CapacityGreaterThan(capacity){
 export async function findByStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(isNaN(parseCapacity) || parseCapacity <= 0){
+        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skladista za materijal manji od "+parseCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-capacity-less-than`,{

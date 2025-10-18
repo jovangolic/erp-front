@@ -16,8 +16,9 @@ const isQualityCheckStatusValid = ["PASSED","FILED","CONDITIONAL","PENDING"];
 export async function createQualityCheck({locDate,inspectorId,referenceType,referenceId,checkType,status,notes}){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(!moment(locDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || isNaN(inspectorId) || inspectorId == null ||
-           !isReferenceTypeValid.includes(referenceType?.toUpperCase()) || isNaN(parseReferenceId) || parseReferenceId <= 0 ||
+        const validateLocDate = moment.isMoment(locDate) || moment(locDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateLocDate || Number.isNaN(Number(inspectorId)) || inspectorId == null ||
+           !isReferenceTypeValid.includes(referenceType?.toUpperCase()) || Number.isNaN(Number(parseReferenceId)) || parseReferenceId <= 0 ||
            !isQualityCheckTypeValid.includes(checkType?.toUpperCase()) || !isQualityCheckStatusValid.includes(status?.toUpperCase()) ||
            !notes || typeof notes !== "string" || notes.trim() === ""){
                 throw new Error("Sva polja moraju biti popunjena i validna");
@@ -36,11 +37,12 @@ export async function createQualityCheck({locDate,inspectorId,referenceType,refe
 export async function updateQualityCheck({}){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(isNaN(id) || id == null ||
-           !moment(locDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || isNaN(inspectorId) || inspectorId == null ||
-           !isReferenceTypeValid.includes(referenceType?.toUpperCase()) || isNaN(parseReferenceId) || parseReferenceId <= 0 ||
-           !isQualityCheckTypeValid.includes(checkType?.toUpperCase()) || !isQualityCheckStatusValid.includes(status?.toUpperCase()) ||
-           !notes || typeof notes !== "string" || notes.trim() === ""){
+        const validateLocDate = moment.isMoment(locDate) || moment(locDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if( id == null || Number.isNaN(Number(id)) ||
+            !validateLocDate || Number.isNaN(Number(inspectorId)) || inspectorId == null ||
+            !isReferenceTypeValid.includes(referenceType?.toUpperCase()) || Number.isNaN(Number(parseReferenceId)) || parseReferenceId <= 0 ||
+            !isQualityCheckTypeValid.includes(checkType?.toUpperCase()) || !isQualityCheckStatusValid.includes(status?.toUpperCase()) ||
+            !notes || typeof notes !== "string" || notes.trim() === ""){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {locDate,inspectorId,referenceType,referenceId: parseReferenceId,checkType,status,notes};
@@ -56,7 +58,7 @@ export async function updateQualityCheck({}){
 
 export async function deleteQualityCheck(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za potvrdu-kvaliteta, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -71,7 +73,7 @@ export async function deleteQualityCheck(id){
 
 export async function findOne(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za potvrdu-kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -132,7 +134,7 @@ export async function findByCheckType(checkType){
     }
 }
 
-export async function  findByStatus(status){
+export async function findByStatus(status){
     try{
         if(!isQualityCheckStatusValid.includes(status?.toUpperCase())){
             throw new Error("Status "+status+" za potvrdu-kvaliteta, nije pronadjena");
@@ -210,8 +212,8 @@ export async function findByCheckTypeAndReferenceType({checkType, referenceType}
 export async function findByReferenceIdAndReferenceType({referenceId, referenceType}){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(isNaN(referenceId) || referenceId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase())){
-            throw new Error("Id reference "+referenceId+" i tip reference "+referenceType+" za potvrdu-kvaliteta, nisu pronadjeni");
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase())){
+            throw new Error("Id reference "+parseReferenceId+" i tip reference "+referenceType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/reference-id-reference-type`,{
             params:{
@@ -230,8 +232,8 @@ export async function findByReferenceIdAndReferenceType({referenceId, referenceT
 export async function findByReferenceIdAndCheckType({referenceId, checkType}){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(isNaN(referenceId) || referenceId == null || !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
-            throw new Error("Id refernce "+referenceId+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId == null || !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
+            throw new Error("Id refernce "+parseReferenceId+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/reference-id-check-type`,{
             params:{
@@ -250,8 +252,8 @@ export async function findByReferenceIdAndCheckType({referenceId, checkType}){
 export async function findByReferenceIdAndStatus({referenceId, status}){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(isNaN(referenceId) || referenceId == null || !isQualityCheckStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Id reference "+referenceId+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId == null || !isQualityCheckStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Id reference "+parseReferenceId+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/reference-id-status`,{
             params:{
@@ -333,9 +335,9 @@ export async function findByStatusIn(statuses){
 export async function findByReferenceIdAndReferenceTypeAndStatus({referenceId, referenceType, status}){
     try{
         const parseReferenceId = parseInt(referenceId, 10);
-        if(isNaN(referenceId) || referenceId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase()) ||
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase()) ||
            !isQualityCheckStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Id reference "+referenceId+" tip reference "+referenceType+" i status "+status+" za datu potvrdu-kvaliteta, nisu pronadjeni");
+            throw new Error("Id reference "+parseReferenceId+" tip reference "+referenceType+" i status "+status+" za datu potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/reference-id-reference-type-status`,{
             params:{
@@ -355,9 +357,9 @@ export async function findByReferenceIdAndReferenceTypeAndStatus({referenceId, r
 export async function findByReferenceIdAndReferenceTypeAndCheckType({referenceId, referenceType, checkType}){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(isNaN(referenceId) || referenceId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase()) ||
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase()) ||
            !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
-            throw new Error("ID reference "+referenceId+" ,tip reference "+referenceType+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
+            throw new Error("ID reference "+parseReferenceId+" ,tip reference "+referenceType+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/reference-id-reference-type-check-type`,{
             params:{
@@ -393,7 +395,7 @@ export async function findByNotes(notes){
 export async function findByReferenceId(referenceId){
     try{
         const parseReferenceId = parseInt(referenceId , 10);
-        if(isNaN(parseReferenceId) || parseReferenceId <= 0){
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId <= 0){
             throw new Error("ID reference "+parseReferenceId+" za potvrdu-kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/by-reference-id`,{
@@ -411,12 +413,13 @@ export async function findByReferenceId(referenceId){
 
 export async function findByLocDate(date){
     try{
-        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum "+date+" za potvrdu kvaliteta, nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Datum "+validateDate+" za potvrdu kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/by-date`,{
             params:{
-                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
+                date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -429,12 +432,13 @@ export async function findByLocDate(date){
 
 export async function findByLocDateBefore(date){
     try{
-        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum pre "+date+" za potvrdu kvaliteta, nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Datum pre "+validateDate+" za potvrdu kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/date-before`,{
             params:{
-                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
+                date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -447,12 +451,13 @@ export async function findByLocDateBefore(date){
 
 export async function findByLocDateAfter(date){
     try{
-        if(!moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum posle "+date+" za potvrdu kvaliteta, nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Datum posle "+validateDate+" za potvrdu kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/date-after`,{
             params:{
-                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
+                date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -465,16 +470,18 @@ export async function findByLocDateAfter(date){
 
 export async function findByLocDateBetween({startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Opseg datuma "+startDate+" - "+endDate+" za potvrdu-kvaliteta, nisu pronadjeni");
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Opseg datuma "+validateDateStart+" - "+validateDateEnd+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
             throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -487,17 +494,19 @@ export async function findByLocDateBetween({startDate, endDate}){
 
 export async function findByStatusAndLocDateBetween({status, startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd || 
            !isQualityCheckStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Opseg datuma "+startDate+" - "+endDate+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
+            throw new Error("Opseg datuma "+validateDateStart+" - "+validateDateStart+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
             throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/by-status-and-date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYYY-MM-DDTHH:mm:ss"),
+                startDate:moment(validateDateStart).format("YYYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateDateEnd).format("YYYYY-MM-DDTHH:mm:ss"),
                 status:(status || "").toUpperCase()
             },
             headers:getHeader()
@@ -511,18 +520,20 @@ export async function findByStatusAndLocDateBetween({status, startDate, endDate}
 
 export async function findByCheckTypeAndLocDateBetween({checkType, startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd || 
            !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
-            throw new Error("Opseg datuma "+startDate+" - "+endDate+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
+            throw new Error("Opseg datuma "+validateDateStart+" - "+validateDateEnd+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
             throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/by-check-type-and-date-range`,{
             params:{
                 checkType:(checkType || "").toUpperCase(),
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -535,18 +546,20 @@ export async function findByCheckTypeAndLocDateBetween({checkType, startDate, en
 
 export async function findByReferenceTypeAndLocDateBetween({referenceType, startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd ||  
            !isReferenceTypeValid.includes(referenceType?.toUpperCase())){
-            throw new Error("Opseg datuma "+startDate+" - "+endDate+" i tip reference "+referenceType+" za potvrdu-kvaliteta, nisu pronadjemi");
+            throw new Error("Opseg datuma "+validateDateStart+" - "+validateDateEnd+" i tip reference "+referenceType+" za potvrdu-kvaliteta, nisu pronadjemi");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
             throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/by-reference-type-and-date-range`,{
             params:{
                 referenceType:(referenceType || "").toUpperCase(),
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -560,8 +573,8 @@ export async function findByReferenceTypeAndLocDateBetween({referenceType, start
 export async function findByReferenceIdOrderByLocDateDesc(referenceId){
     try{
         const parseReferenceId = parseInt(referenceId,10);
-        if(isNaN(parseReferenceId) || parseReferenceId <= 0 ){
-            throw new Error("ID reference "+referenceId+" za potvrdu-kvaliteta sortiranu po opadajucem datumu, nije pronadjeno");
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId <= 0 ){
+            throw new Error("ID reference "+parseReferenceId+" za potvrdu-kvaliteta sortiranu po opadajucem datumu, nije pronadjeno");
         }
         const response = await api.get(url+`/reference-id-order-by-date-desc`,{
             params:{referenceId:parseReferenceId},
@@ -576,7 +589,7 @@ export async function findByReferenceIdOrderByLocDateDesc(referenceId){
 
 export async function findByInspectorIdOrderByLocDateDesc(inspectorId){
     try{
-        if(isNaN(inspectorId) || inspectorId == null){
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null){
             throw new Error("Id inspektora "+inspectorId+" za potvrdu-kvaliteta sortiranu po opadajucem datumu, nije pronadjeno");
         }
         const response = await api.get(url+`/inspector/${inspectorId}/order-by-date-desc`,{
@@ -592,9 +605,9 @@ export async function findByInspectorIdOrderByLocDateDesc(inspectorId){
 export async function existsByReferenceIdAndReferenceTypeAndStatus({referenceId, referenceType, status}){
     try{
         const parseReferenceId = parseInt(referenceId, 10);
-        if(isNaN(parseReferenceId) || parseReferenceId <= 0 || !isReferenceTypeValid.includes(referenceType?.toUpperCase()) ||
+        if(Number.isNaN(Number(parseReferenceId)) || parseReferenceId <= 0 || !isReferenceTypeValid.includes(referenceType?.toUpperCase()) ||
            !isQualityCheckStatusValid.includes(status?.toUpperCase())){
-            throw new Error("Id reference "+referenceId+" ,tip reference "+referenceType+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
+            throw new Error("Id reference "+parseReferenceId+" ,tip reference "+referenceType+" i status "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/exists/reference-id-reference-type-status`,{
             params:{
@@ -613,17 +626,18 @@ export async function existsByReferenceIdAndReferenceTypeAndStatus({referenceId,
 
 export async function existsByInspectorIdAndLocDateBetween({inspectorId, startDate, endDate}){
     try{
-        if(isNaN(inspectorId) || inspectorId == null || !moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || 
-           !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("ID inspektora "+inspectorId+" i opseg datuma "+startDate+" - "+endDate+" za potvrdu-kvaliteta, nisu pronadjeni");
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null || !validateDateStart || !validateDateEnd){
+            throw new Error("ID inspektora "+inspectorId+" i opseg datuma "+validateDateStart+" - "+validateDateEnd+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
             throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/exists/inspector/${inspectorId}/date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -692,7 +706,7 @@ export async function countByReferenceType(referenceType){
 
 export async function countByInspectorId(inspectorId){
     try{
-        if(isNaN(inspectorId) || inspectorId == null){
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null){
             throw new Error("Broj ispektora po id "+inspectorId+" za potvrdu-kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/search/count-inspector/${inspectorId}`,{
@@ -726,16 +740,18 @@ export async function countByReferenceTypeAndStatus({referenceType, status}){
 
 export async function countByLocDateBetween({startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Broj datuma po opsegu "+startDate+" - "+endDate+" za potvrdu-kvaliteta, nisu pronadjeni");
+        const validateDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Broj datuma po opsegu "+validateDateStart+" - "+validateDateEnd+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
-        if(moment(endDate).isBefore(moment(startDate))){
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
             throw new Error("Datum za kraj potvrde-kvaliteta ne sme biti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/search/count-date-between`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -748,7 +764,7 @@ export async function countByLocDateBetween({startDate, endDate}){
 
 export async function findByInspectorId(inspectorId){
     try{
-        if(isNaN(inspectorId) || inspectorId == null){
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null){
             throw new Error("ID inspektora "+inspectorId+" za potvrdu-kvaliteta, nije pronadjen");
         }
         const response = await api.get(url+`/inspector/${inspectorId}`,{
@@ -818,7 +834,7 @@ export async function findByInspector_FirstNameContainingIgnoreCaseAndInspector_
 
 export async function findByInspectorIdAndStatus({inspectorId, status}){
     try{
-        if(isNaN(inspectorId) || inspectorId == null || !isQualityCheckStatusValid.includes(status?.toUpperCase())){
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null || !isQualityCheckStatusValid.includes(status?.toUpperCase())){
             throw new Error("Id isnpektora "+inspectorId+" i status potvrde "+status+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/inspector/${inspectorId}/status`,{
@@ -836,7 +852,7 @@ export async function findByInspectorIdAndStatus({inspectorId, status}){
 
 export async function findByInspectorIdAndCheckType({inspectorId, checkType}){
     try{
-        if(isNaN(inspectorId) || inspectorId == null || !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null || !isQualityCheckTypeValid.includes(checkType?.toUpperCase())){
             throw new Error("Id inspektora "+inspectorId+" i tip potvrde "+checkType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/inspector/${inspectorId}/check-type`,{
@@ -854,7 +870,7 @@ export async function findByInspectorIdAndCheckType({inspectorId, checkType}){
 
 export async function findByInspectorIdAndReferenceType({inspectorId, referenceType}){
     try{
-        if(isNaN(inspectorId) || inspectorId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase())){
+        if(Number.isNaN(Number(inspectorId)) || inspectorId == null || !isReferenceTypeValid.includes(referenceType?.toUpperCase())){
             throw new Error("Id inspektora "+inspectorId+" i tip reference "+referenceType+" za potvrdu-kvaliteta, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/inspector/${inspectorId}/reference-type`,{

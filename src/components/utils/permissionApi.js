@@ -91,14 +91,14 @@ const isPermissionResourceTypeValid = [
     "EDIT_OPT",
     "EMAIL_SETTING"];
 
-export async function cratePermission(permissionType){
+export async function cratePermission(resourceType, actionType){
     try{
         if(
-            !isPermisionTypeValid.includes(permissionType?.toUpperCase())
+            !isPermissionResourceTypeValid.includes(resourceType?.toUpperCase()) || !isPermissionActionTypeValid.includes(actionType?.toUpperCase())
         ){
             throw new Error("Tip mora biti validan i popunjen");
         }
-        const requestBody = {permissionType: (permissionType || "").toUpperCase()};
+        const requestBody = {resourceType, actionType};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/permission/create`,requestBody,{
             headers:getHeader()
         });
@@ -123,7 +123,7 @@ export async function getAll(){
 
 export async function deletePermission(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za permisson nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/permission/delete/${id}`,{
@@ -136,15 +136,15 @@ export async function deletePermission(id){
     }
 }
 
-export async function updatePermission({id, permissionType}){
+export async function updatePermission({id, resourceType,actionType}){
     try{
         if(
-            id == null || isNaN(id) ||
-            !isPermisionTypeValid.includes(permissionType?.toUpperCase())
+            id == null || Number.isNaN(Number(id)) ||
+            !isPermissionResourceTypeValid.includes(resourceType?.toUpperCase()) || !isPermissionActionTypeValid.includes(actionType?.toUpperCase())
         ){
             throw new Error("Tip mora biti validan i popunjen");
         }
-        const requestBody = {permissionType: (permissionType || "").toUpperCase()};
+        const requestBody = {resourceType, actionType};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/permission/update/${id}`,requestBody,{
             headers:getHeader()
         });
@@ -157,7 +157,7 @@ export async function updatePermission({id, permissionType}){
 
 export async function getPermissionById(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za permision nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/permission/get/${id}`,{

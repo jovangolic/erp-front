@@ -6,8 +6,11 @@ const isLanguageNameTypeValid = ["ENGLISH", "SRPSKI", "ESPAÑOL", "FRANÇAIS", "
 
 export async function create({optionId,languageId,localizedLabel}){
     try{
-        if(!optionId || !languageId || !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
-            throw new Error("Sv apolja moraju biti validna i popunjena");
+        if(
+            optionId == null || Number.isNaN(Number(optionId)) || 
+            languageId == null || Number.isNaN(Number(languageId)) || 
+            !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
+                throw new Error("Sv apolja moraju biti validna i popunjena");
         }
         const requestBody = {optionId,languageId,localizedLabel};
         const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/localized-options/create/new-localized-option`,requestBody,{
@@ -22,8 +25,12 @@ export async function create({optionId,languageId,localizedLabel}){
 
 export async function update({id, optionId,languageId,localizedLabel}){
     try{
-        if(id == null || isNaN(id) || !optionId || !languageId || !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
-            throw new Error("Sva polja moraju biti validna i popunjena");
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            optionId == null || Number.isNaN(Number(optionId)) || 
+            languageId == null || Number.isNaN(Number(languageId)) || 
+            !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
+                throw new Error("Sv apolja moraju biti validna i popunjena");
         }
         const requestBody = {optionId,languageId,localizedLabel};
         const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/localized-options/update/${id}`,requestBody,{
@@ -38,7 +45,7 @@ export async function update({id, optionId,languageId,localizedLabel}){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/find-one/${id}`,{
@@ -65,7 +72,7 @@ export async function getAll(){
 
 export async function getTranslationsForOption(optionId){
     try{
-        if(!optionId){
+        if(optionId == null || Number.isNaN(Number(optionId))){
             throw new Error("Dati ID "+optionId+" za option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/option/${optionId}/translations`,{
@@ -80,7 +87,7 @@ export async function getTranslationsForOption(optionId){
 
 export async function deleteLocalizedOption(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localized-options/delete/${id}`,{
@@ -95,7 +102,7 @@ export async function deleteLocalizedOption(id){
 
 export async function deleteAllByOptionId(optionId){
     try{
-        if(optionId == null || isNaN(optionId)){
+        if(optionId == null || Number.isNaN(Number(optionId))){
             throw new Error("Dati id "+optionId+"za option nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localized-options/deleteAll-option/${optionId}`,{
@@ -130,7 +137,7 @@ export async function addTranslationForOption(optionId, { languageId, localizedL
 
 export async function getTranslation({optionId,languageId}){
     try{
-        if(optionId == null || isNaN(optionId) || languageId){
+        if(optionId == null || Number.isNaN(Number(optionId)) || languageId == null || Number.isNaN(Number(languageId))){
             throw new Error("Dati id "+optionId+" za optionid i languageId "+languageId+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/option/${optionId}/language/${languageId}`,{
@@ -145,7 +152,7 @@ export async function getTranslation({optionId,languageId}){
 
 export async function getAllByLanguage(languageId){
     try{
-        if(languageId == null || isNaN(languageId)){
+        if(languageId == null || Number.isNaN(Number(languageId))){
             throw new Error("Dati ID "+languageId+" za language nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/translations/language/${languageId}`,{
@@ -208,7 +215,7 @@ export async function findByOption_Category(category){
 
 export async function findByLanguage_Id(languageId){
     try{
-        if(languageId == null || isNaN(languageId)){
+        if(languageId == null || Number.isNaN(Number(languageId))){
             throw new Error("Dati ID "+languageId+" za jezik nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/language/${languageId}`);
@@ -253,7 +260,7 @@ export async function findByLanguage_LanguageNameType(languageNameType){
 
 export async function saveLocalizedOptions({optionId,languageId, localizedLabel}){
     try{
-        if(isNaN(optionId) || optionId == null || isNaN(languageId) || languageId == null ||
+        if(Number.isNaN(Number(optionId)) || optionId == null || Number.isNaN(Number(languageId)) || languageId == null ||
            !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim() === ""){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
@@ -270,7 +277,7 @@ export async function saveLocalizedOptions({optionId,languageId, localizedLabel}
 
 export async function saveAs({sourceId,newLabel}){
     try{
-        if(sourceId == null || isNaN(sourceId) || !newLabel || typeof newLabel !== "string" || newLabel.trim() === ""){
+        if(sourceId == null || Number.isNaN(Number(sourceId)) || !newLabel || typeof newLabel !== "string" || newLabel.trim() === ""){
             throw new Error(`Nevalidni parametri: id=${sourceId}, label=${newLabel}`);
         }
         const requestBody = {sourceId,newLabel};

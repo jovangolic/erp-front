@@ -2,15 +2,23 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/routes`;
 
-export async function createRoute({origin,destination,distanceKm}){
-    if(
-        !origin || typeof origin !== "string" || origin.trim()==="" ||
-        !destination || typeof destination !== "string" || destination.trim() === "" ||
-        isNaN(distanceKm) || parseFloat(distanceKm) <= 0
-    ){
-        throw new Error("Sva polja moraju biti ispravno popunjena.");
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
     }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
+export async function createRoute({origin,destination,distanceKm}){
     try{
+        const parseDistance = parseFloat(distanceKm);
+        if(
+            !origin || typeof origin !== "string" || origin.trim()==="" ||
+            !destination || typeof destination !== "string" || destination.trim() === "" ||
+            Number.isNaN(Number(parseDistance)) || parseDistance <= 0
+        ){
+            throw new Error("Sva polja moraju biti ispravno popunjena.");
+        }
         const requestBody = {origin,destination, distanceKm};
         const response = await api.post(url+`/create/new-route`,requestBody,{
             headers:getHeader()
@@ -24,14 +32,15 @@ export async function createRoute({origin,destination,distanceKm}){
 
 export async function updateRoute({id, origin,destination,distanceKm}){
     try{
+        const parseDistance = parseFloat(distanceKm);
         if(
-        id == null || isNaN(id) ||
-        !origin || typeof origin !== "string" || origin.trim()==="" ||
-        !destination || typeof destination !== "string" || destination.trim() === "" ||
-        isNaN(distanceKm) || parseFloat(distanceKm) <= 0
-    ){
-        throw new Error("Sva polja moraju biti ispravno popunjena.");
-    }
+            id == null || Number.isNaN(Number(id)) ||
+            !origin || typeof origin !== "string" || origin.trim()==="" ||
+            !destination || typeof destination !== "string" || destination.trim() === "" ||
+            Number.isNaN(Number(parseDistance)) || parseDistance <= 0
+        ){
+            throw new Error("Sva polja moraju biti ispravno popunjena.");
+        }
         const requestBody = {origin,destination, distanceKm};
         const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
@@ -45,7 +54,7 @@ export async function updateRoute({id, origin,destination,distanceKm}){
 
 export async function deleteRoute(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -60,7 +69,7 @@ export async function deleteRoute(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -143,12 +152,13 @@ export async function findByOriginAndDestination({origin, destination}){
 
 export async function findByDistanceKmGreaterThan(distance) {
     try{
-        if(isNaN(distance) || parseFloat(distance) <= 0){
-            throw new Error("Distanca veca od "+distance+" nije proinadjena");
+        const parseDistance = parseFloat(distance);
+        if(Number.isNaN(Number(parseDistance)) || parseDistance <= 0){
+            throw new Error("Distanca veca od "+parseDistance+" nije proinadjena");
         }
         const response = await api.get(url+`/distance-greater`,{
             params:{
-                distance:distance
+                distance:parseDistance
             },
             headers:getHeader()
         });
@@ -161,12 +171,13 @@ export async function findByDistanceKmGreaterThan(distance) {
 
 export async function findByDistanceKmLessThan(distance){
     try{
-        if(isNaN(distance) || parseFloat(distance) < 0){
-            throw new Error("Distanca manja od "+distance+" nije pronadjena");
+        const parseDistance = parseFloat(distance);
+        if(Number.isNaN(Number(parseDistance)) || parseDistance <= 0){
+            throw new Error("Distanca veca od "+parseDistance+" nije proinadjena");
         }
         const response = await api.get(url+`/distance-less`,{
             params:{
-                distance:distance
+                distance:parseDistance
             },
             headers:getHeader()
         });
@@ -177,9 +188,3 @@ export async function findByDistanceKmLessThan(distance){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

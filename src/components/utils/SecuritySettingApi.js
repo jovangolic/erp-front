@@ -1,39 +1,51 @@
 import { api, getHeader } from "./AppFunction";
 
+const url = `${import.meta.env.VITE_API_BASE_URL}/securitySettings`;
+
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(`${customMessage}: ${error.response.data}`);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 export async function getByName(name) {
     try {
         if(!name || typeof name !=="string" || name.trim() === ""){
             throw new Error("Pretraga po nazivu "+name+" je nepoznata");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/${name}`, {
+        const response = await api.get(url+`/${name}`, {
             headers: getHeader()
         });
         return response.data;
     } catch (error) {
-        handleApiError(error, "Greška prilikom dobavljanja po nazivu "+name);
+        handleApiError(error, "Greska prilikom dobavljanja po nazivu "+name);
     }
 }
 
 export async function updateSetting({id, settingName, value}) {
     try {
+        if(id == null || Number.isNaN(Number(id)) || !settingName?.trim() || !value?.trim()){
+            throw new Error("Sva polja moraju biti popunjena i validna");
+        }
         const requestBody = { id, settingName, value };
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/securitySettings`, requestBody, {
+        const response = await api.put(url+`/update/${id}`, requestBody, {
             headers: getHeader()
         });
         return response.data; // Očekujemo SecuritySettingResponse: { id, settingName, value }
     } catch (error) {
-        handleApiError(error, "Greška prilikom ažuriranja");
+        handleApiError(error, "Greska prilikom azuriranja");
     }
 }
 
 export async function getAllSettings() {
     try {
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/get-all`, {
+        const response = await api.get(url+`/get-all`, {
             headers: getHeader()
         });
         return response.data;
     } catch (error) {
-        handleApiError(error, "Greška prilikom dobavljanja svih podešavanja");
+        handleApiError(error, "Greska prilikom dobavljanja svih podesavanja");
     }
 }
 
@@ -44,7 +56,7 @@ export async function saveSecuritySettings({settingName,value}){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {settingName,value};
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/securitySettings/save`,requestBody,{
+        const response = await api.post(url+`/save`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -54,10 +66,5 @@ export async function saveSecuritySettings({settingName,value}){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(`${customMessage}: ${error.response.data}`);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}
+
 

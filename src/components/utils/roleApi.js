@@ -1,7 +1,15 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+const url = `${import.meta.env.VITE_API_BASE_URL}/roles`;
 const isRoleTypeValid = ["SUPER_ADMIN", "ADMIN", "STORAGE_FOREMAN", "STORAGE_EMPLOYEE", "STORAGE_MANAGER"];
+
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
 
 export async function createRole({name, users, roleTypes, permissionIds}){
     try{
@@ -12,7 +20,7 @@ export async function createRole({name, users, roleTypes, permissionIds}){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
         const requestBody = {name, users,roleTypes, permissionIds};
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/roles/create-new-role`,requestBody,{
+        const response = await api.post(url+`/create-new-role`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -30,7 +38,7 @@ export async function createRole({name, users, roleTypes, permissionIds}){
 export async function updateRole({roleId, name, users, roleTypes, permissionIds}){
     try{
         if(
-            !roleId ||
+            roleId == null || Number.isNaN(Number(roleId)) ||
             !name || typeof name !== "string" || name.trim() ==="" ||
             !Array.isArray(users) || users.length === 0 ||
             !isRoleTypeValid.includes(roleTypes?.toUpperCase()) ||
@@ -38,7 +46,7 @@ export async function updateRole({roleId, name, users, roleTypes, permissionIds}
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
         const requestBody = {name, users,roleTypes, permissionIds};
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/roles/update/${roleId}`,requestBody,{
+        const response = await api.put(url+`/update/${roleId}`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -55,10 +63,10 @@ export async function updateRole({roleId, name, users, roleTypes, permissionIds}
 
 export async function deleteRole(roleId){
     try{    
-        if(!roleId){
+        if(roleId == null || Number.isNaN(Number(roleId))){
             throw new Error("Dati ID za role nije pronadjen");
         }
-        const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/roles/delete/${roleId}`,{
+        const response = await api.delete(url+`/delete/${roleId}`,{
             headers:getHeader()
         });
         return response.data;
@@ -69,7 +77,7 @@ export async function deleteRole(roleId){
 
 export async function getAllRoles(){
     try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/roles/get-all-roles`,{
+        const response = await api.get(url+`/get-all-roles`,{
             headers:getHeader()
         });
         return response.data;
@@ -80,10 +88,10 @@ export async function getAllRoles(){
 
 export async function getRoleById(roleId){
     try{
-        if(!roleId){
+        if(roleId == null || Number.isNaN(Number(roleId))){
             throw new Error("Dati ID za role nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/roles/role/${roleId}`,{
+        const response = await api.get(url+`/role/${roleId}`,{
             headers:getHeader()
         });
         return response.data;
@@ -95,10 +103,10 @@ export async function getRoleById(roleId){
 
 export async function assignUserToRole({roleId, userId}){
     try{
-        if(!roleId || !userId){
+        if(roleId == null || Number.isNaN(Number(roleId)) || userId == null || Number.isNaN(Number(userId))){
             throw new Error("Dati roleId i userId nisu pronadjeni");
         }
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/roles/${roleId}/assign/${userId}`,null,{
+        const response = await api.post(url+`/${roleId}/assign/${userId}`,null,{
             headers:getHeader()
         });
         return response.data;
@@ -108,9 +116,3 @@ export async function assignUserToRole({roleId, userId}){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

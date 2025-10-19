@@ -3,46 +3,53 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/shipments`
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 const validateStatus = ["PENDING","SHIPPED","IN_TRANSIT","DELIVERED","DELAYED","CANCELLED"];
 const isDeliveryStatusValid = ["PENDING", "IN_TRANSIT", "DELIVERED", "CANCELLED"];
 
 export function isValidShipmentData({
-  status,
-  validateStatus = [],
-  shipmentDate,
-  storageId,
-  providerId,
-  outboundDeliveryId,
-  trackingInfo = {}
+    status,
+    validateStatus = [],
+    shipmentDate,
+    storageId,
+    providerId,
+    outboundDeliveryId,
+    trackingInfo = {}
 }) {
   // Validacija statusa po enum vrednostima
-  if (!status || !validateStatus.includes(status?.toUpperCase())) {
-    return false;
-  }
+    if (!status || !validateStatus.includes(status?.toUpperCase())) {
+        return false;
+    }
 
-  // Validacija datuma
-  if (!shipmentDate || !moment(shipmentDate, "YYYY-MM-DD", true).isValid()) {
-    return false;
-  }
+    // Validacija datuma
+    if (!shipmentDate || !moment(shipmentDate, "YYYY-MM-DD", true).isValid()) {
+        return false;
+    }
 
-  // Osnovne vrednosti
-  if (!storageId || !providerId || !outboundDeliveryId) {
-    return false;
-  }
+    // Osnovne vrednosti
+    if (!storageId || !providerId || !outboundDeliveryId) {
+        return false;
+    }
 
   // Validacija trackingInfo objekta
-  if (
-    !trackingInfo.trackingNumber ||
-    !trackingInfo.currentLocation ||
-    !trackingInfo.estimatedDelivery ||
-    !moment(trackingInfo.estimatedDelivery, "YYYY-MM-DD", true).isValid() ||
-    !trackingInfo.currentStatus ||
-    !validateStatus.includes(trackingInfo.currentStatus?.toUpperCase())
-  ) {
-    return false;
-  }
+    if (
+        !trackingInfo.trackingNumber ||
+        !trackingInfo.currentLocation ||
+        !trackingInfo.estimatedDelivery ||
+        !moment(trackingInfo.estimatedDelivery, "YYYY-MM-DD", true).isValid() ||
+        !trackingInfo.currentStatus ||
+        !validateStatus.includes(trackingInfo.currentStatus?.toUpperCase())
+    ) {
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 export async function createShipment(data) {
@@ -50,7 +57,7 @@ export async function createShipment(data) {
         throw new Error("Sva polja moraju biti popunjena i validna.");
     }
     try {
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/shipments/create`, data, {
+        const response = await api.post(url+`/create`, data, {
         headers: getHeader()
         });
         return response.data;
@@ -61,7 +68,7 @@ export async function createShipment(data) {
 
 export async function update({id,date}){
     try{
-        if (id == null || isNaN(id) || !isValidShipmentData({ ...data, validateStatus })) {
+        if (id == null || Number.isNaN(Number(id)) || !isValidShipmentData({ ...data, validateStatus })) {
             throw new Error("Sva polja moraju biti popunjena i validna.");
         }
         const response = await api.put(url+`/update/${id}`,date,{
@@ -76,7 +83,7 @@ export async function update({id,date}){
 
 export async function deleteShipment(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -91,7 +98,7 @@ export async function deleteShipment(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -118,7 +125,7 @@ export async function findAll(){
 
 export async function findByOutboundDeliveryId(outboundId){
     try{
-        if(outboundId == null || isNaN(outboundId)){
+        if(outboundId == null || Number.isNaN(Number(outboundId))){
             throw new Error("Dati outboundId "+outboundId+" nije pronadjen");
         }
         const response = await api.get(url+`/outboundDelivery/${outboundId}`,{
@@ -151,15 +158,18 @@ export async function findByStatus(status){
 
 export async function findByShipmentDateBetween({from, to}) {
     try{
-        const isFromValid = moment(from, "YYYY-MM-DD", true).isValid();
-        const isToValid = moment(to, "YYYY-MM-DD", true).isValid();
+        const isFromValid = moment.isMoment(from) ||  moment(from, "YYYY-MM-DD", true).isValid();
+        const isToValid = moment.isMoment(to) ||  moment(to, "YYYY-MM-DD", true).isValid();
         if (!isFromValid || !isToValid) {
             return false;
-         }
+        }
+        if(moment(isToValid).isBefore(moment(isFromValid))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
         const response = await api.get(url+`/date-ranges`,{
             params:{
-                from:moment(from).format("YYYY-MM-DD"),
-                to:moment(to).format("YYYY-MM-DD")
+                from:moment(isFromValid).format("YYYY-MM-DD"),
+                to:moment(isToValid).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -172,7 +182,7 @@ export async function findByShipmentDateBetween({from, to}) {
 
 export async function findByProviderId(providerId){
     try{
-        if(providerId == null || isNaN(providerId)){
+        if(providerId == null || Number.isNaN(Number(providerId))){
             throw new Error("ProviderId "+providerId+" nije pornadjen");
         }
         const response = await api.get(url+`/provider/${providerId}`,{
@@ -223,7 +233,7 @@ export async function findByTrackingInfo_CurrentStatus(status){
 
 export async function findByTrackingInfoId(trackingInfoId){
     try{
-        if(trackingInfoId == null || isNaN(trackingInfoId)){
+        if(trackingInfoId == null ||Number.isNaN(Number(trackingInfoId))){
             throw new Error("TrackingInfo ID "+trackingInfoId+" nije pronadjen");
         }
         const response = await api.get(url+`/trackingInfo/${trackingInfoId}`,{
@@ -238,7 +248,7 @@ export async function findByTrackingInfoId(trackingInfoId){
 
 export async function findByOriginStorageId(storageId){
     try{
-        if(storageId == null || isNaN(storageId)){
+        if(storageId == null || Number.isNaN(Number(storageId))){
             throw new Error("StorageId "+storageId+" nije pornadjen");
         }
         const response = await api.get(url+`/storage/${storageId}`,{
@@ -307,8 +317,8 @@ export async function findByOriginStorage_Type(type){
 
 export async function findByOriginStorageIdAndStatus({storageId, status}){
     try{
-        if(storageId == null || isNaN(storageId) || !validateStatus.includes(status?.toUpperCase())){
-            throw new Error("StorageId "+status+" I status "+status+" nisu pronadjeni");
+        if(storageId == null || Number.isNaN(Number(storageId)) || !validateStatus.includes(status?.toUpperCase())){
+            throw new Error("StorageId "+storageId+" I status "+status+" nisu pronadjeni");
         }
         const response = await api.get(url+`/storage-and-status`,{
             params:{
@@ -374,7 +384,7 @@ export async function findOverdueDelayedShipments(){
 
 export async function findByTrackingInfo_TrackingNumber(trackingNumber){
     try{
-        if(trackingNumber == null || isNaN(trackingNumber) || typeof trackingNumber !== "string" || trackingNumber.trim() === ""){
+        if(trackingNumber == null || typeof trackingNumber !== "string" || trackingNumber.trim() === ""){
             throw new Error("Dati broj "+trackingNumber+" za pracenje nije pronadjen");
         }
         const response = await api.get(url+`/search/tracking-number`,{
@@ -390,13 +400,12 @@ export async function findByTrackingInfo_TrackingNumber(trackingNumber){
 
 export async function findByTrackingInfo_EstimatedDelivery(estimatedDelivery){
     try{
-        if(
-            !moment(estimatedDelivery,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati procenjeni datum "+estimatedDelivery+" dostave nije pronadjen");
+        const validateDate = moment.isMoment(estimatedDelivery) || moment(estimatedDelivery,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati procenjeni datum "+validateDate+" dostave nije pronadjen");
         }
         const response = await api.get(url+`/search/estimated-delivery`,{
-            params:{estimatedDelivery:moment(estimatedDelivery).format("YYYY-MM-DD")},
+            params:{estimatedDelivery:moment(validateDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -408,16 +417,18 @@ export async function findByTrackingInfo_EstimatedDelivery(estimatedDelivery){
 
 export async function findByTrackingInfo_EstimatedDeliveryBetween(estimatedDeliveryStart, estimatedDeliveryEnd){
     try{
-        if(
-            !moment(estimatedDeliveryStart,"YYYY-MM-DD",true).isValid() ||
-            !moment(estimatedDeliveryEnd,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati opseg datuma "+estimatedDeliveryStart+" - "+estimatedDeliveryEnd+" za dostavu nije pronadjen");
+        const validateDateStart = moment.isMoment(estimatedDeliveryStart) || moment(estimatedDeliveryStart,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(estimatedDeliveryEnd) || moment(estimatedDeliveryEnd,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dati opseg datuma "+validateDateStart+" - "+validateDateEnd+" za dostavu nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(ur+`/search/estimated-delivery-between`,{
             params:{
-                estimatedDeliveryStart:moment(estimatedDeliveryStart).format("YYYY-MM-DD"),
-                estimatedDeliveryEnd:moment(estimatedDeliveryEnd).format("YYYY-MM-DD")
+                estimatedDeliveryStart:moment(validateDateStart).format("YYYY-MM-DD"),
+                estimatedDeliveryEnd:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -478,13 +489,12 @@ export async function findByProvider_PhoneNumberLikeIgnoreCase(phoneNumber){
 
 export async function findByOutboundDelivery_DeliveryDate(deliveryDate){
     try{
-        if(
-            !moment(deliveryDate,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati datum "+deliveryDate+" dostave za outboundDelivery nije pronadjen");
+        const validateDate = moment.isMoment(deliveryDate) || moment(deliveryDate,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum "+validateDate+" dostave za outboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/search/outboundDelivery-delivery-date`,{
-            params:{deliveryDate:moment(deliveryDate).format("YYYY-MM-DD")},
+            params:{deliveryDate:moment(validateDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -496,16 +506,18 @@ export async function findByOutboundDelivery_DeliveryDate(deliveryDate){
 
 export async function findByOutboundDelivery_DeliveryDateBetween(deliveryDateStart, deliveryDateEnd){
     try{
-        if(
-            !moment(deliveryDateStart,"YYYY-MM-DD",true).isValid() ||
-            !moment(deliveryDateEnd,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati opseg datuma "+deliveryDateStart+" - "+deliveryDateEnd+" dostave za outbound-delivery nije pronadjen");
+        const validateDateStart = moment.isMoment(deliveryDateStart) || moment(deliveryDateStart,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(deliveryDateEnd) || moment(deliveryDateEnd,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dati opseg datuma "+validateDateStart+" - "+validateDateEnd+" dostave za outbound-delivery nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/outboundDelivery-delivery-date-range`,{
             params:{
-                deliveryDateStart:moment(deliveryDateStart).format("YYYY-MM-DD"),
-                deliveryDateEnd:moment(deliveryDateEnd).format("YYYY-MM-DD")
+                deliveryDateStart:moment(validateDateStart).format("YYYY-MM-DD"),
+                deliveryDateEnd:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -552,7 +564,7 @@ export async function findByOutboundDelivery_Status(status){
 
 export async function findByOutboundDelivery_Buyer_Id(buyerId){
     try{
-        if(buyerId == null || isNaN(buyerId)){
+        if(buyerId == null || Number.isNaN(Number(buyerId))){
             throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(ur+`/search/outboundDelivery/buyer/${buyerId}`,{
@@ -579,13 +591,12 @@ export async function findLateShipments(){
 
 export async function findShipmentsDueSoon(futureDate){
     try{
-        if(
-            !moment(futureDate,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati datum "+futureDate+" za dostavu koja treb astici nije pronadjen");
+        const validateDate = moment.isMoment(futureDate)  || moment(futureDate,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum "+validateDate+" za dostavu koja treba stici nije pronadjen");
         }
         const response = await api.get(url+`/search/shipments-due-soon`,{
-            params:{futureDate:moment(futureDate).format("YYYY-MM-DD")},
+            params:{futureDate:moment(validateDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -609,16 +620,19 @@ export async function findByTrackingInfoIsNull(){
 
 export async function findByOutboundDelivery_StatusAndOutboundDelivery_DeliveryDateBetween({status, from, to}){
     try{
-        if(!isDeliveryStatusValid.includes(status?.toUpperCase()) ||
-            !moment(from,"YYYY-MM-DD",true).isValid() || 
-            !moment(to,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati status "+status+" dostave i opseg datuma "+from+" - "+to+" dostave nisu pronadjeni");
+        const validateStart = moment.isMoment(from) || moment(from,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(to) || moment(to,"YYYY-MM-DD",true).isValid();
+        if(!isDeliveryStatusValid.includes(status?.toUpperCase()) || !validateStart || !validateEnd){
+            throw new Error("Dati status "+status+" dostave i opseg datuma "+validateStart+" - "+validateEnd+" dostave nisu pronadjeni");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetka");
         }
         const response = await api.get(url+`/search/outboundDelivery/status-delivery-date-range`,{
             params:{
                 status:(status || "").toUpperCase(),
-                from:moment(from).format("YYYY-MM-DD"),
-                to:moment(to).format("YYYY-MM-DD")
+                from:moment(validateStart).format("YYYY-MM-DD"),
+                to:moment(validateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -631,15 +645,19 @@ export async function findByOutboundDelivery_StatusAndOutboundDelivery_DeliveryD
 
 export async function findByOriginStorageIdAndTrackingInfo_EstimatedDeliveryBetween({storageId, from, to}){
     try{
-        if(storageId == null || isNaN(storageId) ||
-            !moment(from,"YYYY-MM-DD",true).isValid() || 
-            !moment(to,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati ID "+storageId+" za skladiste i procenjeni opseg datuma "+from+" - "+to+" dostave nije pronadjen");
+        const validateStart = moment.isMoment(from) || moment(from,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(to) || moment(to,"YYYY-MM-DD",true).isValid();
+        if(storageId == null || Number.isNaN(Number(storageId)) ||
+            !validateStart || !validateEnd){
+            throw new Error("Dati ID "+storageId+" za skladiste i procenjeni opseg datuma "+validateStart+" - "+validateEnd+" dostave nije pronadjen");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetka");
         }
         const response = await api.get(url+`/search/storage/${storageId}/trackingInfo-estimated-delivery-date-range`,{
             params:{
-                from:moment(from).format("YYYY-MM-DD"),
-                to:moment(to).format("YYYY-MM-DD")
+                from:moment(validateStart).format("YYYY-MM-DD"),
+                to:moment(validateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -690,13 +708,12 @@ export async function findByBuyerNameContainingIgnoreCase(buyerName){
 
 export async function findRecentlyDeliveredShipments(fromDate){
     try{
-        if(
-            !moment(fromDate,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati datum "+fromDate+" za nedavnu dostavu nije pronadjen");
+        const validateDate = moment.isMoment(fromDate) || moment(fromDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati datum "+validateDate+" za nedavnu dostavu nije pronadjen");
         }
         const response = await api.get(url+`/search/recently-delivered-shipments`,{
-            params:{fromDate:moment(fromDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{fromDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -720,16 +737,18 @@ export async function findCancelledShipments(){
 
 export async function findCancelledShipmentsBetweenDates({from, to}){
     try{
-        if(
-            !moment(from,"YYYY-MM-DD",true).isValid() || 
-            !moment(to,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati opseg datuma "+from+" - "+to+" otkazivanja posiljke nije pronadjen");
+        const validateDateStart = moment.isMoment(from) || moment(from,"YYYY-MM-DD",true).isValid();
+        const validateDateEnd = moment.isMoment(to) || moment(to,"YYYY-MM-DD",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dati opseg datuma "+validateDateStart+" - "+validateDateEnd+" otkazivanja posiljke nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/cancelled-shipments-date-range`,{
             params:{
-                from:moment(from).format("YYYY-MM-DD"),
-                to:moment(to).format("YYYY-MM-DD")
+                from:moment(validateDateStart).format("YYYY-MM-DD"),
+                to:moment(validateDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -853,9 +872,3 @@ export async function findInTransitShipmentsWithInTransitDelivery(){
 
 
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

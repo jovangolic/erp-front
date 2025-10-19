@@ -1,20 +1,30 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 import moment from "moment";
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 const url = `${import.meta.env.VITE_API_BASE_URL}/shifts`;
 
 export async function createShift({startTime, endTime, shiftSupervisorId}){
     try{
+        const validateStart = moment.isMoment(startTime) || moment(startTime, "YYYY-MM-DDTHH:mm:ss").isValid();
+        const validateEnd = moment.isMoment(endTime) || moment(endTime, "YYYY-MM-DDTHH:mm:ss").isValid();
         if(
-            !moment(startTime, moment.ISO_8601, true).isValid() ||
-            !moment(endTime, moment.ISO_8601, true).isValid() ||
-            !shiftSupervisorId
+            !validateStart || !validateEnd ||
+            shiftSupervisorId == null || Number.isNaN(Number(shiftSupervisorId))
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum-vreme za kraj ne sme biti ispred datum-vreme za pocetak");
+        }
         const requestBody = {
-            startTime:moment(startTime).toISOString(), endTime:moment(endTime).toISOString(),
-            shiftSupervisorId: shiftSupervisorId
+            startTime, endTime,shiftSupervisorId: shiftSupervisorId
         };
         const response = await api.post(url+`/new/create-shift`,requestBody,{
             headers:getHeader()
@@ -26,23 +36,27 @@ export async function createShift({startTime, endTime, shiftSupervisorId}){
             throw new Error(error.response.data);
         }
         else{
-            throw new Error("Greška prilikom kreiranja smene: " + error.message);
+            throw new Error("Greska prilikom kreiranja smene: " + error.message);
         }
     }
 }
 
 export async function updateShift({id,startTime, endTime, shiftSupervisorId}){
     try{
+        const validateStart = moment.isMoment(startTime) || moment(startTime, "YYYY-MM-DDTHH:mm:ss").isValid();
+        const validateEnd = moment.isMoment(endTime) || moment(endTime, "YYYY-MM-DDTHH:mm:ss").isValid();
         if(
-            id == null || isNaN(id) ||
-            !moment(startTime, moment.ISO_8601, true).isValid() ||
-            !moment(endTime, moment.ISO_8601, true).isValid() ||
-            !shiftSupervisorId
+            id == null || Number.isNaN(Number(id)) ||
+            !validateStart || !validateEnd ||
+            shiftSupervisorId == null || Number.isNaN(Number(shiftSupervisorId))
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        const requestBody = {id:id, startTime:moment(startTime).toISOString(), endTime:moment(endTime).toISOString(),
-            shiftSupervisorId:shiftSupervisorId
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum-vreme za kraj ne sme biti ispred datum-vreme za pocetak");
+        }
+        const requestBody = {
+            startTime, endTime,shiftSupervisorId: shiftSupervisorId
         };
         const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
@@ -54,14 +68,14 @@ export async function updateShift({id,startTime, endTime, shiftSupervisorId}){
             throw new Error(error.response.data);
         }
         else{
-            throw new Error("Greška prilikom azuriranja smene: " + error.message);
+            throw new Error("Greska prilikom azuriranja smene: " + error.message);
         }
     }
 }
 
 export async function deleteShift(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije nadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -76,7 +90,7 @@ export async function deleteShift(id){
 
 export async function getShiftById(id){
     try{   
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije nadjen");
         } 
         const response = await api.get(url+`/get-one/${id}`,{
@@ -103,11 +117,12 @@ export async function getAllShifts(){
 
 export async function findByEndTimeBefore(time){
     try{
-        if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme "+time+" kraja smene nije pronadjeno");
+        const validateDateTime = moment.isMoment(time) || moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateTime){
+            throw new Error("Dato vreme "+validateDateTime+" kraja smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/end-time-before`,{
-            params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
+            params:{time:moment(validateDateTime).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -119,11 +134,12 @@ export async function findByEndTimeBefore(time){
 
 export async function findByEndTimeAfter(time){
     try{
-        if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme "+time+" kraja smene nije pronadjeno");
+        const validateDateTime = moment.isMoment(time) || moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateTime){
+            throw new Error("Dato vreme "+validateDateTime+" kraja smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/end-time-after`,{
-            params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
+            params:{time:moment(validateDateTime).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -135,11 +151,12 @@ export async function findByEndTimeAfter(time){
 
 export async function findByStartTimeAfter(time){
     try{
-        if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme "+time+" pocetka smene nije pronadjeno");
+        const validateDateTime = moment.isMoment(time) || moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateTime){
+            throw new Error("Dato vreme "+validateDateTime+" pocetka smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/start-time-after`,{
-            params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
+            params:{time:moment(validateDateTime).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -151,11 +168,12 @@ export async function findByStartTimeAfter(time){
 
 export async function findByStartTimeBefore(time){
     try{
-        if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme "+time+" pocetka smene nije pronadjeno");
+        const validateDateTime = moment.isMoment(time) || moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateTime){
+            throw new Error("Dato vreme "+validateDateTime+" pocetka smene nije pronadjeno");
         }
         const response = await api.get(url+`/search/start-time-before`,{
-            params:{time:moment(time).format("YYY-MM-DDTHH:mm:ss")},
+            params:{time:moment(validateDateTime).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -167,16 +185,18 @@ export async function findByStartTimeBefore(time){
 
 export async function findByEndTimeBetween({start, end}){
     try{
-        if(
-            !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati opseg "+start+" - "+end+" kraja smene nije pronadjen");
+        const validateDateTimeStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateTimeEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateDateTimeStart || !validateDateTimeEnd){
+            throw new Error("Dati opseg "+validateDateTimeStart+" - "+validateDateTimeEnd+" kraja smene nije pronadjen");
+        }
+        if(moment(validateDateTimeEnd).isBefore(moment(validateDateTimeStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/end-time-between`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(validateDateTimeStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateDateTimeEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -213,17 +233,21 @@ export async function findByEndTimeIsNull(){
 
 export async function findByShiftSupervisorIdAndStartTimeBetween({supervisorId, start, end}){
     try{
+        const validateDateTimeStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateTimeEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            supervisorId == null || isNaN(supervisorId) ||
-            !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
+            supervisorId == null || Number.isNaN(Number(supervisorId)) ||
+            !validateDateTimeStart || !validateDateTimeEnd
          ){
-            throw new Error("Dati ID "+supervisorId+" nadzorinka i opseg "+start+" - "+end+" smena nije pronadjen");
+            throw new Error("Dati ID "+supervisorId+" nadzorinka i opseg "+validateDateTimeStart+" - "+validateDateTimeEnd+" smena nije pronadjen");
+        }
+        if(moment(validateDateTimeEnd).isBefore(moment(validateDateTimeStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/supervisor/${supervisorId}/start-between`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(validateDateTimeStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateDateTimeEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -236,7 +260,7 @@ export async function findByShiftSupervisorIdAndStartTimeBetween({supervisorId, 
 
 export async function findByShiftSupervisorIdAndEndTimeIsNull(supervisorId){
     try{
-        if(isNaN(supervisorId) || supervisorId == null ){
+        if(Number.isNaN(Number(supervisorId)) || supervisorId == null ){
             throw new Error("Dati ID "+supervisorId+" za nadzornika nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/${supervisorId}/end-time-null`,{
@@ -251,13 +275,12 @@ export async function findByShiftSupervisorIdAndEndTimeIsNull(supervisorId){
 
 export async function countShiftsByStartDate(date){
     try{
-        if(
-            !moment(date,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati ukupan broj smena sa pocetnim "+date+" datumom nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD", true).isValid();
+        if(!validateDate){
+            throw new Error("Dati ukupan broj smena sa pocetnim "+validateDate+" datumom nije pronadjen");
         }
         const response = await api.get(url+`/search/count-start-date`,{
-            params:{date:moment(date).format("YYYY-MM-DD")},
+            params:{date:moment(validateDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -269,13 +292,12 @@ export async function countShiftsByStartDate(date){
 
 export async function countShiftsByEndDate(date){
     try{
-        if(
-            !moment(date,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati ukupan broj smena sa datumom "+date+" zavrsetka nije pronadjen");
+        const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD", true).isValid();
+        if(!validateDate){
+            throw new Error("Dati ukupan broj smena sa datumom "+validateDate+" zavrsetka nije pronadjen");
         }
         const response = await api.get(url+`/search/count-end-date`,{
-            params:{date:moment(date).format("YYYY-MM-DD")},
+            params:{date:moment(validateDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -287,7 +309,7 @@ export async function countShiftsByEndDate(date){
 
 export async function findCurrentShiftBySupervisor(supervisorId){
     try{
-        if(supervisorId == null || isNaN(supervisorId)){
+        if(supervisorId == null || Number.isNaN(Number(supervisorId))){
             throw new Error("Dati ID "+supervisorId+" nadzornika za trenutnu smenu nije pronadjen");
         }
         const response = await api.get(url+`/search/supervisor/${supervisorId}/current`,{
@@ -303,8 +325,8 @@ export async function findCurrentShiftBySupervisor(supervisorId){
 export async function findShiftsLongerThan(hours){
     try{
         const parseHours = parseInt(hours,10);
-        if(isNaN(parseHours) || parseHours <= 0 ){
-            throw new Error("Dato vreme "+hours+" za smene koje trazju duze od 8 sati nisu pronadjene");
+        if(Number.isNaN(Number(parseHours)) || parseHours <= 0 ){
+            throw new Error("Dato vreme "+parseHours+" za smene koje trazju duze od 8 sati nisu pronadjene");
         }
         const response = await api.get(url+`/search/shift-longer-than`,{
             params:{hours:parseHours},
@@ -319,16 +341,18 @@ export async function findShiftsLongerThan(hours){
 
 export async function findShiftsOverlappingPeriod({start, end}){
     try{
-        if(
-            !moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Dati opseg "+start+" - "+end+" preklapanja smena nije pronadjen");
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss", true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss", true).isValid();
+        if(!validateDateStart || !validateDateEnd ){
+            throw new Error("Dati opseg "+validateDateStart+" - "+validateDateEnd+" preklapanja smena nije pronadjen");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/overlapping-shifts`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -353,13 +377,12 @@ export async function findNightShifts(){
 
 export async function findFutureShifts(now){
     try{
-        if(
-            !moment(now,"YYYY-MM-DDTHH:mm:ss",true).isValid()
-        ){
-            throw new Error("Date buduce smene koje pocinju od datog "+now+" datuma i vremena nisu pronadjene");
+        const validateDate = moment.isMoment(now) || moment(now,"YYYY-MM-DDTHH:mm:ss", true).isValid();
+        if(!validateDate){
+            throw new Error("Date buduce smene koje pocinju od datog "+validateDate+" datuma i vremena nisu pronadjene");
         }
         const response = await api.get(url+`/search/future-shifts`,{
-            params:{now:moment(now).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{now:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -432,7 +455,7 @@ export async function findByShiftSupervisor_FirstNameLikeIgnoreCaseAndLastNameLi
 
 export async function hasActiveShift(supervisorId){
     try{
-        if(isNaN(supervisorId) || supervisorId == null){
+        if(Number.isNaN(Number(supervisorId)) || supervisorId == null){
             throw new Error("ID "+supervisorId+" nadzornika za proveru aktivne smene nije validan ili nije unet");
         }
         const response =await api.get(url+`/active/${supervisorId}`,{
@@ -447,9 +470,3 @@ export async function hasActiveShift(supervisorId){
 
 
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

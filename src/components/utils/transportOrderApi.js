@@ -16,9 +16,12 @@ const deliveryStatus = ["PENDING", "IN_TRANSIT", "DELIVERED", "CANCELLED"];
 
 export async function create({scheduledDate,vehicleId,driversId,status,outboundDeliveryId}){
     try{
-        if(!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status?.toUpperCase())
-        || !outboundDeliveryId){
-            throw new Error("Sva polja moraju biti popunjena");
+        const validateScheduleDate = moment.isMoment(scheduledDate) || moment(scheduledDate, "YYYY-MM-DD", true).isValid();
+        if(
+            !validateScheduleDate || vehicleId == null || Number.isNaN(num(vehicleId)) || 
+            driversId == null || Number.isNaN(Number(driversId)) || !t_status.includes(status?.toUpperCase()) ||
+            outboundDeliveryId == null || Number.isNaN(Number(outboundDeliveryId))){
+                throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {scheduledDate,vehicleId,driversId,status,outboundDeliveryId};
         const response = await api.post(url+`/create/new-transportOrder`,requestBody,{
@@ -33,9 +36,13 @@ export async function create({scheduledDate,vehicleId,driversId,status,outboundD
 
 export async function update({id,scheduledDate,vehicleId,driversId,status,outboundDeliveryId}){
     try{
-        if( id == null || isNaN(id) ||!moment(scheduledDate, "YYYY-MM-DD", true).isValid() || !vehicleId || !driversId || !t_status.includes(status?.toUpperCase())
-        || !outboundDeliveryId){
-            throw new Error("Sva polja moraju biti popunjena");
+        const validateScheduleDate = moment.isMoment(scheduledDate) || moment(scheduledDate, "YYYY-MM-DD", true).isValid();
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            !validateScheduleDate || vehicleId == null || Number.isNaN(num(vehicleId)) || 
+            driversId == null || Number.isNaN(Number(driversId)) || !t_status.includes(status?.toUpperCase()) ||
+            outboundDeliveryId == null || Number.isNaN(Number(outboundDeliveryId))){
+                throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {scheduledDate,vehicleId,driversId,status,outboundDeliveryId};
         const response = await api.put(url+`/update/${id}`,requestBody,{
@@ -50,7 +57,7 @@ export async function update({id,scheduledDate,vehicleId,driversId,status,outbou
 
 export async function deleteTransportOrder(id){
     try{   
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za transportOrder nije pronadjen");
         } 
         const response = await api.delete(url+`/delete/${id}`,{
@@ -65,7 +72,7 @@ export async function deleteTransportOrder(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za transportOrder nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -128,7 +135,7 @@ export async function findByDriver_Name(name){
 
 export async function findByVehicleId(vehicleId){
     try{
-        if(vehicleId == null || isNaN(vehicleId)){
+        if(vehicleId == null || Number.isNaN(Number(vehicleId))){
             throw new Error("Dati ID "+vehicleId+" za vozilo nije pronadjeno");
         }
         const response = await api.get(url+`/vehicle/${vehicleId}`,{
@@ -143,7 +150,7 @@ export async function findByVehicleId(vehicleId){
 
 export async function findByDriverId(driverId){
     try{
-        if(driverId == null || isNaN(driverId)){
+        if(driverId == null || Number.isNaN(Number(driverId))){
             throw new Error("Dati ID "+driverId+" za vozaca nije pronadjeno");
         }
         const response = await api.get(url+`/driver/${driverId}`,{
@@ -176,7 +183,7 @@ export async function findByStatus(status){
 
 export async function findByOutboundDelivery_Id(outboundDeliveryId){
     try{
-        if(outboundDeliveryId == null  || isNaN(outboundDeliveryId)){
+        if(outboundDeliveryId == null  || Number.isNaN(Number(outboundDeliveryId))){
             throw new Error("Dati ID "+outboundDeliveryId+" za outboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/outboundDelivery/${outboundDeliveryId}`,{
@@ -209,13 +216,18 @@ export async function findByOutboundDelivery_Status(status){
 
 export async function findByScheduledDateBetween({from, to}){
     try{
-        if (!from || !to || !moment(from, "YYYY-MM-DD", true).isValid() || !moment(to, "YYYY-MM-DD", true).isValid()) {
-            throw new Error("Opseg  "+from+" - "+to+" datuma nije ispravan");
+        const validateStart = moment.isMoment(from) || moment(from, "YYYY-MM-DD", true).isValid();
+        const validateEnd = moment.isMoment(to) || moment(to, "YYYY-MM-DD", true).isValid();
+        if (!validateStart || !validateEnd) {
+            throw new Error("Opseg  "+validateStart+" - "+validateEnd+" datuma nije ispravan");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/date-range`,{
             params:{
-                from:moment(from).format("YYYY-MM-DD"),
-                to:moment(to).format("YYYY-MM-DD")
+                from:moment(validateStart).format("YYYY-MM-DD"),
+                to:moment(validateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -228,11 +240,12 @@ export async function findByScheduledDateBetween({from, to}){
 
 export async function findByScheduledDate(scheduleDate){
     try{
-        if(!moment(scheduleDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum rasporeda "+scheduleDate+" nije pronadjen");
+        const validateScheduleDate = moment.isMoment(scheduleDate) || moment(scheduleDate,"YYYY-MM-DD",true).isValid();
+        if(!validateScheduleDate){
+            throw new Error("Dati datum rasporeda "+validateScheduleDate+" nije pronadjen");
         }
         const response = await api.get(url+`/by-schedule-date`,{
-            params:{scheduleDate:moment(scheduleDate).format("YYYY-MM-DD")},
+            params:{scheduleDate:moment(validateScheduleDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -440,12 +453,13 @@ export async function findByOutboundDelivery_Cancelled(){
 
 export async function findByOutboundDelivery_DeliveryDate(deliveryDate){
     try{
-        if(!moment(deliveryDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datum "+deliveryDate+" dostave za outbound delivery nije pronadjen");
+        const validateDeliveryDate = moment.isMoment(deliveryDate) || moment(deliveryDate,"YYYY-MM-DD",true).isValid();
+        if(validateDeliveryDate){
+            throw new Error("Dati datum "+validateDeliveryDate+" dostave za outbound delivery nije pronadjen");
         }
         const response = await api.get(url+`/outbound-delivery/delivery-date`,{
             params:{
-                deliveryDate:moment(deliveryDate).format("YYYY-MM-DD")
+                deliveryDate:moment(validateDeliveryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -458,16 +472,18 @@ export async function findByOutboundDelivery_DeliveryDate(deliveryDate){
 
 export async function findByOutboundDelivery_DeliveryDateBetween({deliveryDateStart, deliveryDateEnd}){
     try{
-        if(
-            !moment(deliveryDateStart,"YYYY-MM-DD",true).isValid() ||
-            !moment(deliveryDateEnd,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati opseg "+deliveryDateStart+" - "+deliveryDateEnd+" datuma dostave za outbound-delivery nije pronadjen");
+        const validateDeliveryDateStart = moment.isMoment(deliveryDateStart) || moment(deliveryDateStart,"YYYY-MM-DD",true).isValid();
+        const validateDeliveryDateEnd = moment.isMoment(deliveryDateEnd) || moment(deliveryDateEnd,"YYYY-MM-DD",true).isValid();
+        if(!validateDeliveryDateStart || !validateDeliveryDateEnd){
+            throw new Error("Dati opseg "+validateDeliveryDateStart+" - "+validateDeliveryDateEnd+" datuma dostave za outbound-delivery nije pronadjen");
+        }
+        if(moment(validateDeliveryDateEnd).isBefore(moment(validateDeliveryDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/outbound-delivery/delivery-date-range`,{
             params:{
-                deliveryDateStart:moment(deliveryDateStart).format("YYYY-MM-DD"),
-                deliveryDateEnd:moment(deliveryDateEnd).format("YYYY-MM-DD")
+                deliveryDateStart:moment(validateDeliveryDateStart).format("YYYY-MM-DD"),
+                deliveryDateEnd:moment(validateDeliveryDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -480,7 +496,7 @@ export async function findByOutboundDelivery_DeliveryDateBetween({deliveryDateSt
 
 export async function findByOutboundDelivery_Buyer_Id(buyerId){
     try{
-        if(isNaN(buyerId) || buyerId == null){
+        if(Number.isNaN(Number(buyerId)) || buyerId == null){
             throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/outbound-delivery/buyer/${buyerId}`,{
@@ -585,7 +601,7 @@ export async function findByOutboundDelivery_Buyer_PibLikeIgnoreCase(buyerPib){
 
 export async function findDeliveryItemsByTransportOrderId(transportOrderId){
     try{
-        if(transportOrderId == null || isNaN(transportOrderId)){
+        if(transportOrderId == null || Number.isNaN(Number(transportOrderId))){
             throw new Error("Dati transport-order ID "+transportOrderId+" nije pronadjen");
         }
         const response = await api.get(url+`/search/delivery-items/${transportOrderId}`,{
@@ -612,14 +628,13 @@ export async function findAllWithDeliveryItems(){
 
 export async function findByOutboundDelivery_DeliveryDateAfter(deliveryAfter){
     try{
-        if(
-            !moment(deliveryAfter,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati datum dostave posle "+deliveryAfter+", za outbound-delivery, nije pronadjen");
+        const validateDeliveryDate = moment.isMoment(deliveryAfter) || moment(deliveryAfter,"YYYY-MM-DD",true).isValid();
+        if(!validateDeliveryDate){
+            throw new Error("Dati datum dostave posle "+validateDeliveryDate+", za outbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/outbound-delivery/delivery-after`,{
             params:{
-                deliveryAfter:moment(deliveryAfter).format("YYYY-MM-DD")
+                deliveryAfter:moment(validateDeliveryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -632,14 +647,13 @@ export async function findByOutboundDelivery_DeliveryDateAfter(deliveryAfter){
 
 export async function findByOutboundDelivery_DeliveryDateBefore(deliveryBefore){
     try{
-        if(
-            !moment(deliveryBefore,"YYYY-MM-DD",true).isValid()
-        ){
-            throw new Error("Dati datum dostave pre "+deliveryBefore+", za outbound-delivery, nije pronadjen");
+        const validateDeliveryDate = moment.isMoment(deliveryBefore) || moment(deliveryBefore,"YYYY-MM-DD",true).isValid();
+        if(!validateDeliveryDate){
+            throw new Error("Dati datum dostave pre "+validateDeliveryDate+", za outbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/outbound-delivery/delivery-before`,{
             params:{
-                deliveryBefore:moment(deliveryBefore).format("YYYY-MM-DD")
+                deliveryBefore:moment(validateDeliveryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -749,7 +763,7 @@ export async function findByVehicle_StatusIn(statuses){
 
 export async function findByVehicleAndStatuses(vehicleId, statusesArray) {
     try {
-        if(!t_status.includes(statusesArray?.toUpperCase()) || vehicleId == null || isNaN(vehicleId)){
+        if(!t_status.includes(statusesArray?.toUpperCase()) || vehicleId == null || Number.isNaN(Number(vehicleId))){
             throw new Error("Dati ID "+vehicleId+" za vozilo kao i lista statusa za TransportStatus, nisu pronadjeni");
         }
         const response = await api.get(url+`/by-vehicle-and-statuses`, {
@@ -789,12 +803,13 @@ export async function findWithInactiveVehicles(){
 
 export async function findByScheduledDateAfter(scheduledDateAfter){
     try{
-        if(!moment(scheduledDateAfter,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Redosled datuma posle "+scheduledDateAfter+" za transport-order, nije pronadjen");
+        const validateScheduleDate = moment.isMoment(scheduledDateAfter) || moment(scheduledDateAfter,"YYYY-MM-DD",true).isValid();
+        if(!validateScheduleDate){
+            throw new Error("Redosled datuma posle "+validateScheduleDate+" za transport-order, nije pronadjen");
         }
         const response = await api.get(url+`/scheduled-date-after`,{
             params:{
-                scheduledDateAfter:moment(scheduledDateAfter).format("YYYY-MM-DD")
+                scheduledDateAfter:moment(validateScheduleDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -807,12 +822,13 @@ export async function findByScheduledDateAfter(scheduledDateAfter){
 
 export async function findByScheduledDateBefore(scheduledDateBefore){
     try{
-        if(!moment(scheduledDateBefore,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Redosled datuma pre "+scheduledDateBefore+" za transport-order, nije pronadjen");
+        const validateScheduleDate = moment.isMoment(scheduledDateBefore) || moment(scheduledDateBefore,"YYYY-MM-DD",true).isValid();
+        if(!validateScheduleDate){
+            throw new Error("Redosled datuma pre "+validateScheduleDate+" za transport-order, nije pronadjen");
         }
         const response = await api.get(url+`/scheduled-date-before`,{
             params:{
-                scheduledDateBefore:moment(scheduledDateBefore).format("YYYY-MM-DD")
+                scheduledDateBefore:moment(validateScheduleDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });

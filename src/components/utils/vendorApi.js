@@ -3,13 +3,21 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 const url = `${import.meta.env.VITE_API_BASE_URL}/vendors`;
 const isMaterialTransactionStatusValid = ["PENDING", "APPROVED", "SENT_TO_LAB", "LAB_CONFIRMED", "COMPLETED", "REJECTED"];
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 export async function createVendor({name, email, phoneNumber, address}) {
     try{
-        if(!name || name.trim() ==="" || typeof name !== "string" ||
-        !email || email.trim()==="" || typeof email !=="string" || 
-        !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
-        !address || address.trim() ==="" || typeof address !=="string"){
-            throw new Error("Sva polja moraju biti popunjena");
+        if(
+            !name || name.trim() ==="" || typeof name !== "string" ||
+            !email || email.trim()==="" || typeof email !=="string" || 
+            !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
+            !address || address.trim() ==="" || typeof address !=="string"){
+                throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {name:name, email:email, phoneNumber:phoneNumber, address:address};
         const response = await api.post(url+`/create/new-vendor`, requestBody,{
@@ -30,10 +38,10 @@ export async function createVendor({name, email, phoneNumber, address}) {
 export async function updateVendor({id, name, email,phoneNumber, address}){
     try{
         if(
-        id == null || isNaN(id) || !name || name.trim() ==="" || typeof name !== "string" ||
-        !email || email.trim()==="" || typeof email !=="string" || 
-        !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
-        !address || address.trim() ==="" || typeof address !=="string"){
+            id == null || Number.isNaN(Number(id)) || !name || name.trim() ==="" || typeof name !== "string" ||
+            !email || email.trim()==="" || typeof email !=="string" || 
+            !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
+            !address || address.trim() ==="" || typeof address !=="string"){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {id:id, name:name, email:email, phoneNumber:phoneNumber, address:address};
@@ -54,7 +62,7 @@ export async function updateVendor({id, name, email,phoneNumber, address}){
 
 export async function deleteVendor(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id)) ){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -123,7 +131,7 @@ export async function getVendorByEmail(email){
 
 export async function getById(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id)) ){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
@@ -202,7 +210,7 @@ export async function findByNameIgnoreCaseContainingAndAddressIgnoreCaseContaini
 
 export async function findByIdBetween({startId, endId}){
     try{
-        if(startId == null || isNaN(startId) || endId == null || isNaN(endId)){
+        if(startId == null || Number.isNaN(Number(startId)) || endId == null || Number.isNaN(Number(endId))){
             throw new Error("Dati opseg "+startId+" - "+endId+" indeksa nije pronadjen");
         }
         const response = await api.get(url+`/search/between-ids`,{
@@ -364,9 +372,3 @@ export async function findVendorsByTransactionStatuses(statuses){
 
 
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

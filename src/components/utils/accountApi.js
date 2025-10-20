@@ -500,7 +500,7 @@ export async function saveAll(requests){
             if(!isAccountStatusIsValid.includes(statusUpper)){
                 throw new Error(`Nevalidan status racuna ${req.status}`);
             }
-            if (typeof confirmed !== "boolean") {
+            if (typeof req.confirmed !== "boolean") {
                 throw new Error("Polje 'confirmed' mora biti boolean");
             }
         }

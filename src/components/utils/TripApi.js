@@ -15,11 +15,14 @@ const isDriverStatusValid = ["ALL","ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLE
 
 export async function createTrip({startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed}){
     try{
-        if(!startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
-           !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
-           !moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-           !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
-           isNaN(driverId) || driverId == null || typeof confirmed !== "boolean" ){
+        const validateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(
+            !startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
+            !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
+            !validateStart || !validateEnd ||
+            !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
+            Number.isNaN(Number(driverId)) || driverId == null || typeof confirmed !== "boolean" ){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed};
@@ -35,12 +38,15 @@ export async function createTrip({startLocation, endLocation,startTime,endTime,s
 
 export async function updateTrip({id, startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed}){
     try{
-        if(isNaN(id) || id == null ||
-           !startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
-           !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
-           !moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-           !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
-           isNaN(driverId) || driverId == null || typeof confirmed !== "boolean" ){
+        const validateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            !startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
+            !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
+            !validateStart || !validateEnd ||
+            !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
+            Number.isNaN(Number(driverId)) || driverId == null || typeof confirmed !== "boolean" ){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed};
@@ -56,7 +62,7 @@ export async function updateTrip({id, startLocation, endLocation,startTime,endTi
 
 export async function deleteTrip(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za putovanje/trip, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -71,7 +77,7 @@ export async function deleteTrip(id){
 
 export async function findOne(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za putovanje/trip, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -134,12 +140,13 @@ export async function findByEndLocationContainingIgnoreCase(endLocation){
 
 export async function findByStartTime(startTime){
     try{
-        if(!moment(startTime,"YYYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Vreme pocetka "+startTime+" datog putovanja, nije pronadjeno");
+        const validateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Vreme pocetka "+validateStart+" datog putovanja, nije pronadjeno");
         }
         const response = await api.get(url+`/start-time`,{
             params:{
-                startTime:moment(startTime).format("YYYY-MM-DDTHH:mm:ss")
+                startTime:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -152,12 +159,13 @@ export async function findByStartTime(startTime){
 
 export async function findByStartTimeBefore(startTime){
     try{
-        if(!moment(startTime,"YYYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Vreme pocetka-pre "+startTime+" datog putovanja, nije pronadjeno");
+        const validateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Vreme pocetka-pre "+validateStart+" datog putovanja, nije pronadjeno");
         }
         const response = await api.get(url+`/start-time-before`,{
             params:{
-                startTime:moment(startTime).format("YYYY-MM-DDTHH:mm:ss")
+                startTime:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -170,12 +178,13 @@ export async function findByStartTimeBefore(startTime){
 
 export async function findByStartTimeAfter(startTime){
     try{
-        if(!moment(startTime,"YYYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Vreme pocetka-posle "+startTime+" datog putovanja, nije pronadjeno");
+        const validateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Vreme pocetka-posle "+validateStart+" datog putovanja, nije pronadjeno");
         }
         const response = await api.get(url+`/start-time-after`,{
             params:{
-                startTime:moment(startTime).format("YYYY-MM-DDTHH:mm:ss")
+                startTime:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -188,16 +197,18 @@ export async function findByStartTimeAfter(startTime){
 
 export async function findByStartTimeBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum opsega "+start+" - "+end+" datog putovanja, nije pronadjeno");
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Datum opsega "+validateStart+" - "+validateEnd+" datog putovanja, nije pronadjeno");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error("Datum za kraj putovanja, ne sme biti ispred datuma za pocetak putovanja");
         }
         const response = await api.get(url+`/start-time-range`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -210,12 +221,13 @@ export async function findByStartTimeBetween({start, end}){
 
 export async function findByEndTime(endTime){
     try{
-        if(!moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum za kraj "+endTime+" putovanja, nije pronadjen");
+        const validateStart = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Datum za kraj "+validateStart+" putovanja, nije pronadjen");
         }
         const response = await api.get(url+`/end-time`,{
             params:{
-                end:moment(endTime).format("YYYY-MM-DDTHH:mm:ss")
+                end:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -228,12 +240,13 @@ export async function findByEndTime(endTime){
 
 export async function findByEndTimeBefore(endTime){
     try{
-        if(!moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum za kraj-pre "+endTime+" putovanja, nije pronadjen");
+        const validateStart = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Datum za kraj-pre "+validateStart+" putovanja, nije pronadjen");
         }
         const response = await api.get(url+`/end-time-before`,{
             params:{
-                end:moment(endTime).format("YYYY-MM-DDTHH:mm:ss")
+                end:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -246,12 +259,13 @@ export async function findByEndTimeBefore(endTime){
 
 export async function findByEndTimeAfter(endTime){
     try{
-        if(!moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Datum za kraj-posle "+endTime+" putovanja, nije pronadjen");
+        const validateStart = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart){
+            throw new Error("Datum za kraj-posle "+validateStart+" putovanja, nije pronadjen");
         }
         const response = await api.get(url+`/end-time-after`,{
             params:{
-                end:moment(endTime).format("YYYY-MM-DDTHH:mm:ss")
+                end:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -264,16 +278,18 @@ export async function findByEndTimeAfter(endTime){
 
 export async function findByEndTimeBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Opseg datuma kraja "+start+" - "+end+" za dato putovanje, nije pronadjen");
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Opseg datuma kraja "+validateStart+" - "+validateEnd+" za dato putovanje, nije pronadjen");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error("Datum za kraj putovanja, ne sme biti ispred datuma za pocetak putovanja");
         }
         const response = await api.get(url+`/end-time-range"`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -286,16 +302,18 @@ export async function findByEndTimeBetween({start, end}){
 
 export async function findTripsWithinPeriod({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Opseg datuma unutar perioda "+start+" - "+end+" za dato putovanje, nije pronadjen");
+        const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Opseg datuma unutar perioda "+validateStart+" - "+validateEnd+" za dato putovanje, nije pronadjen");
         }
-        if(moment(end).isBefore(moment(start))){
+        if(moment(validateEnd).isBefore(moment(validateStart))){
             throw new Error("Datum za kraj putovanja, ne sme biti ispred datuma za pocetak putovanja");
         }
         const response = await api.get(url+`/within-period-range"`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -326,7 +344,7 @@ export async function findByStatus(status){
 
 export async function findByDriverId(driverId){
     try{
-        if(isNaN(driverId) || driverId == null){
+        if(Number.isNaN(Number(driverId)) || driverId == null){
             throw new Error("ID "+driverId+" vozaca za dato putovanje, nije pronadjen");
         }
         const response = await api.get(url+`/driver/${driverId}`,{
@@ -437,12 +455,13 @@ export async function findByStatusIn(statuses){
 
 export async function searchByDateOnly(dateOnly){
     try{
-        if(!moment(dateOnly,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Pretraga po samo datumu "+dateOnly+" ne daje odgovarajuci rezultat");
+        const validateDate = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
+        if(!validateDate){
+            throw new Error("Pretraga po samo datumu "+validateDate+" ne daje odgovarajuci rezultat");
         }
         const response = await api.get(url+`/search/by-date"`,{
             params:{
-                dateOnly:moment(dateOnly).format("YYYY-MM-DD")
+                dateOnly:moment(validateDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -453,24 +472,10 @@ export async function searchByDateOnly(dateOnly){
     }
 }
 
-export async function generalSearch(req){
-    try{
-        const response = await api.get(url+`/general-search`,{
-            params:{
-                req : req
-            },
-            headers:getHeader()
-        });
-        return response.data;
-    }
-    catch(error){
-        handleApiError(error,"Trenutno nismo pronasli odogvarajuci rezultat prema generalnoj pretrazi");
-    }
-}
 
 export async function cancelTrip(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za otkazivanje putovanja, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -485,7 +490,7 @@ export async function cancelTrip(id){
 
 export async function closeTrip(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za zatvaranje putovanja, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -500,7 +505,7 @@ export async function closeTrip(id){
 
 export async function confirmTrip(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("ID "+id+" za potvrdu putovanja, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -515,7 +520,7 @@ export async function confirmTrip(id){
 
 export async function changeStatus(id, newStatus){
     try{
-        if(isNaN(id) || id == null || !isTripTypeStatusValid.includes(newStatus?.toUpperCase())){
+        if(Number.isNaN(Number(id)) || id == null || !isTripTypeStatusValid.includes(newStatus?.toUpperCase())){
                 throw new Error("ID "+id+" i status putovanja "+newStatus+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${newStatus}`,{
@@ -530,12 +535,18 @@ export async function changeStatus(id, newStatus){
 
 export async function saveTrip({startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed = false}){
     try{
-        if(!startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
-           !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
-           !moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-           !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
-           isNaN(driverId) || driverId == null || typeof confirmed !== "boolean" ){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+        const validateDateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if(
+            !startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
+            !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
+            !validateDateStart || !validateDateEnd ||
+            !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
+            Number.isNaN(Number(driverId)) || driverId == null || typeof confirmed !== "boolean" ){
+                throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const requestBody = {startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed};
         const response = await api.post(url+`/save`,requestBody,{
@@ -550,13 +561,19 @@ export async function saveTrip({startLocation, endLocation,startTime,endTime,sta
 
 export async function saveAs({id,startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed = false}){
     try{
-        if( isNaN(id) || id == null ||
+        const validateDateStart = moment.isMoment(startTime) || moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(endTime) || moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
+        if( 
+            Number.isNaN(Number(id)) || id == null ||
             !startLocation || typeof startLocation !== "string" || startLocation.trim() === "" ||
-           !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
-           !moment(startTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() || !moment(endTime,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-           !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
-           isNaN(driverId) || driverId == null || typeof confirmed !== "boolean" ){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+            !endLocation || typeof endLocation !== "string" || endLocation.trim() === "" ||
+            !validateDateStart || !validateDateEnd ||
+            !isTripStatusValid.includes(status?.toUpperCase()) || !isTripTypeStatusValid.includes(typeStatus?.toUpperCase()) ||
+            Number.isNaN(Number(driverId)) || driverId == null || typeof confirmed !== "boolean" ){
+                throw new Error("Sva polja moraju biti popunjena i validna");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const requestBody = {startLocation, endLocation,startTime,endTime,status,typeStatus,driverId,confirmed};
         const response = await api.post(url+`/save-as`,requestBody,{
@@ -574,18 +591,38 @@ export async function saveAll(requests){
         if(!Array.isArray(requests) || requests.length === 0){
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        requests.forEach((req, index) => {
-            if(!req.startLocation?.trim() || !req.endLocation?.trim() || !moment(req.endTime) || !req.status || !req.typeStatus || isNaN(req.driverId)){
-                throw new Error(`Nevalidan zahtev na indexu ${index}: 'start-location', 'end-location', 'end-time','status','typeStatus' i 'driver-id' su obavezni`);
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[i];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
             }
-            req.status = req.status.toUpperCase();
-            req.typeStatus = req.typeStatus.toUpperCase();
-            if (req.status) req.status = req.status.toUpperCase();
-            if(req.typeStatus) req.typeStatus = req.typeStatus.toUpperCase();
+            if(!req.startLocation?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'start-lokacija' je obavezna`);
+            }
+            if(!req.endLocation?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'end-lokacija' je obavezna`);
+            }
+            const validateStart = moment.isMoment(req.startTime) || moment(req.startTime, "YYYY-MM-DDTHH:mm:ss",true).isValid();
+            const validateEnd = moment.isMoment(req.endTime) || moment(req.endTime, "YYYY-MM-DDTHH:mm:ss",true).isValid();
+            if (!validateEnd) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'end-time' mora biti validan datum`);
+            }
+            if(moment(validateEnd).isBefore(moment(validateStart))){
+                throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+            }
+            if (req.driverId == null || Number.isNaN(Number(req.driverId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'driver-id' je obavezan i mora biti broj`);
+            }
+            if (!req.status || !isTripStatusValid.includes(req.status.toUpperCase())) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'status' nije ispravan`);
+            }
+            if(!req.typeStatus || !isTripTypeStatusValid.includes(req.typeStatus?.toUpperCase())){
+                throw new Error(`nevalidan zahtev na indexu ${i}: 'tip-statusa' se mora izabrati`);
+            }
             if (typeof req.confirmed !== "boolean") {
-                req.confirmed = false; // default ako nije prosledjeno
+                throw new Error("Polje 'confirmed' mora biti boolean");
             }
-        });
+        }
         const response = await api.post(url+`/save-all`,requests,{
             headers:getHeader()
         });
@@ -593,5 +630,24 @@ export async function saveAll(requests){
     }
     catch(error){
         handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

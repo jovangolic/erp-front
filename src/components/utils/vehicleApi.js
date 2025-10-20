@@ -1,16 +1,30 @@
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const validateStatus = ["AVAILABLE","IN_USE","UNDER_MAINTENANCE","OUT_OF_SERVICE","RESERVED"];
+const isVehicleFuelValid = ["PETROL","DIESEL","ELECTRIC","CNG","LPG_PETROL","HYBRID_PETROL","HYBRID_DIESEL"];
+const isVehicleTypeStatusValid = ["ALL","ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
-export async function createVehicle({registrationNumber,model,status}){
-    if(!registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
-    !model || model.trim() ===""|| typeof model !=="string" || 
-    !status || !validateStatus.includes(status?.toUpperCase())){
-        throw new Error("Sva polja moraju biti popunjena");
+const url = `${import.meta.env.VITE_API_BASE_URL}/vehicles`;
+
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
     }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
+export async function createVehicle({registrationNumber,model,status,fuel,typeStatus,confirmed = false}){
     try{
-        const requestBody = {registrationNumber, model, status:(status || "").toUpperCase()};
-        const response = await api.post(`${import.meta.env.VITE_API_BASE_URL}/vehicles/create/new-vehicle`,requestBody,{
+        if(
+            !registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
+            !model || model.trim() ===""|| typeof model !=="string" || typeof confirmed !== "boolean" ||
+            !status || !validateStatus.includes(status?.toUpperCase()) ||
+            !isVehicleFuelValid.includes(fuel?.toUpperCase()) ||
+            !isVehicleTypeStatusValid.includes(typeStatus?.toUpperCase())){
+                throw new Error("Sva polja moraju biti popunjena");
+        }
+        const requestBody = {registrationNumber, model, status, fuel, typeStatus, confirmed};
+        const response = await api.post(url+`/create/new-vehicle`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -21,16 +35,18 @@ export async function createVehicle({registrationNumber,model,status}){
 }
 
 export async function updateVehicle({id,registrationNumber,model,status}){
-    if(
-    id == null || isNaN(id) ||    
-    !registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
-    !model || model.trim() ===""|| typeof model !=="string" || 
-    !status || !validateStatus.includes(status?.toUpperCase())){
-        throw new Error("Sva polja moraju biti popunjena");
-    }
     try{
-        const requestBody = {registrationNumber, model, status:(status || "").toUpperCase()};
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/vehicles/update/${id}`,requestBody,{
+        if(
+            id == null || Number.isNaN(Number(id)) ||
+            !registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
+            !model || model.trim() ===""|| typeof model !=="string" || typeof confirmed !== "boolean" ||
+            !status || !validateStatus.includes(status?.toUpperCase()) ||
+            !isVehicleFuelValid.includes(fuel?.toUpperCase()) ||
+            !isVehicleTypeStatusValid.includes(typeStatus?.toUpperCase())){
+                throw new Error("Sva polja moraju biti popunjena");
+        }
+        const requestBody = {registrationNumber, model, status, fuel, typeStatus, confirmed};
+        const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });
         return response.data;
@@ -42,10 +58,10 @@ export async function updateVehicle({id,registrationNumber,model,status}){
 
 export async function deleteVehicle(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
-        const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/vehicles/delete/${id}`,{
+        const response = await api.delete(url+`/delete/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -57,10 +73,10 @@ export async function deleteVehicle(id){
 
 export async function findOneById(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/find-one/${id}`,{
+        const response = await api.get(url+`/find-one/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -72,7 +88,7 @@ export async function findOneById(id){
 
 export async function findAll(){
     try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/find-all-vehicles`,{
+        const response = await api.get(url+`/find-all-vehicles`,{
             headers:getHeader()
         });
         return response.data;
@@ -87,7 +103,7 @@ export async function findByModel(model){
         if(!model || model.trim() ===""|| typeof model !=="string"){
             throw new Error("Dati model "+model+" nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/find-by-model`,{
+        const response = await api.get(url+`/find-by-model`,{
             params:{
                 model:model
             },
@@ -105,7 +121,7 @@ export async function findByRegistrationNumber(registrationNumber){
         if(!registrationNumber || registrationNumber.trim() ===""|| typeof registrationNumber !=="string"){
             throw new Error("Dati broj registracije "+registrationNumber+" vozila, nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/by-registration-number`,{
+        const response = await api.get(url+`/by-registration-number`,{
             params:{
                 registrationNumber:registrationNumber
             },
@@ -123,7 +139,7 @@ export async function findByStatus(status){
         if(!validateStatus.includes(status?.toUpperCase())){
             throw new Error("Status "+status+" vozila nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/status`,{
+        const response = await api.get(url+`/status`,{
             params:{
                 status:(status || "").toUpperCase()
             },
@@ -141,7 +157,7 @@ export async function findByModelAndStatus({model, status}){
         if(!model || model.trim() ===""|| typeof model !=="string" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Model "+model+" i status "+status+" vozila nisu pronadjeni");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/filter-by-model-and-status`,{
+        const response = await api.get(url+`/filter-by-model-and-status`,{
             params:{
                 model:model,
                 status:(status || "").toUpperCase()
@@ -160,7 +176,7 @@ export async function search(key){
         if(!key || key.trim()==="" || typeof key !=="string"){
             throw new Error("Pretraga po odredjenom kljucu "+key+" nije dala rezultat");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/search`,{
+        const response = await api.get(url+`/search`,{
             params:{
                 key:key
             },
@@ -178,7 +194,7 @@ export async function filterVehicles({model, status}){
         if(!model || model.trim() ===""|| typeof model !=="string" || !validateStatus.includes(status?.toUpperCase())){
             throw new Error("Model "+model+" i status "+status+" vozila nisu pronadjeni");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/filter`,{
+        const response = await api.get(url+`/filter`,{
             params:{
                 model:model,
                 status:(status || "").toUpperCase()
@@ -197,7 +213,7 @@ export async function findByModelContainingIgnoreCase(modelFragment){
         if(!modelFragment || modelFragment.trim()==="" || typeof modelFragment !=="string"){
             throw new Error("Pretraga po fragmentu "+modelFragment+" modela nije pronadjena");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/vehicles/modelFragment`,{
+        const response = await api.get(url+`/modelFragment`,{
             params:{
                 modelFragment:modelFragment
             },
@@ -210,9 +226,3 @@ export async function findByModelContainingIgnoreCase(modelFragment){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

@@ -1,8 +1,15 @@
 import moment from "moment";
 import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 const isSystemStatusValid = ["RUNNING","MAINTENANCE","OFFLINE","RESTARTING"];
-const url = '${import.meta.env.VITE_API_BASE_URL}/system-states';
+const url = `${import.meta.env.VITE_API_BASE_URL}/system-states`;
 
 export async function getCurrentState(){
     try{
@@ -31,7 +38,7 @@ export async function updateState({maintenanceMode,registrationEnabled, systemVe
             systemVersion,
             statusMessage: (statusMessage || "").toUpperCase()
             };
-        const response = await api.put(`${import.meta.env.VITE_API_BASE_URL}/system-states`,requestBody,{
+        const response = await api.put(url,requestBody,{
             headers:getHeader()
         })
         return response.data;
@@ -43,10 +50,10 @@ export async function updateState({maintenanceMode,registrationEnabled, systemVe
 
 export async function getOneById(id){
     try{
-        if(isNaN(id) || id == null){
+        if(Number.isNaN(Number(id)) || id == null){
             throw new Error("Dati id "+id+" za system-state, nije pronadjen");
         }
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/system-states/get-one/${id}`,{
+        const response = await api.get(url+`/get-one/${id}`,{
             headers:getHeader()
         });
         return response.data;
@@ -58,7 +65,7 @@ export async function getOneById(id){
 
 export async function getAllSystemStates(){
     try{
-        const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/system-states/get-all`,{
+        const response = await api.get(url+`/get-all`,{
             headers:getCurrentState()
         });
         return response.data;
@@ -226,12 +233,13 @@ export async function findBySystemVersion(systemVersion){
 
 export async function findByLastRestartTime(lastRestartTime){
     try{
-        if(!moment(lastRestartTime,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dati posledji "+lastRestartTime+" restart nije pronadjen");
+        const validateDate = moment.isMoment(lastRestartTime) || moment(lastRestartTime,"YYYY-MM-DD-THH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Dati posledji "+validateDate+" restart nije pronadjen");
         }
         const response = await api.get(url+`/search/last-restart-time`,{
             params:{
-                lastRestartTime:moment(lastRestartTime).format("YYYY-MM-DDTHH:mm:ss")
+                lastRestartTime:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -358,12 +366,13 @@ export async function existsByStatusMessageAndSystemVersion({statusMessage, syst
 
 export async function findByLastRestartTimeAfter(time){
     try{
-        if(!moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme posle "+time+" nije pronadjeno");
+        const validateDate = moment.isMoment(time) || moment(time,"YYYY-MM-DD-THH:mm:ss",true).isValid();
+        if(!validateDate){
+            throw new Error("Dato vreme posle "+validateDate+" nije pronadjeno");
         }
         const response = await api.get(url+`/search/last-restart-time-after`,{
             params:{
-                time:moment(time).format("YYYY-MM-DDTHH:mm:ss")
+                time:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -376,14 +385,18 @@ export async function findByLastRestartTimeAfter(time){
 
 export async function findByLastRestartTimeBetween({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid() ||
-            !moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()){
-            throw new Error("Dato vreme "+start+" - "+end+" opesage poslednjeg restarta nije pronadjeno");
+        const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD-THH:mm:ss",true).isValid();
+        const validateDateEnd = moment.isMoment(end) || moment(e,"YYYY-MM-DD-THH:mm:ss",true).isValid();
+        if(!validateDateStart || !validateDateEnd){
+            throw new Error("Dato vreme "+validateDateStart+" - "+validateDateEnd+" opesage poslednjeg restarta nije pronadjeno");
+        }
+        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+            throw new Error("Datum za krja ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/last-restart-time-between`,{
             params:{
-                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(end).format("YYYU-MM-DDTHH:mm:ss")
+                start:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -394,9 +407,3 @@ export async function findByLastRestartTimeBetween({start, end}){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

@@ -14,10 +14,12 @@ const isTaxRateTypeValid = ["VAT", "INCOME_TAX", "SALES_TAX", "CUSTOM"];
 export async function createTaxRate({taxName,percentage,startDate,endDate,type}){
     try{
         const parsePercentage = parseFloat(percentage);
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD").isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD").isValid();
         if(
             !taxName || typeof taxName !=="string" || taxName.trim() === "" ||
-            isNaN(parsePercentage) || parsePercentage <= 0 ||
-            !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
+            Number.isNaN(Number(parsePercentage)) || parsePercentage <= 0 ||
+            !validateStart || !validateEnd || 
             !isTaxRateTypeValid.includes(type?.toUpperCase())
         ){ 
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -36,10 +38,13 @@ export async function createTaxRate({taxName,percentage,startDate,endDate,type})
 export async function updateTaxRate({id,taxName,percentage,startDate,endDate,type}){
     try{
         const parsePercentage = parseFloat(percentage);
-        if( id == null || isNaN(id) ||
+        const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD").isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD").isValid();
+        if(
+            id == null || Number.isNaN(Number(id)) ||
             !taxName || typeof taxName !=="string" || taxName.trim() === "" ||
-            isNaN(parsePercentage) || parsePercentage <= 0 ||
-            !moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
+            Number.isNaN(Number(parsePercentage)) || parsePercentage <= 0 ||
+            !validateStart || !validateEnd || 
             !isTaxRateTypeValid.includes(type?.toUpperCase())
         ){ 
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -57,7 +62,7 @@ export async function updateTaxRate({id,taxName,percentage,startDate,endDate,typ
 
 export async function deleteTaxRate(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za taxRate nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -72,7 +77,7 @@ export async function deleteTaxRate(id){
 
 export async function findOne(id){
     try{
-        if(id == null || isNaN(id)){
+        if(id == null || Number.isNaN(Number(id))){
             throw new Error("Dati ID "+id+" za taxRate nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -132,7 +137,7 @@ export async function findByTaxName(taxName){
 export async function findByPercentage(percentage){
     try{
         const parsePercentage = parseFloat(percentage);
-        if(isNaN(parsePercentage) || parsePercentage <= 0){
+        if(Number.isNaN(Number(parsePercentage)) || parsePercentage <= 0){
             throw new Error("Dati procenata "+parsePercentage+" nije pronadjen");
         }
         const response = await api.get(url+`/by-percentage`,{
@@ -151,7 +156,7 @@ export async function findByTaxNameAndPercentage({taxName, percentage}){
         const parsePercentage = parseFloat(percentage);
         if(
             !taxName || typeof taxName !=="string" || taxName.trim() === "" ||
-            isNaN(parsePercentage) || parsePercentage <= 0 ){
+            Number.isNaN(Number(parsePercentage)) || parsePercentage <= 0 ){
                 throw new Error("Dati taxName "+taxName+" i procenat "+parsePercentage+" nisu pronadjeni");
             }
         const response = await api.get(url+`/taxName-percentage`,{
@@ -170,13 +175,18 @@ export async function findByTaxNameAndPercentage({taxName, percentage}){
 
 export async function findByStartDateBeforeAndEndDateAfter({date1, date2}){
     try{
-        if(!moment(date1,"YYYY-MM-DD",true).isValid() || !moment(date2,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati pocetni datum pre "+date1+" i krajnji datum posle "+date2+" nisu pronadjeni");
+        const validateStart = moment.isMoment(date1) || moment(date1, "YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(date2) || moment(date2, "YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati pocetni datum pre "+validateStart+" i krajnji datum posle "+validateEnd+" nisu pronadjeni");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/startDateBefore`,{
             params:{
-                date1:moment(date1).format("YYYY-MM-DD"),
-                date2:moment(date2).format("YYYY-MM-DD")
+                date1:moment(validateStart).format("YYYY-MM-DD"),
+                date2:moment(validateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -189,13 +199,18 @@ export async function findByStartDateBeforeAndEndDateAfter({date1, date2}){
 
 export async function findByStartDateLessThanEqualAndEndDateGreaterThanEqual({date1,date2}){
     try{
-        if(!moment(date1,"YYYY-MM-DD",true).isValid() || !moment(date2,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati pocetni daum manji od "+date1+" i krajni datum veci od "+date2+" nisu pronadjeni");
+        const validateStart = moment.isMoment(date1) || moment(date1, "YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(date2) || moment(date2, "YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati pocetni daum manji od "+validateStart+" i krajni datum veci od "+validateEnd+" nisu pronadjeni");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/startDate-lessThan`,{
             params:{
-                date1:moment(date1).format("YYYY-MM-DD"),
-                date2:moment(date2).format("YYYY-MM-DD")
+                date1:moment(validateStart).format("YYYY-MM-DD"),
+                date2:moment(validateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -208,13 +223,18 @@ export async function findByStartDateLessThanEqualAndEndDateGreaterThanEqual({da
 
 export async function findOverlapping({start, end}){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid() || !moment(end,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati datumi "+start+" - "+end+" koji se preklapaju, nisu pronadjeni");
+        const validateStart = moment.isMoment(start) || moment(start, "YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(end) || moment(end, "YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            throw new Error("Dati datumi "+validateStart+" - "+validateEnd+" koji se preklapaju, nisu pronadjeni");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/by-overlapping`,{
             params:{
-                start:moment(start).format("YYYY-MM-DD"),
-                end:moment(end).format("YYYY-MM-DD")
+                start:moment(validateStart).format("YYYY-MM-DD"),
+                end:moment(validateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -227,11 +247,12 @@ export async function findOverlapping({start, end}){
 
 export async function findByStartDate(start){
     try{
-        if(!moment(start,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati pocetak "+start+" datuma nije pronadjen");
+        const validateStart = moment.isMoment(start) || moment(start, "YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati pocetak "+validateStart+" datuma nije pronadjen");
         }
         const response = await api.get(url+`/by-startDate`,{
-            params:{start:moment(start).format("YYYY-MM-DD")},
+            params:{start:moment(validateStart).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -243,11 +264,12 @@ export async function findByStartDate(start){
 
 export async function findByEndDate(endDate){
     try{
-        if(!moment(endDate,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati kraj "+end+" datuma nije pronadjen");
+        const validateStart = moment.isMoment(endDate) || moment(endDate, "YYYY-MM-DD",true).isValid();
+        if(!validateStart){
+            throw new Error("Dati kraj "+validateStart+" datuma nije pronadjen");
         }
         const response = await api.get(url+`/by-endDate`,{
-            params:{endDate:moment(start).format("YYYY-MM-DD")},
+            params:{endDate:moment(validateStart).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -259,13 +281,14 @@ export async function findByEndDate(endDate){
 
 export async function findActiveByType({type, date}){
     try{
-        if(!isTaxRateTypeValid.includes(type?.toUpperCase()) || !moment(date,"YYYY-MM-DD",true).isValid()){
-            throw new Error("Dati tip "+type+" i datum "+date+" nisu pronadjeni");
+        const validateStart = moment.isMoment(stadatert) || moment(date, "YYYY-MM-DD",true).isValid();
+        if(!isTaxRateTypeValid.includes(type?.toUpperCase()) || !validateStart){
+            throw new Error("Dati tip "+type+" i datum "+validateStart+" nisu pronadjeni");
         }
         const response = await api.get(url+`/active-byType`,{
             params:{
                 type:(type || "").toUpperCase(),
-                date:moment(date).format("YYY-MM-DD")
+                date:moment(validateStart).format("YYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -278,14 +301,19 @@ export async function findActiveByType({type, date}){
 
 export async function findByTypeAndPeriod({type, startDate, endDate}){
     try{
-        if(!moment(startDate,"YYYY-MM-DD",true).isValid() || !moment(endDate,"YYYY-MM-DD",true).isValid() ||
+        const validateStart = moment.isMoment(startDate) || moment(startDate, "YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(endDate) || moment(endDate, "YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd || 
             !isTaxRateTypeValid.includes(type?.toUpperCase())){
-            throw new Error("Dati taxRate tip "+type+", i opsegu "+startDate+" - "+endDate+" datuma za odredjeni period, nisu pronadjeni");
+            throw new Error("Dati taxRate tip "+type+", i opsegu "+validateStart+" - "+validateEnd+" datuma za odredjeni period, nisu pronadjeni");
+        }
+        if(moment(validateEnd).isBefore(moment(validateStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/type-and-period`,{
             params:{
-                startDate:moment(startDate).format("YYYY-MM-DD"),
-                endDate:moment(endDate).format("YYYY-MM-DD"),
+                startDate:moment(validateStart).format("YYYY-MM-DD"),
+                endDate:moment(validateEnd).format("YYYY-MM-DD"),
                 type:(type || "").toUpperCase()
             },
             headers:getHeader()

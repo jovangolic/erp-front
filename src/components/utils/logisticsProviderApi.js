@@ -2,6 +2,13 @@ import { api, getHeader, getToken, getHeaderForFormData } from "./AppFunction";
 
 const url = `${import.meta.env.VITE_API_BASE_URL}/logistics-providers`;
 
+function handleApiError(error, customMessage) {
+    if (error.response && error.response.data) {
+        throw new Error(error.response.data);
+    }
+    throw new Error(`${customMessage}: ${error.message}`);
+}
+
 export async function create({name, contactPhone, email,website}){
     try{
         if(
@@ -24,7 +31,7 @@ export async function create({name, contactPhone, email,website}){
 
 export async function update({id, name, contactPhone, email,website}){
     try{
-        if( id == null || Number.isNaN(Number(id)) ||
+        if( id == null || isNaN(id) ||
             !name || typeof name !=="string" || name.trim()==="" ||
             !contactPhone || typeof contactPhone !=="string" || contactPhone.trim()==="" || 
             !email || typeof email !=="string" || email.trim()==="" || 
@@ -44,7 +51,7 @@ export async function update({id, name, contactPhone, email,website}){
 
 export async function deleteLogistric(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za LogisticProvider nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -59,7 +66,7 @@ export async function deleteLogistric(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za LogisticProvider nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -192,9 +199,3 @@ export async function findByWebsite(website){
     }
 }
 
-function handleApiError(error, customMessage) {
-    if (error.response && error.response.data) {
-        throw new Error(error.response.data);
-    }
-    throw new Error(`${customMessage}: ${error.message}`);
-}

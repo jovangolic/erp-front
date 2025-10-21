@@ -38,7 +38,7 @@ export async function createRole({name, users, roleTypes, permissionIds}){
 export async function updateRole({roleId, name, users, roleTypes, permissionIds}){
     try{
         if(
-            roleId == null || Number.isNaN(Number(roleId)) ||
+            roleId == null || isNaN(roleId) ||
             !name || typeof name !== "string" || name.trim() ==="" ||
             !Array.isArray(users) || users.length === 0 ||
             !isRoleTypeValid.includes(roleTypes?.toUpperCase()) ||
@@ -63,7 +63,7 @@ export async function updateRole({roleId, name, users, roleTypes, permissionIds}
 
 export async function deleteRole(roleId){
     try{    
-        if(roleId == null || Number.isNaN(Number(roleId))){
+        if(roleId == null || isNaN(roleId)){
             throw new Error("Dati ID za role nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${roleId}`,{
@@ -88,7 +88,7 @@ export async function getAllRoles(){
 
 export async function getRoleById(roleId){
     try{
-        if(roleId == null || Number.isNaN(Number(roleId))){
+        if(roleId == null || isNaN(roleId)){
             throw new Error("Dati ID za role nije pronadjen");
         }
         const response = await api.get(url+`/role/${roleId}`,{
@@ -103,7 +103,7 @@ export async function getRoleById(roleId){
 
 export async function assignUserToRole({roleId, userId}){
     try{
-        if(roleId == null || Number.isNaN(Number(roleId)) || userId == null || Number.isNaN(Number(userId))){
+        if(roleId == null || isNaN(roleId) || userId == null || isNaN(userId)){
             throw new Error("Dati roleId i userId nisu pronadjeni");
         }
         const response = await api.post(url+`/${roleId}/assign/${userId}`,null,{

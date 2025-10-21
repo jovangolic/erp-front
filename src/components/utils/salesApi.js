@@ -15,9 +15,9 @@ export async function createSales({buyerId, itemSales, createdAt, totalPrice, sa
         const validateDate = moment.isMoment(createdAt) || moment(createdAt, "YYYY-MM-DDTHH:mm:ss",true).isValid();
         const parseTotalPrice = parseFloat(totalPrice);
         if(
-            buyerId == null || Number.isNaN(Number(buyerId)) || !Array.isArray(itemSales) || itemSales.length === 0 ||
+            buyerId == null || isNaN(buyerId) || !Array.isArray(itemSales) || itemSales.length === 0 ||
             !validateDate ||
-            Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0 ||
+            isNaN(parseTotalPrice) || parseTotalPrice <= 0 ||
             !salesDescription || typeof salesDescription !== "string" || salesDescription.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -49,10 +49,10 @@ export async function updateSales({id, buyerId, itemSales, createdAt, totalPrice
         const validateDate = moment.isMoment(createdAt) || moment(createdAt, "YYYY-MM-DDTHH:mm:ss",true).isValid();
         const parseTotalPrice = parseFloat(totalPrice);
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            buyerId == null || Number.isNaN(Number(buyerId)) || !Array.isArray(itemSales) || itemSales.length === 0 ||
+            id == null || isNaN(id) ||
+            buyerId == null || isNaN(buyerId) || !Array.isArray(itemSales) || itemSales.length === 0 ||
             !validateDate ||
-            Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0 ||
+            isNaN(parseTotalPrice) || parseTotalPrice <= 0 ||
             !salesDescription || typeof salesDescription !== "string" || salesDescription.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -81,7 +81,7 @@ export async function updateSales({id, buyerId, itemSales, createdAt, totalPrice
 
 export async function deleteSales(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/sale/${id}`,{
@@ -99,15 +99,15 @@ export async function getByCreatedAtBetween({startDate, endDate}){
         const validateStart = moment.isMoment(startDate) || moment(startDate, "YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(endDate) || moment(endDate, "YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Opseg datuma "+validateStart+" - "+validateEnd+" mora biti ispravan");
+            throw new Error("Opseg datuma "+startDate+" - "+endDate+" mora biti ispravan");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/between-dates`,{
             params:{
-                startDate:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -139,7 +139,7 @@ export async function getByTotalPrice(totalPrice){
 
 export async function findBySalesId(salesId){
     try{
-        if(salesId == null || Number.isNaN(Number(salesId))){
+        if(salesId == null || isNaN(salesId)){
             throw new Error("Dati salesId "+salesId+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${salesId}`,{
@@ -156,11 +156,11 @@ export async function getSalesByDate(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if (!validateDate) {
-            throw new Error("Datum "+validateDate+" mora biti validan ISO string.");
+            throw new Error("Datum "+date+" mora biti validan ISO string.");
         }
         const response = await api.get(url+`/sale-by-date`,{
             params:{
-                date: moment(validateDate).format("YYYY-MM-DD")
+                date: moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -185,7 +185,7 @@ export async function getAllSales(){
 
 export async function findByBuyer_Id(buyerId){
     try{
-        if(buyerId == null || Number.isNaN(Number(buyerId))){
+        if(buyerId == null || isNaN(buyerId)){
             throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/buyer/${buyerId}`,{
@@ -297,7 +297,7 @@ export async function findByBuyer_PhoneNumber(buyerPhoneNumber){
 export async function findByTotalPriceGreaterThan(totalPrice){
     try{    
         const parseTotalPrice = parseFloat(totalPrice);
-        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
+        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena veca od "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/search/by-total-price-max`,{
@@ -314,7 +314,7 @@ export async function findByTotalPriceGreaterThan(totalPrice){
 export async function findByTotalPriceLessThan(totalPrice){
     try{    
         const parseTotalPrice = parseFloat(totalPrice);
-        if(Number.isNaN(Number(parseTotalPrice)) || parseTotalPrice <= 0){
+        if(isNaN(parseTotalPrice) || parseTotalPrice <= 0){
             throw new Error("Data ukupna cena manja od "+parseTotalPrice+" nije pronadjena");
         }
         const response = await api.get(url+`/search/by-total-price-min`,{
@@ -333,14 +333,14 @@ export async function searchSales({buyerId, companyName, pib, email, phoneNumber
         const parseMinTotalPrice = parseFloat(minTotalPrice);
         const parseMaxTotalPrice = parseFloat(maxTotalPrice);
         if(
-            buyerId == null || Number.isNaN(Number(buyerId)) ||
+            buyerId == null || isNaN(buyerId) ||
             !companyName || typeof companyName !== "string" || companyName.trim() === "" ||
             !pib || typeof pib !== "string" || pib.trim() === "" ||
             !email || typeof email !== "string" || email.trim() === "" ||
             !phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
             !address || typeof address !== "string" || address.trim() === "" ||
             !contactPerson || typeof contactPerson !== "string" || contactPerson.trim() === "" ||
-            Number.isNaN(Number(parseMinTotalPrice)) || parseMinTotalPrice <= 0 || Number.isNaN(Number(parseMaxTotalPrice)) || parseMaxTotalPrice <= 0
+            isNaN(parseMinTotalPrice) || parseMinTotalPrice <= 0 || isNaN(parseMaxTotalPrice) || parseMaxTotalPrice <= 0
         ){
             throw new Error("Dati parametri za pretragu: "+buyerId+","+companyName+","+pib+","+email+","+
                 phoneNumber+","+address+","+contactPerson+","+parseMinTotalPrice+","+parseMaxTotalPrice+" nisu validni");

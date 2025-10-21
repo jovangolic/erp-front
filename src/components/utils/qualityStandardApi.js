@@ -22,9 +22,9 @@ export async function createQualityStandard({productId,description,minValue,maxV
         const parseMinValue = parseFloat(minValue);
         const parseMaxValue = parseFloat(maxValue);
         if(
-            Number.isNaN(Number(productId)) || productId == null || !description || typeof description !== "string" || description.trim() === "" || 
-            Number.isNaN(Number(parseMinValue)) || parseMaxValue <= 0 || 
-            Number.isNaN(Number(parseMaxValue)) || parseMaxValue <= 0 || !isUnitValid.includes(unit?.toUpperCase())){
+            isNaN(productId) || productId == null || !description || typeof description !== "string" || description.trim() === "" || 
+            isNaN(parseMinValue) || parseMaxValue <= 0 || 
+            isNaN(parseMaxValue) || parseMaxValue <= 0 || !isUnitValid.includes(unit?.toUpperCase())){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
         if(parseMinValue > parseMaxValue){
@@ -46,10 +46,10 @@ export async function updateQualityStandard({id,productId,description,minValue,m
         const parseMinValue = parseFloat(minValue);
         const parseMaxValue = parseFloat(maxValue);
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            Number.isNaN(Number(productId)) || productId == null || !description || typeof description !== "string" || description.trim() === "" || 
-            Number.isNaN(Number(parseMinValue)) || parseMaxValue <= 0 || 
-            Number.isNaN(Number(parseMaxValue)) || parseMaxValue <= 0 || !isUnitValid.includes(unit?.toUpperCase())){
+            id == null || isNaN(id) ||
+            isNaN(productId) || productId == null || !description || typeof description !== "string" || description.trim() === "" || 
+            isNaN(parseMinValue) || parseMaxValue <= 0 || 
+            isNaN(parseMaxValue) || parseMaxValue <= 0 || !isUnitValid.includes(unit?.toUpperCase())){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
         if(parseMinValue > parseMaxValue){
@@ -68,7 +68,7 @@ export async function updateQualityStandard({id,productId,description,minValue,m
 
 export async function deleteQualityStandard(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za quality-standard, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -83,7 +83,7 @@ export async function deleteQualityStandard(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za quality-standard, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -117,11 +117,11 @@ export async function searchQualityStandards({supplyId, productStorageMin, produ
         const parseShelfRow = parseInt(shelfRow,10);
         const parseShelfCol = parseInt(shelfCol,10);
         if(
-            Number.isNaN(Number(supplyId)) || supplyId == null || Number.isNaN(Number(parseProductStorageMin)) || parseProductStorageMin <= 0 || 
-            Number.isNaN(Number(parseProductStorageMax)) || parseProductStorageMax <=0 ||
-            Number.isNaN(Number(parseSupplyMin)) || parseSupplyMin <= 0 || Number.isNaN(Number(parseSupplyMax)) || parseSupplyMax <= 0 || 
-            Number.isNaN(Number(parseShelfRow)) || parseShelfRow <= 0 ||
-            Number.isNaN(Number(parseShelfCol)) || parseShelfCol <= 0){
+            isNaN(supplyId) || supplyId == null || isNaN(parseProductStorageMin) || parseProductStorageMin <= 0 || 
+            isNaN(parseProductStorageMax) || parseProductStorageMax <=0 ||
+            isNaN(parseSupplyMin) || parseSupplyMin <= 0 || isNaN(parseSupplyMax) || parseSupplyMax <= 0 || 
+            isNaN(parseShelfRow) || parseShelfRow <= 0 ||
+            isNaN(parseShelfCol) || parseShelfCol <= 0){
                 throw new Error("Dati parametri za pretragu: "+supplyId+" ,"+parseProductStorageMin+" ,"
                     +parseProductStorageMax+" ,"+parseSupplyMin+" ,"+parseSupplyMax+" ,"+parseShelfRow+" ,"+parseShelfCol+" ne daju ocekivani rezultat");
         }
@@ -187,7 +187,7 @@ export async function findByDescriptionContainingIgnoreCase(description){
 export async function findByMinValue(minValue){
     try{
         const parseMinValue = parseFloat(minValue);
-        if(Number.isNaN(Number(parseMinValue)) || parseMinValue <= 0){
+        if(isNaN(parseMinValue) || parseMinValue <= 0){
             throw new Error("Data minimalna vrednost "+parseMinValue+" za kvalitet-standarda, nije pronadjena");
         }
         const response = await api.get(url+`/min-value`,{
@@ -206,7 +206,7 @@ export async function findByMinValue(minValue){
 export async function findByMinValueLessThan(minValue){
     try{
         const parseMinValue = parseFloat(minValue);
-        if(Number.isNaN(Number(parseMinValue)) || parseMinValue <= 0){
+        if(isNaN(parseMinValue) || parseMinValue <= 0){
             throw new Error("Data minimalna vrednost veca od "+parseMinValue+" za kvalitet-standarda, nije pronadjena");
         }
         const response = await api.get(url+`/min-value-greater-than`,{
@@ -225,7 +225,7 @@ export async function findByMinValueLessThan(minValue){
 export async function findByMinValueLessThan(minValue){
     try{
         const parseMinValue = parseFloat(minValue);
-        if(Number.isNaN(Number(parseMinValue)) || parseMinValue <= 0){
+        if(isNaN(parseMinValue) || parseMinValue <= 0){
             throw new Error("Data minimalna vrednost manja od "+parseMinValue+" za kvalitet-standarda, nije pronadjena");
         }
         const response = await api.get(url+`/min-value-less-than`,{
@@ -245,7 +245,7 @@ export async function findByMinValueBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0 || parseMin > parseMax){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || parseMin > parseMax){
             throw new Error("Opseg minimalne vrednosti "+parseMin+" - "+parseMax+" za kvalitet-standarda, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -268,7 +268,7 @@ export async function findByMinValueBetween({min, max}){
 export async function findByMaxValue(maxValue){
     try{
         const parseMaxValue = parseFloat(maxValue);
-        if(Number.isNaN(Number(parseMaxValue)) || parseMaxValue <= 0){
+        if(isNaN(parseMaxValue) || parseMaxValue <= 0){
             throw new Error("Data maksimalna vrednost "+parseMaxValue+" za kvalitet-standard, nije pronadjena");
         }
         const response = await api.get(url+`/max-value`,{
@@ -287,7 +287,7 @@ export async function findByMaxValue(maxValue){
 export async function findByMaxValueGreaterThan(maxValue){
     try{
         const parseMaxValue = parseFloat(maxValue);
-        if(Number.isNaN(Number(parseMaxValue)) || parseMaxValue <= 0){
+        if(isNaN(parseMaxValue) || parseMaxValue <= 0){
             throw new Error("Data maksimalna vrednost veca od "+parseMaxValue+" za kvalitet-standard, nije pronadjena");
         }
         const response = await api.get(url+`/max-value-greater-than`,{
@@ -306,7 +306,7 @@ export async function findByMaxValueGreaterThan(maxValue){
 export async function findByMaxValueLessThan(maxValue){
     try{
         const parseMaxValue = parseFloat(maxValue);
-        if(Number.isNaN(Number(parseMaxValue)) || parseMaxValue <= 0){
+        if(isNaN(parseMaxValue) || parseMaxValue <= 0){
             throw new Error("Data maksimalna vrednost manja od "+parseMaxValue+" za kvalitet-standard, nije pronadjena");
         }
         const response = await api.get(url+`/max-value-less-than`,{
@@ -326,7 +326,7 @@ export async function findByMaxValueBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <=0 || parseMin > parseMax){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <=0 || parseMin > parseMax){
             throw new Error("Opseg maksimalne vrednosti "+parseMin+" - "+parseMax+" za kvalitet-standarda, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -373,7 +373,7 @@ export async function countByMaxValueIsNotNull(){
 export async function countByMinValue(minValue){
     try{
         const parseMinValue = parseFloat(minValue);
-        if(Number.isNaN(Number(parseMinValue)) || parseMinValue <= 0){
+        if(isNaN(parseMinValue) || parseMinValue <= 0){
             throw new Error("Ukupan broj minimalne vrednosti "+parseMinValue+" za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/count-min-value`,{
@@ -392,7 +392,7 @@ export async function countByMinValue(minValue){
 export async function countByMaxValue(maxValue){
     try{
         const parseMaxValue = parseFloat(maxValue);
-        if(Number.isNaN(Number(parseMaxValue)) || parseMaxValue <= 0){
+        if(isNaN(parseMaxValue) || parseMaxValue <= 0){
             throw new Error("Ukupan broj maksimalne vrednosti "+parseMaxValue+" za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/count-max-value`,{
@@ -410,7 +410,7 @@ export async function countByMaxValue(maxValue){
 
 export async function findByProduct_Id(productId){
     try{
-        if(Number.isNaN(Number(productId)) || productId == null){
+        if(isNaN(productId) || productId == null){
             throw new Error("Dati id "+productId+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/${productId}`,{
@@ -426,7 +426,7 @@ export async function findByProduct_Id(productId){
 export async function findByProduct_CurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina "+parseCurrentQuantity+" proizvoda za kvalitet-standarda, nije pronadjena");
         }
         const response = await api.get(url+`/search/product-current-quantity`,{
@@ -445,7 +445,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
 export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina veca od "+parseCurrentQuantity+" proizvoda za kvalitet-standarda, nije pronadjena");
         }
         const response = await api.get(url+`/search/product-current-quantity-greater-than`,{
@@ -464,7 +464,7 @@ export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
 export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina manja od "+parseCurrentQuantity+" proizvoda za kvalitet-standarda, nije pronadjena");
         }
         const response = await api.get(url+`/search/product-current-quantity-less-than`,{
@@ -484,7 +484,7 @@ export async function findByProduct_CurrentQuantityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0 || parseMin > parseMax){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || parseMin > parseMax){
             throw new Error("Opseg trenutne kolicine "+parseMin+" - "+parseMax+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -596,7 +596,7 @@ export async function findByProduct_GoodsType(goodsType){
 
 export async function findByProduct_StorageId(storageId){
     try{
-        if(Number.isNaN(Number(storageId)) || storageId == null){
+        if(isNaN(storageId) || storageId == null){
             throw new Error("Id skladista "+storageId+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/storage/${storageId}`,{
@@ -648,7 +648,7 @@ export async function findByProduct_StorageLocationContainingIgnoreCase(storageL
 export async function findByProduct_StorageCapacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skaldista "+parseCapacity+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/storage-capacity`,{
@@ -667,7 +667,7 @@ export async function findByProduct_StorageCapacity(capacity){
 export async function findByProduct_StorageCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skaldista veci od "+parseCapacity+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/storage-capacity-greater-than`,{
@@ -686,7 +686,7 @@ export async function findByProduct_StorageCapacityGreaterThan(capacity){
 export async function findByProduct_StorageCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skaldista manji od "+parseCapacity+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/storage-capacity-less-than`,{
@@ -706,7 +706,7 @@ export async function findByProduct_StorageCapacityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Opseg kapaciteta skladista "+parseMin+" - "+parseMax+" proizvoda za kvalitet-standarda, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -730,7 +730,7 @@ export async function findByProductStorageCapacityBetweenAndStatus({min, max, st
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0 || 
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || 
            !isStorageStatusValid.includes(status?.toUpperCase())) {
                 throw new Error("Opseg kapaciteta skladista "+parseMin+" - "+parseMax+" proizvoda i status skladista "+status+" za kvalitet-standarda, nije pronadjen");
         }
@@ -756,7 +756,7 @@ export async function findByProductStorageCapacityStatusAndType({min, max, statu
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0 ||
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 ||
            !isStorageStatusValid.includes(status?.toUpperCase()) || !iseStorageTypeValid.includes(type?.toUpperCase())){
                 throw new Error("Opseg kapaciteta skladista "+parseMin+" - "+parseMax+" i njegov status "+status+" i tip "+type+" za proizvod, nisu pronadjeni");
         }
@@ -782,7 +782,7 @@ export async function findByProductStorageCapacityStatusAndType({min, max, statu
 export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacity({storageName, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati naziv skladista "+storageName+" i njegov kapacitet "+parseCapacity+" za proizvod, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/product/storage-name-capacity`,{
@@ -802,7 +802,7 @@ export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacity({
 export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityGreaterThan({storageName, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati naziv skladista "+storageName+" i njegov kapacitet veci od "+parseCapacity+" za proizvod, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/product/storage-name-capacity-greater-than`,{
@@ -822,7 +822,7 @@ export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityGr
 export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityLessThan({storageName, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!storageName || typeof storageName !== "string" || storageName.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati naziv skladista "+storageName+" i njegov kapacitet manji od "+parseCapacity+" za proizvod, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/product/storage-name-capacity-less-than`,{
@@ -843,7 +843,7 @@ export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityBe
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0 || 
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || 
            !storageName || typeof storageName !== "string" || storageName.trim() === ""){
             throw new Error("Dati naziv skladista "+storageName+" i opseg njegovog kapaciteta "+parseMin+" - "+parseMax+" za proizvod, nisu pronadjeni");
         }
@@ -868,7 +868,7 @@ export async function findByProduct_StorageNameContainingIgnoreCaseAndCapacityBe
 export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacity({storageLocation, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Lokacija skladista "+storageLocation+" i njegov kapacitet "+parseCapacity+" za proizvod, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/product/storage-location-capacity`,{
@@ -888,7 +888,7 @@ export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapaci
 export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacityGreaterThan({storageLocation, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Lokacija skladista "+storageLocation+" i njegov kapacitet veci od "+parseCapacity+" za proizvod, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/product/storage-location-capacity-greater-than`,{
@@ -908,7 +908,7 @@ export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapaci
 export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapacityLessThan({storageLocation, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Lokacija skladista "+storageLocation+" i njegov kapacitet manji od "+parseCapacity+" za proizvod, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/product/storage-location-capacity-less-than`,{
@@ -929,9 +929,10 @@ export async function findByProduct_StorageLocationContainingIgnoreCaseAndCapaci
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(!storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" ||
-           Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
-            throw new Error("Lokacija skladista "+storageLocation+" i opseg kapaciteta "+parseMin+" - "+parseMax+" za proizvod, nisu pronadjeni");
+        if(
+            !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === "" ||
+            isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
+                throw new Error("Lokacija skladista "+storageLocation+" i opseg kapaciteta "+parseMin+" - "+parseMax+" za proizvod, nisu pronadjeni");
         }
         if(parseMin > parseMax){
             throw new Error("Minimalni kapacitet skladista ne sme da bude veci od maksimalnog kapaciteta skladista");
@@ -965,7 +966,7 @@ export async function findByProduct_StorageHasShelvesForIsNull(){
 
 export async function findByProduct_SupplyId(supplyId){
     try{
-        if(Number.isNaN(Number(supplyId)) || supplyId == null){
+        if(isNaN(supplyId) || supplyId == null){
             throw new Error("Dati id "+supplyId+" dobavljaca proizvoda, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/supply/${supplyId}`,{
@@ -980,7 +981,7 @@ export async function findByProduct_SupplyId(supplyId){
 
 export async function findByProduct_ShelfId(shelfId){
     try{
-        if(Number.isNaN(Number(shelfId)) || shelfId == null){
+        if(isNaN(shelfId) || shelfId == null){
             throw new Error("Dati id "+shelfId+" police za proizvod, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/shelf/${shelfId}`,{
@@ -996,7 +997,7 @@ export async function findByProduct_ShelfId(shelfId){
 export async function findByProduct_ShelfRowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0){
+        if(isNaN(parseRowCount) || parseRowCount <= 0){
             throw new Error("Dati red police "+parseRowCount+" za proizvod, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/shelf-row-count`,{
@@ -1015,7 +1016,7 @@ export async function findByProduct_ShelfRowCount(rowCount){
 export async function findByProduct_ShelfCols(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(Number.isNaN(Number(parseCols)) || parseCols <= 0){
+        if(isNaN(parseCols) || parseCols <= 0){
             throw new Error("Dati raf police "+parseCols+" za proizvod, nije pronadjen");
         }
         const response = await api.get(url+`/search/product/shelf-cols`,{
@@ -1035,7 +1036,7 @@ export async function findByProduct_ShelfRowAndColNullable({row, col}){
     try{
         const parseRow = parseInt(row,10);
         const parseCol = parseInt(col,10);
-        if(Number.isNaN(Number(parseRow)) || parseRow <= 0 || Number.isNaN(Number(parseCol)) || parseCol <=-0 ){
+        if(isNaN(parseRow) || parseRow <= 0 || isNaN(parseCol) || parseCol <=-0 ){
             throw new Error("Dati red "+parseRow+" i raf "+parseCol+" police za proizvod, ne postoje");
         }
         const response = await api.get(url+`/search/product/shelf-row-col`,{
@@ -1058,9 +1059,10 @@ export async function findByProduct_ShelfRowAndColBetweenNullable({rowMin, rowMa
         const parseRowMax = parseInt(rowMax,10);
         const parseColMin = parseInt(colMin,10);
         const parseColMax = parseInt(colMax,10);
-        if(Number.isNaN(Number(parseRowMin)) || parseRowMin <= 0 || Number.isNaN(Number(parseRowMax)) || parseRowMax <= 0 || 
-           Number.isNaN(Number(parseColMin)) || parseColMin <= 0 || Number.isNaN(Number(parseColMax)) || parseColMax <= 0){
-            throw new Error("Opseg redova "+parseRowMin+" - "+parseRowMax+" i opseg rafova "+parseColMin+" - "+parseColMax+" polica nisu pronadjeni");
+        if(
+            isNaN(parseRowMin) || parseRowMin <= 0 || isNaN(parseRowMax) || parseRowMax <= 0 || 
+            isNaN(parseColMin) || parseColMin <= 0 || isNaN(parseColMax) || parseColMax <= 0){
+                throw new Error("Opseg redova "+parseRowMin+" - "+parseRowMax+" i opseg rafova "+parseColMin+" - "+parseColMax+" polica nisu pronadjeni");
         }
         if(parseRowMin > parseRowMax){
             throw new Error("Najmanja vrednost za red ne sme biti veca od najvece vrednosti reda");

@@ -24,8 +24,8 @@ export async function createProduct({name, unitMeasure,supplierType,storageType,
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
             !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
-            storageId == null || Number.isNaN(Number(storageId)) || 
-            Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0 ||
+            storageId == null || isNaN(storageId) || 
+            isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0 ||
             !Array.isArray(barCodes) || barCodes.length === 0
         ){
             throw new Error("Sva polja moraju biti validirana i popunjena");
@@ -50,14 +50,14 @@ export async function updateProduct({id,name, unitMeasure,supplierType,storageTy
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !nama || typeof name !=="string" || name.trim()==="" ||
             !unitMeasure || typeof unitMeasure !=="string" ||unitMeasure.trim() === ""||
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
             !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
-            storageId == null || Number.isNaN(Number(storageId)) || 
-            Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0 ||
+            storageId == null || isNaN(storageId) || 
+            isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0 ||
             !Array.isArray(barCodes) || barCodes.length === 0
         ){
             throw new Error("Sva polja moraju biti validirana i popunjena");
@@ -80,7 +80,7 @@ export async function updateProduct({id,name, unitMeasure,supplierType,storageTy
 
 export async function deleteProduct(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Proizvod sa datim "+id+" ID-om nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -95,7 +95,7 @@ export async function deleteProduct(id){
 
 export async function getOneProduct(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Proizvod sa datim "+id+" ID-om nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -141,7 +141,7 @@ export async function findByBarCode(barCode){
 export async function findByCurrentQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Data kolicina "+parseQuantity+" za proizvod, nije pronadjena");
         }
         const response = await api.get(url+`/product-by-quantity`,{
@@ -177,7 +177,7 @@ export async function findByName(name){
 
 export async function findByStorageId(storageId){
     try{
-        if(storageId == null || Number.isNaN(Number(storageId))){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati storageId "+storageId+"  za proizvod, ne postoji");
         }
         const response = await api.get(url+`/product-by-storage/${storageId}`,{
@@ -286,7 +286,7 @@ export async function findByShelfRowColAndStorage(row, col, storageId){
 export async function findByShelfRow(row){
     try{
         const parseRow = parseInt(row,10);
-        if(Number.isNaN(Number(parseRow)) || parseRow <= 0){
+        if(isNaN(parseRow) || parseRow <= 0){
             throw new Error("Dati red "+parseRow+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/shelf/row`,{
@@ -303,7 +303,7 @@ export async function findByShelfRow(row){
 export async function findByShelfColumn(col){
     try{
         const parseCol = parseInt(col,10);
-        if(Number.isNaN(Number(parseCol)) || parseCol <= 0){
+        if(isNaN(parseCol) || parseCol <= 0){
             throw new Error("Data kolona "+parseCol+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/shelf/col`,{
@@ -320,7 +320,7 @@ export async function findByShelfColumn(col){
 export async function findBySupplyMinQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Data minimalna kolicina "+parseQuantity+" za dobavljaca nije pronadjena");
         }
         const response = await api.get(url+`/supply-min-quantity`,{
@@ -339,15 +339,15 @@ export async function findBySupplyUpdateRange(from, to){
         const validateFrom = moment.isMoment(from) || moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateTo = moment.isMoment(to) || moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateFrom || !validateTo){
-            throw new Error("Dati opseg "+validateFrom+" - "+validateTo+" datuma za dobavljaca nije pronadjen");
+            throw new Error("Dati opseg "+from+" - "+to+" datuma za dobavljaca nije pronadjen");
         }
-        if(moment(validateTo).isBefore(moment(validateFrom))){
+        if(moment(to).isBefore(moment(from))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/supply/updated`,{
             params:{
-                from:moment(validateFrom).format("YYYY-MM-DDTHH:mm:ss"),
-                to:moment(validateTo).format("YYYY-MM-DDTHH:mm:ss")
+                from:moment(from).format("YYYY-MM-DDTHH:mm:ss"),
+                to:moment(to).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -360,7 +360,7 @@ export async function findBySupplyUpdateRange(from, to){
 
 export async function findBySupplyStorageId(storageId){
     try{
-        if(storageId == null || Number.isNaN(Number(storageId))){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati ID "+storageId+" za skaldiste nije pronadjen");
         }
         const response = await api.get(url`/supply/storage/${storageId}`,{
@@ -376,7 +376,7 @@ export async function findBySupplyStorageId(storageId){
 export async function countByShelfRowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0){
+        if(isNaN(parseRowCount) || parseRowCount <= 0){
             throw new Error("Dati broj redova "+parseRowCount+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/count/shelf/rows`,{
@@ -393,7 +393,7 @@ export async function countByShelfRowCount(rowCount){
 export async function countByShelfCols(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(Number.isNaN(Number(parseCols)) || parseCols <= 0){
+        if(isNaN(parseCols) || parseCols <= 0){
             throw new Error("Dati broj kolona "+parseCols+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/count/shelf/cols`,{

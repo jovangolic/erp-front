@@ -17,8 +17,8 @@ export async function createShelf({rowCount, cols, storageId, goods}){
         const parseRowCount = parseInt(rowCount, 10);
         const parseCols = parseInt(cols, 10);
         if(
-            Number.sNaN(Number(parseRowCount)) || parseRowCount <= 0 ||
-            Number.isNaN(Number(parseCols)) || parseCols <= 0 || storageId == null || Number.isNaN(Number(storageId)) ||
+            isNaN(parseRowCount) || parseRowCount <= 0 ||
+            isNaN(parseCols) || parseCols <= 0 || storageId == null || isNaN(storageId) ||
             !Array.isArray(goods) || goods.length === 0
         ){
             throw new Error("Sva polja moraju biti popunjena");
@@ -44,9 +44,9 @@ export async function updateShelf({id, rowCount, cols, storageId, goods}){
         const parseRowCount = parseInt(rowCount, 10);
         const parseCols = parseInt(cols, 10);
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            Number.sNaN(Number(parseRowCount)) || parseRowCount <= 0 ||
-            Number.isNaN(Number(parseCols)) || parseCols <= 0 || storageId == null || Number.isNaN(Number(storageId)) ||
+            id == nul || isNaN(id) ||
+            isNaN(parseRowCount) || parseRowCount <= 0 ||
+            isNaN(parseCols) || parseCols <= 0 || storageId == null || isNaN(storageId) ||
             !Array.isArray(goods) || goods.length === 0
         ){
             throw new Error("Sva polja moraju biti popunjena");
@@ -69,7 +69,7 @@ export async function updateShelf({id, rowCount, cols, storageId, goods}){
 
 export async function deleteShelf(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Data polica po id "+id+" nije pronadjena");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -84,7 +84,7 @@ export async function deleteShelf(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -112,7 +112,7 @@ export async function findAll(){
 export async function existsByRowCountAndStorageId({storageId, rowCount}){
     try{
         const parseRowCount = parseInt(rowCount, 10);
-        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0 || storageId == null || Number.isNaN(Number(storageId))){
+        if(isNaN(parseRowCount) || parseRowCount <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greska, nepostojeci red "+parseRowCount+" polica i id "+storageId+" skladista");
         }
         const response = await api.get(url+`/storage/${storageId}/rowCount/${rowCount}/exists`,{
@@ -128,7 +128,7 @@ export async function existsByRowCountAndStorageId({storageId, rowCount}){
 export async function existsByColsAndStorageId({storageId, cols}){
     try{
         const parseCols = parseInt(cols, 10);
-        if(Number.isNaN(Number(parseCols)) || parseCols <= 0 || storageId == null || Number.isNaN(Number(storageId))){
+        if(isNaN(parseCols) || parseCols <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greska, nepostojeca kolona "+parseCols+" polica i id "+storageId+" skladista");
         }
         const response = await api.get(url+`/storage/${storageId}/cols/${cols}/exists`,{
@@ -145,8 +145,9 @@ export async function existsByRowCountAndColumnAndStorageId({storageId, rowCount
     try{
         const parseCols = parseInt(cols, 10);
         const parseRowCount = parseInt(rowCount, 10);
-        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0 ||
-            Number.isNaN(Number(parseCols)) || parseCols <= 0 || storageId == null || Number.isNaN(Number(storageId))){
+        if(
+            isNaN(parseRowCount) || parseRowCount <= 0 ||
+            isNaN(parseCols) || parseCols <= 0 || storageId == null || isNaN(storageId)){
                 throw new Error("Greska, nepostojeci red "+parseRowCount+" i kolona "+parseCols+" polica kao i ID "+storageId+" skladista");
         }
         const response = await api.get(url+`/storage/${storageId}/rowCount/${rowCount}/cols/${cols}/exists`,{
@@ -161,7 +162,7 @@ export async function existsByRowCountAndColumnAndStorageId({storageId, rowCount
 
 export async function findByStorageId(storageId){
     try{
-        if(storageId == null || Number.isNaN(Number(storageId))){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati ID "+storageId+" skladista je nepostojeci");
         }
         const response = await api.get(url+`/by-storage/${storageId}`,{
@@ -177,7 +178,7 @@ export async function findByStorageId(storageId){
 export async function findByRowCountAndStorageId({storageId, rowCount}){
     try{
         const parseRowCount = parseInt(rowCount, 10);
-        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0 || storageId == null || Number.isNaN(Number(storageId))){
+        if(isNaN(parseRowCount) || parseRowCount <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greks prilikom trazenja reda "+parseRowCount+" polica i ID "+storageId+" skladista");
         }
         const response = await api.get(url+`/storage/${storageId}/rowCount/${rowCount}`,{
@@ -193,7 +194,7 @@ export async function findByRowCountAndStorageId({storageId, rowCount}){
 export async function findByColumnAndStorageId({storageId, cols}){
     try{
         const parseCols = parseInt(cols, 10);
-        if(Number.isNaN(Number(parseCols)) || parseCols <= 0 || storageId == null || Number.isNaN(Number(storageId))){
+        if(isNaN(parseCols) || parseCols <= 0 || storageId == null || isNaN(storageId)){
             throw new Error("Greks prilikom trazenja kolone "+parseCols+" polica i ID "+storageId+" skladista");
         }
         const response = await api.get(url+`/storage/${storageId}/cols/${cols}`,{
@@ -211,8 +212,8 @@ export async function findByRowCountAndColsAndStorageId({storageId, rowCount, co
         const parseCols = parseInt(cols, 10);
         const parseRowCount = parseInt(rowCount, 10);
         if(
-            Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0 ||
-            Number.isNaN(Number(parseCols)) || parseCols <= 0 || storageId == null || Number.isNaN(Number(storageId))){
+            isNaN(parseRowCount) || parseRowCount <= 0 ||
+            isNaN(parseCols) || parseCols <= 0 || storageId == null || isNaN(storageId)){
                 throw new Error("Greska, prilikom trazenja reda "+parseRowCount+" i kolone "+parseCols+" polica kao i ID "+storageId+" skladista");
         }
         const response = await api.get(url+`/storage/${storageId}/rowCount/${rowCount}/cols/${cols}`,{
@@ -227,7 +228,7 @@ export async function findByRowCountAndColsAndStorageId({storageId, rowCount, co
 
 export async function getShelfWithGoods(shelfId){
     try{
-        if(shelfId == null || Number.isNaN(Number(shelfId))){
+        if(shelfId == null || isNaN(shelfId)){
             throw new Error("Dati id "+shelfId+" police, nije pronadjen");
         }
         const response = await api.get(url+`/${shelfId}/with-goods`,{
@@ -242,7 +243,7 @@ export async function getShelfWithGoods(shelfId){
 
 export const getShelvesByStorageId = async (storageId) => {
     try{
-        if(storageId == null || inum.sNaN(Number(storageId))){
+        if(storageId == null || isNaN(storageId)){
             throw new Error("Dati id skladista "+storageId+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/by-storage/${storageId}`);
@@ -304,7 +305,7 @@ export async function findByStorage_Type(type){
 export async function findByStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skladista veceg od "+parseCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/storage-capacity-greater-than`,{
@@ -340,7 +341,7 @@ export async function findByStorage_NameAndStorage_Type({name, type}){
 
 export async function countAvailableCapacity(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati ID "+id+" skladista nije pronadjen");
         }
         const response = await api.get(url+`/${id}/available-capacity`,{
@@ -356,7 +357,7 @@ export async function countAvailableCapacity(id){
 export async function allocateCapacity({id, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(id)  || id == null || isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Dati ID "+id+" skladista i njegova kolicina "+parseAmount+" za alociranje nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/allocate`,{
@@ -373,7 +374,7 @@ export async function allocateCapacity({id, amount}){
 export async function releaseCapacity({id, amount}){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(id)  || id == null || isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Dati ID "+id+" skladista i njegova kolicina "+parseAmount+" za premestanje nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/release`,{
@@ -390,7 +391,7 @@ export async function releaseCapacity({id, amount}){
 export async function findByStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet skladista manji od "+parseCapacity+", nie pronadjen");
         }
         const response = await api.get(url+`/search/storage-capacity-less-than`,{
@@ -407,7 +408,7 @@ export async function findByStorage_CapacityLessThan(capacity){
 export async function findByStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet "+parseCapacity+" skladista, nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-capacity`,{
@@ -482,7 +483,7 @@ export async function findByStorageNameContainingIgnoreCaseAndLocationContaining
 export async function findByStorageNameContainingIgnoreCaseAndCapacity({name, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!name || typeof name !== "string" || name.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!name || typeof name !== "string" || name.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati naziv "+name+" i kapacitet "+parseCapacity+" skladista nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-name-and-capacity`,{
@@ -502,7 +503,7 @@ export async function findByStorageNameContainingIgnoreCaseAndCapacity({name, ca
 export async function findByStorageNameContainingIgnoreCaseAndCapacityGreaterThan({name, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!name || typeof name !== "string" || name.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!name || typeof name !== "string" || name.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati naziv"+name+" i kapacitet skladista veci od "+parseCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-name-and-capacity-greater-than`,{
@@ -522,7 +523,7 @@ export async function findByStorageNameContainingIgnoreCaseAndCapacityGreaterTha
 export async function findByStorageNameContainingIgnoreCaseAndCapacityLessThan({name, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(!name || typeof name !== "string" || name.trim() === "" || Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(!name || typeof name !== "string" || name.trim() === "" || isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati naziv "+name+" i kapacitet skladista manji od "+parseCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/search/storage-name-and-capacity-less-than`,{
@@ -563,7 +564,7 @@ export async function findByStorageCapacityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 ||isNaN(parseMax) || parseMax <= 0){
             throw new Error("Dati opseg "+parseMin+" - "+parseMax+" kapaciteta skladista nije pronadjen");
         }
         if(parseMin > parseMax){

@@ -15,7 +15,7 @@ export async function createShiftPlanning({workCenterId,userId,date,shiftType,as
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(
-            Number.isNaN(Number(workCenterId)) || workCenterId == null || Number.isNaN(Number(userId)) || userId == null ||
+            isNaN(workCenterId) || workCenterId == null || isNaN(userId) || userId == null ||
             !validateDate || !isShiftTypeValid.includes(shiftType?.toUpperCase()) || typeof assigned !== "boolean"){
                 throw new Error("Sva polja moraju biti popunjena i validirana");
         }
@@ -34,8 +34,8 @@ export async function updateShiftPlanning({id,workCenterId,userId,date,shiftType
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            Number.isNaN(Number(workCenterId)) || workCenterId == null || Number.isNaN(Number(userId)) || userId == null ||
+            id == nul || isNaN(id) || 
+            isNaN(workCenterId) || workCenterId == null || isNaN(userId) || userId == null ||
             !validateDate || !isShiftTypeValid.includes(shiftType?.toUpperCase()) || typeof assigned !== "boolean"){
                 throw new Error("Sva polja moraju biti popunjena i validirana");
         }
@@ -52,7 +52,7 @@ export async function updateShiftPlanning({id,workCenterId,userId,date,shiftType
 
 export async function deleteShiftPlanning(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati id "+id+" za planiranje-smena, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -67,7 +67,7 @@ export async function deleteShiftPlanning(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati id "+id+" za planiranje-smena, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -111,7 +111,7 @@ export async function findByWorkCenter_NameContainingIgnoreCase(name){
 export async function findByWorkCenter_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet "+parseCapacity+" radnog centra za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity`,{
@@ -130,7 +130,7 @@ export async function findByWorkCenter_Capacity(capacity){
 export async function findByWorkCenter_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet radnog centra veci od "+parseCapacity+", za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-greater-than`,{
@@ -149,7 +149,7 @@ export async function findByWorkCenter_CapacityGreaterThan(capacity){
 export async function findByWorkCenter_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet radnog centra manji od "+parseCapacity+", za smenu, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-less-than`,{
@@ -185,7 +185,7 @@ export async function findByWorkCenter_LocationContainingIgnoreCase(location){
 
 export async function findByEmployee_Id(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati ID "+id+" zaposlenog, nije pronadjen");
         }
         const response = await api.get(url+`/employee/${id}`,{
@@ -256,11 +256,11 @@ export async function findByDate(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum "+validateDate+" za planiranje smene nije pronadjen");
+            throw new Error("Datum "+date+" za planiranje smene nije pronadjen");
         }
         const response = await api.get(url+`/by-date`,{
             params:{
-                datr:moment(validateDate).format("YYYY-MM-DD")
+                datr:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -276,15 +276,15 @@ export async function findByDateBetween({start, end}){
         const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateDateStart || !validateDateEnd){
-            throw new Error("Datum opsega "+validateDateStart+" - "+validateDateEnd+" za planiranje smene, nije pronadjen");
+            throw new Error("Datum opsega "+start+" - "+end+" za planiranje smene, nije pronadjen");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za pocetak ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/date-range`,{
             params:{
-                start:moment(validateDateStart).format("YYYY-MM-DD"),
-                end:moment(validateDateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -299,11 +299,11 @@ export async function findByDateGreaterThanEqual(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum veci od "+validateDate+" za planiranje smene nije pronadjen");
+            throw new Error("Datum veci od "+date+" za planiranje smene nije pronadjen");
         }
         const response = await api.get(url+`/date-greater-than`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD")
+                date:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -318,11 +318,11 @@ export async function findOrdersWithStartDateAfterOrEqual(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Start datuma posle "+validateDate+" za planiranje smene, nije pronadjen");
+            throw new Error("Start datuma posle "+date+" za planiranje smene, nije pronadjen");
         }
         const response = await api.get(url+`/orders-with-start-date-after`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD")
+                date:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -371,7 +371,7 @@ export async function findByAssigned(assigned){
 
 export async function findByEmployee_IdAndAssignedTrue(employeeIds){
     try{
-        if(Number.isNaN(Number(employeeIds)) || employeeIds == null){
+        if(isNaN(employeeIds) || employeeIds == null){
             throw new Error("ID  "+employeeIds+"zapolsenog nije pronadjen");
         }
         const response = await api.get(url+`/employee/${employeeIds}/assigned`,{
@@ -386,7 +386,7 @@ export async function findByEmployee_IdAndAssignedTrue(employeeIds){
 
 export async function findByEmployee_IdAndShiftType({employeeId,shiftType}){
     try{
-        if(Number.isNaN(Number(employeeId)) || employeeId == null || !isShiftTypeValid.includes(shiftType?.toUpperCase())){
+        if(isNaN(employeeId) || employeeId == null || !isShiftTypeValid.includes(shiftType?.toUpperCase())){
             throw new Error("ID zaposlenog "+employeeId+" i tip smene "+shiftType+" nije pronadjen");
         }
         const response = await api.get(url+`/employee/${employeeId}/shift-type`,{
@@ -405,12 +405,12 @@ export async function findByEmployee_IdAndShiftType({employeeId,shiftType}){
 export async function findByWorkCenter_IdAndDateAfterAndAssignedFalse({workCenterIds, date}){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
-        if(Number.isNaN(Number(workCenterIds)) || workCenterIds == null || !validateDate){
-            throw new Error("ID radnog centra "+workCenterIds+" i datum posle "+validateDate+" nisu pronadjeni");
+        if(isNaN(workCenterIds) || workCenterIds == null || !validateDate){
+            throw new Error("ID radnog centra "+workCenterIds+" i datum posle "+date+" nisu pronadjeni");
         }
         const response = await api.get(url+`/work-center/${workCenterIds}/date`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD")
+                date:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -425,16 +425,16 @@ export async function findShiftsForEmployeeBetweenDates({employeeId, start,end})
     try{
         const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
-        if(Number.isNaN(Number(employeeId)) || employeeId == null || !validateDateStart || !validateDateEnd){
-            throw new Error("ID zaposlenog "+employeeId+" i opseg datuma "+validateDateStart+" i "+validateDateEnd+" nije pronadjen");
+        if(isNaN(employeeId) || employeeId == null || !validateDateStart || !validateDateEnd){
+            throw new Error("ID zaposlenog "+employeeId+" i opseg datuma "+start+" i "+end+" nije pronadjen");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/employee/${employeeId}/date-range`,{
             params:{
-                start:moment(validateDateStart).format("YYYY-MM-DD"),
-                end:moment(validateDateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -448,12 +448,12 @@ export async function findShiftsForEmployeeBetweenDates({employeeId, start,end})
 export async function existsByEmployee_IdAndDateAndShiftType({employeeId, date, shiftType}){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
-        if(Number.isNaN(Number(employeeId)) || employeeId == null || !validateDate || !isShiftTypeValid.includes(shiftType?.toUpperCase())){
-            throw new Error("ID zaposlenog "+employeeId+" datum "+validateDate+" i tip smene "+shiftType+" nisu pronadjeni");
+        if(isNaN(employeeId) || employeeId == null || !validateDate || !isShiftTypeValid.includes(shiftType?.toUpperCase())){
+            throw new Error("ID zaposlenog "+employeeId+" datum "+date+" i tip smene "+shiftType+" nisu pronadjeni");
         }
         const response = await api.get(url+`/employee/${employeeId}/date-shift-type`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD"),
+                date:moment(date).format("YYYY-MM-DD"),
                 shiftType:(shiftType || "").toUpperCase()
             },
             headers:getHeader()

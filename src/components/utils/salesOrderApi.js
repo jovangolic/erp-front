@@ -18,12 +18,12 @@ export async function createSalesOrder(buyerId, items, orderDate, totalAmount, n
         const validateDate = moment.isMoment(orderDate) || moment(orderDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const parseAmount = parseFloat(amount);
         if(
-            buyerId == null || Number.isNaN(Number(buyerId)) ||!Array.isArray(items) || items.length === 0 ||
+            buyerId == null || isNaN(buyerId) ||!Array.isArray(items) || items.length === 0 ||
             !validateDate ||
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 ||
+            isNaN(parseAmount) || parseAmount <= 0 ||
             !note || typeof note !== "string" || note.trim() ===""||
             !isOrderStatusValid.includes(status?.toUpperCase()) ||
-            invoiceId == null || Number.isNaN(Number(invoiceId)) || 
+            invoiceId == null || isNaN(invoiceId) || 
             !orderNumber || typeof orderNumber !=="string" || orderNumber.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -49,13 +49,13 @@ export async function updateSalesOrder({id,buyerId, items, orderDate, totalAmoun
         const validateDate = moment.isMoment(orderDate) || moment(orderDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const parseAmount = parseFloat(amount);
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            buyerId == null || Number.isNaN(Number(buyerId)) ||!Array.isArray(items) || items.length === 0 ||
+            id == null || isNaN(id) ||
+            buyerId == null || isNaN(buyerId) ||!Array.isArray(items) || items.length === 0 ||
             !validateDate ||
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 ||
+            isNaN(parseAmount) || parseAmount <= 0 ||
             !note || typeof note !== "string" || note.trim() ===""||
             !isOrderStatusValid.includes(status?.toUpperCase()) ||
-            invoiceId == null || Number.isNaN(Number(invoiceId)) || 
+            invoiceId == null || isNaN(invoiceId) || 
             !orderNumber || typeof orderNumber !=="string" || orderNumber.trim() === ""
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
@@ -78,7 +78,7 @@ export async function updateSalesOrder({id,buyerId, items, orderDate, totalAmoun
 
 export async function deleteSalesOrder(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -93,7 +93,7 @@ export async function deleteSalesOrder(id){
 
 export async function getSalesOrderById(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
@@ -120,7 +120,7 @@ export async function getAllSalesOrders(){
 
 export async function findByBuyer_Id(buyerId){
     try{
-        if(buyerId == null || Number.isNaN(Number(buyerId))){
+        if(buyerId == null || isNaN(buyerId)){
             throw new Error("Dati ID "+buyerId+" za kupca nije pronadjen");
         }
         const response = await api.get(url+`/buyer/${buyerId}`,{
@@ -248,7 +248,7 @@ export async function findByInvoice_InvoiceNumberContainingIgnoreCase(invoiceNum
 export async function findByInvoice_TotalAmount(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
+        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
                 throw new Error("Data ukupna kolicina "+parseTotalAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/byTotalAmount`,{
@@ -265,7 +265,7 @@ export async function findByInvoice_TotalAmount(totalAmount){
 export async function findByInvoice_TotalAmountGreaterThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
+        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
                 throw new Error("Data ukupna kolicina veca od "+parseTotalAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/totalAmount/greater-than`,{
@@ -282,7 +282,7 @@ export async function findByInvoice_TotalAmountGreaterThan(totalAmount){
 export async function findByInvoice_TotalAmountLessThan(totalAmount){
     try{
         const parseTotalAmount = parseFloat(totalAmount);
-        if(Number.isNaN(Number(parseTotalAmount)) || parseTotalAmount <= 0){
+        if(isNaN(parseTotalAmount) || parseTotalAmount <= 0){
                 throw new Error("Data ukupna kolicina manja od "+parseTotalAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/totalAmount/less-than`,{
@@ -300,7 +300,7 @@ export async function findByInvoice_TotalAmountBetween(min, max){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Dati opseg "+parseMin+" - "+parseMax+" za ukupnu kolicinu nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -324,10 +324,10 @@ export async function findByInvoice_IssueDate(issueDate){
     try{
         const validateIssueDate = moment.isMoment(issueDate) || moment(issueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateIssueDate){
-            throw new Error("Dati datum "+validateIssueDate+" izdavanja fakture nije pronadjen");
+            throw new Error("Dati datum "+issueDate+" izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issueDate`,{
-            params:{issueDate:moment(validateIssueDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{issueDate:moment(issueDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -341,10 +341,10 @@ export async function findByInvoice_IssueDateAfter(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum posle "+validateDate+" izdavanja fakture nije pronadjen");
+            throw new Error("Dati datum posle "+date+" izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issue-date-after`,{
-            params:{date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -358,10 +358,10 @@ export async function findByInvoice_IssueDateBefore(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum pre "+validateDate+" izdavanja fakture nije pronadjen");
+            throw new Error("Dati datum pre "+date+" izdavanja fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/issue-date-before`,{
-            params:{date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -376,14 +376,14 @@ export async function findByInvoice_IssueDateBetween({start, end}){
         const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDateStart || !validateDateEnd){
-            throw new Error("Dati opseg "+validateDateStart+" - "+validateDateEnd+" datum izdavanja fakture nije pronadjen");
+            throw new Error("Dati opseg "+start+" - "+end+" datum izdavanja fakture nije pronadjen");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/issue-date-range`,{
-            params:{start:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                    end:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+            params:{start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                    end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -398,10 +398,10 @@ export async function findByInvoice_DueDate(dueDate){
     try{
         const validateDueDate = moment.isMoment(dueDate) || moment(dueDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDueDate){
-            throw new Error("Dati datum dospeca "+validateDueDate+" fakture nije pronadjen");
+            throw new Error("Dati datum dospeca "+dueDate+" fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date`,{
-            params:{dueDate:moment(validateDueDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{dueDate:moment(dueDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -415,10 +415,10 @@ export async function findByInvoice_DueDateAfter(date){
     try{
         const validateDueDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDueDate){
-            throw new Error("Dati datum posle "+validateDueDate+" dospeca fakture nije pronadjen");
+            throw new Error("Dati datum posle "+dueDate+" dospeca fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date-after`,{
-            params:{date:moment(validateDueDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(dueDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -432,10 +432,10 @@ export async function findByInvoice_DueDateBefore(date){
     try{
         const validateDueDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDueDate){
-            throw new Error("Dati datum pre "+validateDueDate+" dospeca fakture nije pronadjen");
+            throw new Error("Dati datum pre "+date+" dospeca fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/due-date-before`,{
-            params:{date:moment(validateDueDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -450,15 +450,15 @@ export async function findByInvoice_DueDateBetween({start, end}){
         const validateDueDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateDueDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDueDateStart || !validateDueDateEnd){
-            throw new Error("Dati datum opsega "+validateDueDateStart+" - "+validateDueDateEnd+" dospeca fakture nije pronadjen");
+            throw new Error("Dati datum opsega "+start+" - "+end+" dospeca fakture nije pronadjen");
         }
-        if(moment(validateDueDateEnd).isBefore(moment(validateDueDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/due-date-range"`,{
             params:{
-                start:moment(validateDueDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateDueDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -487,7 +487,7 @@ export async function findByInvoice_NoteContainingIgnoreCase(note){
 
 export async function findByInvoice_Buyer_Id(buyerId){
     try{
-        if(Number.isNaN(Number(buyerId)) || buyerId == null){
+        if(isNaN(buyerId) || buyerId == null){
             throw new Error("Dati ID "+buyerId+" kupca za fakturu nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/buyer/${buyerId}`,{
@@ -502,7 +502,7 @@ export async function findByInvoice_Buyer_Id(buyerId){
 
 export async function findByInvoice_RelatedSales_Id(relatedSalesId){
     try{
-        if(Number.isNaN(Number(relatedSalesId)) || relatedSalesId == null){
+        if(isNaN(relatedSalesId) || relatedSalesId == null){
             throw new Error("Dati ID "+relatedSalesId+" za prodaju fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/relatedSales/${relatedSalesId}`,{
@@ -517,7 +517,7 @@ export async function findByInvoice_RelatedSales_Id(relatedSalesId){
 
 export async function findByInvoice_Payment_Id(paymentId){
     try{
-        if(Number.isNaN(Number(paymentId)) || paymentId == null){
+        if(isNaN(paymentId) || paymentId == null){
             throw new Error("Dati ID "+paymentId+" za placanje fakture nije pronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment/${paymentId}`,{
@@ -533,7 +533,7 @@ export async function findByInvoice_Payment_Id(paymentId){
 export async function findByInvoice_Payment_Amount(amount){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Data kolicina placanja "+parseAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice/payment/amount`,{
@@ -550,7 +550,7 @@ export async function findByInvoice_Payment_Amount(amount){
 export async function findByInvoice_Payment_AmountGreaterThan(amount){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Data kolicina placanja veca od "+parseAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice/payment/amount-greater-than`,{
@@ -567,7 +567,7 @@ export async function findByInvoice_Payment_AmountGreaterThan(amount){
 export async function findByInvoice_Payment_AmountLessThan(amount){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Data kolicina placanja manjoj od "+parseAmount+" za fakturu nije pronadjena");
         }
         const response = await api.get(url+`/search/invoice/payment/amount-less-than`,{
@@ -633,10 +633,10 @@ export async function findByInvoice_Payment_PaymentDate(paymentDate){
     try{
         const validatePaymentDate = moment.isMoment(paymentDate) || moment(paymentDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validatePaymentDate){
-            throw new Error("Dati datum "+validatePaymentDate+" placanja fakture nije p[ronadjen");
+            throw new Error("Dati datum "+paymentDate+" placanja fakture nije p[ronadjen");
         }
         const response = await api.get(url+`/search/invoice/payment-date`,{
-            params:{paymentDate:moment(validatePaymentDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{paymentDate:moment(paymentDate).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -651,15 +651,15 @@ export async function findByInvoice_Payment_PaymentDateBetween({startDate, endDa
         const validatePaymentDateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validatePaymentDateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validatePaymentDateStart || !validatePaymentDateEnd){
-            throw new Error("Dati opseg "+validatePaymentDateStart+" - "+validatePaymentDateEnd+" datuma placanja fakture nije pronadjen");
+            throw new Error("Dati opseg "+startDate+" - "+endDate+" datuma placanja fakture nije pronadjen");
         }
-        if(moment(validatePaymentDateEnd).isBefore(moment(validatePaymentDateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/invoice/payment-date-range`,{
             params:{
-                startDate:moment(validatePaymentDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate:moment(validatePaymentDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                startDate:moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate:moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -672,7 +672,7 @@ export async function findByInvoice_Payment_PaymentDateBetween({startDate, endDa
 
 export async function findByInvoice_CreatedBy_Id(userId){
     try{
-        if(Number.isNaN(Number(userId)) || userId == null){
+        if(isNaN(userId) || userId == null){
             throw new Error("Dati ID "+userId+" za lice koje je kreiralo fakturu nije pronadjeno");
         }
         const response = await api.get(url+`/search/invoice/createdBy/${userId}`,{

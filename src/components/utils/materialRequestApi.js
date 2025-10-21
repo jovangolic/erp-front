@@ -18,8 +18,8 @@ export async function createMaterialRequest({requestingWorkCenterId,materialId,q
         const validateNeededBy = moment.isMoment(neededBy) || moment(neededBy,"YYYY-MM-DD",true).isValid();
         const parseQuantity = parseFloat(quantity);
         if(
-            Number.isNaN(Number(requestingWorkCenterId)) || requestingWorkCenterId == null ||
-            Number.isNaN(Number(materialId)) || materialId == null || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            isNaN(requestingWorkCenterId) || requestingWorkCenterId == null ||
+            isNaN(materialId) || materialId == null || isNaN(parseQuantity) || parseQuantity <= 0 ||
             !validateRequestDate || !validateNeededBy ||
             !isMaterialRequestStatusValid.includes(status?.toUpperCase())){
                 throw new Error("Sva polja moraju biti popunjena i validirana");
@@ -41,9 +41,9 @@ export async function updateMaterialRequest({id,requestingWorkCenterId,materialI
         const validateNeededBy = moment.isMoment(neededBy) || moment(neededBy,"YYYY-MM-DD",true).isValid();
         const parseQuantity = parseFloat(quantity);
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            Number.isNaN(Number(requestingWorkCenterId)) || requestingWorkCenterId == null ||
-            Number.isNaN(Number(materialId)) || materialId == null || Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 ||
+            id == null || isNaN(id) ||
+            isNaN(requestingWorkCenterId) || requestingWorkCenterId == null ||
+            isNaN(materialId) || materialId == null || isNaN(parseQuantity) || parseQuantity <= 0 ||
             !validateRequestDate || !validateNeededBy ||
             !isMaterialRequestStatusValid.includes(status?.toUpperCase())){
                 throw new Error("Sva polja moraju biti popunjena i validirana");
@@ -61,7 +61,7 @@ export async function updateMaterialRequest({id,requestingWorkCenterId,materialI
 
 export async function deleteMaterialRequest(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za material-request nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -76,7 +76,7 @@ export async function deleteMaterialRequest(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za material-request nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -140,7 +140,7 @@ export async function findByRequestingWorkCenter_LocationContainingIgnoreCase(wo
 export async function findByRequestingWorkCenter_Capacity(workCenterCapacity){
     try{
         const parseWorkCenterCapacity = parseFloat(workCenterCapacity);
-        if(Number.isNaN(Number(parseWorkCenterCapacity)) || parseWorkCenterCapacity <= 0){
+        if(isNaN(parseWorkCenterCapacity) || parseWorkCenterCapacity <= 0){
             throw new Error("Dati kapacitet "+parseWorkCenterCapacity+" radnog centra za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity`,{
@@ -157,7 +157,7 @@ export async function findByRequestingWorkCenter_Capacity(workCenterCapacity){
 export async function findByRequestingWorkCenter_CapacityGreaterThan(workCenterCapacity){
     try{
         const parseWorkCenterCapacity = parseFloat(workCenterCapacity);
-        if(Number.sNaN(Number(parseWorkCenterCapacity)) || parseWorkCenterCapacity <= 0){
+        if(isNaN(parseWorkCenterCapacity) || parseWorkCenterCapacity <= 0){
             throw new Error("Dati kapacitet radnog centra za material-request veci od "+parseWorkCenterCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-greater-than`,{
@@ -174,7 +174,7 @@ export async function findByRequestingWorkCenter_CapacityGreaterThan(workCenterC
 export async function findByRequestingWorkCenter_CapacityLessThan(workCenterCapacity){
     try{
         const parseWorkCenterCapacity = parseFloat(workCenterCapacity);
-        if(Number.isNaN(Number(parseWorkCenterCapacity)) || parseWorkCenterCapacity <= 0){
+        if(isNaN(parseWorkCenterCapacity) || parseWorkCenterCapacity <= 0){
             throw new Error("Dati kapacitet radnog centra za material-request manji od "+parseWorkCenterCapacity+", nije pronadjen");
         }
         const response = await api.get(url+`/work-center-capacity-less-than`,{
@@ -191,7 +191,7 @@ export async function findByRequestingWorkCenter_CapacityLessThan(workCenterCapa
 export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Dati kapacitet "+parseQuantity+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/by-quantity`,{
@@ -210,7 +210,7 @@ export async function findByQuantity(quantity){
 export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Dati kapacitet veci od "+parseQuantity+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-greater-than"`,{
@@ -229,7 +229,7 @@ export async function findByQuantityGreaterThan(quantity){
 export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Dati kapacitet manji od "+parseQuantity+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-less-than"`,{
@@ -247,7 +247,7 @@ export async function findByQuantityLessThan(quantity){
 
 export async function findByMaterial_Id(materialId){
     try{
-        if(Number.isNaN(Number(materialId)) || materialId == null){
+        if(isNaN(materialId) || materialId == null){
             throw new Error("Dati id "+materialId+" materijala za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/material/${materialId}`,{
@@ -313,7 +313,7 @@ export async function findByMaterial_Unit(unit){
 export async function findByMaterial_CurrentStock(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
+        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
             throw new Error("Trenutna zaliha materijala "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`/material-current-stock`,{
@@ -330,7 +330,7 @@ export async function findByMaterial_CurrentStock(currentStock){
 export async function findByMaterial_CurrentStockLessThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
+        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
             throw new Error("Trenutna zaliha materijala manja od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`//material-current-stock-less-than`,{
@@ -347,7 +347,7 @@ export async function findByMaterial_CurrentStockLessThan(currentStock){
 export async function findByMaterial_CurrentStockGreaterThan(currentStock){
     try{
         const parseCurrentStock = parseFloat(currentStock);
-        if(Number.isNaN(Number(parseCurrentStock)) || parseCurrentStock <= 0){
+        if(isNaN(parseCurrentStock) || parseCurrentStock <= 0){
             throw new Error("Trenutna zaliha materijala veca od "+parseCurrentStock+", nije pronadjena");
         }
         const response = await api.get(url+`//material-current-stock-greater-than`,{
@@ -364,7 +364,7 @@ export async function findByMaterial_CurrentStockGreaterThan(currentStock){
 export async function findByMaterial_ReorderLevel(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
-        if(Number.isNaN(Number(parseReorderLevel)) || parseReorderLevel <= 0){
+        if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
             throw new Error("Dati reorder-level "+parseReorderLevel+" za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level`,{
@@ -383,7 +383,7 @@ export async function findByMaterial_ReorderLevel(reorderLevel){
 export async function findByMaterial_ReorderLevelGreaterThan(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
-        if(Number.isNaN(Number(parseReorderLevel)) || parseReorderLevel <= 0){
+        if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
             throw new Error("Dati reorder-level za materijal veci od "+parseReorderLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level-greater-than`,{
@@ -402,7 +402,7 @@ export async function findByMaterial_ReorderLevelGreaterThan(reorderLevel){
 export async function findByMaterial_ReorderLevelLessThan(reorderLevel){
     try{
         const parseReorderLevel = parseFloat(reorderLevel);
-        if(Number.isNaN(Number(parseReorderLevel)) || parseReorderLevel <= 0){
+        if(isNaN(parseReorderLevel) || parseReorderLevel <= 0){
             throw new Error("Dati reorder-level za materijal manji od "+parseReorderLevel+", nije pronadjen");
         }
         const response = await api.get(url+`/material-reorder-level-less-than`,{
@@ -420,7 +420,7 @@ export async function findByMaterial_ReorderLevelLessThan(reorderLevel){
 
 export async function findByMaterial_Storage_Id(storageId){
     try{
-        if(Number.isNaN(Number(storageId)) || storageId == null){
+        if(isNaN(storageId) || storageId == null){
             throw new Error("Dati id "+storageId+" skladista za materijal, nije pronadjen");
         }
         const response = await api.get(url+`/material/storage/${storageId}`,{
@@ -437,11 +437,11 @@ export async function findByRequestDate(requestDate){
     try{
         const validateRequestDate = moment.isMoment(requestDate) || moment(requestDate,"YYYY-MM-DD",true).isValid();
         if(!validateRequestDate){
-            throw new Error("Dati datum "+validateRequestDate+" zahteva za material-request, nije pronadjen");
+            throw new Error("Dati datum "+requestDate+" zahteva za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/request-date`,{
             params:{
-                requestDate:moment(validateRequestDate).format("YYYY-MM-DD")
+                requestDate:moment(requestDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -456,11 +456,11 @@ export async function findByRequestDateBefore(requestDate){
     try{
         const validateRequestDate = moment.isMoment(requestDate) || moment(requestDate,"YYYY-MM-DD",true).isValid();
         if(!validateRequestDate){
-            throw new Error("Dati datum zahteva posle "+validateRequestDate+", za material-request, nije pronadjen");
+            throw new Error("Dati datum zahteva posle "+requestDate+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/request-date-before`,{
             params:{
-                requestDate:moment(validateRequestDate).format("YYYY-MM-DD")
+                requestDate:moment(requestDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -475,11 +475,11 @@ export async function findByRequestDateAfter(requestDate){
     try{
         const validateRequestDate = moment.isMoment(requestDate) || moment(requestDate,"YYYY-MM-DD",true).isValid();
         if(!validateRequestDate){
-            throw new Error("Dati datum zahteva pre "+validateRequestDate+", za material-request, nije pronadjen");
+            throw new Error("Dati datum zahteva pre "+requestDate+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/request-date-after`,{
             params:{
-                requestDate:moment(validateRequestDate).format("YYYY-MM-DD")
+                requestDate:moment(requestDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -495,15 +495,15 @@ export async function findByRequestDateBetween({startDate, endDate}){
         const validateRequestStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
         const validateRequestEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
         if(!validateRequestStart || !validateRequestEnd){
-                throw new Error("Dati opseg datuma "+validateRequestStart+" - "+validateRequestEnd+" za material-request, nije pronadjen");
+                throw new Error("Dati opseg datuma "+startDate+" - "+endDate+" za material-request, nije pronadjen");
         }
-        if(moment(validateRequestEnd).isBefore(moment(validateRequestStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/request-date-between`,{
             params:{
-                statusbar:moment(validateRequestStart).format("YYYY-MM-DD"),
-                endDate:moment(validateRequestEnd).format("YYYY-MM-DD")
+                statusbar:moment(startDate).format("YYYY-MM-DD"),
+                endDate:moment(endDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });    
@@ -518,11 +518,11 @@ export async function findByNeededBy(neededBy){
     try{
         const validateNeededBy = moment.isMoment(neededBy) || moment(neededBy,"YYYY-MM-DD",true).isValid();
         if(!validateNeededBy){
-            throw new Error("Dati datum potrebe "+validateNeededBy+" za material-request, nije pronadjen");
+            throw new Error("Dati datum potrebe "+neededBy+" za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-by`,{
             params:{
-                neededBy:moment(validateNeededBy).format("YYYY-MM-DD")
+                neededBy:moment(neededBy).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -537,11 +537,11 @@ export async function findByNeededByBefore(neededBy){
     try{
         const validateNeededBy = moment.isMoment(neededBy) || moment(neededBy,"YYYY-MM-DD",true).isValid();
         if(!validateNeededBy){
-            throw new Error("Dati datum potrebe, pre "+validateNeededBy+", za material-request, nije pronadjen");
+            throw new Error("Dati datum potrebe, pre "+neededBy+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-before`,{
             params:{
-                neededBy:moment(validateNeededBy).format("YYYY-MM-DD")
+                neededBy:moment(neededBy).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -556,11 +556,11 @@ export async function findByNeededByAfter(neededBy){
     try{
         const validateNeededBy = moment.isMoment(neededBy) || moment(neededBy,"YYYY-MM-DD",true).isValid();
         if(!validateNeededBy){
-            throw new Error("Dati datum potrebe, posle "+validateNeededBy+", za material-request, nije pronadjen");
+            throw new Error("Dati datum potrebe, posle "+neededBy+", za material-request, nije pronadjen");
         }
         const response = await api.get(url+`/needed-after`,{
             params:{
-                neededBy:moment(validateNeededBy).format("YYYY-MM-DD")
+                neededBy:moment(neededBy).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -576,15 +576,15 @@ export async function findByNeededByBetween({startDate, endDate}){
         const validateNeededByStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
         const validateNeededByEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
         if(!validateNeededByStart || !validateNeededByEnd){
-            throw new Error("Datum opsega potrebe "+validateNeededByStart+" - "+validateNeededByEnd+" za material-request, nije pronadjen");
+            throw new Error("Datum opsega potrebe "+startDate+" - "+endDate+" za material-request, nije pronadjen");
         }
-        if(moment(validateNeededByEnd).isBefore(moment(validateNeededByStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/needed-between`,{
             params:{
-                startDate:moment(validateNeededByStart).format("YYYY-MM-DD"),
-                endDate:moment(validateNeededByEnd).format("YYYY-MM-DD")
+                startDate:moment(startDate).format("YYYY-MM-DD"),
+                endDate:moment(endDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });

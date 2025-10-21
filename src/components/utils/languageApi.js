@@ -26,7 +26,7 @@ export async function create({languageCodeType, languageNameType}){
 export async function update({id, languageCodeType, languageNameType}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !isLanguageCodeTypeValid.includes(languageCodeType?.toUpperCase()) ||
             !isLanguageNameTypeValid.includes(languageNameType?.toUpperCase())
         ){
@@ -45,7 +45,7 @@ export async function update({id, languageCodeType, languageNameType}){
 
 export async function deleteLanguage(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za language nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/language/delete/${id}`,{
@@ -60,7 +60,7 @@ export async function deleteLanguage(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za language nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/language/find-one/${id}`,{

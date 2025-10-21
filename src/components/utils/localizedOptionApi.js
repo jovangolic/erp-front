@@ -7,8 +7,8 @@ const isLanguageNameTypeValid = ["ENGLISH", "SRPSKI", "ESPAÑOL", "FRANÇAIS", "
 export async function create({optionId,languageId,localizedLabel}){
     try{
         if(
-            optionId == null || Number.isNaN(Number(optionId)) || 
-            languageId == null || Number.isNaN(Number(languageId)) || 
+            optionId == null || isNaN(optionId) || 
+            languageId == null || isNaN(languageId) || 
             !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
                 throw new Error("Sv apolja moraju biti validna i popunjena");
         }
@@ -26,9 +26,9 @@ export async function create({optionId,languageId,localizedLabel}){
 export async function update({id, optionId,languageId,localizedLabel}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            optionId == null || Number.isNaN(Number(optionId)) || 
-            languageId == null || Number.isNaN(Number(languageId)) || 
+            id == null || isNaN(id) ||
+            optionId == null || isNaN(optionId) || 
+            languageId == null || isNaN(languageId) || 
             !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim()===""){
                 throw new Error("Sv apolja moraju biti validna i popunjena");
         }
@@ -45,7 +45,7 @@ export async function update({id, optionId,languageId,localizedLabel}){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/find-one/${id}`,{
@@ -72,7 +72,7 @@ export async function getAll(){
 
 export async function getTranslationsForOption(optionId){
     try{
-        if(optionId == null || Number.isNaN(Number(optionId))){
+        if(optionId == null || isNaN(optionId)){
             throw new Error("Dati ID "+optionId+" za option nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/option/${optionId}/translations`,{
@@ -87,7 +87,7 @@ export async function getTranslationsForOption(optionId){
 
 export async function deleteLocalizedOption(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" ne postoji");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localized-options/delete/${id}`,{
@@ -102,7 +102,7 @@ export async function deleteLocalizedOption(id){
 
 export async function deleteAllByOptionId(optionId){
     try{
-        if(optionId == null || Number.isNaN(Number(optionId))){
+        if(optionId == null || isNaN(optionId)){
             throw new Error("Dati id "+optionId+"za option nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/localized-options/deleteAll-option/${optionId}`,{
@@ -137,7 +137,7 @@ export async function addTranslationForOption(optionId, { languageId, localizedL
 
 export async function getTranslation({optionId,languageId}){
     try{
-        if(optionId == null || Number.isNaN(Number(optionId)) || languageId == null || Number.isNaN(Number(languageId))){
+        if(optionId == null || isNaN(optionId) || languageId == null || isNaN(languageId)){
             throw new Error("Dati id "+optionId+" za optionid i languageId "+languageId+" nisu pronadjeni");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/option/${optionId}/language/${languageId}`,{
@@ -152,7 +152,7 @@ export async function getTranslation({optionId,languageId}){
 
 export async function getAllByLanguage(languageId){
     try{
-        if(languageId == null || Number.isNaN(Number(languageId))){
+        if(languageId == null || isNaN(languageId)){
             throw new Error("Dati ID "+languageId+" za language nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/translations/language/${languageId}`,{
@@ -215,7 +215,7 @@ export async function findByOption_Category(category){
 
 export async function findByLanguage_Id(languageId){
     try{
-        if(languageId == null || Number.isNaN(Number(languageId))){
+        if(languageId == null || isNaN(languageId)){
             throw new Error("Dati ID "+languageId+" za jezik nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/localized-options/language/${languageId}`);
@@ -260,7 +260,7 @@ export async function findByLanguage_LanguageNameType(languageNameType){
 
 export async function saveLocalizedOptions({optionId,languageId, localizedLabel}){
     try{
-        if(Number.isNaN(Number(optionId)) || optionId == null || Number.isNaN(Number(languageId)) || languageId == null ||
+        if(isNaN(optionId) || optionId == null || isNaN(languageId) || languageId == null ||
            !localizedLabel || typeof localizedLabel !== "string" || localizedLabel.trim() === ""){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
@@ -277,7 +277,7 @@ export async function saveLocalizedOptions({optionId,languageId, localizedLabel}
 
 export async function saveAs({sourceId,newLabel}){
     try{
-        if(sourceId == null || Number.isNaN(Number(sourceId)) || !newLabel || typeof newLabel !== "string" || newLabel.trim() === ""){
+        if(sourceId == null || isNaN(sourceId) || !newLabel || typeof newLabel !== "string" || newLabel.trim() === ""){
             throw new Error(`Nevalidni parametri: id=${sourceId}, label=${newLabel}`);
         }
         const requestBody = {sourceId,newLabel};
@@ -296,12 +296,21 @@ export async function saveAll(requests) {
         if (!Array.isArray(requests) || requests.length === 0) {
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
         }
-        // Opcionalna validacija svakog elementa
-        requests.forEach((req, index) => {
-            if (!req.optionId || !req.languageId || !req.localizedLabel) {
-                throw new Error(`Nevalidan zahtev na indexu ${index}`);
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[i];
+            if(!req.id == null || isNaN(req.id)){
+                throw new Error(`Nevalidan zahteva na indexu ${i}: 'id' mora biti ceo broj`);
             }
-        });
+            if(!req.optionId == null || isNaN(req.optionId)){
+                throw new Error(`Nevalidan zahteva na indexu ${i}: 'option-id' mora biti ceo broj`);
+            }
+            if(!erq.languageId == null || isNaN(req.languageId)){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'language-id' mora btii ceo broj`);
+            }
+            if(!req.localizedLabel?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'localized-label' mora biti umet`);
+            }
+        }
         const response = await api.post(
             `${import.meta.env.VITE_API_BASE_URL}/localized-options/save-all`,
             requests, // telo je niz objekata!

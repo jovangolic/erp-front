@@ -25,7 +25,7 @@ export async function getByName(name) {
 
 export async function updateSetting({id, settingName, value}) {
     try {
-        if(id == null || Number.isNaN(Number(id)) || !settingName?.trim() || !value?.trim()){
+        if(id == null || isNaN(id) || !settingName?.trim() || !value?.trim()){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = { id, settingName, value };

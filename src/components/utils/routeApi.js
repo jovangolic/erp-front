@@ -34,7 +34,7 @@ export async function updateRoute({id, origin,destination,distanceKm}){
     try{
         const parseDistance = parseFloat(distanceKm);
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !origin || typeof origin !== "string" || origin.trim()==="" ||
             !destination || typeof destination !== "string" || destination.trim() === "" ||
             Number.isNaN(Number(parseDistance)) || parseDistance <= 0
@@ -54,7 +54,7 @@ export async function updateRoute({id, origin,destination,distanceKm}){
 
 export async function deleteRoute(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -69,7 +69,7 @@ export async function deleteRoute(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -153,7 +153,7 @@ export async function findByOriginAndDestination({origin, destination}){
 export async function findByDistanceKmGreaterThan(distance) {
     try{
         const parseDistance = parseFloat(distance);
-        if(Number.isNaN(Number(parseDistance)) || parseDistance <= 0){
+        if(isNaN(parseDistance) || parseDistance <= 0){
             throw new Error("Distanca veca od "+parseDistance+" nije proinadjena");
         }
         const response = await api.get(url+`/distance-greater`,{
@@ -172,7 +172,7 @@ export async function findByDistanceKmGreaterThan(distance) {
 export async function findByDistanceKmLessThan(distance){
     try{
         const parseDistance = parseFloat(distance);
-        if(Number.isNaN(Number(parseDistance)) || parseDistance <= 0){
+        if(isNaN(parseDistance) || parseDistance <= 0){
             throw new Error("Distanca veca od "+parseDistance+" nije proinadjena");
         }
         const response = await api.get(url+`/distance-less`,{

@@ -18,9 +18,9 @@ export async function createLedgerEntry({entryDate,amount,description,accountId,
         const parseAmount = parseFloat(amount);
         if(
             !validateDate ||
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 ||
+            isNaN(parseAmount) || parseAmount <= 0 ||
             !description || typeof description !=="string" || description.trim() === "" ||
-            accountId == null || Number.isNaN(Number(accountId)) || !isLedgerEntryTypeValid.includes(type?.toUpperCase())
+            accountId == null || isNaN(accountId) || !isLedgerEntryTypeValid.includes(type?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -40,11 +40,11 @@ export async function updateLedgerEntry({id,entryDate,amount,description,account
         const validateDate = moment.isMoment(entryDate) || moment(entryDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const parseAmount = parseFloat(amount);
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !validateDate ||
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 ||
+            isNaN(parseAmount) || parseAmount <= 0 ||
             !description || typeof description !=="string" || description.trim() === "" ||
-            accountId == null || Number.isNaN(Number(accountId)) || !isLedgerEntryTypeValid.includes(type?.toUpperCase())
+            accountId == null || isNaN(accountId) || !isLedgerEntryTypeValid.includes(type?.toUpperCase())
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
@@ -61,7 +61,7 @@ export async function updateLedgerEntry({id,entryDate,amount,description,account
 
 export async function deleteLedgerEntry(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za LedgerEntry nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -76,7 +76,7 @@ export async function deleteLedgerEntry(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za LedgerEntry nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -162,12 +162,15 @@ export async function findByEntryDateBetween({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati opseg "+validateStart+" - "+validateEnd+" datuma je ne-validan");
+            throw new Error("Dati opseg "+start+" - "+end+" datuma je ne-validan");
+        }
+        if(moment(end).isBefore(moment(start))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/entryDateBetween`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -180,7 +183,7 @@ export async function findByEntryDateBetween({start, end}){
 
 export async function findByAccount_Id(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za racun nije pronadjen");
         }
         const response = await api.get(url+`/account/${id}`,{
@@ -289,10 +292,10 @@ export async function findByEntryDateEquals(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum "+validateDate+" unosa nije pronadjen");
+            throw new Error("Dati datum "+date+" unosa nije pronadjen");
         }
         const response = await api.get(url+`/entryDateEquals`,{
-            params:{date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -306,7 +309,7 @@ export async function findByEntryDateBefore(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum unosa pre "+validateDate+" nije pronadjen");
+            throw new Error("Dati datum unosa pre "+date+" nije pronadjen");
         }
         const response = await api.get(url+`/entryDateBefore`,{
             params:{date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
@@ -323,10 +326,10 @@ export async function findByEntryDateAfter(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum unosa posle "+validateDate+" nije pronadjen");
+            throw new Error("Dati datum unosa posle "+date+" nije pronadjen");
         }
         const response = await api.get(url+`/entryDateAfter`,{
-            params:{date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{date:moment(date).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -340,11 +343,11 @@ export async function findByEntryDateAfterAndType({date, type}){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!isLedgerEntryTypeValid.includes(type?.toUpperCase()) || !validateDate){
-            throw new Error("Dati datum unosa posle "+validateDate+" i tip "+type+" nisu pronadjeni");
+            throw new Error("Dati datum unosa posle "+date+" i tip "+type+" nisu pronadjeni");
         }
         const response = await api.get(url+`/dateAfter-type`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss"),
+                date:moment(date).format("YYYY-MM-DDTHH:mm:ss"),
                 type:(type || "").toUpperCase()
             },
             headers:getHeader()
@@ -360,16 +363,16 @@ export async function findByEntryDateBetweenAndAccount_Id({start, end,accountId}
     try{
         const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        if(!validateDateStart || !validateDateEnd ||accountId == null || Number.isNaN(Number(accountId))){
-            throw new Error("Dati pocetak "+validateDateStart+" i kraju "+validateDateEnd+" datuma kao i id "+accountId+" racuna nisu pronadjeni");
+        if(!validateDateStart || !validateDateEnd ||accountId == null || isNaN(accountId)){
+            throw new Error("Dati pocetak "+start+" i kraju "+end+" datuma kao i id "+accountId+" racuna nisu pronadjeni");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/account/${accountId}/date-range`,{
             params:{
-                start:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });

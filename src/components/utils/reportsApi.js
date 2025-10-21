@@ -33,7 +33,7 @@ export const generateReport = async (reportType) => {
 
 export const downloadReport = async (reportId) => {
     try {
-        if(reportId == null || Number.isNaN(Number(reportId))){
+        if(reportId == null || isNaN(reportId)){
           throw new Error("Id od report-a nije pronadjen.");
         }
         const response = await axios.get(url+`/download/${reportId}`, { responseType: 'blob' });
@@ -46,7 +46,7 @@ export const downloadReport = async (reportId) => {
 
 export async function getReportById(id){
     try{
-        if(reportId == null || Number.isNaN(Number(reportId))){
+        if(reportId == null || isNaN(reportId)){
           throw new Error("Id "+id+" od report-a nije pronadjen.");
         }
         const response = await api.get(url+`/get/${id}`,{
@@ -80,15 +80,15 @@ export async function getReportsBetweenDates({from, to}){
       const validateFrom = moment.isMoment(from) || moment(from,"YYYY-MM-DDTHH:mm:ss").isValid();
       const validateTo = moment.isMoment(to) || moment(to,"YYYY-MM-DDTHH:mm:ss").isValid();
       if(!validateFrom || !validateTo){
-          throw new Error("Dati izvestaj nije pronadjen u opsegu "+validateFrom+" - "+validateToto+" datuma");
+          throw new Error("Dati izvestaj nije pronadjen u opsegu "+from+" - "+to+" datuma");
       }
-      if(moment(validateTo).isBefore(moment(validateFrom))){
+      if(moment(to).isBefore(moment(from))){
           throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
       }
       const response = await api.get(url+`/date-range`,{
           params : {
-            from: moment(validateFrom).format("YYYY-MM-DDTHH:mm:ss"),
-            to: moment(validateTo).format("YYYY-MM-DDTHH:mm:ss")
+            from: moment(from).format("YYYY-MM-DDTHH:mm:ss"),
+            to: moment(to).format("YYYY-MM-DDTHH:mm:ss")
           },
           headers:getHeader()
       });

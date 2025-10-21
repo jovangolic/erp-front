@@ -23,9 +23,9 @@ export async function createRawMaterial({name, unitMeasure, supplierType, storag
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
             !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
-            storageId == null || Number.isNaN(Number(storageId)) || 
-            supplyId == null || Number.isNaN(Number(supplyId)) || Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0 ||
-            productId == null || Number.isNaN(Number(productId)) || !Array.isArray(barCodes) || barCodes.length === 0
+            storageId == null || isNaN(storageId) || 
+            supplyId == null || isNaN(supplyId) || isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0 ||
+            productId == null || isNaN(productId) || !Array.isArray(barCodes) || barCodes.length === 0
         ){
             throw new Error("Sva polja moraju biti popunjena");
         }
@@ -49,14 +49,14 @@ export async function updateRawMaterial({id, name, unitMeasure, supplierType, st
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !nama || typeof name !=="string" || name.trim()==="" ||
             !isSupplierTypeValidated.includes(supplierType?.toUpperCase()) ||
             !isStorageTypeValidated.includes(storageType?.toUpperCase()) ||
             !isGoodsTypeValidated.includes(goodsType?.toUpperCase()) ||
-            storageId == null || Number.isNaN(Number(storageId)) || 
-            supplyId == null || Number.isNaN(Number(supplyId)) || Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0 ||
-            productId == null || Number.isNaN(Number(productId)) || !Array.isArray(barCodes) || barCodes.length === 0
+            storageId == null || isNaN(storageId) || 
+            supplyId == null || isNaN(supplyId) || isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0 ||
+            productId == null || isNaN(productId) || !Array.isArray(barCodes) || barCodes.length === 0
         ){
             throw new Error("Sva polja moraju biti popunjena");
         }
@@ -78,7 +78,7 @@ export async function updateRawMaterial({id, name, unitMeasure, supplierType, st
 
 export async function deleteRawMaterial(id){
     try{
-        if(id = null || Number.isNaN(Number(id))){
+        if(id = null || isNaN(id)){
             throw new Error("Dati rawMaterial ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -93,7 +93,7 @@ export async function deleteRawMaterial(id){
 
 export async function findOneRawMaterial(id){
     try{
-        if(id = null || Number.isNaN(Number(id))){
+        if(id = null || isNaN(id)){
             throw new Error("Dati rawMaterial ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -140,8 +140,9 @@ export async function filterRawMaterials(shelfId, minQty, maxQty, productId){
     try{
         const parseMinQty = parseFloat(minQty);
         const parseMaxQty = parseFloat(maxQty);
-        if(shelfId == null || Number.isNaN(Number(shelfId)) || productId == null || Number.isNaN(Number(productId)) ||
-            Number.isNaN(Number(parseMinQty)) || parseMinQty < 0 || Number.isNaN(Number(parseMaxQty)) || parseMaxQty <= 0){
+        if(
+            shelfId == null || isNaN(shelfId) || productId == null || isNaN(productId) ||
+            isNaN(parseMinQty) || parseMinQty < 0 || isNaN(parseMaxQty) || parseMaxQty <= 0){
             throw new Error("Dati filter parametri: "+shelfId+" ,"+parseMinQty+" , "+parseMaxQty+" , "+productId+" ne daju ocekivani rezultat");
         }
         const response = await api.get(url+`/filter`,{
@@ -161,7 +162,7 @@ export async function filterRawMaterials(shelfId, minQty, maxQty, productId){
 export async function findByCurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/current-quantity`,{
@@ -178,7 +179,7 @@ export async function findByCurrentQuantity(currentQuantity){
 export async function findByCurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina manja od "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/current-quantity-less-than`,{
@@ -195,7 +196,7 @@ export async function findByCurrentQuantityLessThan(currentQuantity){
 export async function findByCurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data trenutna kolicina veca od "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/current-quantity-greater-than`,{
@@ -212,7 +213,7 @@ export async function findByCurrentQuantityGreaterThan(currentQuantity){
 export async function findByProduct_CurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina "+parseCurrentQuantity+" za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/product/current-quantity`,{
@@ -229,7 +230,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
 export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina veca od "+parseCurrentQuantity+" za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/product/current-quantity-greater-than`,{
@@ -246,7 +247,7 @@ export async function findByProduct_CurrentQuantityGreaterThan(currentQuantity){
 export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Data kolicina manja od "+parseCurrentQuantity+" za proizvod nije pronadjena");
         }
         const response = await api.get(url+`/product/current-quantity-less-than`,{
@@ -262,7 +263,7 @@ export async function findByProduct_CurrentQuantityLessThan(currentQuantity){
 
 export async function findByShelf_Id(shelfId){
     try{
-        if(shelfId == null || Number.isNaN(Number(shelfId))){
+        if(shelfId == null || isNaN(shelfId)){
             throw new Error("Dati ID "+shelfId+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/shelf/${shelfId}`,{
@@ -278,7 +279,7 @@ export async function findByShelf_Id(shelfId){
 export async function countByShelf_RowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(parseRowCount <= 0 || Number.isNaN(Number(parseRowCount))){
+        if(parseRowCount <= 0 || isNaN(parseRowCount)){
             throw new Error("Dati red "+parseRowCount+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/count/shelf/rows`,{
@@ -295,7 +296,7 @@ export async function countByShelf_RowCount(rowCount){
 export async function countByShelf_Cols(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(parseCols <= 0 || Number.isNaN(Number(parseCols))){
+        if(parseCols <= 0 || isNaN(parseCols)){
             throw new Error("Data kolona "+parseCols+" za policu nije pronadjena");
         }
         const response = await api.get(url+`/count/shelf/cols`,{
@@ -312,7 +313,7 @@ export async function countByShelf_Cols(cols){
 export async function findByShelfAndExactQuantity(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(shelfId == null || Number.isNaN(Number(shelfId)) || parseQuantity <= 0 || Number.isNaN(Number(parseQuantity))){
+        if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
             throw new Error("Dati ID "+shelfId+" za policu i kolicinu "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(url+`/shelf/${shelfId}/quantity-equal`,{
@@ -329,7 +330,7 @@ export async function findByShelfAndExactQuantity(shelfId, quantity){
 export async function findByShelfAndQuantityGreaterThan(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(shelfId == null || Number.isNaN(Number(shelfId)) || parseQuantity <= 0 || Number.isNaN(Number(parseQuantity))){
+        if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
             throw new Error("Dati ID "+shelfId+" za policu i kolicinu vecu od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(url+`/shelf/${shelfId}/quantity-greater-than`,{
@@ -346,7 +347,7 @@ export async function findByShelfAndQuantityGreaterThan(shelfId, quantity){
 export async function findByShelfAndQuantityLessThan(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(shelfId == null || Number.isNaN(Number(shelfId)) || parseQuantity <= 0 || Number.isNaN(Number(parseQuantity))){
+        if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
             throw new Error("Dati ID "+shelfId+" za policu i kolicinu manju od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(url+`/shelf/${shelfId}/quantity-less-than`,{
@@ -363,7 +364,7 @@ export async function findByShelfAndQuantityLessThan(shelfId, quantity){
 export async function findByShelf_IdAndCurrentQuantityGreaterThan(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(shelfId == null || Number.isNaN(Number(shelfId)) || parseQuantity <= 0 || Number.isNaN(Number(parseQuantity))){
+        if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
             throw new Error("Dati ID "+shelfId+" za policu i kolicinu vecu od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(url+`/shelf/${shelfId}/current-quantity-greater-than`,{
@@ -380,7 +381,7 @@ export async function findByShelf_IdAndCurrentQuantityGreaterThan(shelfId, quant
 export async function findByShelf_IdAndCurrentQuantityLessThan(shelfId, quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(shelfId == null || Number.isNaN(Number(shelfId)) || parseQuantity <= 0 || Number.isNaN(Number(parseQuantity))){
+        if(shelfId == null || isNaN(shelfId) || parseQuantity <= 0 || isNaN(parseQuantity)){
             throw new Error("Dati ID "+shelfId+" za policu i kolicinu manju od "+parseQuantity+" nije pronadjen");
         }
         const response = await api.get(url+`/shelf/${shelfId}/current-quantity-less-than`,{

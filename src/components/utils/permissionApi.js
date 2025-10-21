@@ -123,7 +123,7 @@ export async function getAll(){
 
 export async function deletePermission(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za permisson nije pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/permission/delete/${id}`,{
@@ -139,7 +139,7 @@ export async function deletePermission(id){
 export async function updatePermission({id, resourceType,actionType}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !isPermissionResourceTypeValid.includes(resourceType?.toUpperCase()) || !isPermissionActionTypeValid.includes(actionType?.toUpperCase())
         ){
             throw new Error("Tip mora biti validan i popunjen");
@@ -157,7 +157,7 @@ export async function updatePermission({id, resourceType,actionType}){
 
 export async function getPermissionById(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za permision nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/permission/get/${id}`,{

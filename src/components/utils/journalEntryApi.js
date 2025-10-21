@@ -43,7 +43,7 @@ export async function createJournalEntry({ entryDate, description, itemRequests 
 export async function updateJournalEntry({id,entryDate, description, itemRequests}){
     try{
         const formattedEntryDate = moment.isMoment(entryDate) || moment(formattedEntryDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        if( id == null || Number.isNaN(Number(id)) ||
+        if( id == null || isNaN(id) ||
             !formattedEntryDate ||
             !description ||typeof description !=="string" || description.trim() === "" ||
             !Array.isArray(itemRequests) || itemRequests.length === 0){
@@ -71,7 +71,7 @@ export async function updateJournalEntry({id,entryDate, description, itemRequest
 
 export async function deleteJournalEntry(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za JournalEntry nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -86,7 +86,7 @@ export async function deleteJournalEntry(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za JournalEntry nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -132,15 +132,15 @@ export async function findByEntryDateBetween({start, end}){
         const formattedStart = moment.isMoment(start) || moment(start,"YYYY-MM-DTHH:mm:ss",true).isValid();
         const formattedEnd = moment.isMoment(end) || moment(start,"YYYY-MM-DTHH:mm:ss",true).isValid()
         if(!formattedStart || !formattedEnd){
-            throw new Error("Dati opseg "+formattedStart+" - "+formattedEnd+" dateuma nije pronadjen");
+            throw new Error("Dati opseg "+start+" - "+end+" dateuma nije pronadjen");
         }
-        if(moment(formattedEnd).isBefore(moment(formattedStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/entry-date-between`,{
             params:{
-                start: moment(formattedStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end: moment(formattedEnd).format("YYYY-MM-DDTHH:mm:ss")},
+                start: moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end: moment(end).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -154,10 +154,10 @@ export async function findByEntryDateOn(date){
     try{
         const formattedDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!formattedDate){
-            throw new Error("Dati datum "+formattedDate+" za entryDateOn nije pronadjen");
+            throw new Error("Dati datum "+date+" za entryDateOn nije pronadjen");
         }
         const response = await api.get(url+`/entry-dateOn`,{
-            params:{date: moment(formattedDate).format("YYYY-MM-DD")},
+            params:{date: moment(date).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -171,10 +171,10 @@ export async function findByEntryDateBefore(dateTime){
     try{
         const formattedDateTime = moment.isMoment(dateTime) || moment(dateTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!formattedDateTime){
-            throw new Error("Dati datum unosa pre "+formattedDateTime+" nije pronadjen");
+            throw new Error("Dati datum unosa pre "+dateTime+" nije pronadjen");
         }
         const response = await api.get(url+`/entry-date-before`,{
-            params:{dateTime: moment(formattedDateTime).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{dateTime: moment(dateTime).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -188,10 +188,10 @@ export async function findByEntryDateAfter(dateTime){
     try{
         const formattedDateTime = moment.isMoment(dateTime) || moment(dateTime,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!formattedDateTime){
-            throw new Error("Dati datum unosa posle "+formattedDateTime+" nije pronadjen");
+            throw new Error("Dati datum unosa posle "+dateTime+" nije pronadjen");
         }
         const response = await api.get(url+`/entry-date-after`,{
-            params:{dateTime: moment(formattedDateTime).format("YYYY-MM-DDTHH:mm:ss")},
+            params:{dateTime: moment(dateTime).format("YYYY-MM-DDTHH:mm:ss")},
             headers:getHeader()
         });
         return response.data;
@@ -204,7 +204,7 @@ export async function findByEntryDateAfter(dateTime){
 export async function findByYear(year){
     try{
         const parseYear = parseInt(year);
-        if(Number.isNaN(Number(parseYear)) || parseYear <= 0){
+        if(isNaN(parseYear) || parseYear <= 0){
             throw new Error("Data godina "+parseYear+" nije pronadjena");
         }
         const response = await api.get(url+`/by-year`,{
@@ -224,15 +224,15 @@ export async function findByDescriptionAndEntryDateBetween({description,start, e
         const formattedEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid()
         if(!description || typeof description !== "string" || description.trim() === "" ||
             !formattedStart || !formattedEnd){
-            throw new Error("Dati opis "+description+" i opseg datuma "+formattedStart+" - "+formattedEnd+" nisu pronadjeni");
+            throw new Error("Dati opis "+description+" i opseg datuma "+start+" - "+end+" nisu pronadjeni");
         }
-        if(moment(formattedEnd).isBefore(moment(formattedStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/by-description-and-date`,{
             params:{
-                start:moment(formattedStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(formattedEnd).format("YYYY-MM-DDTHH:mm:ss"),
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss"),
                 description:description
             },
             headers:getHeader()

@@ -13,12 +13,13 @@ const isGoToTypeValid = ["NAVIGATION","ACTION"];
 
 export async function createGoTo({label,description,category,type,path,icon,active,roles}){
     try{
-        if(!label || typeof label !== "string" || label.trim() === "" ||
-          !description || typeof description !== "string" || description.trim() === "" ||
-          !isGoToCategoryValid.includes(category?.toUpperCase()) || !isGoToTypeValid.includes(type?.toUpperCase()) || 
-          !path || typeof path !== "string" || path.trim() === "" || typeof active !== "boolean" ||
-          !roles || typeof roles !== "string" || roles.trim() === ""){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+        if(
+            !label || typeof label !== "string" || label.trim() === "" ||
+            !description || typeof description !== "string" || description.trim() === "" ||
+            !isGoToCategoryValid.includes(category?.toUpperCase()) || !isGoToTypeValid.includes(type?.toUpperCase()) || 
+            !path || typeof path !== "string" || path.trim() === "" || typeof active !== "boolean" ||
+            !roles || typeof roles !== "string" || roles.trim() === ""){
+                throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requiredBody = {label,description,category,type,path,icon,active,roles};
         const response = await api.post(url+`/create/new-goto`,requiredBody,{
@@ -34,7 +35,7 @@ export async function createGoTo({label,description,category,type,path,icon,acti
 export async function updateGoTo({id,label,description,category,type,path,icon,active,roles}){
     try{
         if(
-          Number.isNaN(Number(id)) || id == null ||
+          isNaN(id) || id == null ||
           !label || typeof label !== "string" || label.trim() === "" ||
           !description || typeof description !== "string" || description.trim() === "" ||
           !isGoToCategoryValid.includes(category?.toUpperCase()) || !isGoToTypeValid.includes(type?.toUpperCase()) || 
@@ -55,7 +56,7 @@ export async function updateGoTo({id,label,description,category,type,path,icon,a
 
 export async function deleteGoTo(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za GotTo, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -70,7 +71,7 @@ export async function deleteGoTo(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za GotTo, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{

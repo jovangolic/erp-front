@@ -26,13 +26,14 @@ export async function createInspection({code,type,date,batchId,productId,inspect
         const parseQuantityAccepted = parseInt(quantityAccepted,10);
         const parseQuantityRejected = parseInt(quantityRejected,10);
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss").isValid();
-        if(!code || typeof code !== "string" || code.trim() === "" || !isInspectionTypeValid.includes(type?.toUpperCase()) ||
-           !isInspectionResultValid.includes(result?.toUpperCase()) || !validateDate ||
-           Number.isNaN(Number(batchId)) || batchId == null || Number.isNaN(Number(productId)) || productId == null || Number.isNaN(Number(inspectorId)) || inspectorId == null ||
-           Number.isNaN(Number(parseQuantityInspected)) || parseQuantityInspected <= 0 || Number.isNaN(Number(parseQuantityAccepted)) || parseQuantityAccepted <= 0 ||
-           Number.isNaN(Number(parseQuantityRejected)) || parseQuantityRejected <= 0 || !notes || typeof notes !== "string" || notes.trim() === "" ||
-           Number.isNaN(Number(qualityCheckId)) || qualityCheckId == null){
-            throw new Error("Sva polja moraju biti popunjena i validna");
+        if(
+            !code || typeof code !== "string" || code.trim() === "" || !isInspectionTypeValid.includes(type?.toUpperCase()) ||
+            !isInspectionResultValid.includes(result?.toUpperCase()) || !validateDate ||
+            isNaN(batchId) || batchId == null || isNaN(productId) || productId == null || isNaN(inspectorId) || inspectorId == null ||
+            isNaN(parseQuantityInspected) || parseQuantityInspected <= 0 || isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0 ||
+            isNaN(parseQuantityRejected) || parseQuantityRejected <= 0 || !notes || typeof notes !== "string" || notes.trim() === "" ||
+            isNaN(qualityCheckId) || qualityCheckId == null){
+                throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {code,type,date,batchId,productId,inspectorId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId};
         const response = await api.post(url+`/create/new-inspection`,requestBody,{
@@ -51,13 +52,14 @@ export async function updateInspection({id,code,type,date,batchId,productId,insp
         const parseQuantityAccepted = parseInt(quantityAccepted,10);
         const parseQuantityRejected = parseInt(quantityRejected,10);
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss").isValid();
-        if( Number.isNaN(Number(id)) || id == null ||
+        if(
+            id == null || isNaN(id) ||
             !code || typeof code !== "string" || code.trim() === "" || !isInspectionTypeValid.includes(type?.toUpperCase()) ||
             !isInspectionResultValid.includes(result?.toUpperCase()) || !validateDate ||
-            Number.isNaN(Number(batchId)) || batchId == null || Number.isNaN(Number(productId)) || productId == null || Number.isNaN(Number(inspectorId)) || inspectorId == null ||
-            Number.isNaN(Number(parseQuantityInspected)) || parseQuantityInspected <= 0 || Number.isNaN(Number(parseQuantityAccepted)) || parseQuantityAccepted <= 0 ||
-            Number.isNaN(Number(parseQuantityRejected)) || parseQuantityRejected <= 0 || !notes || typeof notes !== "string" || notes.trim() === "" ||
-            Number.isNaN(Number(qualityCheckId)) || qualityCheckId == null){
+            isNaN(batchId) || batchId == null || isNaN(productId) || productId == null || isNaN(inspectorId) || inspectorId == null ||
+            isNaN(parseQuantityInspected) || parseQuantityInspected <= 0 || isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0 ||
+            isNaN(parseQuantityRejected) || parseQuantityRejected <= 0 || !notes || typeof notes !== "string" || notes.trim() === "" ||
+            isNaN(qualityCheckId) || qualityCheckId == null){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {code,type,date,batchId,productId,inspectorId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId};
@@ -73,7 +75,7 @@ export async function updateInspection({id,code,type,date,batchId,productId,insp
 
 export async function deleteInspection(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za inspekciju, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -88,7 +90,7 @@ export async function deleteInspection(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -118,9 +120,9 @@ export async function searchInspections({storageName, storageLocation, minCapaci
         const parseMinCapacity = parseFloat(minCapacity);
         const parseMaxCapacity = parseFloat(maxCapacity);
         if(
-            Number.isNaN(Number(parseMinCapacity)) || parseMinCapacity <= 0 || Number.isNaN(Number(parseMaxCapacity)) || parseMaxCapacity <= 0 ||
-           !storageName || typeof storageName !== "string" || storageName.trim() === "" ||
-           !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
+            isNaN(parseMinCapacity) || parseMinCapacity <= 0 || isNaN(parseMaxCapacity) || parseMaxCapacity <= 0 ||
+            !storageName || typeof storageName !== "string" || storageName.trim() === "" ||
+            !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
                 throw new Error("Parametri za pretragu: "+parseMinCapacity+" ,"+parseMaxCapacity+" ,"+storageLocation+" ,"+storageName+" ne daju ocekivani rezultat");
         }
         if(parseMinCapacity > parseMaxCapacity){
@@ -144,7 +146,7 @@ export async function searchInspections({storageName, storageLocation, minCapaci
 
 export async function getQuantityInspected(inspectionId){
     try{
-        if(Number.isNaN(Number(inspectionId)) || inspectionId == null){
+        if(isNaN(inspectionId) || inspectionId == null){
             throw new Error("Dati id "+inspectionId+" za inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-inspected/${inspectionId}`,{
@@ -159,7 +161,7 @@ export async function getQuantityInspected(inspectionId){
 
 export async function getQuantityAccepted(inspectionId){
     try{
-        if(Number.isNaN(Number(inspectionId)) || inspectionId == null){
+        if(isNaN(inspectionId) || inspectionId == null){
             throw new Error("Dati id "+inspectionId+" za inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-accepted/${inspectionId}`,{
@@ -174,7 +176,7 @@ export async function getQuantityAccepted(inspectionId){
 
 export async function getQuantityRejected(inspectionId){
     try{
-        if(Number.isNaN(Number(inspectionId)) || inspectionId == null){
+        if(isNaN(inspectionId) || inspectionId == null){
             throw new Error("Dati id "+inspectionId+" za inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quantity-rejected/${inspectionId}`,{
@@ -370,11 +372,11 @@ export async function findByInspectionDate(inspectionDate){
     try{
         const validateDate = moment.isMoment(inspectionDate) || moment(inspectionDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Datum za datu inspekciju "+validateDate+" nije pronadjen");
+            throw new Error("Datum za datu inspekciju "+inspectionDate+" nije pronadjen");
         }
         const response = await api.get(url+`/inspection-date`,{
             params:{
-                inspectionDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                inspectionDate:moment(inspectionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -389,11 +391,11 @@ export async function findByInspectionDateBefore(inspectionDate){
     try{
         const validateDate = moment.isMoment(inspectionDate) || moment(inspectionDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Datum pre za datu inspekciju "+validateDate+" nije pronadjen");
+            throw new Error("Datum pre za datu inspekciju "+i+" nije pronadjen");
         }
         const response = await api.get(url+`/inspection-date-before`,{
             params:{
-                inspectionDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                inspectionDate:moment(inspectionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -408,11 +410,11 @@ export async function findByInspectionDateAfter(inspectionDate){
     try{
         const validateDate = moment.isMoment(inspectionDate) || moment(inspectionDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Datum posle za datu inspekciju "+validateDate+" nije pronadjen");
+            throw new Error("Datum posle za datu inspekciju "+inspectionDate+" nije pronadjen");
         }
         const response = await api.get(url+`/inspection-date-after`,{
             params:{
-                inspectionDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                inspectionDate:moment(inspectionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -428,15 +430,15 @@ export async function findByInspectionDateBetween({start, end}){
         const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss").isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDateStart || !validateDateEnd){
-            throw new Error("Opseg datuma "+validateDateStart+" - "+validateDateEnd+" inspekcije, nije pronadjen");
+            throw new Error("Opseg datuma "+start+" - "+end+" inspekcije, nije pronadjen");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum kraja inspekcije ne sme biti ispred datuma pocetka inspekcije");
         }
         const response = await api.get(url+`/inspection-date-between`,{
             params:{
-                start:moment(validateDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -451,11 +453,11 @@ export async function findByInspectionDateAndResult({inspectionDate, result}){
     try{
         const validateDate = moment.isMoment(inspectionDate) || moment(inspectionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate|| !isInspectionResultValid.includes(result?.toUpperCase())){
-            throw new Error("Datum inspekcije "+validateDate+" i njen rezultat "+result+" nisu pronadjeni");
+            throw new Error("Datum inspekcije "+inspectionDate+" i njen rezultat "+result+" nisu pronadjeni");
         }
         const response = await api.get(url+`/inspection-date-and-result`,{
             params:{
-                inspectionDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss"),
+                inspectionDate:moment(inspectionDate).format("YYYY-MM-DDTHH:mm:ss"),
                 result:(result || "").toUpperCase()
             },
             headers:getHeader()
@@ -469,7 +471,7 @@ export async function findByInspectionDateAndResult({inspectionDate, result}){
 
 export async function findByBatchId(batchId){
     try{
-        if(Number.isNaN(Number(batchId)) || batchId == null){
+        if(isNaN(batchId) || batchId == null){
             throw new Error("Dati batch id "+batchId+" za inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/batch/${batchId}`,{
@@ -520,11 +522,11 @@ export async function findByBatch_ExpiryDate(expiryDate){
     try{
         const validateDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum isticanja "+validateDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum isticanja "+expiryDate+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/expiry-date`,{
             params:{
-                expiryDate:moment(validateDate).format("YYYY-MM-DD")
+                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -539,11 +541,11 @@ export async function findByBatch_ExpiryDateAfter(expiryDate){
     try{
         const validateDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum isticanja posle "+validateDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum isticanja posle "+expiryDate+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/expiry-date-after`,{
             params:{
-                expiryDate:moment(validateDate).format("YYYY-MM-DD")
+                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -558,11 +560,11 @@ export async function findByBatch_ExpiryDateBefore(expiryDate){
     try{
         const validateDate = moment.isMoment(expiryDate) || moment(expiryDate,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum isticanja pre "+validateDate+" za dati batch, nije pronadjen");
+            throw new Error("Datum isticanja pre "+expiryDate+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/expiry-date-before`,{
             params:{
-                expiryDate:moment(validateDate).format("YYYY-MM-DD")
+                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -578,15 +580,15 @@ export async function findByBatch_ExpiryDateBetween({start, end}){
         const validateDateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateDateStart || !validateDateEnd){
-            throw new Error("Datum opsega "+validateDateStart+" - "+validateDateEnd+" isticanja za dati batch, nije pronadjen");
+            throw new Error("Datum opsega "+start+" - "+end+" isticanja za dati batch, nije pronadjen");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum isticanja za kraj ne sme biti ispred datuma isticanja za pocetak");
         }
         const response = await api.get(url+`/search/batch/expiry-date-range`,{
             params:{
-                start:moment(validateDateStart).format("YYYY-MM-DD"),
-                end:moment(validateDateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -601,11 +603,11 @@ export async function findByBatch_ProductionDate(productionDate){
     try{
         const validateDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum proizvodnje "+validateDate+" za batch, nije pronadjen");
+            throw new Error("Datum proizvodnje "+productionDate+" za batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/production-date`,{
             params:{
-                productionDate:moment(validateDate).format("YYYY-MM-DD")
+                productionDate:moment(productionDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -620,11 +622,11 @@ export async function findByBatch_ProductionDateAfter(productionDate){
     try{
         const validateDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum proizvodnje posle "+validateDate+" za batch, nije pronadjen");
+            throw new Error("Datum proizvodnje posle "+productionDate+" za batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/production-date-after`,{
             params:{
-                productionDate:moment(validateDate).format("YYYY-MM-DD")
+                productionDate:moment(productionDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -639,11 +641,11 @@ export async function findByBatch_ProductionDateBefore(productionDate){
     try{
         const validateDate = moment.isMoment(productionDate) || moment(productionDate,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Datum proizvodnje pre "+validateDate+" za batch, nije pronadjen");
+            throw new Error("Datum proizvodnje pre "+productionDate+" za batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/production-date-before`,{
             params:{
-                productionDate:moment(validateDate).format("YYYY-MM-DD")
+                productionDate:moment(productionDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -659,15 +661,15 @@ export async function findByBatch_ProductionDateBetween({productionDateStart, pr
         const validateDateStart = moment.isMoment(productionDateStart) || moment(productionDateStart,"YYYY-MM-DD",true).isValid();
         const validateDateEnd = moment.isMoment(productionDateEnd) || moment(productionDateEnd,"YYYY-MM-DD",true).isValid();
         if(!validateDateStart || !validateDateEnd){
-            throw new Error("Opseg datuma proizvodnje "+validateDateStart+" - "+validateDateEnd+" za batch, nije pronadjen");
+            throw new Error("Opseg datuma proizvodnje "+productionDateStart+" - "+productionDateEnd+" za batch, nije pronadjen");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(productionDateEnd).isBefore(moment(productionDateStart))){
             throw new Error("Datum za kraj proizvodnje ne sme biti ispred datuma za pocetak proizvodnje");
         }
         const response = await api.get(url+`/search/batch/production-date-range`,{
             params:{
-                productionDateStart:moment(validateDateStart).format("YYYY-MM-DD"),
-                productionDateEnd:moment(validateDateEnd).format("YYYY-MM-DD")
+                productionDateStart:moment(productionDateStart).format("YYYY-MM-DD"),
+                productionDateEnd:moment(productionDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -718,11 +720,11 @@ export async function findByBatch_ExpiryDateGreaterThanEqual(expiryDate){
     try{
         const validateDate = moment.isMoment(expiryDate) || moment().isValid(expiryDate,"YYYY-MM-DD",true);
         if(!validateDate){
-            throw new Error("Datum isticanja batcha >= "+validateDate+" datumu, nije pronadjen");
+            throw new Error("Datum isticanja batcha >= "+expiryDate+" datumu, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/expiry-date-greater-than-equal`,{
             params:{
-                expiryDate:moment(validateDate).format("YYYY-MM-DD")
+                expiryDate:moment(expiryDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -737,11 +739,11 @@ export async function findByBatch_ProductionDateLessThanEqual(productionDate){
     try{
         const validateDate = moment.isMoment(productionDate) || moment().isValid(productionDate,"YYYY-MM-DD",true);
         if(!validateDate){
-            throw new Error("Datum proizvodnje batcha <= "+validateDate+" datuum, nije pronadjen");
+            throw new Error("Datum proizvodnje batcha <= "+productionDate+" datuum, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/production-date-less-than-equal`,{
             params:{
-                productionDate:moment(validateDate).format("YYYY-MM-DD")
+                productionDate:moment(productionDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -815,7 +817,7 @@ export async function findByBatch_ExpiryDateIsNull(){
 export async function findByBatch_QuantityProduced(quantityProduced){
     try{
         const parseQuantityProduced = parseInt(quantityProduced,10);
-        if(Number.isNaN(Number(parseQuantityProduced)) || parseQuantityProduced <= 0){
+        if(isNaN(parseQuantityProduced) || parseQuantityProduced <= 0){
             throw new Error("Proizvedena kolicina "+parseQuantityProduced+" za dati batch, nije pronadjena");
         }
         const response = await api.get(url+`/search/batch/quantity-produced`,{
@@ -834,7 +836,7 @@ export async function findByBatch_QuantityProduced(quantityProduced){
 export async function findByBatch_QuantityProducedGreaterThan(quantityProduced){
     try{
         const parseQuantityProduced = parseInt(quantityProduced,10);
-        if(Number.isNaN(Number(parseQuantityProduced)) || parseQuantityProduced <= 0){
+        if(isNaN(parseQuantityProduced) || parseQuantityProduced <= 0){
             throw new Error("Proizvedena kolicina veca od "+parseQuantityProduced+" za dati batch, nije pronadjena");
         }
         const response = await api.get(url+`/search/batch/quantity-produced-greater-than`,{
@@ -853,7 +855,7 @@ export async function findByBatch_QuantityProducedGreaterThan(quantityProduced){
 export async function findByBatch_QuantityProducedLessThan(quantityProduced){
     try{
         const parseQuantityProduced = parseInt(quantityProduced,10);
-        if(Number.isNaN(Number(parseQuantityProduced)) || parseQuantityProduced <= 0){
+        if(isNaN(parseQuantityProduced) || parseQuantityProduced <= 0){
             throw new Error("Proizvedena kolicina manja od "+parseQuantityProduced+" za dati batch, nije pronadjena");
         }
         const response = await api.get(url+`/search/batch/quantity-produced-less-than`,{
@@ -873,7 +875,7 @@ export async function findByBatch_QuantityProducedBetween({min, max}){
     try{
         const parseMin = parseInt(min,10);
         const parseMax = parseInt(max,10);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax  <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax  <= 0){
             throw new Error("Opseg proixvedene kolicine "+parseMin+" - "+parseMax+" za dati batch, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -895,7 +897,7 @@ export async function findByBatch_QuantityProducedBetween({min, max}){
 
 export async function findByBatch_ProductId(productId){
     try{
-        if(Number.isNaN(Number(productId)) || productId == null){
+        if(isNaN(productId) || productId == null){
             throw new Error("Dati id "+productId+" proizvoda za batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/product/${productId}`,{
@@ -911,7 +913,7 @@ export async function findByBatch_ProductId(productId){
 export async function findByBatch_ProductCurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Trenutna kolicina "+parseCurrentQuantity+" proizvoda za dati batch, nije pronadjena");
         }
         const response = await api.get(url+`/search/batch/product-current-quantity`,{
@@ -930,7 +932,7 @@ export async function findByBatch_ProductCurrentQuantity(currentQuantity){
 export async function findByBatch_ProductCurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Trenutna kolicina veca od "+parseCurrentQuantity+" proizvoda za dati batch, nije pronadjena");
         }
         const response = await api.get(url+`/search/batch/product-current-quantity-greater-than`,{
@@ -949,7 +951,7 @@ export async function findByBatch_ProductCurrentQuantityGreaterThan(currentQuant
 export async function findByBatch_ProductCurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Trenutna kolicina manja od "+parseCurrentQuantity+" proizvoda za dati batch, nije pronadjena");
         }
         const response = await api.get(url+`/search/batch/product-current-quantity-less-than`,{
@@ -969,7 +971,7 @@ export async function findByBatch_ProductCurrentQuantityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Opseg proizvedene kolicine "+parseMin+" - "+parseMax+" za dati batch, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -1081,7 +1083,7 @@ export async function findByBatch_ProductGoodsType(goodsType){
 
 export async function findByBatch_Product_StorageId(storageId){
     try{
-        if(Number.isNaN(Number(storageId)) || storageId == null){
+        if(isNaN(storageId) || storageId == null){
             throw new Error("ID skladista "+storageId+" za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/product/storage/${storageId}`,{
@@ -1096,7 +1098,7 @@ export async function findByBatch_Product_StorageId(storageId){
 
 export async function findByBatch_Product_ShelfId(shelfId){
     try{
-        if(Number.isNaN(Number(shelfId)) || shelfId == null){
+        if(isNaN(shelfId) || shelfId == null){
             throw new Error("ID "+shelfId+" police za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/product/shelf/${shelfId}`,{
@@ -1111,7 +1113,7 @@ export async function findByBatch_Product_ShelfId(shelfId){
 
 export async function findByBatch_Product_SupplyId(supplyId){
     try{
-        if(Number.isNaN(Number(supplyId)) || supplyId == null){
+        if(isNaN(supplyId) || supplyId == null){
             throw new Error("ID "+supplyId+" dobavljaca zadati batch, nije pronadjen");
         }
         const response = await api.get(url+`/search/batch/product/supply/${supplyId}`,{
@@ -1126,7 +1128,7 @@ export async function findByBatch_Product_SupplyId(supplyId){
 
 export async function findByInspectorId(inspectorId){
     try{
-        if(Number.isNaN(Number(inspectorId)) || inspectorId == null){
+        if(isNaN(inspectorId) || inspectorId == null){
             throw new Error("ID "+inspectorId+" inspektora za dati batch, nije pronadjen");
         }
         const response = await api.get(url+`/inspector/${inspectorId}`,{
@@ -1197,7 +1199,7 @@ export async function findByInspectorPhoneNumberLikeIgnoreCase(inspectorPhoneNum
 
 export async function findByProductId(productId){
     try{
-        if(Number.isNaN(Number(productId)) || productId == null){
+        if(isNaN(productId) || productId == null){
             throw new Error("ID "+productId+" proizvoda za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/product/${productId}`,{
@@ -1213,7 +1215,7 @@ export async function findByProductId(productId){
 export async function findByProductCurrentQuantity(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Trenutna kolicina "+parseCurrentQuantity+" proizvoda za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(url+`/product-current-quantity`,{
@@ -1232,7 +1234,7 @@ export async function findByProductCurrentQuantity(currentQuantity){
 export async function findByProductCurrentQuantityGreaterThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Trenutna kolicina veca od "+parseCurrentQuantity+" proizvoda za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(url+`/product-current-quantity-greater-than`,{
@@ -1251,7 +1253,7 @@ export async function findByProductCurrentQuantityGreaterThan(currentQuantity){
 export async function findByProductCurrentQuantityLessThan(currentQuantity){
     try{
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if(Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0){
+        if(isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0){
             throw new Error("Trenutna kolicina manja od "+parseCurrentQuantity+" proizvoda za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(url+`/product-current-quantity-less-than`,{
@@ -1271,7 +1273,7 @@ export async function findByProductCurrentQuantityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Opseg kolicine "+parseMin+" - "+parseMax+" proizvoda za inspekciju, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -1383,7 +1385,7 @@ export async function findByProductGoodsType(goodsType){
 
 export async function findByProduct_SupplyId(supplyId){
     try{
-        if(Number.isNaN(Number(supplyId)) || supplyId == null){
+        if(isNaN(supplyId) || supplyId == null){
             throw new Error("ID "+supplyId+" dobavljaca proizvoda za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/product/supply/${supplyId}`,{
@@ -1398,7 +1400,7 @@ export async function findByProduct_SupplyId(supplyId){
 
 export async function findByProduct_ShelfId(shelfId){
     try{
-        if(Number.isNaN(Number(shelfId)) || shelfId == null){
+        if(isNaN(shelfId) || shelfId == null){
             throw new Error("ID "+shelfId+" police proizvoda za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/product/shelf/${shelfId}`,{
@@ -1426,7 +1428,7 @@ export async function findByProduct_StorageHasShelvesForIsNull(){
 export async function findByProduct_ShelfRowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(Number.isNaN(Number(parseRowCount)) || parseRowCount <= 0){
+        if(isNaN(parseRowCount) || parseRowCount <= 0){
             throw new Error("Red polica "+parseRowCount+" proizvoda za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/product/shelf-row-count`,{
@@ -1445,7 +1447,7 @@ export async function findByProduct_ShelfRowCount(rowCount){
 export async function findByProduct_ShelfCols(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(Number.isNaN(Number(parseCols)) || parseCols <= 0){
+        if(isNaN(parseCols) || parseCols <= 0){
             throw new Error("Dati raf police "+parseCols+" proizvoda za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/product/shelf-cols`,{
@@ -1465,7 +1467,7 @@ export async function findByProduct_ShelfRowAndColNullable({row, col}){
     try{
         const parseRow = parseInt(row,10);
         const parseCol = parseInt(col,10);
-        if(Number.isNaN(Number(parseRow)) || parseRow <= 0 || Number.isNaN(Number(parseCol)) || parseCol <= 0){
+        if(isNaN(parseRow) || parseRow <= 0 || isNaN(parseCol) || parseCol <= 0){
             throw new Error("Dati red "+parseRow+" i raf "+parseCol+" police proizvoda za inspekciju, nisu pronadjeni");
         }
         const response = await api.get(url+`/product/shelf-row-col-nullable`,{
@@ -1488,8 +1490,8 @@ export async function findByProduct_ShelfRowAndColBetweenNullable({rowMin, rowMa
         const parseRowMax = parseInt(rowMax,10);
         const parseColMin = parseInt(colMin,10);
         const parseColMax = parseInt(colMax,10);
-        if(Number.isNaN(Number(parseRowMin)) || parseRowMin <= 0 || Number.isNaN(Number(parseRowMax)) || 
-            parseRowMax <= 0 || Number.isNaN(Number(parseColMin)) || parseColMin <= 0 || Number.isNaN(Number(parseColMax)) || parseColMax <= 0){
+        if(isNaN(parseRowMin) || parseRowMin <= 0 || isNaN(parseRowMax) || 
+            parseRowMax <= 0 || isNaN(parseColMin) || parseColMin <= 0 || isNaN(parseColMax) || parseColMax <= 0){
             throw new Error("Opseg redova "+parseRowMin+" - "+parseRowMax+" i opseg rafova "+parseColMin+" - "+parseColMax+" polica za datu inspekciju, nisu pronadjeni");
         }
         if(parseRowMin > parseRowMax){
@@ -1517,7 +1519,7 @@ export async function findByProduct_ShelfRowAndColBetweenNullable({rowMin, rowMa
 export async function findByQuantityInspected(quantityInspected){
     try{
         const parseQuantityInspected = parseInt(quantityInspected,10);
-        if(Number.isNaN(Number(parseQuantityInspected)) || parseQuantityInspected <= 0){
+        if(isNaN(parseQuantityInspected) || parseQuantityInspected <= 0){
             throw new Error("Pregledana kolicina "+parseQuantityInspected+" za datu inspekciju, nije proandjena");
         }
         const response = await api.get(url+`/quantity-inspected`,{
@@ -1536,7 +1538,7 @@ export async function findByQuantityInspected(quantityInspected){
 export async function findByQuantityInspectedGreaterThan(quantityInspected){
     try{
         const parseQuantityInspected = parseInt(quantityInspected,10);
-        if(Number.isNaN(Number(parseQuantityInspected)) || parseQuantityInspected <= 0){
+        if(isNaN(parseQuantityInspected) || parseQuantityInspected <= 0){
             throw new Error("Pregledana kolicina veca od "+parseQuantityInspected+" za datu inspekciju, nije proandjena");
         }
         const response = await api.get(url+`/quantity-inspected-greater-than`,{
@@ -1555,7 +1557,7 @@ export async function findByQuantityInspectedGreaterThan(quantityInspected){
 export async function findByQuantityInspectedLessThan(quantityInspected){
     try{
         const parseQuantityInspected = parseInt(quantityInspected,10);
-        if(Number.isNaN(Number(parseQuantityInspected)) || parseQuantityInspected <= 0){
+        if(isNaN(parseQuantityInspected) || parseQuantityInspected <= 0){
             throw new Error("Pregledana kolicina manja od "+parseQuantityInspected+" za datu inspekciju, nije proandjena");
         }
         const response = await api.get(url+`/quantity-inspected-less-than`,{
@@ -1575,7 +1577,7 @@ export async function findByQuantityInspectedBetween({min, max}){
     try{
         const parseMin = parseInt(min,10);
         const parseMax = parseInt(max, 10);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Opseg pregledane kolicine "+parseMin+" - "+parseMax+" za datu inspekciju, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -1598,7 +1600,7 @@ export async function findByQuantityInspectedBetween({min, max}){
 export async function findByQuantityAccepted(quantityAccepted){
     try{
         const parseQuantityAccepted = parseInt(quantityAccepted,10);
-        if(Number.isNaN(Number(parseQuantityAccepted)) || parseQuantityAccepted <= 0){
+        if(isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0){
             throw new Error("Prihvacena kolicina "+parseQuantityAccepted+" za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(irl+`/quantity-accepted`,{
@@ -1617,7 +1619,7 @@ export async function findByQuantityAccepted(quantityAccepted){
 export async function findByQuantityAcceptedGreaterThan(quantityAccepted){
     try{
         const parseQuantityAccepted = parseInt(quantityAccepted,10);
-        if(Number.isNaN(Number(parseQuantityAccepted)) || parseQuantityAccepted <= 0){
+        if(isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0){
             throw new Error("Prihvacena kolicina veca od "+parseQuantityAccepted+" za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(irl+`/quantity-accepted-greater-than`,{
@@ -1636,7 +1638,7 @@ export async function findByQuantityAcceptedGreaterThan(quantityAccepted){
 export async function findByQuantityAcceptedLessThan(quantityAccepted){
     try{
         const parseQuantityAccepted = parseInt(quantityAccepted,10);
-        if(Number.isNaN(Number(parseQuantityAccepted)) || parseQuantityAccepted <= 0){
+        if(isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0){
             throw new Error("Prihvacena kolicina manja od "+parseQuantityAccepted+" za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(irl+`/quantity-accepted-less-than`,{
@@ -1656,7 +1658,7 @@ export async function findByQuantityAcceptedBetween({min, max}){
     try{
         const parseMin = parseInt(min,10);
         const parseMax = parseInt(max, 10);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Opseg prihvacene kolicine "+parseMin+" - "+parseMax+" za datu inspekciju, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -1679,7 +1681,7 @@ export async function findByQuantityAcceptedBetween({min, max}){
 export async function findByQuantityRejected(quantityRejected){
     try{
         const parseQuantityRejected = parseInt(quantityRejected,10);
-        if(Number.isNaN(Number(parseQuantityRejected)) || parseQuantityRejected <= 0){
+        if(isNaN(parseQuantityRejected) || parseQuantityRejected <= 0){
             throw new Error("Odbacena kolicina "+parseQuantityRejected+" za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(url+`/quantity-rejected`,{
@@ -1698,7 +1700,7 @@ export async function findByQuantityRejected(quantityRejected){
 export async function findByQuantityRejectedGreaterThan(quantityRejected){
     try{
         const parseQuantityRejected = parseInt(quantityRejected,10);
-        if(Number.isNaN(Number(parseQuantityRejected)) || parseQuantityRejected <= 0){
+        if(isNaN(parseQuantityRejected) || parseQuantityRejected <= 0){
             throw new Error("Odbacena kolicina veca od "+parseQuantityRejected+" za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(url+`/quantity-rejected-greater-than`,{
@@ -1717,7 +1719,7 @@ export async function findByQuantityRejectedGreaterThan(quantityRejected){
 export async function findByQuantityRejectedLessThan(quantityRejected){
     try{
         const parseQuantityRejected = parseInt(quantityRejected,10);
-        if(Number.isNaN(Number(parseQuantityRejected)) || parseQuantityRejected <= 0){
+        if(isNaN(parseQuantityRejected) || parseQuantityRejected <= 0){
             throw new Error("Odbacena kolicina manja od "+parseQuantityRejected+" za datu inspekciju, nije pronadjena");
         }
         const response = await api.get(url+`/quantity-rejected-less-than`,{
@@ -1737,7 +1739,7 @@ export async function findByQuantityRejectedBetween({min, max}){
     try{
         const parseMin = parseInt(min, 10);
         const parseMax = parseInt(max, 10);
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Opseg odbacene kolicine "+parseMin+" - "+parseMax+" za datu inspekciju, nije pronadjen");
         }
         if(parseMin > parseMax){
@@ -1759,7 +1761,7 @@ export async function findByQuantityRejectedBetween({min, max}){
 
 export async function findByQualityCheckId(qualityCheckId){
     try{
-        if(Number.isNaN(Number(qualityCheckId)) || qualityCheckId == null){
+        if(isNaN(qualityCheckId) || qualityCheckId == null){
             throw new Error("Dati ID "+qualityCheckId+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quality-check/${qualityCheckId}`,{
@@ -1776,11 +1778,11 @@ export async function findByQualityCheckLocDate(locDate){
     try{
         const validateDate = moment.isMoment(locDate) || moment(locDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Dati datum "+validateDate+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
+            throw new Error("Dati datum "+locDate+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quality-check/loc-date`,{
             params:{
-                locDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                locDate:moment(locDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -1795,11 +1797,11 @@ export async function findByQualityCheckLocDateAfter(locDate){
     try{
         const validateDate = moment.isMoment(locDate) || moment(locDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Dati datum posle "+validateDate+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
+            throw new Error("Dati datum posle "+locDate+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quality-check/loc-date-after`,{
             params:{
-                locDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                locDate:moment(locDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -1814,11 +1816,11 @@ export async function findByQualityCheckLocDateBefore(locDate){
     try{
         const validateDate = moment.isMoment(locDate) || moment(locDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Dati datum pre "+validateDate+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
+            throw new Error("Dati datum pre "+locDate+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quality-check/loc-date-before`,{
             params:{
-                locDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                locDate:moment(locDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -1834,9 +1836,9 @@ export async function findByQualityCheckLocDateBetween({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss").isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Datum opsega "+validateStart+" - "+validateEnd+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
+            throw new Error("Datum opsega "+start+" - "+end+" potvrde-kvaliteta za datu inspekciju, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj pootvrde-kvaliteta ne sme niti ispred datuma za pocetak potvrde-kvaliteta");
         }
         const response = await api.get(url+`/quality-check/loc-date-range`,{
@@ -1874,7 +1876,7 @@ export async function findByQualityCheckNotes(notes){
 export async function findByQualityCheckReferenceId(referenceId){
     try{
         const parseRefernceId = parseInt(referenceId);
-        if(Number.isNaN(Number(parseRefernceId)) || parseRefernceId <= 0){
+        if(isNaN(parseRefernceId) || parseRefernceId <= 0){
             throw new Error("ID "+parseRefernceId+" reference potvrde-kvaliteta za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quality-check/reference-id`,{
@@ -2003,7 +2005,7 @@ export async function findByQualityCheck_CheckTypeAndQualityCheck_Status({checkT
 
 export async function findByQualityCheckInspectorId(inspectorId){
     try{
-        if(Number.isNaN(Number(inspectorId)) || inspectorId == null){
+        if(isNaN(inspectorId) || inspectorId == null){
             throw new Error("Dati id "+inspectorId+" inspektora za datu inspekciju, nije pronadjen");
         }
         const response = await api.get(url+`/quality-check/inspector/${inspectorId}`,{

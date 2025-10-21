@@ -13,9 +13,10 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/eventLogs`;
 export async function createEventLog({timestamp,description,shipmentId}){
     try{
         const validateDateTime = moment.isMoment(timestamp) || moment(timestamp,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        if( !validateDateTime || 
+        if( 
+            !validateDateTime || 
             !description || typeof description !== "string" || description.trim() === "" || 
-            Number.isNaN(Number(shipmentId)) || shipmentId == null){
+            isNaN(shipmentId) || shipmentId == null){
             throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {timestamp,description,shipmentId};
@@ -32,10 +33,11 @@ export async function createEventLog({timestamp,description,shipmentId}){
 export async function updateEventLog({id,timestamp,description,shipmentId}){
     try{
         const validateDateTime = moment.isMoment(timestamp) || moment(timestamp,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        if( Number.isNaN(Number(id)) || id == null ||
+        if( 
+            isNaN(id)|| id == null ||
             !validateDateTime || 
             !description || typeof description !== "string" || description.trim() === "" || 
-            Number.isNaN(Number(shipmentId)) || shipmentId == null){
+            isNaN(shipmentId) || shipmentId == null){
                 throw new Error("Sva polja moraju biti popunjena i validirana");
         }
         const requestBody = {timestamp,description,shipmentId};
@@ -51,7 +53,7 @@ export async function updateEventLog({id,timestamp,description,shipmentId}){
 
 export async function deleteEventLog(id){
     try{
-        if(Number.isNaN(Number(id))){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za event-log, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -66,7 +68,7 @@ export async function deleteEventLog(id){
 
 export async function getEventsForShipment(shipmentId){
     try{
-        if(Number.isNaN(Number(shipmentId)) || shipmentId == null){
+        if(isNaN(shipmentId) || shipmentId == null){
             throw new Error("Dati id "+shipmentId+"za dostavu, nije pronadjen");
         }
         const response = await api.get(url+`/shipment/${shipmentId}`,{
@@ -81,7 +83,7 @@ export async function getEventsForShipment(shipmentId){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id))){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za event-log, nije pronadjen");
         }
         const response = await api.delete(url+`/find-one/${id}`,{
@@ -108,7 +110,7 @@ export async function findAll(){
 
 export async function findByShipmentId(shipmentId){
     try{
-        if(Number.isNaN(Number(shipmentId)) || shipmentId == null){
+        if(isNaN(shipmentId) || shipmentId == null){
             throw new Error("Dati id "+shipmentId+" za dostavu nije pronadjen");
         }
         const response = await api.get(url+`/find-by-shipment/${shipmentId}`,{
@@ -123,7 +125,7 @@ export async function findByShipmentId(shipmentId){
 
 export async function findLatestForShipment(shipmentId){
     try{    
-        if(Number.isNaN(Number(shipmentId)) || shipmentId == null){
+        if(isNaN(shipmentId) || shipmentId == null){
             throw new Error("Dati id "+shipmentId+" za dostavu nije pronadjen");
         }
         const response = await api.get(url+`/search/latest-shipment/${shipmentId}`,{
@@ -140,7 +142,7 @@ export async function findByTimestampAfter(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum posle "+validateDate+" za event-log, nije pronadjen");
+            throw new Error("Dati datum posle "+date+" za event-log, nije pronadjen");
         }
         const response = await api.get(url+`/timestamp-after`,{
             params:{
@@ -160,9 +162,9 @@ export async function findByTimestampBetween({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati opseg datuma "+validateStart+" - "+validateEnd+" za event-log nije pronadjen");
+            throw new Error("Dati opseg datuma "+start+" - "+end+" za event-log nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/timestamp-between`,{
@@ -202,11 +204,11 @@ export async function findByShipmentIdAndTimestampBetween({shipmentId, from, to}
         const validateStart = moment.isMoment(from) || moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(to) || moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            Number.isNaN(Number(shipmentId)) || shipmentId == null ||
+            isNaN(shipmentId) || shipmentId == null ||
             !validateStart || !validateEnd){
-            throw new Error("Dati id "+shipmentId+" za dostavu i datumski opseg "+validateStart+" - "+validateEnd+" za event-log, nije pronadjen");
+            throw new Error("Dati id "+shipmentId+" za dostavu i datumski opseg "+from+" - "+to+" za event-log, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(to).isBefore(moment(from))){
             throw new Error(`Datum za kraj ne sme biti ispred datuma za pocetak`);
         }
         const response = await api.get(url+`/search/${shipmentId}/timestamp-between`,{
@@ -225,7 +227,7 @@ export async function findByShipmentIdAndTimestampBetween({shipmentId, from, to}
 
 export async function findTopByShipmentIdOrderByTimestampDesc(shipmentId){
     try{
-        if(Number.isNaN(Number(shipmentId)) || shipmentId == null){
+        if(isNaN(shipmentId) || shipmentId == null){
             throw new Error("Dati id "+shipmentId+" za dostavu, nije pronadjen");
         }
         const response = await api.get(url+`/search/shipment-order-by-timestamp-desc/${shipmentId}`,{

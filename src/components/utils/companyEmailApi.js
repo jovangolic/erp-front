@@ -91,7 +91,7 @@ export async function getAllCompanyEmails(){
 
 export async function deleteCompanyEmail(email){
     try{
-        if(!email){
+        if(!email?.trim()){
             throw new Error("Dati emai ne postoji");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/companyEmail/company-email/${email}`,{

@@ -884,8 +884,8 @@ export async function saveAll(requests){
     try{
         if (!Array.isArray(requests) || requests.length === 0) {
             throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
-            }
-            for (let i = 0; i < requests.length; i++) {
+        }
+        for (let i = 0; i < requests.length; i++) {
             const req = requests[i];
             if (req.id == null || Number.isNaN(Number(req.id))) {
                 throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);

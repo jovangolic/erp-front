@@ -87,7 +87,7 @@ export async function updateConfirmationDocument({id, filePath, createdAt, userI
         const validateUserId = Number.isNaN(Number(userId)) || userId == null;
         const validateShiftId = Number.isNaN(Number(shiftId)) || shiftId == null;
         const validateDate = moment.isMoment(createdAt) || moment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        const requestBody = {filePath, validDate,validateUserId,validateShiftId};
+        const requestBody = {filePath, validateDate,validateUserId,validateShiftId};
         const response = await api.put(url+`/update/${id}`,requestBody,{
             headers:getHeader()
         });
@@ -108,7 +108,7 @@ export const downloadConfirmationDocument = async (id) => {
 
 export async function trackConfirmationDoc(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
           throw new Error("Dati id "+id+" za pracenje dokumenta, nije pronadjen");
         }
         const response = await api.get(url+`/track-confirmation-doc/${id}`,{
@@ -123,7 +123,7 @@ export async function trackConfirmationDoc(id){
 
 export async function confirmConfDoc(id){
     try{
-        if(Number.isNaN(Number(id))  || id == null){
+        if(isNaN(id)  || id == null){
             throw new Error("Dati id "+id+" za potvrdjivanje dokumenta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -138,7 +138,7 @@ export async function confirmConfDoc(id){
 
 export async function cancelConfirmationDoc(id){
     try{
-        if(Number.isNaN(Number(id))  || id == null){
+        if(isNaN(id)  || id == null){
             throw new Error("ID "+id+" za otkazivanje dokumenta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -153,7 +153,7 @@ export async function cancelConfirmationDoc(id){
 
 export async function closeConfirmationDoc(id){
     try{
-        if(Number.isNaN(Number(id))  || id == null){
+        if(isNaN(id)  || id == null){
             throw new Error("ID "+id+" za zatvaranje dokumenta, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -168,7 +168,7 @@ export async function closeConfirmationDoc(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(Number.isNaN(Number(id))  || id == null || !isConfirmationDocumentValid.includes(status?.toUpperCase())){
+        if(isNaN(id) || id == null || !isConfirmationDocumentValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status dokumenta "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -184,7 +184,7 @@ export async function changeStatus({id, status}){
 export async function saveConfirmationDoc({filePath,createdAt,userId,shiftId,status, confirmed = false}){
     try{ 
         const validDate = moment.isMoment(createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        if(!filePath?.trim() || !validDate || Number.isNaN(Number(userId)) || userId == null || Number.isNaN(Number(shiftId)) || shiftId == null ||
+        if(!filePath?.trim() || !validDate || isNaN(userId) || userId == null || isNaN(shiftId) || shiftId == null ||
             !isConfirmationDocumentValid.includes(status?.toUpperCase()) || typeof confirmed !== "boolean"){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
@@ -201,13 +201,13 @@ export async function saveConfirmationDoc({filePath,createdAt,userId,shiftId,sta
 
 export async function saveAs({sourceId, filePath,userId,shiftId,status,confirmed = false}){
     try{  
-        if(Number.isNaN(Number(sourceId)) || sourceId == null){
+        if(isNaN(sourceId) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
-        if(Number.isNaN(Number(userId)) || userId == null){
+        if(isNaN(userId) || userId == null){
             throw new Error("Id "+userId+" mora biti ceo broj");
         }
-        if(Number.isNaN(Number(shiftId)) || shiftId == null){
+        if(isNaN(shiftId) || shiftId == null){
             throw new Error("Id "+shiftId+" mora biti ceo broj");
         }
         if(!isConfirmationDocumentValid.includes(status?.toUpperCase())){
@@ -235,13 +235,13 @@ export async function saveAll(requests){
         for(let i = 0; i < requests.length; i++){
             const req = requests[i];
             const validDate = moment.isMoment(req.createdAt,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-            if (req.id == null || Number.isNaN(Number(req.id))) {
+            if (req.id == null || isNaN(req.id)) {
                 throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.userId == null || Number.isNaN(Number(req.userId))) {
+            if (req.userId == null || sNaN(req.userId)) {
                 throw new Error(`Nevalidan zahtev na indexu ${i}: 'userId' je obavezan i mora biti broj`);
             }
-            if (req.shiftId == null || Number.isNaN(Number(req.shiftId))) {
+            if (req.shiftId == null || sNaN(req.shiftId)) {
                 throw new Error(`Nevalidan zahtev na indexu ${i}: 'shiftId' je obavezan i mora biti broj`);
             }
             if(!req.filePath?.trim()){

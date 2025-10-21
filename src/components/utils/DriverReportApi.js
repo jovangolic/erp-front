@@ -65,7 +65,7 @@ export async function generateAdvancedDriverReport({startDate, endDate, tripStat
         if(!validateStart || !validateEnd){
             throw new Error(`Datum za pocetak ${startDate} i kraj ${endDate} moraju biti ispravni`);
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za pocetak ne sme biti posle datuma za kraj");
         }
         // Validacija tripStatuses

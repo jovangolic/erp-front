@@ -33,7 +33,7 @@ export async function createDriver({firstName,lastName, phone, status,confirmed}
 
 export async function updateDriver({id, firstName,lastName, phone, status,confirmed}){
     if (
-        id == null || Number.isNaN(Number(id)) ||
+        id == null || isNaN(id) ||
         !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
         !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
         !phone || typeof phone !== "string" || phone.trim() === "" ||
@@ -55,7 +55,7 @@ export async function updateDriver({id, firstName,lastName, phone, status,confir
 
 export async function deleteDriver(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" vozaca nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -70,7 +70,7 @@ export async function deleteDriver(id){
 
 export async function findOneById(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" vozaca nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -190,7 +190,7 @@ export async function existsByFirstNameContainingIgnoreCaseAndLastNameContaining
 
 export async function confirmDriver(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("ID "+id+" za potvrdu vozaca, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -205,7 +205,7 @@ export async function confirmDriver(id){
 
 export async function closeDriver(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
                 throw new Error("ID "+id+" za zatvaranje vozaca, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -220,7 +220,7 @@ export async function closeDriver(id){
 
 export async function cancelDriver(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("ID "+id+" za otkazivanje vozaca, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -235,7 +235,7 @@ export async function cancelDriver(id){
 
 export async function changeStatus({id, newStatus}){
     try{
-        if(id == null || Number.isNaN(Number(id)) || !isDriverStatusValid.includes(newStatus?.toUpperCase())){
+        if(id == null || isNaN(id) || !isDriverStatusValid.includes(newStatus?.toUpperCase())){
             throw new Error("ID "+id+" i status vozaca "+newStatus+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${newStatus}`,{
@@ -279,7 +279,7 @@ export async function saveDriver({firstName, lastName, phone, status, confirmed 
 
 export async function saveAs({sourceId,firstName, lastName, phone}){
     try{
-        if(Number.isNaN(Number(sourceId)) || sourceId == null){
+        if(isNaN(sourceId) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         if (!code?.trim() || !name?.trim()) {
@@ -307,7 +307,7 @@ export async function saveAll(requests){
         }
         for(let i = 0; i < requests.length; i++){
             const req = requests[i];
-            if(req.id == null || Number.isNaN(Number(req.id))){
+            if(req.id == null || isNan(req.id)){
                 throw new Error(`Nevalidan zahtev na indexu ${i}: 'id' mora biti ceo broj`);
             }
             if (!req.firstName?.trim() || !req.lastName?.trim() || !req.phone?.trim()) {

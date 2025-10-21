@@ -11,6 +11,7 @@ function handleApiError(error, customMessage) {
 const url =`${import.meta.env.VITE_API_BASE_URL}/incomeStatements`;
 const isFiscalQuarterStatusValid = ["Q1","Q2","Q3","Q4"];
 const isFiscalYearStatusValid = ["OPEN", "CLOSED", "ARCHIVED"];
+const isIncomeStatementStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createIncomeStatement({periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId}){
     try{
@@ -21,13 +22,13 @@ export async function createIncomeStatement({periodStart,periodEnd,totalRevenue,
         const validateEnd = moment.isMoment(periodEnd) || moment(periodEnd,"YYYY-MM-DD",true).isValid();
         if(
             !validateStart || !validateEnd ||
-            Number.isNaN(Number(parseTotalRevenue)) || parseTotalRevenue <= 0 ||
-            Number.isNaN(Number(parseTotalExpenses)) || parseTotalExpenses <= 0 ||
-            Number.isNaN(Number(parseNetProfit)) || parseNetProfit <= 0 || fiscalYearId == null || Number.isNaN(Number(fiscalYearId))
+            isNaN(parseTotalRevenue) || parseTotalRevenue <= 0 ||
+            isNaN(parseTotalExpenses) || parseTotalExpenses <= 0 ||
+            isNaN(parseNetProfit) || parseNetProfit <= 0 || fiscalYearId == null || isNaN(fiscalYearId)
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(periodEnd).isBefore(moment(periodStart))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const requestBody = {periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId};
@@ -49,15 +50,15 @@ export async function updateIncomeStatement({id,periodStart,periodEnd,totalReven
         const validateStart = moment.isMoment(periodStart) || moment(periodStart,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(periodEnd) || moment(periodEnd,"YYYY-MM-DD",true).isValid();
         if(
-            Number.isNaN(Number(id)) || id == null ||
+            id == null || isNaN(id) ||
             !validateStart || !validateEnd ||
-            Number.isNaN(Number(parseTotalRevenue)) || parseTotalRevenue <= 0 ||
-            Number.isNaN(Number(parseTotalExpenses)) || parseTotalExpenses <= 0 ||
-            Number.isNaN(Number(parseNetProfit)) || parseNetProfit <= 0 || fiscalYearId == null || Number.isNaN(Number(fiscalYearId))
+            isNaN(parseTotalRevenue) || parseTotalRevenue <= 0 ||
+            isNaN(parseTotalExpenses) || parseTotalExpenses <= 0 ||
+            isNaN(parseNetProfit) || parseNetProfit <= 0 || fiscalYearId == null || isNaN(fiscalYearId)
         ){
             throw new Error("Sva polja moraju biti validna i popunjena");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(periodEnd).isBefore(moment(periodStart))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const requestBody = {periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId};
@@ -73,7 +74,7 @@ export async function updateIncomeStatement({id,periodStart,periodEnd,totalReven
 
 export async function deleteIncomeStatement(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati ID "+id+" za incomeStatement nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -88,7 +89,7 @@ export async function deleteIncomeStatement(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati ID "+id+" za incomeStatement nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -116,7 +117,7 @@ export async function findAll(){
 export async function findByTotalRevenue(totalRevenue){
     try{
         const parseTotalRevenue = parseFloat(totalRevenue);
-        if(Number.isNaN(Number(parseTotalRevenue)) || parseTotalRevenue <= 0){
+        if(isNaN(parseTotalRevenue) || parseTotalRevenue <= 0){
             throw new Error("Dati ukupan-prihod "+parseTotalRevenue+" nije pronadjen");
         }
         const response = await api.get(url+`/totalRevenue`,{
@@ -133,7 +134,7 @@ export async function findByTotalRevenue(totalRevenue){
 export async function findByTotalExpenses(totalExpenses){
     try{
         const parseTotalExpenses = parseFloat(totalExpenses);
-        if(Number.isNaN(Number(parseTotalExpenses)) || parseTotalExpenses <= 0){
+        if(isNaN(parseTotalExpenses) || parseTotalExpenses <= 0){
             throw new Error("Dati ukupni troskovi "+parseTotalExpenses+" nisu pronadjeni");
         }
         const response = await api.get(url+`/totalExpenses`,{
@@ -150,7 +151,7 @@ export async function findByTotalExpenses(totalExpenses){
 export async function findByNetProfit(netProfit){
     try{
         const parseNetProfit = parseFloat(netProfit);
-        if(Number.isNaN(Number(parseNetProfit)) || parseNetProfit <= 0){
+        if(isNaN(parseNetProfit) || parseNetProfit <= 0){
             throw new Error("Data neto-zarada "+parseNetProfit+" nije pronadjena");
         }
         const response = await api.get(url+`/netProfit`,{
@@ -167,7 +168,7 @@ export async function findByNetProfit(netProfit){
 export async function findByFiscalYear_Year(year){
     try{
         const parsedYear = parseInt(year);
-        if (Number.isNaN(Number(parsedYear)) || parsedYear <= 0) {
+        if (isNaN(parsedYear) || parsedYear <= 0) {
             throw new Error("Data godina "+parsedYear+" nije pronadjena");
         }
         const response = await api.get(url+`/by-fiscal-year`,{
@@ -202,15 +203,15 @@ export async function findByPeriodStartBetween({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati pocetak "+validateStart+" i kraj "+validateStart+" datuma nije pronadjen");
+            throw new Error("Dati pocetak "+start+" i kraj "+end+" datuma nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/period-start-between`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -226,15 +227,15 @@ export async function findByPeriodEndBetween({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati pocetak "+validateStart+" i kraj "+validateEnd+" datuma nije pronadjen");
+            throw new Error("Dati pocetak "+start+" i kraj "+end+" datuma nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/period-end-between`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -250,15 +251,15 @@ export async function findWithinPeriod({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati pocetak "+validateStart+" i kraj "+validateEnd+" datuma nije pronadjen");
+            throw new Error("Dati pocetak "+start+" i kraj "+end+" datuma nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/within-period`,{
             params:{
                 start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -273,10 +274,10 @@ export async function findByDateWithinPeriod(start){
     try{
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         if(!validateStart){
-            throw new Error("Dati posetak "+validateStart+" datuma unutar perioda nije pronadjen");
+            throw new Error("Dati posetak "+start+" datuma unutar perioda nije pronadjen");
         }
         const response = await api.get(url+`/contains-date`,{
-            params:{start:moment(validateStart).format("YYYY-MM-DD")},
+            params:{start:moment(start).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -289,7 +290,7 @@ export async function findByDateWithinPeriod(start){
 export async function getMonthlyNetProfitForYear(year){
     try{
         const parsedYear = parseInt(year);
-        if(Number.isNaN(Number(parsedYear)) || parsedYear <= 0){
+        if(isNaN(parsedYear) || parsedYear <= 0){
             throw new Error("Data godina "+parsedYear+" za mesecnu neto zaradu, nije pronadjena");
         }
         const response = await api.get(url+`/net-profit/monthly/${parsedYear}`,{
@@ -304,7 +305,7 @@ export async function getMonthlyNetProfitForYear(year){
 
 export async function calculateTotalNetProfitByFiscalYear(fiscalYearId){
     try{
-        if(Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null){
+        if(isNaN(fiscalYearId) || fiscalYearId == null){
             throw new Error("Dati ID "+fiscalYearId+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/calculate-net-proft-by-year/${fiscalYearId}`,{
@@ -319,7 +320,7 @@ export async function calculateTotalNetProfitByFiscalYear(fiscalYearId){
 
 export async function findTotalNetProfitByFiscalYear(fiscalYearId){
     try{
-        if(Number.isNaN(Number(fiscalYearId)) || fiscalYearId == null){
+        if(isNaN(fiscalYearId) || fiscalYearId == null){
             throw new Error("Dati ID "+fiscalYearId+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/find-net-profit-by-year/${fiscalYearId}`,{
@@ -335,7 +336,7 @@ export async function findTotalNetProfitByFiscalYear(fiscalYearId){
 export async function findByTotalRevenueGreaterThan(totalRevenue){
     try{
         const parseTotalRevenue = parseFloat(totalRevenue);
-        if(Number.isNaN(Number(parseTotalRevenue)) || parseTotalRevenue <= 0){
+        if(isNaN(parseTotalRevenue) || parseTotalRevenue <= 0){
             throw new Error("Dati ukupan prihod veci od "+parseTotalRevenue+" nije pronadjen");
         }
         const response = await api.get(url+`/search/total-revenue-greater-than`,{
@@ -352,7 +353,7 @@ export async function findByTotalRevenueGreaterThan(totalRevenue){
 export async function findByTotalExpensesGreaterThan(totalExpenses){
     try{
         const parseTotalExpenses = parseFloat(totalExpenses);
-        if(Number.isNaN(Number(parseTotalExpenses)) || parseTotalExpenses <= 0){
+        if(isNaN(parseTotalExpenses) || parseTotalExpenses <= 0){
             throw new Error("Dati ukupni troskovi veci od "+parseTotalExpenses+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/total-expenses-greater-than`,{
@@ -369,7 +370,7 @@ export async function findByTotalExpensesGreaterThan(totalExpenses){
 export async function findByNetProfitGreaterThan(netProfit){
     try{
         const parseNetProfit = parseFloat(netProfit);
-        if(Number.isNaN(Number(parseNetProfit)) || parseNetProfit <= 0){
+        if(isNaN(parseNetProfit) || parseNetProfit <= 0){
             throw new Error("Data neto zarada veca od "+parseNetProfit+" nije pronadjena");
         }
         const response = await api.get(url+`/search/net-profit-greater-than`,{
@@ -388,7 +389,7 @@ export async function findByNetProfitGreaterThan(netProfit){
 export async function findByTotalRevenueLessThan(totalRevenue){
     try{
         const parseTotalRevenue = parseFloat(totalRevenue);
-        if(Number.isNaN(Number(parseTotalRevenue)) || parseTotalRevenue <= 0){
+        if(isNaN(parseTotalRevenue) || parseTotalRevenue <= 0){
             throw new Error("Dati ukupan prihod nije pronadjen");
         }
         const response = await api.get(url+`/search/total-revenue-less-than`,{
@@ -405,7 +406,7 @@ export async function findByTotalRevenueLessThan(totalRevenue){
 export async function findByTotalExpensesLessThan(totalExpenses){
     try{
         const parseTotalExpenses = parseFloat(totalExpenses);
-        if(Number.isNaN(Number(parseTotalExpenses)) || parseTotalExpenses <= 0){
+        if(isNaN(parseTotalExpenses) || parseTotalExpenses <= 0){
             throw new Error("Dati ukupni troskovi manji od "+parseTotalExpenses+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/total-expenses-less-than`,{
@@ -422,7 +423,7 @@ export async function findByTotalExpensesLessThan(totalExpenses){
 export async function findByNetProfitLessThan(netProfit){
     try{
         const parseNetProfit = parseFloat(netProfit);
-        if(Number.isNaN(Number(parseNetProfit)) || parseNetProfit <= 0){
+        if(isNaN(parseNetProfit) || parseNetProfit <= 0){
             throw new Error("Data neto zarada manja od "+parseNetProfit+" nije pronadjena");
         }
         const response = await api.get(url+`/search/net-profit-less-than`,{
@@ -481,15 +482,15 @@ export async function sumTotalRevenueBetweenDates({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati datumski opseg "+validateStart+"- "+validateEnd+" za ukupan prihod, nije pronadjen");
+            throw new Error("Dati datumski opseg "+start+"- "+end+" za ukupan prihod, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Dtum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/total-revenue-date-range`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -505,15 +506,15 @@ export async function sumTotalExpensesBetweenDates({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati datumski opseg "+validateStart+"- "+validateEnd+" za ukupan rashod, nije pronadjen");
+            throw new Error("Dati datumski opseg "+start+"- "+end+" za ukupan rashod, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Dtum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/total-expenses-date-range`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -529,15 +530,15 @@ export async function sumNetProfitBetweenDates({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati datumski opseg "+validateStart+"- "+validateEnd+" za profit, nije pronadjen");
+            throw new Error("Dati datumski opseg "+start+"- "+end+" za profit, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Dtum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/net-profit-date-range`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -570,7 +571,7 @@ export async function findByQuarterStatusAndMinRevenue({quarterStatus, minRevenu
     try{
         const parseMinRevenue = parseFloat(minRevenue);
         if(!isFiscalQuarterStatusValid.includes(quarterStatus?.toUpperCase()) || 
-            Number.isNaN(Number(parseMinRevenue)) || parseMinRevenue <= 0){
+            isNaN(parseMinRevenue) || parseMinRevenue <= 0){
             throw new Error("Dati kvartalni status "+quarterStatus+" i minimalan prihod "+parseMinRevenue+", nisu pronadjeni");
         }
         const response = await api.get(url+`/search/quarter-status-min-revenue`,{
@@ -609,11 +610,11 @@ export async function findByFiscalYear_StartDate(startDate){
     try{
         const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DD",true).isValid();
         if(!validateStart){
-            throw new Error("Dati datum pocetka "+validateStart+" za fiskalnu godinu nije pronadjen");
+            throw new Error("Dati datum pocetka "+startDate+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/fiscal-year-start-date`,{
             params:{
-                startDate:moment(validateStart).format("YYYY-MM-DD")
+                startDate:moment(startDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -628,11 +629,11 @@ export async function findByFiscalYear_EndDate(endDate){
     try{
         const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DD",true).isValid();
         if(!validateEnd){
-            throw new Error("Dati datum kraja "+validateEnd+" za fiskalnu godinu nije pronadjen");
+            throw new Error("Dati datum kraja "+endDate+" za fiskalnu godinu nije pronadjen");
         }
         const response = await api.get(url+`/search/fiscal-year-end-date`,{
             params:{
-                endDate:moment(validateEnd).format("YYYY-MM-DD")
+                endDate:moment(endDate).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -648,15 +649,15 @@ export async function sumTotalRevenue({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati datumski opseg "+validateStart+"- "+validateEnd+" za ukupan prihod, nije pronadjen");
+            throw new Error("Dati datumski opseg "+start+"- "+end+" za ukupan prihod, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/sum-total-revenue-date-range`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -672,15 +673,15 @@ export async function sumTotalExpenses({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart  || !validateEnd){
-            throw new Error("Dati datumski opseg "+validateStart+"- "+validateEnd+" za ukupane troskove, nisu pronadjeni");
+            throw new Error("Dati datumski opseg "+start+"- "+end+" za ukupane troskove, nisu pronadjeni");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/sum-total-expenses-date-range`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -696,15 +697,15 @@ export async function sumNetProfit({start, end}){
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DD",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Dati datumski opseg "+validateStart+"- "+validateEnd+" za profit, nisu pronadjeni");
+            throw new Error("Dati datumski opseg "+start+"- "+end+" za profit, nisu pronadjeni");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/sum-net-profit-date-range`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -730,5 +731,245 @@ export async function sumNetProfitByYearStatus(yearStatus){
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli profit po statusu "+yearStatus+" godine");
+    }
+}
+
+export async function trackIncomeStatement(id){
+    try{
+        if(Number.isNaN(Number(id)) || id == null){
+            throw new Error("Dati id "+id+" income-statement za pracenje, nije pronadjen");
+        }
+        const response = await api.get(url+`/track/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" income-statement za pracenje");
+    }
+}
+
+export async function confirmIncomeStatement(id){
+    try{
+        if(Number.isNaN(Number(id)) || id == null){
+            throw new Error("ID "+id+" za potvrdu income-statement, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za datu potvrdu income-statement");
+    }
+}
+
+export async function cancelIncomeStatement(id){
+    try{
+        if(Number.isNaN(Number(id)) || id == null){
+            throw new Error("ID "+id+" za otkazivanje income-statement, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato otkazivanje income-statement");
+    }
+}
+
+export async function closeIncomeStatement(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("ID "+id+" za zatvaranje income-statement, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za dato zatvaranje income-statement");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+        if(isNaN(id) || id == null || !isIncomeStatementStatusValid.includes(status?.toUpperCase())){
+            throw new Error("ID "+id+" i status income-statement "+status+" nisu pronadjeni");
+        }
+        const response = await api.post(url+`/${id}/status/${status}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+         handleApiError(error,"Trenutno nismo pronasli id "+id+" i status income-statement "+status);
+    }
+}
+
+export async function saveIncomeStatement({periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId,status,confirmed = false}){
+    try{
+        const parseTotalRevenue = parseFloat(totalRevenue);
+        const parseTotalExpenses = parseFloat(totalExpenses);
+        const parseNetProfit = parseFloat(netProfit);
+        const expectedProfit = parseTotalRevenue - parseTotalExpenses;
+        const validateStart = moment.isMoment(periodStart) || moment(periodStart,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(periodEnd) || moment(periodEnd,"YYYY-MM-DD",true).isValid();
+        if(!validateStart || !validateEnd){
+            return false;
+        }
+        if(moment(periodEnd).isBefore(moment(periodStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
+        if (isNaN(parseTotalRevenue) || parseTotalRevenue < 0) {
+            throw new Error("Ukupna zarada mora biti broj veći ili jednak nuli");
+        }
+        if (isNaN(parseTotalExpenses) || parseTotalExpenses < 0) {
+            throw new Error("Ukupan trošak mora biti broj veći ili jednak nuli");
+        }
+        if (isNaN(parseNetProfit) || parseNetProfit < 0) {
+            throw new Error("Neto zarada mora biti broj veći ili jednak nuli");
+        }
+        if(Math.abs(expectedProfit - parseNetProfit) > 0.01){
+            throw new Error("Ocekivana zarada mora biti jednaka: prihod minus trosak");
+        }
+        if(isNaN(fiscalYearId) || fiscalYearId == null){
+            throw new Error("Neispravan ID za fiskalnu godinu");
+        }
+        if(!isIncomeStatementStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Status se mora izabrati");
+        }
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Cofirmed mora biti true/false");
+        }
+        const requestBody = {periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId,status,confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId}){
+    try{
+        const parseTotalRevenue = parseFloat(totalRevenue);
+        const parseTotalExpenses = parseFloat(totalExpenses);
+        const parseNetProfit = parseFloat(netProfit);
+        const expectedProfit = parseTotalRevenue - parseTotalExpenses;
+        const validateStart = moment.isMoment(periodStart) || moment(periodStart,"YYYY-MM-DD",true).isValid();
+        const validateEnd = moment.isMoment(periodEnd) || moment(periodEnd,"YYYY-MM-DD",true).isValid();
+        if(sourceId === undefined || sourceId == null || Number.isNaN(Number(sourceId))){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if(!validateStart || !validateEnd){
+            return false;
+        }
+        if(moment(periodEnd).isBefore(moment(periodStart))){
+            throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+        }
+        if (isNaN(parseTotalRevenue) || parseTotalRevenue < 0) {
+            throw new Error("Ukupna zarada mora biti broj veći ili jednak nuli");
+        }
+        if (isNaN(parseTotalExpenses) || parseTotalExpenses < 0) {
+            throw new Error("Ukupan trošak mora biti broj veći ili jednak nuli");
+        }
+        if (isNaN(parseNetProfit) || parseNetProfit < 0) {
+            throw new Error("Neto zarada mora biti broj veći ili jednak nuli");
+        }
+        if(Math.abs(expectedProfit - parseNetProfit) > 0.01){
+            throw new Error("Ocekivana zarada mora biti jednaka: prihod minus trosak");
+        }
+        if(fiscalYearId === undefined || fiscalYearId == null || Number.isNaN(Number(fiscalYearId))){
+            throw new Error("ID fiskalne godine "+fiscalYearId+" mora biti ceo broj");
+        }
+        const requestBody = {periodStart,periodEnd,totalRevenue,totalExpenses,netProfit,fiscalYearId};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if (!Array.isArray(requests) || requests.length === 0) {
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[i];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
+            }
+            if (req.fiscalYearId == null || Number.isNaN(Number(req.fiscalYearId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'supplyId' je obavezan i mora biti broj`);
+            }
+            if (!req.status || !isIncomeStatementStatusValid.includes(req.status.toUpperCase())) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'status' nije ispravan`);
+            }
+            const validateStart = moment.isMoment(req.periodStart) || moment(req.periodStart,"YYYY-MM-DD",true).isValid();
+            const validateEnd = moment.isMoment(req.periodEnd) || moment(req.periodEnd,"YYYY-MM-DD",true).isValid();
+            const parseTotalRevenue = parseFloat(req.totalRevenue);
+            const parseTotalExpenses = parseFloat(req.totalExpenses);
+            const parseNetProfit = parseFloat(req.netProfit);
+            const expectedProfit = parseTotalRevenue - parseTotalExpenses;
+            if(!validateStart){
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'period-start' mora biti validan datum`);
+            }
+            if(!validateEnd){
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'period-end' mora biti validan datum`);
+            }
+            if(moment(req.periodEnd).isBefore(moment(req.periodStart))){
+                throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
+            }
+            if(isNaN(parseTotalRevenue) || parseTotalRevenue <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'ukupan-prihod' mora biti broj`);
+            }
+            if(isNaN(parseTotalExpenses) || parseTotalExpenses <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'ukupan-trosak' mora biti broj`);
+            }
+            if(isNaN(parseNetProfit) || parseNetProfit <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'neto-profit' mora biti broj`);
+            }
+            if(Math.abs(expectedProfit - parseNetProfit) > 0.01){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'ocekivani-prihod' mora biti broj`);
+            }
+            if(!req.confirmed || typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' mora biti true ili false`);
+            }
+        }
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }

@@ -18,7 +18,7 @@ export async function createWorkCenter({name,location,capacity, localStorageId})
         if(
             !name || typeof name !== "string" || name.trim() === "" ||
             !location || typeof location !== "string" || location.trim() === "" ||
-            Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || Number.isNaN(Number(localStorageId)) || localStorageId == null
+            isNaN(parseCapacity) || parseCapacity <= 0 || isNaN(localStorageId) || localStorageId == null
         ){
             throw new Error("Sva polja moraju biti validirana i popunjena");
         }
@@ -37,10 +37,10 @@ export async function updateWorkCenter({id,name,location,capacity, localStorageI
     try{
         const parseCapacity = parseFloat(capacity);
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !name || typeof name !== "string" || name.trim() === "" ||
             !location || typeof location !== "string" || location.trim() === "" ||
-            Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || Number.isNaN(Number(localStorageId)) || localStorageId == null
+            isNaN(parseCapacity) || parseCapacity <= 0 || isNaN(localStorageId) || localStorageId == null
         ){
             throw new Error("Sva polja moraju biti validirana i popunjena");
         }
@@ -57,7 +57,7 @@ export async function updateWorkCenter({id,name,location,capacity, localStorageI
 
 export async function deleteWorkCenter(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -72,7 +72,7 @@ export async function deleteWorkCenter(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -116,7 +116,7 @@ export async function findByName(name){
 export async function findByCapacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacite "+parseCapacity+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/by-capacity`,{
@@ -166,7 +166,7 @@ export async function findByNameAndLocation({name, location}){
 export async function findByCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/capacityGreaterThan`,{
@@ -183,7 +183,7 @@ export async function findByCapacityGreaterThan(capacity){
 export async function findByCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet manji od "+parseCapacity+" za work-center nije pronadjen");
         }
         const response = await api.get(url+`/capacityLessThan`,{
@@ -237,7 +237,7 @@ export async function findByCapacityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(max);
-        if(Number.isNaN(Number(parseMin)) || parseMin <=0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMin <=0 || sNaN(parseMax) || parseMax <= 0){
             throw new Error("Dati opseg "+parseMin+" - "+parseMax+" kapacitet za work-center nije pronadjen");
         }
         if (parseMin >= parseMax) {
@@ -275,7 +275,7 @@ export async function findByLocationOrderByCapacityDesc(location){
 
 export async function findByLocalStorage_Id(localStorageId){
     try{
-        if(Number.isNaN(Number(localStorageId)) || localStorageId == null){
+        if(isNaN(localStorageId) || localStorageId == null){
             throw new Error("Dati ID "+localStorageId+" za lokalno skladiste, nije pronadjen");
         }
         const response = await api.get(url+`/localStorage/${localStorageId}`,{
@@ -323,7 +323,7 @@ export async function findByLocalStorage_LocationContainingIgnoreCase(localStora
 export async function findByLocalStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet "+parseCapacity+" za lokalno skladiste nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-capacity`,{
@@ -340,7 +340,7 @@ export async function findByLocalStorage_Capacity(capacity){
 export async function findByLocalStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet manji od "+parseCapacity+" za lokalno skladiste nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-capacity-less-than`,{
@@ -357,7 +357,7 @@ export async function findByLocalStorage_CapacityLessThan(capacity){
 export async function findByLocalStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" za lokalno skladiste nije pronadjen");
         }
         const response = await api.get(url+`/localStorage-capacity-greater-than`,{
@@ -396,7 +396,7 @@ export async function filterWorkCenters({name, location, capacityMin, capacityMa
         if(
             !name || typeof name !== "string" || name.trim() === "" ||
             !location || typeof location !== "string" || location.trim() === "" ||
-            Number.isNaN(Number(parseCapacityMin)) || parseCapacityMin <= 0 || Number.isNaN(Number(parseCapacityMax)) || parseCapacityMin <= 0 ||
+            isNaN(parseCapacityMin) || parseCapacityMin <= 0 || isNaN(parseCapacityMax) || parseCapacityMin <= 0 ||
             parseCapacityMin >= parseCapacityMax || !validateStatus.includes(status?.toUpperCase()) ||
             !validateStorageType.includes(type?.toUpperCase())
         ){
@@ -586,7 +586,7 @@ export async function findByLocationAndCapacityGreaterThan({location, capacity})
     try{
         const parseCapacity = parseFloat(capacity);
         if(!location || typeof location !== "string" || location.trim() === "" ||
-            parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+            parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Data lokacija "+location+" i kapacitet veci od "+parseCapacity+" lokalnog skladista za work-center nisu pronadjeni");
         }
         const response = await api.get(url+`/search/location-and-capacity-greater-than`,{
@@ -644,7 +644,7 @@ export async function findByLocalStorage_TypeAndLocalStorage_Status({type, statu
 
 export async function findByIdBetween({startId, endId}){
     try{
-        if(Number.isNaN(Number(startId)) || startId == null || Number.isNaN(Number(endId)) || endId == null){
+        if(isNaN(startId) || startId == null || isNaN(endId) || endId == null){
             throw new Error("Dati opseg "+startId+" - "+endId+" id-ijeva, nije pronadjen");
         }
         const response = await api.get(url+`/search/ids-between`,{
@@ -785,7 +785,7 @@ export async function countWorkCentersByCapacity(){
 export async function countWorkCentersByCapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet manji od "+parseCapacity+" za broj work-centers nije pronadjen");
         }
         const response = await api.get(url+`/search/count-work-centers-by-capacity-less-than`,{
@@ -804,7 +804,7 @@ export async function countWorkCentersByCapacityLessThan(capacity){
 export async function countWorkCentersByCapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0){
+        if(isNaN(parseCapacity) || parseCapacity <= 0){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" za broj work-centers nije pronadjen");
         }
         const response = await api.get(url+`/search/count-work-centers-by-capacity-greater-than`,{

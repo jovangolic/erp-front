@@ -18,9 +18,9 @@ export async function createTransaction({amount,transactionDate,transactionType,
         const parseAmount = parseFloat(amount);
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || !validateTransactionDate ||
-            !isTransactionTypeValid.includes(transactionType?.toUpperCase()) || Number.isNaN(Number(sourceAccountId)) || sourceAccountId == null ||
-            Number.isNaN(Number(targetAccountId)) || targetAccountId == null || Number.isNaN(Number(userId)) || userId == null){
+            isNaN(parseAmount) || parseAmount <= 0 || !validateTransactionDate ||
+            !isTransactionTypeValid.includes(transactionType?.toUpperCase()) || isNaN(sourceAccountId) || sourceAccountId == null ||
+            isNaN(targetAccountId) || targetAccountId == null || isNaN(userId) || userId == null){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {amount,transactionDate,transactionType,sourceAccountId,targetAccountId,userId};
@@ -39,10 +39,10 @@ export async function updateTransaction({id,amount,transactionDate,transactionTy
         const parseAmount = parseFloat(amount);
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || !validateTransactionDate ||
-            !isTransactionTypeValid.includes(transactionType?.toUpperCase()) || Number.isNaN(Number(sourceAccountId)) || sourceAccountId == null ||
-            Number.isNaN(Number(targetAccountId)) || targetAccountId == null || Number.isNaN(Number(userId)) || userId == null){
+            id == null || isNaN(id) ||
+            isNaN(parseAmount) || parseAmount <= 0 || !validateTransactionDate ||
+            !isTransactionTypeValid.includes(transactionType?.toUpperCase()) || isNaN(sourceAccountId) || sourceAccountId == null ||
+            isNaN(targetAccountId) || targetAccountId == null || isNaN(userId) || userId == null){
                 throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {amount,transactionDate,transactionType,sourceAccountId,targetAccountId,userId};
@@ -58,7 +58,7 @@ export async function updateTransaction({id,amount,transactionDate,transactionTy
 
 export async function deleteTransaction(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" transakcije nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -73,7 +73,7 @@ export async function deleteTransaction(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" transakcije nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -101,7 +101,7 @@ export async function findAll(){
 export async function findByAmount(amount){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Kolicina novca "+parseAmount+" za datu transakciju, nije pronadjena");
         }
         const response = await api.get(url+`/by-amount`,{
@@ -120,7 +120,7 @@ export async function findByAmount(amount){
 export async function findByAmountGreaterThan(amount){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Kolicina novca veca od "+parseAmount+" za datu transakciju, nije pronadjena");
         }
         const response = await api.get(url+`/by-amount-greater-than`,{
@@ -139,7 +139,7 @@ export async function findByAmountGreaterThan(amount){
 export async function findByAmountLessThan(amount){
     try{
         const parseAmount = parseFloat(amount);
-        if(Number.isNaN(Number(parseAmount)) || parseAmount <= 0){
+        if(isNaN(parseAmount) || parseAmount <= 0){
             throw new Error("Kolicina novca manja od "+parseAmount+" za datu transakciju, nije pronadjena");
         }
         const response = await api.get(url+`/by-amount-less-than`,{
@@ -159,7 +159,7 @@ export async function findByAmountBetween({amountMin, amountMax}){
     try{
         const parseAmountMin = parseFloat(amountMin);
         const parseAmountMax = parseFloat(amountMax);
-        if(Number.isNaN(Number(parseAmountMin)) || parseAmountMin <= 0 || Number.isNaN(Number(parseAmountMax)) || parseAmountMax <= 0){
+        if(isNaN(parseAmountMin) || parseAmountMin <= 0 || isNaN(parseAmountMax) || parseAmountMax <= 0){
             throw new Error("Opseg kolicine novca "+parseAmountMax+" - "+parseAmountMax+" za transakciju, nije pronadjen");
         }
         if(parseAmountMin > parseAmountMax){
@@ -183,11 +183,11 @@ export async function findByTransactionDate(transactionDate){
     try{
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateTransactionDate){
-            throw new Error("Datum "+validateTransactionDate+" za datu transakciju, nije pronadjen");
+            throw new Error("Datum "+transactionDate+" za datu transakciju, nije pronadjen");
         }
         const response = await api.get(url+`/by-transaction-date`,{
             params:{
-                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDate:moment(transactionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -202,11 +202,11 @@ export async function findByTransactionDateAfter(transactionDate){
     try{
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateTransactionDate){
-            throw new Error("Datum posle "+validateTransactionDate+" za datu transakciju, nije pronadjen");
+            throw new Error("Datum posle "+transactionDate+" za datu transakciju, nije pronadjen");
         }
         const response = await api.get(url+`/by-transaction-date-after`,{
             params:{
-                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDate:moment(transactionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -221,11 +221,11 @@ export async function findByTransactionDateBefore(transactionDate){
     try{
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateTransactionDate){
-            throw new Error("Datum pre "+validateTransactionDate+" za datu transakciju, nije pronadjen");
+            throw new Error("Datum pre "+transactionDate+" za datu transakciju, nije pronadjen");
         }
         const response = await api.get(url+`/by-transaction-date-before`,{
             params:{
-                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDate:moment(transactionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -241,15 +241,15 @@ export async function findByTransactionDateBetween({transactionDateStart, transa
         const validateTransactionDateStart = moment.isMoment(transactionDateStart) || moment(transactionDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateTransactionDateEnd = moment.isMoment(transactionDateEnd) || moment(transactionDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateTransactionDateStart || !validateTransactionDateEnd){
-            throw new Error("Opseg datuma "+validateTransactionDateStart+" - "+validateTransactionDateEnd+" za transakciju, nije pronadjen");
+            throw new Error("Opseg datuma "+transactionDateStart+" - "+transactionDateEnd+" za transakciju, nije pronadjen");
         }
-        if (moment(validateTransactionDateEnd).isBefore(moment(validateTransactionDateStart))) {
+        if (moment(transactionDateEnd).isBefore(moment(transactionDateStart))) {
             throw new Error("Datum za kraj transakcije ne sme biti pre datuma za pocetak transakcije");
         }
         const response = await api.get(url+`/by-transaction-date-range`,{
             params:{
-                transactionDateStart:moment(validateTransactionDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                transactionDateEnd:moment(validateTransactionDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDateStart:moment(transactionDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                transactionDateEnd:moment(transactionDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -282,12 +282,12 @@ export async function findByTransactionTypeAndTransactionDate({transactionType, 
     try{
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!isTransactionTypeValid.includes(transactionType?.toUpperCase()) || !validateTransactionDate){
-            throw new Error("Tip-transakcije "+transactionType+" i datum "+validateTransactionDate+" za datu transakciju, nisu pronadjeni");
+            throw new Error("Tip-transakcije "+transactionType+" i datum "+transactionDate+" za datu transakciju, nisu pronadjeni");
         }
         const response = await api.get(url+`/transaction-type-and-date`,{
             params:{
                 transactionType:(transactionType || "").toUpperCase(),
-                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDate:moment(transactionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -302,12 +302,12 @@ export async function findByTransactionTypeAndTransactionDateAfter({transactionT
     try{
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!isTransactionTypeValid.includes(transactionType?.toUpperCase()) || !validateTransactionDate){
-            throw new Error("Tip-transakcije "+transactionType+" i datum-posle "+validateTransactionDate+" za datu transakciju, nisu pronadjeni");
+            throw new Error("Tip-transakcije "+transactionType+" i datum-posle "+transactionDate+" za datu transakciju, nisu pronadjeni");
         }
         const response = await api.get(url+`/transaction-type-and-date-after`,{
             params:{
                 transactionType:(transactionType || "").toUpperCase(),
-                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDate:moment(transactionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -322,12 +322,12 @@ export async function findByTransactionTypeAndTransactionDateBefore({transaction
     try{
         const validateTransactionDate = moment.isMoment(transactionDate) || moment(transactionDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!isTransactionTypeValid.includes(transactionType?.toUpperCase()) || !validateTransactionDate){
-            throw new Error("Tip-transakcije "+transactionType+" i datum-pre "+validateTransactionDate+" za datu transakciju, nisu pronadjeni");
+            throw new Error("Tip-transakcije "+transactionType+" i datum-pre "+transactionDate+" za datu transakciju, nisu pronadjeni");
         }
         const response = await api.get(url+`/transaction-type-and-date-before`,{
             params:{
                 transactionType:(transactionType || "").toUpperCase(),
-                transactionDate:moment(validateTransactionDate).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDate:moment(transactionDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -343,16 +343,16 @@ export async function findByTransactionTypeAndTransactionDateBetween({transactio
         const validateTransactionDateStart = moment.isMoment(transactionDateStart) || moment(transactionDateStart,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateTransactionDateEnd = moment.isMoment(transactionDateEnd) || moment(transactionDateEnd,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!isTransactionTypeValid.includes(transactionType?.toUpperCase()) || !validateTransactionDateStart || !validateTransactionDateEnd){
-            throw new Error("Tip-transakcije "+transactionType+" i opseg datuma "+validateTransactionDateStart+" - "+validateTransactionDateEnd+" za transakciju, nisu pronadjeni");
+            throw new Error("Tip-transakcije "+transactionType+" i opseg datuma "+validateTratransactionDateStartnsactionDateStart+" - "+transactionDateEnd+" za transakciju, nisu pronadjeni");
         }
-        if(moment(validateTransactionDateEnd).isBefore(moment(validateTransactionDateStart))){
+        if(moment(transactionDateEnd).isBefore(moment(transactionDateStart))){
             throw new Error("Datum za kraj transakcije ne sme biti pre datuma za pocetak transakcije");
         }
         const response = await api.get(url+`/transaction-type-and-date-range`,{
             params:{
                 transactionType:(transactionType || "").toUpperCase(),
-                transactionDateStart:moment(validateTransactionDateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                transactionDateEnd:moment(validateTransactionDateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                transactionDateStart:moment(transactionDateStart).format("YYYY-MM-DDTHH:mm:ss"),
+                transactionDateEnd:moment(transactionDateEnd).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -402,7 +402,7 @@ export async function findByUserEmailLikeIgnoreCase(userEmail){
 
 export async function findBySourceAccountId(sourceAccountId){
     try{
-        if(Number.isNaN(Number(sourceAccountId)) || sourceAccountId == null){
+        if(isNaN(sourceAccountId) || sourceAccountId == null){
             throw new Error("Id "+sourceAccountId+" izvornog racuna 'source-account' za datu transakciju, nije pronadjen");
         }
         const response = await api.get(url+`/search/source-account/${sourceAccountId}`,{
@@ -490,7 +490,7 @@ export async function findBySourceAccountAccountNumberContainingIgnoreCaseAndSou
 
 export async function findByTargetAccountId(targetAccountId){
     try{
-        if(Number.isNaN(Number(targetAccountId)) || targetAccountId == null){
+        if(isNaN(targetAccountId) || targetAccountId == null){
             throw new Error("Id "+targetAccountId+" ciljanog-racuna za datu transakciju, nije pronadjen");
         }
         const response = await api.get(url+`/target-account/${targetAccountId}`,{
@@ -583,22 +583,22 @@ export async function findByAmountBetweenAndTransactionDateBetween({min, max, st
         const parseMax = parseFloat(max);
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
-        if(Number.isNaN(Number(parseMin)) || parseMin <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0 || !validateStart ||
+        if(isNaN(parseMin) || parseMin <= 0 || isNaN(parseMax) || parseMax <= 0 || !validateStart ||
            !validateEnd){
-            throw new Error("Opseg kolicine novca "+parseMin+" - "+parseMax+" i opseg datuma transakcije "+validateStart+" - "+validateEnd+" za transakciju, nisu pronadjeni");
+            throw new Error("Opseg kolicine novca "+parseMin+" - "+parseMax+" i opseg datuma transakcije "+start+" - "+end+" za transakciju, nisu pronadjeni");
         }
         if(parseMin > parseMax){
             throw new Error("Minimalna kolicina novca ne sme biti veca od maksimalne kolicine novca");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj transakcije ne sme biti pre datuma za pocetak transakcije");
         }
         const response = await api.get(url+`/search/amount-range-and-transaction-date-range`,{
             params:{
                 min:parseMin,
                 max:parseMax,
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -614,16 +614,16 @@ export async function findByUserIdAndTransactionDateBetween({userId, start, end}
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            Number.isNaN(Number(userId)) || userId == null || !validateStart || !validateEnd){
-            throw new Error("Id korisnika "+userId+" i opseg datuma transakcije "+validateStart+" - "+validateEnd+" za transakciju, nisu pronadjeni");
+            isNaN(userId) || userId == null || !validateStart || !validateEnd){
+            throw new Error("Id korisnika "+userId+" i opseg datuma transakcije "+start+" - "+end+" za transakciju, nisu pronadjeni");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj transakcije ne sme biti pre datuma za pocetak transakcije");
         }
         const response = await api.get(url+`/user/${userId}/transaction-date-between`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -639,20 +639,20 @@ export async function findBySourceAccountIdAndTransactionTypeAndTransactionDateB
         const validateStart = moment.isMoment(start) || moment(start,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            Number.isNaN(Number(accountId)) || accountId == null || !isTransactionTypeValid.includes(transactionType?.toUpperCase()) ||
+            isNaN(accountId) || accountId == null || !isTransactionTypeValid.includes(transactionType?.toUpperCase()) ||
             !validateStart || !validateEnd){
             throw new Error("Id izvornog-racuna "+accountId+" ,tip-transakcije "+transactionType+" i opseg datuma transakcije "+
-                validateStart+" - "+validateEnd+" za transakciju, nisu pronadjeni"
+                start+" - "+end+" za transakciju, nisu pronadjeni"
             );
         }
-        if(moment(validateEnd).isBefore(moment(validateEnd))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj transakcije ne sme biti pre datuma za pocetak transakcije");
         }
         const response = await api.get(url+`/source-account/${accountId}/transaction-type-date-between`,{
             params:{
                 transactionType:(transactionType || "").toUpperCase(),
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -667,7 +667,7 @@ export async function findBySourceAccountIdAndTransactionTypeAndTransactionDateB
 
 export async function sumOfOutgoingTransactions(accountId){
     try{
-        if(Number.isNaN(Number(accountId)) || accountId == null){
+        if(isNaN(accountId) || accountId == null){
             throw new Error("Zbir odlazecih transakcija po datom "+accountId+" id-iju, nije pronadjen");
         }
         const response = await api.get(url+`/sum-of-outgoing-transactions/account/${accountId}`,{
@@ -682,7 +682,7 @@ export async function sumOfOutgoingTransactions(accountId){
 
 export async function sumOfIncomingTransactions(accountId){
     try{
-        if(Number.isNaN(Number(accountId)) || accountId == null){
+        if(isNaN(accountId) || accountId == null){
             throw new Error("Zbir dolazecih transakcija po datom "+accountId+" id-iju, nije pronadjen");
         }
         const response = await api.get(url+`/sum-of-incoming-transactions/account/${accountId}`,{
@@ -769,7 +769,7 @@ export async function existsByTargetAccount_AccountNumberContainingIgnoreCase(ac
 
 export async function existsBySourceAccountIdAndTargetAccountId({sourceId, targetId}){
     try{
-        if(Number.isNaN(Number(sourceId)) || sourceId == null || Number.isNaN(Number(targetId)) || targetId == null){
+        if(isNaN(sourceId) || sourceId == null || isNaN(targetId) || targetId == null){
             throw new Error("Id izvornog racuna "+sourceId+" kao i id ciljanog racuna "+targetId+" za datu transakciju, nisu pronadjeni");
         }
         const response = await api.get(url+`/exists/source-account/${sourceId}/target-account/${targetId}`,{
@@ -786,7 +786,7 @@ export async function fundTransfer({sourceAccountNumber, targetAccountNumber, pa
     try{
         const parseAmount = parseFloat(amount);
         if(
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(userId)) || userId == null || 
+            isNaN(parseAmount) || parseAmount <= 0 || sNaN(userId) || userId == null || 
             !isPaymentMethodValid.includes(paymentMethod?.toUpperCase()) || !sourceAccountNumber || typeof sourceAccountNumber !== "string" || 
             sourceAccountNumber.trim() === "" || !targetAccountNumber || typeof targetAccountNumber !== "string" || targetAccountNumber.trim() === ""){
             throw new Error("Broj izvornog racuna "+sourceAccountNumber+" ,broj ciljanog racuna "+targetAccountNumber+" ,metod placanja "+paymentMethod+
@@ -815,7 +815,7 @@ export async function cashWithdrawal({accountNumber, amount, paymentMethod, user
     try{
         const parseAmount = parseFloat(amount);
         if(
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(userId)) || userId == null || !isPaymentMethodValid.includes(paymentMethod?.toUpperCase()) ||
+            isNaN(parseAmount) || parseAmount <= 0 || isNaN(userId) || userId == null || !isPaymentMethodValid.includes(paymentMethod?.toUpperCase()) ||
             !accountNumber || typeof accountNumber !== "string" || accountNumber.trim() === ""){
             throw new Error("Broj racuna "+accountNumber+" , kolicina novca "+parseAmount+" , metod placanja "+paymentMethod+
                 " i korisnicki id "+userId+" za podizanje sredstava za datu transakciju, nisu pronadjeni");
@@ -840,7 +840,7 @@ export async function deposit({accountNumber, amount, paymentMethod, userId}){
     try{
         const parseAmount = parseFloat(amount);
         if(
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(userId)) || userId == null ||
+            isNaN(parseAmount) || parseAmount <= 0 || isNaN(userId) || userId == null ||
             !isPaymentMethodValid.includes(paymentMethod?.toUpperCase()) || !accountNumber || typeof accountNumber !== "string" || accountNumber.trim() === ""){
             throw new Error("Broj ciljanog racuna "+accountNumber+" kolicina novca "+parseAmount+" ,metod placanja "+paymentMethod+
                 " i korisnikcki id "+userId+" za depozit sredstava za datu transakciju, nisu pronadjeni");
@@ -865,10 +865,10 @@ export async function makePayment({sourceAccountNumber, targetAccountNumber, amo
     try{
         const parseAmount = parseFloat(amount);
         if(
-            Number.isNaN(Number(parseAmount)) || parseAmount <= 0 || Number.isNaN(Number(userId)) || userId <= 0 || !isPaymentMethodValid.includes(paymentMethod?.toUpperCase()) ||
-           !sourceAccountNumber || typeof sourceAccountNumber !== "string" || sourceAccountNumber.trim() === "" ||
-           !targetAccountNumber || typeof targetAccountNumber !== "string" || targetAccountNumber.trim() === ""){
-            throw new Error("Broj izvornog racuna "+sourceAccountNumber+" ,broj ciljanog racuna "+targetAccountNumber+
+            isNaN(parseAmount) || parseAmount <= 0 || isNaN(userId) || userId <= 0 || !isPaymentMethodValid.includes(paymentMethod?.toUpperCase()) ||
+            !sourceAccountNumber || typeof sourceAccountNumber !== "string" || sourceAccountNumber.trim() === "" ||
+            !targetAccountNumber || typeof targetAccountNumber !== "string" || targetAccountNumber.trim() === ""){
+                throw new Error("Broj izvornog racuna "+sourceAccountNumber+" ,broj ciljanog racuna "+targetAccountNumber+
                 " ,kolicina novca "+parseAmount+" ,metod placanja "+paymentMethod+" i korisnicki id "+userId+" za izvrsavanje plavanja date transakcije, nisu pronadjeni");
         }
         const response = await api.get(url+`/make-payment/${userId}`,{
@@ -890,7 +890,7 @@ export async function makePayment({sourceAccountNumber, targetAccountNumber, amo
 
 export async function refund({originalTransactionId, userId}){
     try{
-        if(Number.isNaN(Number(originalTransactionId)) || originalTransactionId == null || Number.isNaN(Number(userId)) || userId == null){
+        if(isNaN(originalTransactionId) || originalTransactionId == null || isNaN(userId) || userId == null){
             throw new Error("Id izvornog racuna "+originalTransactionId+" kao i id ciljanog racuna "+userId+" za povracaj sredstava date transakcije, nisu pronadjeni");
         }
         const response = await api.get(url+`/refund/${userId}/${originalTransactionId}`,{

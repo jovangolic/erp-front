@@ -13,7 +13,7 @@ const isTransactionTypeValid = ["TRANSFER","DEPOSIT","WITHDRAWAL","PAYMENT","REF
 
 export async function findByUserId(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/user/${userId}`,{
@@ -28,7 +28,7 @@ export async function findByUserId(id){
 
 export async function findByTransactionId(transactionId){
     try{
-        if(Number.isNaN(Number(transactionId)) || transactionId == null){
+        if(isNaN(transactionId) || transactionId == null){
             throw new Error("Dati id "+transactionId+" transakcije, nije pronadjen");
         }
         const response = await api.get(url+`//transaction/${transactionId}`,{

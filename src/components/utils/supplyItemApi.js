@@ -15,8 +15,8 @@ export async function createSupplyItem({procurementId, vendorId, cost}){
     try{
         const parseCost = parseFloat(cost);
         if(
-            procurementId == null || Number.isNaN(Number(procurementId)) || 
-            vendorId == null || Number.isNaN(Number(vendorId)) || Number.isNaN(Number(parseCost)) || parseCost <= 0){
+            procurementId == null || isNaN(procurementId) || 
+            vendorId == null || sNaN(vendorId) || isNaN(parseCost) || parseCost <= 0){
                 throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {
@@ -42,9 +42,9 @@ export async function updateSupplyItem({id, procurementId, vendorId, cost}){
     try{
         const parseCost = parseFloat(cost);
         if(
-            id == null || Number.isNaN(Number(id)) ||
-            procurementId == null || Number.isNaN(Number(procurementId)) || 
-            vendorId == null || Number.isNaN(Number(vendorId)) || Number.isNaN(Number(parseCost)) || parseCost <= 0){
+            id == null || isNaN(id) ||
+            procurementId == null || isNaN(procurementId) || 
+            vendorId == null || sNaN(vendorId) || isNaN(parseCost) || parseCost <= 0){
                 throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {
@@ -67,7 +67,7 @@ export async function updateSupplyItem({id, procurementId, vendorId, cost}){
 
 export async function deleteSupplyItem(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pornadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -82,7 +82,7 @@ export async function deleteSupplyItem(id){
 
 export async function getOneSupplyItem(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -109,7 +109,7 @@ export async function getAllSuppliesItems(){
 
 export async function getByProcurementId(procurementId){
     try{
-        if(procurementId == null || Number.isNaN(Number(procurementId))){
+        if(procurementId == null || isNaN(procurementId)){
             throw new Error("Dati id "+procurementId+" nabavke nije pronadjen");
         }
         const response = await api.get(url+`/procurement/${procurementId}`,{
@@ -127,7 +127,7 @@ export async function getByProcurementId(procurementId){
 
 export async function getBySupplierId(supplierId){
     try {
-        if(supplierId == null || Number.isNaN(Number(supplierId))){
+        if(supplierId == null || isNaN(supplierId)){
             throw new Error("Dati id "+supplierId+"  dobavljaca, nije pronadjen");
         }
         const response = await api.get(url+`/supplier/${supplierId}`, {
@@ -144,8 +144,8 @@ export async function getByCostBetween({min, max}){
         const parsedMin = parseFloat(min);
         const parsedMax = parseFloat(max);
         if(
-            Number.isNaN(Number(parsedMin)) || parsedMin < 0 ||
-            Number.isNaN(Number(parsedMax)) || parsedMax <= 0){
+            isNaN(parsedMin) || parsedMin < 0 ||
+            isNaN(parsedMax) || parsedMax <= 0){
                 throw new Error("Dati opseg cena "+parsedMin+" - "+parsedMax+" nije pronadjen");
             }
         const response = await api.get(url+`/cost-between`,{
@@ -166,15 +166,15 @@ export async function getByProcurementDateBetween({startDate, endDate}){
         const validateStart = moment.isMoment(startDate) || moment(startDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if (!validateStart || !validateEnd) {
-            throw new Error("Dati opseg "+validateStart+" - "+validateEnd+" datuma, nije pronadje");
+            throw new Error("Dati opseg "+startDate+" - "+endDate+" datuma, nije pronadje");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/procurement-date-between`, {
             params: {
-                startDate: moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate: moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers: getHeader()
         });
@@ -192,19 +192,19 @@ export async function getByProcurementDateAndCostBetween({startDate,endDate, min
         const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if (
             !validateStart || !validateEnd ||
-            Number.isNaN(Number(parsedMin)) || parsedMin < 0 ||
-            Number.isNaN(Number(parsedMax)) || parsedMax <= 0
+            isNaN(parsedMin) || parsedMin < 0 ||
+            isNaN(parsedMax) || parsedMax <= 0
         ) {
-            throw new Error("Dati opseg "+validateStart+" - "+validateEnd+" datuma i opseg "+parsedMin+" - "+parsedMax+" cena za nabavku, nije pronadjen");
+            throw new Error("Dati opseg "+startDate+" - "+endDate+" datuma i opseg "+parsedMin+" - "+parsedMax+" cena za nabavku, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/date-cost-between`,{
             params:{
                 min:min, max:max,
-                startDate: moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate: moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
             }
         });
         return response.data;
@@ -216,7 +216,7 @@ export async function getByProcurementDateAndCostBetween({startDate,endDate, min
 
 export async function getByProcurementAndVendor({procurementId, vendorId}){
     try{
-        if(procurementId == null || Number.isNaN(Number(procurementId)) || vendorId == null || Number.isNaN(Number(vendorId))){
+        if(procurementId == null || isNaN(procurementId) || vendorId == null || isNaN(vendorId)){
             throw new Error("Dati id "+procurementId+" za nabavku i id "+vendorId+" za prodavca, nisu pronadjeni");
         }
         const response = await api.get(url+`/by-procurement-vendor/${procurementId}/${vendorId}`,{
@@ -233,8 +233,8 @@ export async function getByVendorAndProcurementAndCost({supplierId, procurementI
     try {
         const parseMinCost = parseFloat(minCost);
         if(
-            procurementId == null || Number.isNaN(Number(procurementId)) || vendorId == null || Number.isNaN(Number(vendorId)) ||
-            Number.isNaN(Number(parseMinCost)) || parseMinCost <= 0){
+            procurementId == null || isNaN(procurementId) || vendorId == null || isNaN(vendorId) ||
+            isNaN(parseMinCost) || parseMinCost <= 0){
                 throw new Error("Dati id "+procurementId+" za nabavku, id "+vendorId+" za prodavca i cena "+parseMinCost+" nisu pronadjeni");
         }
         const response = await api.get(
@@ -260,20 +260,20 @@ export async function getByDateAndCost({startDate, endDate, min, max}) {
         const validateEnd = moment.isMoment(endDate) || moment(endDate,"YYYY-MM-DDTHH:mm:ss").isValid();
         if (
             !validateStart || !validateEnd ||
-            Number.isNaN(Number(parsedMin)) || parsedMin < 0 ||
-            Number.isNaN(Number(parsedMax)) || parsedMax <= 0
+            isNaN(parsedMin) || parsedMin < 0 ||
+            isNaN(parsedMax) || parsedMax <= 0
         ) {
-            throw new Error("Dati opseg "+validateStart+" - "+validateEnd+" datuma i opseg "+parsedMin+" - "+parsedMax+" cena, nije pronadjen");
+            throw new Error("Dati opseg "+startDate+" - "+endDate+" datuma i opseg "+parsedMin+" - "+parsedMax+" cena, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/date-cost`, {
             params: {
                 min: parsedMin,
                 max: parsedMax,
-                startDate: moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                endDate: moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers: getHeader()
         });
@@ -291,11 +291,11 @@ export async function getBySupplierNameAndProcurementDateAndMaxCost({supplierNam
         if (
             !supplierName || typeof supplierName !== "string" || supplierName.trim() === "" ||
             !validateStart || !validateEnd || 
-            Number.isNaN(Number(parseMax)) || parseMax <= 0
+            isNaN(parseMax) || parseMax <= 0
         ) {
-            throw new Error("Dati naziv "+supplierName+" dobavljaca, opseg "+validateStart+" - "+validateEnd+" datuma i maksimalna cena "+parseMax+" ,nisu");
+            throw new Error("Dati naziv "+supplierName+" dobavljaca, opseg "+startDate+" - "+endDate+" datuma i maksimalna cena "+parseMax+" ,nisu");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(endDate).isBefore(moment(startDate))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(
@@ -303,8 +303,8 @@ export async function getBySupplierNameAndProcurementDateAndMaxCost({supplierNam
             {
                 params: {
                     supplierName: supplierName.trim(),
-                    startDate: moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"), 
-                    endDate: moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss"),
+                    startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"), 
+                    endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss"),
                     max: parseMax 
                 },
                 headers: getHeader()
@@ -394,7 +394,7 @@ export async function findBySupplierNameContainingAndCostBetween({supplierName, 
         const parseMaxCost = parseFloat(maxCost);
         if(
             !supplierName || typeof supplierName !== "string" || supplierName.trim() === "" ||
-            parseMaxCost <= 0 || Number.isNaN(Number(parseMaxCost)) || parseMinCost <= 0 || Number.isNaN(Number(parseMinCost))){
+            parseMaxCost <= 0 || isNaN(parseMaxCost) || parseMinCost <= 0 || isNaN(parseMinCost)){
             throw new Error("Dati naziv "+supplierName+" dobavljaca i opseg cena "+parseMinCost+" - "+parseMaxCost+" nije pronadjen");
         }
         if(parseMinCost > parseMaxCost){
@@ -423,16 +423,16 @@ export async function findBySupplierNameAndProcurementDateBetween({supplierName,
             !supplierName || typeof supplierName !== "string" || supplierName.trim() === "" ||
             !validateStart ||
             !validateEnd){
-                throw new Error("Dati naziv "+supplierName+" za dobavljaca i opseg "+validateStart+" - "+validateEnd+" datuma za nabavku, nije pronadjen");
+                throw new Error("Dati naziv "+supplierName+" za dobavljaca i opseg "+start+" - "+end+" datuma za nabavku, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/supplier-name-procurement-date-range`,{
             params:{
                 supplierName:supplierName,
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -447,7 +447,7 @@ export async function findByAddressAndMinCost({address, minCost}){
     try{
         const parseMinCost = parseFloat(minCost);
         if(!address || typeof address !== "string" || address.trim() === "" ||
-            parseMinCost <= 0 || Number.isNaN(Number(parseMinCost))){
+            parseMinCost <= 0 || isNaN(parseMinCost)){
             throw new Error("Data adresa "+address+" dobavljaca i minimalna "+parseMinCost+" cena nisu pronadjeni");
         }
         const response = await api.get(url+`/search/address-min-cost`,{
@@ -468,7 +468,7 @@ export async function findByPhoneNumberAndCost({phoneNumber, cost}){
     try{
         const parseCost = parseFloat(cost);
         if(!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "" ||
-            Number.isNaN(Number(parseCost)) || parseCost <= 0){
+            isNaN(parseCost) || parseCost <= 0){
             throw new Error("Dati broj-telefona "+phoneNumber+" dobavljaca i cena "+parseCost+" nisu pronadjeni");
         }
         const response = await api.get(url+`/search/phone-number-cost`,{
@@ -488,7 +488,7 @@ export async function findByPhoneNumberAndCost({phoneNumber, cost}){
 export async function findByProcurementSupplyItemCount(count){
     try{
         const parseCount = parseInt(count,10);
-        if(Number.isNaN(Number(parseCount)) || parseCount <= 0){
+        if(isNaN(parseCount) || parseCount <= 0){
             throw new Error("Dati broj "+parseCount+" nabavki za supply-item nije pronadjen");
         }
         const response = await api.get(url+`/search/procurement-supply-item-count`,{
@@ -507,7 +507,7 @@ export async function findByProcurementSupplyItemCount(count){
 export async function findByCost(cost){
     try{
         const parseCost = parseFloat(cost);
-        if(parseCost <= 0 || Number.isNaN(Number(parseCost))){
+        if(parseCost <= 0 || isNaN(parseCost)){
             throw new Error("Data cena "+parseCost+" za stavku-dobavljaca nije pronadjena");
         }
         const response = await api.get(url+`/search/by-cost`,{
@@ -526,7 +526,7 @@ export async function findByCost(cost){
 export async function findByCostGreaterThan(cost){
     try{
         const parseCost = parseFloat(cost);
-        if(parseCost <= 0 || Number.isNaN(Number(parseCost))){
+        if(parseCost <= 0 || isNaN(parseCost)){
             throw new Error("Data cena veca od "+parseCost+" za stavku-dobavljaca nije pronadjena");
         }
         const response = await api.get(url+`/search/cost-greater-than`,{
@@ -545,7 +545,7 @@ export async function findByCostGreaterThan(cost){
 export async function findByCostLessThan(cost){
     try{
         const parseCost = parseFloat(cost);
-        if(parseCost <= 0 || Number.isNaN(Number(parseCost))){
+        if(parseCost <= 0 || isNaN(parseCost)){
             throw new Error("Data cena manja od "+parseCost+" za stavku-dobavljaca nije pronadjena");
         }
         const response = await api.get(url+`/search/cost-less-than`,{
@@ -564,7 +564,7 @@ export async function findByCostLessThan(cost){
 export async function findByProcurementTotalCostGreaterThan(minCost){
     try{
         const parseMinCost = parseFloat(minCost);
-        if(Number.isNaN(Number(parseMinCost)) || parseMinCost <= 0){
+        if(isNaN(parseMinCost) || parseMinCost <= 0){
             throw new Error("Data cena veca od "+parseMinCost+" za nabavku nije pronadjena");
         }
         const response = await api.get(url+`/search/procurement/total-cost-greater-than`,{
@@ -584,11 +584,11 @@ export async function findByProcurementDate(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum "+validateDate+" nabavke nije pronadjen");
+            throw new Error("Dati datum "+date+" nabavke nije pronadjen");
         }
         const response = await api.get(url+`/search/procurement-date`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                date:moment(date).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -614,7 +614,7 @@ export async function findBySupplyAndSalesCountMismatch(){
 export async function findByProcurementWithSupplyCostOver(minTotal){
     try{
         const parseMinTotal = parseFloat(minTotal);
-        if(Number.isNaN(Number(parseMinTotal)) || parseMinTotal <= 0){
+        if(isNaN(parseMinTotal) || parseMinTotal <= 0){
             throw new Error("Data cena "+parseMinTotal+" koja prelazi cenu nabavke nije pronadjena");
         }
         const response = await api.get(url+`/search/procurement-with-supply-cost-over`,{
@@ -633,7 +633,7 @@ export async function findByProcurementWithSupplyCostOver(minTotal){
 export async function findBySupplierWithMoreThanNItems(minCount){
     try{
         const parseMinCount = parseFloat(minCount);
-        if(parseMinCount <= 0 || Number.isNaN(Number(parseMinCount))){
+        if(parseMinCount <= 0 || isNaN(parseMinCount)){
             throw new Error("Dati broj "+parseMinCount+" stavki za nabavljaca nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supplier-wuth-more-than-n-times`,{
@@ -712,7 +712,7 @@ export async function findCostSumGroupedByProcurement(){
 export async function findCostSumGroupedByProcurementWithMinTotal(minTotal){
     try{
         const parseMinTotal = parseFloat(minTotal);
-        if(Number.isNaN(Number(parseMinTotal)) || parseMinTotal <= 0){
+        if(isNaN(parseMinTotal) || parseMinTotal <= 0){
             throw new Error("Dati unos "+parseMinTotal+" za ukupnu cenu grupisanu po nabavci nije pronadjena");
         }
         const response = await api.get(url+`/search/cost-sum-by-procurement-with-min-total`,{
@@ -754,7 +754,7 @@ export async function countAllSupplyItems(){
 
 export async function countByProcurementId(procurementId){
     try{
-        if(procurementId == null || Number.isNaN(Number(procurementId))){
+        if(procurementId == null || isNaN(procurementId)){
             throw new Error("Dati ID "+procurementId+" za nabavku nije pronadjen");
         }
         const response = await api.get(url+`/search/count-by-procurement/${procurementId}`,{

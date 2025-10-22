@@ -38,7 +38,7 @@ export async function createVendor({name, email, phoneNumber, address}) {
 export async function updateVendor({id, name, email,phoneNumber, address}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) || !name || name.trim() ==="" || typeof name !== "string" ||
+            id == null || isNaN(id) || !name || name.trim() ==="" || typeof name !== "string" ||
             !email || email.trim()==="" || typeof email !=="string" || 
             !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" || 
             !address || address.trim() ==="" || typeof address !=="string"){
@@ -62,7 +62,7 @@ export async function updateVendor({id, name, email,phoneNumber, address}){
 
 export async function deleteVendor(id){
     try{
-        if(id == null || Number.isNaN(Number(id)) ){
+        if(id == null || isNaN(id) ){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -131,7 +131,7 @@ export async function getVendorByEmail(email){
 
 export async function getById(id){
     try{
-        if(id == null || Number.isNaN(Number(id)) ){
+        if(id == null || isNaN(id) ){
             throw new Error("Dati id "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
@@ -210,7 +210,7 @@ export async function findByNameIgnoreCaseContainingAndAddressIgnoreCaseContaini
 
 export async function findByIdBetween({startId, endId}){
     try{
-        if(startId == null || Number.isNaN(Number(startId)) || endId == null || Number.isNaN(Number(endId))){
+        if(startId == null || isNaN(startId) || endId == null || isNaN(endId)){
             throw new Error("Dati opseg "+startId+" - "+endId+" indeksa nije pronadjen");
         }
         const response = await api.get(url+`/search/between-ids`,{

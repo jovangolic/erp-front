@@ -140,7 +140,7 @@ export async function createAdmin({firstName,lastName,email,username,password,ph
 
 export async function deleteUser(userId){
     try{
-        if(userId == null || Number.isNaN(Number(userId))){
+        if(userId == null || isNaN(userId)){
             throw new Error("Dati userId nij pronadjen");
         }
         const response = await api.delete(`${import.meta.env.VITE_API_BASE_URL}/users/delete/${userId}`,{
@@ -185,7 +185,7 @@ export async function getUserByIdentifier(identifier){
 
 export async function getUserById(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati ID nije pronadjen");
         }
         const response = await api.get(`${import.meta.env.VITE_API_BASE_URL}/users/${id}`,{
@@ -201,7 +201,7 @@ export async function getUserById(id){
 export async function updateUser({id,firstName,lastName,email,username,password,phoneNumber, address,roleIds }){
     try{
         if (
-      id == null || Number.isNaN(Number(id)) ||      
+      id == null || isNaN(id) ||      
       !firstName || typeof firstName !== "string" || firstName.trim() === "" ||
       !lastName || typeof lastName !== "string" || lastName.trim() === "" ||
       !email || typeof email !== "string" || email.trim() === "" ||
@@ -296,7 +296,7 @@ export async function createEmployeeByAdmin({firstName,lastName,email,phoneNumbe
 export async function updateEmployeeDetails({id, phoneNumber,address, roleIds}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) || !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" ||
+            id == null || isNaN(id) || !phoneNumber || typeof phoneNumber !=="string" || phoneNumber.trim()==="" ||
             !address || typeof address !== "string" || address.trim() === ""||
             !(roleIds instanceof Set) || roleIds.size === 0
         ){

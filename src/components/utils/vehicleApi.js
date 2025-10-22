@@ -37,7 +37,7 @@ export async function createVehicle({registrationNumber,model,status,fuel,typeSt
 export async function updateVehicle({id,registrationNumber,model,status}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !registrationNumber || registrationNumber.trim() === "" || typeof registrationNumber !=="string" || 
             !model || model.trim() ===""|| typeof model !=="string" || typeof confirmed !== "boolean" ||
             !status || !validateStatus.includes(status?.toUpperCase()) ||
@@ -58,7 +58,7 @@ export async function updateVehicle({id,registrationNumber,model,status}){
 
 export async function deleteVehicle(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -73,7 +73,7 @@ export async function deleteVehicle(id){
 
 export async function findOneById(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{

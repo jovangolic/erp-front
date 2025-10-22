@@ -15,8 +15,8 @@ export async function createVehicleLocation({vehicleId,latitude,longitude}){
         const parseLatitude = parseFloat(latitude);
         const parseLongitude = parseFloat(longitude);
         if(
-            Number.isNaN(Number(vehicleId)) || vehicleId == null || 
-            Number.isNaN(Number(parseLatitude)) || parseLatitude <= 0 || Number.isNaN(Number(parseLongitude)) || parseLongitude <= 0){
+            isNaN(vehicleId) || vehicleId == null || 
+            isNaN(parseLatitude) || parseLatitude <= 0 || isNaN(parseLongitude) || parseLongitude <= 0){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {vehicleId,latitude,longitude};
@@ -33,9 +33,9 @@ export async function createVehicleLocation({vehicleId,latitude,longitude}){
 export async function updateVehicleLocation({id, vehicleId,latitude,longitude}){
     try{
         if(
-            Number.isNaN(Number(id)) || id == null ||
-            Number.isNaN(Number(vehicleId)) || vehicleId == null || 
-            Number.isNaN(Number(parseLatitude)) || parseLatitude <= 0 || Number.isNaN(Number(parseLongitude)) || parseLongitude <= 0){
+            id == null || isNaN(id) ||
+            isNaN(vehicleId) || vehicleId == null || 
+            isNaN(parseLatitude) || parseLatitude <= 0 || isNaN(parseLongitude) || parseLongitude <= 0){
             throw new Error("Sva polja moraju biti popunjena i validna");
         }
         const requestBody = {vehicleId,latitude,longitude};
@@ -51,7 +51,7 @@ export async function updateVehicleLocation({id, vehicleId,latitude,longitude}){
 
 export async function deleteVehicleLocation(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za lokaciju-vozila, nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -66,7 +66,7 @@ export async function deleteVehicleLocation(id){
 
 export async function findOne(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" za lokaciju-vozila, nije pronadjen");
         }
         const response = await api.get(irl+`/find-one/${id}`,{
@@ -96,15 +96,15 @@ export async function findLocationsByTimeRange({from, to}){
         const validateStart = moment.isMoment(from) || moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(to) || moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Vremenski opseg "+validateStart+" - "+validateEnd+" lokacije-vozila, nije pronadjen");
+            throw new Error("Vremenski opseg "+from+" - "+to+" lokacije-vozila, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(to).isBefore(moment(from))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/by-time`,{
             params:{
-                from : moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                to : moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                from : moment(from).format("YYYY-MM-DDTHH:mm:ss"),
+                to : moment(to).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -120,15 +120,15 @@ export async function findVehiclesByLocationTimeRange({from, to}){
         const validateStart = moment.isMoment(from) || moment(from,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(to) || moment(to,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateStart || !validateEnd){
-            throw new Error("Vremenski opseg "+validateStart+" - "+validateEnd+" datih vozila, nije pronadjen");
+            throw new Error("Vremenski opseg "+from+" - "+to+" datih vozila, nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(to).isBefore(moment(from))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/vehicles-by-time`,{
             params:{
-                from : moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                to : moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                from : moment(from).format("YYYY-MM-DDTHH:mm:ss"),
+                to : moment(to).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -146,13 +146,13 @@ export async function findLocationsByRequest({id, vehicleId,vehicleIdFrom,vehicl
         const validateStart = moment.isMoment(recordedAtFrom) || moment(recordedAtFrom,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(recordedAtTo) || moment(recordedAtTo,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(vehicleId)) || vehicleId == null || Number.isNaN(Number(vehicleIdFrom)) || vehicleIdFrom == null ||
-            Number.isNaN(Number(vehicleIdTo)) || vehicleIdTo == null || Number.isNaN(Number(parseLatitude)) || parseLatitude <= 0 || Number.isNaN(Number(parseLongitude)) || parseLongitude <= 0||
+            isNaN(id) || id == null || isNaN(vehicleId) || vehicleId == null || isNaN(vehicleIdFrom) || vehicleIdFrom == null ||
+            isNaN(vehicleIdTo) || vehicleIdTo == null || isNaN(parseLatitude) || parseLatitude <= 0 || isNaN(parseLongitude) || parseLongitude <= 0||
             !validateStart || !validateEnd ){
             throw new Error("Dati parametri ne daju ocekivani rezultat: "+id+"-"+vehicleId+"-"+vehicleIdFrom+"-"+
-            vehicleIdTo+"-"+parseLatitude+"-"+parseLongitude+"-"+validateStart+"-"+validateEnd);
+            vehicleIdTo+"-"+parseLatitude+"-"+parseLongitude+"-"+recordedAtFrom+"-"+recordedAtTo);
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(recordedAtTo).isBefore(moment(recordedAtFrom))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.post(url+`/search`,{
@@ -163,8 +163,8 @@ export async function findLocationsByRequest({id, vehicleId,vehicleIdFrom,vehicl
                 vehicleIdTo:vehicleIdTo,
                 latitude:parseLatitude,
                 longitude:parseLongitude,
-                recordedAtFrom:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                recordedAtTo:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                recordedAtFrom:moment(recordedAtFrom).format("YYYY-MM-DDTHH:mm:ss"),
+                recordedAtTo:moment(recordedAtTo).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -184,13 +184,13 @@ export async function generalSearch({id, vehicleId,vehicleIdFrom,vehicleIdTo,lat
         const validateStart = moment.isMoment(recordedAtFrom) || moment(recordedAtFrom,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         const validateEnd = moment.isMoment(recordedAtTo) || moment(recordedAtTo,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(
-            Number.isNaN(Number(id)) || id == null || Number.isNaN(Number(vehicleId)) || vehicleId == null || Number.isNaN(Number(vehicleIdFrom)) || vehicleIdFrom == null ||
-            Number.isNaN(Number(vehicleIdTo)) || vehicleIdTo == null || Number.isNaN(Number(parseLatitude)) || parseLatitude <= 0 || Number.isNaN(Number(parseLongitude)) || parseLongitude <= 0||
+            isNaN(id) || id == null || isNaN(vehicleId) || vehicleId == null || isNaN(vehicleIdFrom) || vehicleIdFrom == null ||
+            isNaN(vehicleIdTo) || vehicleIdTo == null || isNaN(parseLatitude) || parseLatitude <= 0 || isNaN(parseLongitude) || parseLongitude <= 0||
             !validateStart || !validateEnd){
             throw new Error("Dati parametri ne daju ocekivani rezultat: "+id+"-"+vehicleId+"-"+vehicleIdFrom+"-"+
-            vehicleIdTo+"-"+parseLatitude+"-"+parseLongitude+"-"+validateStart+"-"+validateEnd);
+            vehicleIdTo+"-"+parseLatitude+"-"+parseLongitude+"-"+recordedAtFrom+"-"+recordedAtTo);
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(recordedAtTo).isBefore(moment(recordedAtFrom))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.post(url+`/general-search`,{
@@ -201,8 +201,8 @@ export async function generalSearch({id, vehicleId,vehicleIdFrom,vehicleIdTo,lat
                 vehicleIdTo:vehicleIdTo,
                 latitude:parseLatitude,
                 longitude:parseLongitude,
-                recordedAtFrom:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                recordedAtTo:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                recordedAtFrom:moment(recordedAtFrom).format("YYYY-MM-DDTHH:mm:ss"),
+                recordedAtTo:moment(recordedAtTo).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -218,7 +218,7 @@ export async function saveVehicleLocation({vehicleId,latitude,longitude}){
     try{
         const parseLatitude = parseFloat(latitude);
         const parseLongitude = parseFloat(longitude);
-        if(Number.isNaN(Number(vehicleId)) || vehicleId == null || Number.isNaN(Number(parseLatitude)) || parseLatitude <= 0 || Number.isNaN(Number(parseLongitude)) || parseLongitude <= 0){
+        if(isNaN(vehicleId) || vehicleId == null || isNaN(parseLatitude) || parseLatitude <= 0 || isNaN(parseLongitude) || parseLongitude <= 0){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {vehicleId,latitude,longitude};
@@ -234,12 +234,12 @@ export async function saveVehicleLocation({vehicleId,latitude,longitude}){
 
 export async function saveAs({sourceId,vehicleId,latitude,longitude}){
     try{
-        if(Number.isNaN(Number(sourceId)) || sourceId == null){
+        if(isNaN(sourceId) || sourceId == null){
             throw new Error("Id "+sourceId+" mora biti ceo broj");
         }
         const parseLatitude = parseFloat(latitude);
         const parseLongitude = parseFloat(longitude);
-        if(Number.isNaN(Number(parseLatitude)) || parseLatitude <= 0 || Number.isNaN(Number(parseLongitude)) || parseLongitude <= 0 || Number.isNaN(Number(vehicleId)) || vehicleId == null){
+        if(isNaN(parseLatitude) || parseLatitude <= 0 || isNaN(parseLongitude) || parseLongitude <= 0 || isNaN(vehicleId) || vehicleId == null){
             throw new Error("Longitude "+parseLongitude+", latitude "+parseLatitude+" id vozila "+vehicleId+" moraju biti celi brojevi");
         }
         const requestBody = {vehicleId,latitude,longitude};
@@ -265,13 +265,13 @@ export async function saveAll(requests){
             if (req.id == null || isNaN(req.id)) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.vehicleId == null || Number.isNaN(Number(req.vehicleId))) {
+            if (req.vehicleId == null || isNaN(req.vehicleId)) {
                 throw new Error(`Nevalidan zahtev na indexu ${index}: 'vehicleId' je obavezan i mora biti broj`);
             }
-            if (Number.isNaN(Number(lat)) || lat < -90 || lat > 90) {
+            if (isNaN(lat) || lat < -90 || lat > 90) {
                 throw new Error(`Nevalidna latitude vrednost na indexu ${index}: mora biti broj izmedju -90 i 90`);
             }
-            if (Number.isNaN(Number(lon)) || lon < -180 || lon > 180) {
+            if (isNaN(lon) || lon < -180 || lon > 180) {
                 throw new Error(`Nevalidna longitude vrednost na indexu ${index}: mora biti broj izmedju -180 i 180`);
             }
         }

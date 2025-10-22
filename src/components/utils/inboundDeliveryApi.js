@@ -66,7 +66,7 @@ export async function create(date){
 
 export async function update({id, date}){
     try{
-        if(id == null || Number.isNaN(Number(id)) ||!isValidInboundDelivery(...date, validateStatus)){
+        if(id == null || isNaN(id) ||!isValidInboundDelivery(...date, validateStatus)){
             throw new Error("Sva polja moraju biti popunjena i validna.");    
         }
         const response = await api.put(url+`/update/${id}`,date,{
@@ -81,7 +81,7 @@ export async function update({id, date}){
 
 export async function deleteInboundDelivery(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -96,7 +96,7 @@ export async function deleteInboundDelivery(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za inboundDelivery nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -146,13 +146,13 @@ export async function findByDeliveryDateBetween({from, to}) {
         if (!isFromValid || !isToValid) {
             return false;
         }
-        if(moment(isToValid).isBefore(moment(isFromValid))){
+        if(moment(to).isBefore(moment(from))){
             throw new Error("Datum kraja inspekcije ne sme biti ispred datuma pocetka inspekcije");
         }
         const response = await api.get(url + `/date-range`, {
             params: {
-                from: moment(isFromValid).format("YYYY-MM-DD"),
-                to: moment(isToValid).format("YYYY-MM-DD")
+                from: moment(from).format("YYYY-MM-DD"),
+                to: moment(to).format("YYYY-MM-DD")
         },
             headers: getHeader()
         });
@@ -165,7 +165,7 @@ export async function findByDeliveryDateBetween({from, to}) {
 
 export async function findBySupplyId(supplyId){
     try{
-        if(supplyId == null || Number.isNaN(Number(supplyId))){
+        if(supplyId == null || isNaN(supplyId)){
             throw new Error("ID "+supplyId+" prenosa mora biti prosledjen");
         }
         const response = await api.get(url+`/supply/${supplyId}`,{
@@ -212,7 +212,7 @@ export async function deleteAllByIds(ids) {
 
 export async function findBySupply_Storage_Id(storageId){
     try{
-        if(Number.isNaN(Number(storageId)) || storageId == null){
+        if(isNaN(storageId) || storageId == null){
             throw new Error("Dati id "+storageId+" skladista dobavljaca, nije pronadjen");
         }
         const response = await api.get(url+`/supply/storage/${storageId}`,{
@@ -264,7 +264,7 @@ export async function findBySupply_Storage_LocationContainingIgnoreCase(storageL
 export async function findBySupply_StorageCapacity(storageCapacity){
     try{
         const parseStorageCapacity = parseFloat(storageCapacity);
-        if(Number.isNaN(Number(parseStorageCapacity)) || parseStorageCapacity <= 0){
+        if(isNaN(parseStorageCapacity) || parseStorageCapacity <= 0){
             throw new Error("Dati kapacitet "+parseStorageCapacity+" stkladista dobavljaca za inbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/search/supply/storage-capacity`,{
@@ -283,7 +283,7 @@ export async function findBySupply_StorageCapacity(storageCapacity){
 export async function findBySupply_StorageCapacityGreaterThan(storageCapacity){
     try{
         const parseStorageCapacity = parseFloat(storageCapacity);
-        if(Number.isNaN(Number(parseStorageCapacity)) || parseStorageCapacity <= 0){
+        if(isNaN(parseStorageCapacity) || parseStorageCapacity <= 0){
             throw new Error("Dati kapacitet skaldista dobavljaca veci od "+parseStorageCapacity+" za inbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/search/supply/storage-capacity-greater-than`,{
@@ -302,7 +302,7 @@ export async function findBySupply_StorageCapacityGreaterThan(storageCapacity){
 export async function findBySupply_StorageCapacityLessThan(storageCapacity){
     try{
         const parseStorageCapacity = parseFloat(storageCapacity);
-        if(Number.isNaN(Number(parseStorageCapacity)) || parseStorageCapacity <= 0){
+        if(isNaN(parseStorageCapacity) || parseStorageCapacity <= 0){
             throw new Error("Dati kapacitet skaldista dobavljaca manji od "+parseStorageCapacity+" za inbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/search/supply/storage-capacity-less-than`,{
@@ -433,7 +433,7 @@ export async function findBySupply_StorageLocationContainingIgnoreCaseAndStatus(
 export async function findBySupply_StorageNameContainingIgnoreCaseAndCapacity({storageName, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || !storageName || typeof storageName !== "string" || storageName.trim() === ""){
+        if(isNaN(parseCapacity) || parseCapacity <= 0 || !storageName || typeof storageName !== "string" || storageName.trim() === ""){
             throw new Error("Dati naziv "+storageName+" i kapacitet "+parseCapacity+" skladista dobavljaca za inbound-delivery, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supply/storage-name-capacity"`,{
@@ -453,7 +453,7 @@ export async function findBySupply_StorageNameContainingIgnoreCaseAndCapacity({s
 export async function findBySupply_StorageNameContainingIgnoreCaseAndCapacityGreaterThan({storageName, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || !storageName || typeof storageName !== "string" || storageName.trim() === ""){
+        if(isNaN(parseCapacity) || parseCapacity <= 0 || !storageName || typeof storageName !== "string" || storageName.trim() === ""){
             throw new Error("Dati naziv "+storageName+" i kapacitet veci od "+parseCapacity+" skladista dobavljaca za inbound-delivery, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supply/storage-name-capacity-greater-than`,{
@@ -473,7 +473,7 @@ export async function findBySupply_StorageNameContainingIgnoreCaseAndCapacityGre
 export async function findBySupply_StorageNameContainingIgnoreCaseAndCapacityLessThan({storageName, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || !storageName || typeof storageName !== "string" || storageName.trim() === ""){
+        if(isNaN(parseCapacity) || parseCapacity <= 0 || !storageName || typeof storageName !== "string" || storageName.trim() === ""){
             throw new Error("Dati naziv "+storageName+" i kapacitet manji od "+parseCapacity+" skladista dobavljaca za inbound-delivery, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supply/storage-name-capacity-less-than`,{
@@ -513,7 +513,7 @@ export async function findBySupply_StorageNameContainingIgnoreCaseAndLocationCon
 export async function findBySupply_StorageLocationContainingIgnoreCaseAndCapacity({storageLocation, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
+        if(isNaN(parseCapacity) || parseCapacity <= 0 || !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
             throw new Error("Data lokacija "+storageLocation+" i kapacitet "+parseCapacity+" skladista dobavljaca za inbound-delivery, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supply/storage-location-capacity`,{
@@ -533,7 +533,7 @@ export async function findBySupply_StorageLocationContainingIgnoreCaseAndCapacit
 export async function findBySupply_StorageLocationContainingIgnoreCaseAndCapacityGreaterThan({storageLocation, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
+        if(isNaN(parseCapacity) || parseCapacity <= 0 || !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
             throw new Error("Data lokacija "+storageLocation+" i kapacitet veci od "+parseCapacity+" skaldista dobavljaca za inbound-delivery, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supply/storage-location-capacity-greater-than`,{
@@ -553,7 +553,7 @@ export async function findBySupply_StorageLocationContainingIgnoreCaseAndCapacit
 export async function findBySupply_StorageLocationContainingIgnoreCaseAndCapacityLessThan({storageLocation, capacity}){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(Number.isNaN(Number(parseCapacity)) || parseCapacity <= 0 || !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
+        if(isNaN(parseCapacity) || parseCapacity <= 0 || !storageLocation || typeof storageLocation !== "string" || storageLocation.trim() === ""){
             throw new Error("Data lokacija "+storageLocation+" i kapacitet manji od "+parseCapacity+" skaldista dobavljaca za inbound-delivery, nisu pronadjeni");
         }
         const response = await api.get(url+`/search/supply/storage-location-capacity-less-than`,{
@@ -585,7 +585,7 @@ export async function findByStorageWithoutShelvesOrUnknown(){
 export async function findBySupply_Quantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Data kolicina "+parseQuantity+" dobavljaca za inbound-delivery, nije pronadjena");
         } 
         const response = await api.get(url+`/search/supply-quantity`,{
@@ -604,7 +604,7 @@ export async function findBySupply_Quantity(quantity){
 export async function findBySupply_QuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Data kolicina veca od "+parseQuantity+" dobavljaca za inbound-delivery, nije pronadjena");
         } 
         const response = await api.get(url+`/search/supply-quantity-greater-than`,{
@@ -623,7 +623,7 @@ export async function findBySupply_QuantityGreaterThan(quantity){
 export async function findBySupply_QuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+        if(isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Data kolicina manja od "+parseQuantity+" dobavljaca za inbound-delivery, nije pronadjena");
         } 
         const response = await api.get(url+`/search/supply-quantity-less-than`,{
@@ -643,7 +643,7 @@ export async function findBySupply_QuantityBetween({min, max}){
     try{
         const parseMin = parseFloat(min);
         const parseMax = parseFloat(nax);
-        if(Number.isNaN(Number(parseMin)) || parseMax <= 0 || Number.isNaN(Number(parseMax)) || parseMax <= 0){
+        if(isNaN(parseMin) || parseMax <= 0 || isNaN(parseMax) || parseMax <= 0){
             throw new Error("Dati opseg kolicine "+parseMin+" - "+parseMax+" dobavljaca za inbound-delivery, nije pronadjena");
         }
         if(parseMin > parseMax){
@@ -667,11 +667,11 @@ export async function findBySupply_Updates(updates){
     try{
         const validateDate = moment.isMoment(updates) || moment(updates,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Datum "+validateDate+" dobavljaca za inbound-delivery, nije pronadjen");
+            throw new Error("Datum "+updates+" dobavljaca za inbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/search/supply-updates`,{
             params:{
-                updates:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                updates:moment(updates).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -686,11 +686,11 @@ export async function findBySupply_UpdatesAfter(updates){
     try{
         const validateDate = moment.isMoment(updates) || moment(updates,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Datum posle "+validateDate+" dobavljaca za inbound-delivery, nije pronadjen");
+            throw new Error("Datum posle "+updates+" dobavljaca za inbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/search/supply-updates-after`,{
             params:{
-                updates:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                updates:moment(updates).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -705,11 +705,11 @@ export async function findBySupply_UpdatesBefore(updates){
     try{
         const validateDate = moment.isMoment(updates) || moment(updates,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDate){
-            throw new Error("Datum pre "+validateDate+" dobavljaca za inbound-delivery, nije pronadjen");
+            throw new Error("Datum pre "+updates+" dobavljaca za inbound-delivery, nije pronadjen");
         }
         const response = await api.get(url+`/search/supply-updates-before`,{
             params:{
-                updates:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                updates:moment(updates).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -725,15 +725,15 @@ export async function findBySupply_UpdatesBetween({updatesFrom, updatesTo}){
         const validateDateFrom = moment.isMoment(updatesFrom) || moment(updatesFrom,"YYYY-MM-DDTHH:mm:ss").isValid();
         const validateDateTo = moment.isMoment(updatesTo) || moment(updatesTo,"YYYY-MM-DDTHH:mm:ss").isValid();
         if(!validateDateFrom || !validateDateTo){
-            throw new Error("Datum opsega "+validateDateFrom+" - "+validateDateTo+" dobavljaca za inbound-delivery, nije pronadjen");
+            throw new Error("Datum opsega "+updatesFrom+" - "+updatesTo+" dobavljaca za inbound-delivery, nije pronadjen");
         }
-        if(moment(validateDateTo).isBefore(moment(validateDateFrom))){
+        if(moment(updatesTo).isBefore(moment(updatesFrom))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/supply-updates-between`,{
             params : {
-                updatesFrom:moment(validateDateFrom).format("YYYY-MM-DDTHH:mm:ss"),
-                updatesTo:moment(validateDateTo).format("YYYY-MM-DDTHH:mm:ss")
+                updatesFrom:moment(updatesFrom).format("YYYY-MM-DDTHH:mm:ss"),
+                updatesTo:moment(updatesTo).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -746,7 +746,7 @@ export async function findBySupply_UpdatesBetween({updatesFrom, updatesTo}){
 
 export async function trackInboundDelivery(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("Dati id "+id+" nadolazece-dostave za pracenje, nije pronadjen");
         }
         const response = await api.get(url+`/track/${id}`,{
@@ -761,7 +761,7 @@ export async function trackInboundDelivery(id){
 
 export async function confirmInboundDelivery(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("ID "+id+" za potvrdu nadolazece-dostave, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/confirm`,{
@@ -776,7 +776,7 @@ export async function confirmInboundDelivery(id){
 
 export async function cancelInboundDelivery(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("ID "+id+" za otkazivanje nadolazece-dostave, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/cancel`,{
@@ -791,7 +791,7 @@ export async function cancelInboundDelivery(id){
 
 export async function closeInboundDelivery(id){
     try{
-        if(Number.isNaN(Number(id)) || id == null){
+        if(isNaN(id) || id == null){
             throw new Error("ID "+id+" za zatvaranje nadolazece-dostave, nije pronadjen");
         }
         const response = await api.post(url+`/${id}/close`,{
@@ -806,7 +806,7 @@ export async function closeInboundDelivery(id){
 
 export async function changeStatus({id, status}){
     try{
-        if(Number.isNaN(Number(id)) || id == null || !isInboundDeliveryStatusValid.includes(status?.toUpperCase())){
+        if(isNaN(id) || id == null || !isInboundDeliveryStatusValid.includes(status?.toUpperCase())){
             throw new Error("ID "+id+" i status nadolazece-dostave "+status+" nisu pronadjeni");
         }
         const response = await api.post(url+`/${id}/status/${status}`,{
@@ -887,10 +887,10 @@ export async function saveAll(requests){
         }
         for (let i = 0; i < requests.length; i++) {
             const req = requests[i];
-            if (req.id == null || Number.isNaN(Number(req.id))) {
+            if (req.id == null || isNaN(req.id)) {
                 throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
             }
-            if (req.supplyId == null || Number.isNaN(Number(req.supplyId))) {
+            if (req.supplyId == null || isNaN(req.supplyId)) {
                 throw new Error(`Nevalidan zahtev na indeksu ${i}: 'supplyId' je obavezan i mora biti broj`);
             }
             if (!req.status || !validateStatus.includes(req.status.toUpperCase())) {

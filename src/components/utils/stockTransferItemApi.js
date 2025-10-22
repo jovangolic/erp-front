@@ -19,7 +19,7 @@ const url = `${import.meta.env.VITE_API_BASE_URL}/stockTransferItems`;
 export async function create({productId, quantity}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if(Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 || productId == null || Number.isNaN(Number(productId))){
+        if(isNaN(parseQuantity) || parseQuantity <= 0 || productId == null || isNaN(productId)){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {productId, quantity};
@@ -36,8 +36,9 @@ export async function create({productId, quantity}){
 export async function update({id, productId, quantity}){
     try{
         const parseQuantity = parseFloat(quantity);
-        if( id == null || Number.isNaN(Number(id)) || 
-            Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0 || productId == null || Number.isNaN(Number(productId))){
+        if(
+            id == null || isNaN(id) ||
+            isNaN(parseQuantity) || parseQuantity <= 0 || productId == null || isNaN(productId)){
             throw new Error("Sva polja moraju biti popunjena");
         }
         const requestBody = {productId, quantity};
@@ -53,7 +54,7 @@ export async function update({id, productId, quantity}){
 
 export async function deleteStockTransferItem(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -68,7 +69,7 @@ export async function deleteStockTransferItem(id){
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -95,7 +96,7 @@ export async function findAll(){
 
 export async function findByProductId(productId){
     try{
-        if(productId == null || Number.isNaN(Number(productId))){
+        if(productId == null || isNaN(productId)){
             throw new Error("ID "+productId+" prenosa mora biti prosleđen.");
         }
         const response = await api.get(url+`/product/${productId}`,{
@@ -129,7 +130,7 @@ export async function findByProduct_Name(name){
 export async function findByProduct_CurrentQuantity(currentQuantity){
     try {
         const parseCurrentQuantity = parseFloat(currentQuantity);
-        if (Number.isNaN(Number(parseCurrentQuantity)) || parseCurrentQuantity <= 0) {
+        if (isNaN(parseCurrentQuantity) || parseCurrentQuantity <= 0) {
             throw new Error("Data kolicina "+parseCurrentQuantity+" nije pronadjena");
         }
         const response = await api.get(url + `/by-currentQuantity`, {
@@ -147,7 +148,7 @@ export async function findByProduct_CurrentQuantity(currentQuantity){
 export async function findByQuantity(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if (Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0) {
+        if (isNaN(parseQuantity) || parseQuantity <= 0) {
             throw new Error("Data kolicina "+parseQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-quantity`,{
@@ -166,7 +167,7 @@ export async function findByQuantity(quantity){
 export async function findByQuantityLessThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if (Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0) {
+        if (isNaN(parseQuantity) || parseQuantity <= 0) {
             throw new Error("Data kolicina manja od "+parseQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-less-quantity`,{
@@ -185,7 +186,7 @@ export async function findByQuantityLessThan(quantity){
 export async function findByQuantityGreaterThan(quantity){
     try{
         const parseQuantity = parseFloat(quantity);
-        if (Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0) {
+        if (isNaN(parseQuantity) || parseQuantity <= 0) {
             throw new Error("Data kolicina veca od "+parseQuantity+" nije pronadjena");
         }
         const response = await api.get(url+`/by-greater-quantity`,{
@@ -203,7 +204,7 @@ export async function findByQuantityGreaterThan(quantity){
 
 export async function findByStockTransferId(stockTransferId){
     try{
-        if (stockTransferId == null || Number.isNaN(Number(stockTransferId))) {
+        if (stockTransferId == null || isNaN(stockTransferId)) {
             throw new Error("ID "+stockTransferId+" prenosa mora biti prosleđen.");
         }
         const response = await api.get(url+`/stockTransfer/${stockTransferId}`,{
@@ -218,7 +219,7 @@ export async function findByStockTransferId(stockTransferId){
 
 export async function findByStockTransfer_FromStorageId(fromStorageId){
     try{
-        if(fromStorageId == null || Number.isNaN(Number(fromStorageId))){
+        if(fromStorageId == null || isNaN(fromStorageId)){
             throw new Error("ID prenosa mora biti prosleđen.");
         }
         const response = await api.get(url+`/storage/${fromStorageId}`,{
@@ -233,7 +234,7 @@ export async function findByStockTransfer_FromStorageId(fromStorageId){
 
 export async function findByStockTransfer_ToStorageId(toStorageId){
     try{
-        if(toStorageId == null || Number.isNaN(Number(toStorageId))){
+        if(toStorageId == null || isNaN(toStorageId)){
             throw new Error("ID "+toStorageId+" prenosa mora biti prosleđen.");
         }
         const response = await api.get(url+`/storage/${toStorageId}`,{
@@ -334,7 +335,7 @@ export async function findByProduct_StorageType(storageType){
 
 export async function findByProduct_Shelf_Id(shelfId){
     try{
-        if(shelfId == null || Number.isNaN(Number(shelfId))){
+        if(shelfId == null || isNaN(shelfId)){
             throw new Error("Dati ID "+shelfId+" policene nije pronadjen");
         }
         const response = await api.get(url+`/search/product/shelf/${shelfId}`,{
@@ -351,7 +352,7 @@ export async function findByProduct_Shelf_Id(shelfId){
 export async function findByProduct_Shelf_RowCount(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(parseRowCount <= 0 || Number.isNaN(Number(parseRowCount))){
+        if(parseRowCount <= 0 || isNaN(parseRowCount)){
             throw new Error("Dati red "+parseRowCount+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/search/product/row-count`,{
@@ -368,7 +369,7 @@ export async function findByProduct_Shelf_RowCount(rowCount){
 export async function findByProduct_Shelf_Cols(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(parseCols <= 0 || Number.isNaN(Number(parseCols))){
+        if(parseCols <= 0 || isNaN(parseCols)){
             throw new Error("Dati raf "+parseCols+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/search/product/cols`,{
@@ -385,7 +386,7 @@ export async function findByProduct_Shelf_Cols(cols){
 export async function findByProduct_Shelf_RowCountGreaterThanEqual(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(parseRowCount <= 0 || Number.isNaN(Number(parseRowCount))){
+        if(parseRowCount <= 0 || isNaN(parseRowCount)){
             throw new Error("Dati red "+parseRowCount+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/search/product/row-count-greater-than`,{
@@ -402,7 +403,7 @@ export async function findByProduct_Shelf_RowCountGreaterThanEqual(rowCount){
 export async function findByProduct_Shelf_ColsGreaterThanEqual(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(parseCols <= 0 || Number.isNaN(Number(parseCols))){
+        if(parseCols <= 0 || isNaN(parseCols)){
             throw new Error("Dati raf "+parseCols+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/search/product/cols-greater-than`,{
@@ -419,7 +420,7 @@ export async function findByProduct_Shelf_ColsGreaterThanEqual(cols){
 export async function findByProduct_Shelf_RowCountLessThanEqual(rowCount){
     try{
         const parseRowCount = parseInt(rowCount,10);
-        if(parseRowCount <= 0 || Number.isNaN(Number(parseRowCount))){
+        if(parseRowCount <= 0 || isNaN(parseRowCount)){
             throw new Error("Dati red "+parseRowCount+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/search/product/row-count-less-than`,{
@@ -436,7 +437,7 @@ export async function findByProduct_Shelf_RowCountLessThanEqual(rowCount){
 export async function findByProduct_Shelf_ColsLessThanEqual(cols){
     try{
         const parseCols = parseInt(cols,10);
-        if(parseCols <= 0 || Number.isNaN(Number(parseCols))){
+        if(parseCols <= 0 || isNaN(parseCols)){
             throw new Error("Dati raf "+parseCols+" za policu nije pronadjen");
         }
         const response = await api.get(url+`/search/product/cols-less-than`,{
@@ -454,7 +455,7 @@ export async function findByProduct_Shelf_RowCountBetween({minRowCount, maxRowCo
     try{
         const parseMinRowCount = parseInt(minRowCount,10);
         const parseMaxRowCount = parseInt(maxRowCount,10);
-        if(parseMaxRowCount <= 0 || Number.isNaN(Number(parseMaxRowCount)) || parseMinRowCount <= 0|| Number.isNaN(Number(parseMinRowCount))){
+        if(parseMaxRowCount <= 0 || isNaN(parseMaxRowCount) || parseMinRowCount <= 0|| isNaN(parseMinRowCount)){
             throw new Error("Dati opseg "+parseMinRowCount+" - "+parseMaxRowCount+" redova za policu nije pronadjen");
         }
         if(parseMinRowCount > parseMaxRowCount){
@@ -479,7 +480,7 @@ export async function findByProduct_Shelf_ColsBetween({minCols, maxCols}){
         const parseMinCols = parseInt(minCols,10);
         const parseMaxCols = parseInt(maxCols,10);
         if(
-            parseMinCols <= 0 || Number.isNaN(Number(parseMinCols)) || parseMaxCols <= 0 || Number.isNaN(Number(parseMaxCols))
+            parseMinCols <= 0 || isNaN(parseMinCols) || parseMaxCols <= 0 || isNaN(parseMaxCols)
         ){
             throw new Error("Dati opseg "+parseMinCols+" - "+parseMaxCols+" rafova za policu nije pronadjen");
         }
@@ -502,7 +503,7 @@ export async function findByProduct_Shelf_ColsBetween({minCols, maxCols}){
 
 export async function findByProduct_Supply_Id(supplyId){
     try{    
-        if(supplyId == null || Number.isNaN(Number(supplyId))){
+        if(supplyId == null || isNaN(supplyId)){
             throw new Error("Dati ID "+supplyId+" za dobavljaca nije pronadjen");
         }
         const response = await api.get(url+`/search/product/supply/${supplyId}`,{
@@ -535,10 +536,10 @@ export async function findByStockTransfer_TransferDate(transferDate){
     try{
         const validateTransferDate = moment.isMoment(transferDate) || moment(transferDate,"YYYY-MM-DD",true).isValid();
         if(!validateTransferDate){
-            throw new Error("Dati datum "+validateTransferDate+" za stock-transfer nije pronadjen");
+            throw new Error("Dati datum "+transferDate+" za stock-transfer nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer-date`,{
-            params:{transferDate:moment(validateTransferDate).format("YYYY-MM-DD")},
+            params:{transferDate:moment(transferDate).format("YYYY-MM-DD")},
             headers:getHeader()
         });
         return response.data;
@@ -553,15 +554,15 @@ export async function findByStockTransfer_TransferDateBetween({transferDateStart
         const validateTransferDateStart = moment.isMoment(transferDateStart) || moment(transferDateStart,"YYYY-MM-DD",true).isValid();
         const validateTransferDateEnd = moment.isMoment(transferDateEnd) || moment(transferDateEnd,"YYYY-MM-DD",true).isValid();
         if(!validateTransferDateStart || !validateTransferDateEnd ){
-            throw new Error("Dati opseg "+validateTransferDateStart+" - "+validateTransferDateEnd+" datuma za stock-transfer nije pronadjen");
+            throw new Error("Dati opseg "+transferDateStart+" - "+transferDateEnd+" datuma za stock-transfer nije pronadjen");
         }
-        if(moment(validateTransferDateEnd).isBefore(moment(validateTransferDateStart))){
+        if(moment(transferDateEnd).isBefore(moment(transferDateStart))){
             throw new Error("Datum za kraj ne sme biti veci od datuma za pocetak");
         }
         const response = await api.get(url+`/search/stock-transfer-date-range`,{
             params:{
-                transferDateStart:moment(validateTransferDateStart).format("YYYY-MM-DD"),
-                transferDateEnd:moment(validateTransferDateEnd).format("YYYY-MM-DD")
+                transferDateStart:moment(transferDateStart).format("YYYY-MM-DD"),
+                transferDateEnd:moment(transferDateEnd).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -610,11 +611,11 @@ export async function findByStockTransfer_TransferDateAfter(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum posle "+validateDate+" za stock-transfer nije pronadjen");
+            throw new Error("Dati datum posle "+date+" za stock-transfer nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer-date-after`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD")
+                date:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -629,11 +630,11 @@ export async function findByStockTransfer_TransferDateBefore(date){
     try{
         const validateDate = moment.isMoment(date) || moment(date,"YYYY-MM-DD",true).isValid();
         if(!validateDate){
-            throw new Error("Dati datum pre "+validateDate+" za stock-transfer nije pronadjen");
+            throw new Error("Dati datum pre "+date+" za stock-transfer nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer-date-before`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD")
+                date:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -648,7 +649,7 @@ export async function findByStockTransfer_StatusAndQuantityGreaterThan({status, 
     try{
         const parseQuantity = parseFloat(quantity);
         if(!isTransferStatusValid.includes(status?.toUpperCase()) ||
-            Number.isNaN(Number(parseQuantity)) || parseQuantity <= 0){
+            isNaN(parseQuantity) || parseQuantity <= 0){
             throw new Error("Dati status "+status+" i kolicina veca od "+parseQuantity+" za stock-transfer nisu pronadjeni");
         }
         const response = await api.get(url+`/search/stock-transfer-quantity-greater-than`,{
@@ -671,16 +672,16 @@ export async function findByStockTransfer_StatusAndStockTransfer_TransferDateBet
         const validateDateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DD",true).isValid();
         if(!isTransferStatusValid.includes(status?.toUpperCase()) ||
             !validateDateStart || !validateDateEnd){
-            throw new Error("Dati status "+status+" i opseg "+validateDateStart+" - "+validateDateEnd+" datuma za stock-transfer nisu pronadjeni");
+            throw new Error("Dati status "+status+" i opseg "+start+" - "+end+" datuma za stock-transfer nisu pronadjeni");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/stock-transfer/status-and-date-range`,{
             params:{
                 status:(status || "").toUpperCase(),
-                start:moment(validateDateStart).format("YYYY-MM-DD"),
-                end:moment(validateDateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -726,7 +727,7 @@ export async function findByStockTransfer_FromStorage_LocationContainingIgnoreCa
 export async function findByStockTransfer_FromStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet "+parseCapacity+" from-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer/from-storage-capacity`,{
@@ -743,7 +744,7 @@ export async function findByStockTransfer_FromStorage_Capacity(capacity){
 export async function findByStockTransfer_FromStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" from-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer/from-storage-capcaty-greater-than`,{
@@ -760,7 +761,7 @@ export async function findByStockTransfer_FromStorage_CapacityGreaterThan(capaci
 export async function findByStockTransfer_FromStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet mani od "+parseCapacity+" from-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer/from-storage-capacity-less-than`,{
@@ -825,7 +826,7 @@ export async function findByStockTransfer_ToStorage_LocationContainingIgnoreCase
 export async function findByStockTransfer_ToStorage_Capacity(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet "+parseCapacity+" to-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer/to-storage-capacity`,{
@@ -842,7 +843,7 @@ export async function findByStockTransfer_ToStorage_Capacity(capacity){
 export async function findByStockTransfer_ToStorage_CapacityGreaterThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet veci od "+parseCapacity+" to-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer/to-storage-capacity-greater-than`,{
@@ -859,7 +860,7 @@ export async function findByStockTransfer_ToStorage_CapacityGreaterThan(capacity
 export async function findByStockTransfer_ToStorage_CapacityLessThan(capacity){
     try{
         const parseCapacity = parseFloat(capacity);
-        if(parseCapacity <= 0 || Number.isNaN(Number(parseCapacity))){
+        if(parseCapacity <= 0 || isNaN(parseCapacity)){
             throw new Error("Dati kapacitet manji od "+parseCapacity+" to-storage nije pronadjen");
         }
         const response = await api.get(url+`/search/stock-transfer/to-storage-capacity-less-than`,{

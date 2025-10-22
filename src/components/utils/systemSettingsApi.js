@@ -44,7 +44,7 @@ export async function createSystemSetting({key,value,description,category,dataTy
 export async function updateSystemSetting({id,value,description,category,dataType,editable,isVisible,defaultValue}){
     try{
         if(
-            id == null || Number.isNaN(Number(id)) ||
+            id == null || isNaN(id) ||
             !value || typeof value !== "string" || value.trim() === "" ||
             !description || typeof description !== "string" || description.trim() === "" ||
             !category || typeof category !== "string" || category.trim() === "" ||
@@ -72,7 +72,7 @@ export async function updateSystemSetting({id,value,description,category,dataTyp
 
 export async function getOneById(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za systemSetting nije pronadjen");
         }
         const response = await api.get(url+`/get-one/${id}`,{
@@ -87,7 +87,7 @@ export async function getOneById(id){
 
 export async function deleteSystemSetting(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" za systemSetting nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -367,15 +367,15 @@ export async function findByCreatedAtBetween({start, end}){
         const validateEnd = moment.isMoment(end) || moment(end,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateStart || 
             !validateEnd){
-            throw new Error("Dati vremenski opseg "+validateStart+" - "+validateEnd+" nije pronadjen");
+            throw new Error("Dati vremenski opseg "+start+" - "+end+" nije pronadjen");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/createdAt-between`,{
             params:{
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -390,11 +390,11 @@ export async function findByUpdatedAtAfter(time){
     try{
         const validateTime = moment.isMoment(time) || moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateTime){
-            throw new Error("Dato vreme "+validateTime+" za polje updatedAt nije pronadjeno");
+            throw new Error("Dato vreme "+time+" za polje updatedAt nije pronadjeno");
         }
         const response = await api.get(url+`/search/updatedAt-after`,{
             params:{
-                time:moment(validateTime).format("YYYY-MM-DDTHH:mm:ss")
+                time:moment(time).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -409,11 +409,11 @@ export async function findByUpdatedAtBefore(time){
     try{
         const validateTime = moment.isMoment(time) || moment(time,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!validateTime){
-            throw new Error("Dato vreme "+validateTime+" za polje updatedAt nije pronadjeno");
+            throw new Error("Dato vreme "+time+" za polje updatedAt nije pronadjeno");
         }
         const response = await api.get(url+`/search/updateAt-before`,{
             params:{
-                time:moment(validateTime).format("YYYY-MM-DDTHH:mm:ss")
+                time:moment(time).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -796,12 +796,12 @@ export async function findByCategoryAndCreatedAtAfter({category, fromDate}){
         const validateDate = moment.isMoment(tifromDateme) || moment(fromDate,"YYYY-MM-DDTHH:mm:ss",true).isValid();
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase()) ||
             !validateDate){
-            throw new Error("Data kategorija "+category+" i datum "+validateDate+" kreiranja nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i datum "+fromDate+" kreiranja nisu pronadjeni");
         }
         const response = await api.get(url+`/search/category-and-createAt-after`,{
             params:{
                 category:(category || "").toUpperCase(),
-                fromDate:moment(validateDate).format("YYYY-MM-DDTHH:mm:ss")
+                fromDate:moment(fromDate).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });
@@ -819,16 +819,16 @@ export async function findByCategoryAndUpdatedAtBetween({category, start, end}){
         if(!isSustemSettingCategoryValid.includes(category?.toUpperCase()) ||
             !validateStart ||
             !validateEnd){
-            throw new Error("Data kategorija "+category+" i datumski opseg "+validateStart+" - "+validateEnd+" nisu pronadjeni");
+            throw new Error("Data kategorija "+category+" i datumski opseg "+start+" - "+end+" nisu pronadjeni");
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/search/category-and-update-range`,{
             params:{
                 category:(category || "").toUpperCase(),
-                start:moment(validateStart).format("YYYY-MM-DDTHH:mm:ss"),
-                end:moment(validateEnd).format("YYYY-MM-DDTHH:mm:ss")
+                start:moment(start).format("YYYY-MM-DDTHH:mm:ss"),
+                end:moment(end).format("YYYY-MM-DDTHH:mm:ss")
             },
             headers:getHeader()
         });

@@ -54,7 +54,7 @@ export async function create({transferDate, fromStorageId,toStorageId,status, it
 
 export async function update({id,transferDate, fromStorageId,toStorageId,status, itemRequest} ){
     try{
-        if(id == null || Number.isNaN(Number(id)) || !validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
+        if(id == null || isNaN(id) || !validateStockTransferInput(transferDate,fromStorageId,toStorageId,status,itemRequest)){
             return;
         }
         const requestBody = {transferDate:moment(transferDate).format("YYYY-MM-DD"),
@@ -72,7 +72,7 @@ export async function update({id,transferDate, fromStorageId,toStorageId,status,
 
 export async function deleteStockTransfer (id) {
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.delete(url+`/delete/${id}`,{
@@ -87,7 +87,7 @@ export async function deleteStockTransfer (id) {
 
 export async function findOne(id){
     try{
-        if(id == null || Number.isNaN(Number(id))){
+        if(id == null || isNaN(id)){
             throw new Error("Dati ID "+id+" nije pronadjen");
         }
         const response = await api.get(url+`/find-one/${id}`,{
@@ -140,7 +140,7 @@ export async function findByTransferDate(date){
         }
         const response = await api.get(url+`/transfer-date`,{
             params:{
-                date:moment(validateDate).format("YYYY-MM-DD")
+                date:moment(date).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -156,15 +156,15 @@ export async function findByTransferDateBetween({start, end}){
         const validateDateStart = moment.isMoment(start) || moment(start, "YYYY-MM-DD", true).isValid();
         const validateDateEnd = moment.isMoment(end) || moment(end, "YYYY-MM-DD", true).isValid();
         if(!validateDateStart || !validateDateEnd){
-            throw new Error("Opseg datuma "+validateDateStart+" - "+validateDateEnd+" je nevalidan");
+            throw new Error("Opseg datuma "+start+" - "+end+" je nevalidan");
         }
-        if(moment(validateDateEnd).isBefore(moment(validateDateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/transfer-date-range`,{
             params:{
-                start:moment(validateDateStart).format("YYYY-MM-DD"),
-                end:moment(validateDateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });
@@ -177,7 +177,7 @@ export async function findByTransferDateBetween({start, end}){
 
 export async function findByFromStorageId(fromStorageId){
     try{
-        if(fromStorageId == null || Number.isNaN(Number(fromStorageId))){
+        if(fromStorageId == null || isNaN(fromStorageId)){
             throw new Error("Skaldiste "+fromStorageId+" odakle ide roba ne postoji");
         }
         const response = await api.get(url+`/storage/${fromStorageId}`,{
@@ -192,7 +192,7 @@ export async function findByFromStorageId(fromStorageId){
 
 export async function findByToStorageId(toStorageId){
     try{
-        if(toStorageId == null || Number.isNaN(Number(toStorageId))){
+        if(toStorageId == null || isNaN(toStorageId)){
             throw new Error("Skaldiste "+toStorageId+" gde dolazi roba ne postoji");
         }
         const response = await api.get(url+`/storage/${toStorageId}`,{
@@ -324,14 +324,14 @@ export async function findByStatusAndDateRange({status, start, end}){
         if(!validateStart || !validateEnd){
             return false;
         }
-        if(moment(validateEnd).isBefore(moment(validateStart))){
+        if(moment(end).isBefore(moment(start))){
             throw new Error("Datum za kraj ne sme biti ispred datuma za pocetak");
         }
         const response = await api.get(url+`/status-and-date-range`,{
             params:{
                 status:(status || "").toUpperCase(),
-                start:moment(validateStart).format("YYYY-MM-DD"),
-                end:moment(validateEnd).format("YYYY-MM-DD")
+                start:moment(start).format("YYYY-MM-DD"),
+                end:moment(end).format("YYYY-MM-DD")
             },
             headers:getHeader()
         });

@@ -734,6 +734,42 @@ export async function sumNetProfitByYearStatus(yearStatus){
     }
 }
 
+export async function countIncomeStatementRevenuByFiscalYear(){
+    try{
+        const response = await api.get(url+`/count/revenue-by-fiscal-year`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan prihod po fiskalnoj godini");
+    }
+}
+
+export async function countIncomeStatementExpensesByFiscalYear(){
+    try{
+        const response = await api.get(url+`/count/expenses-by-fiscal-year`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupan rashod po fiskalnoj godini");
+    }
+}
+
+export async function countIncomeStatementNetProfitByFiscalYear(){
+    try{
+        const response = await api.get(url+`/count/net-profit-by-fiscal-year`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli ukupnu neto zaradu po fiskalnoj godini");
+    }
+}
+
 export async function trackIncomeStatement(id){
     try{
         if(Number.isNaN(Number(id)) || id == null){

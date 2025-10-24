@@ -19,6 +19,7 @@ const isGoodsTypeValid = ["RAW_MATERIAL","SEMI_FINISHED_PRODUCT","FINISHED_PRODU
 const isReferenceTypeValid = ["GOODS_RECEIPT","PRODUCTION_ORDER","STORAGE_ITEM","BATCH","MATERIAL"];
 const isQualityCheckTypeValid = ["VISUAL","DIMENSIONAL","CHEMICAL","FUNCTIONAL","TEMPERATURE","HUMIDITY","OTHER"];
 const isQualityCheckStatusValid = ["PASSED","FILED","CONDITIONAL","PENDING"];
+const isInspectionStatusValid = ["ACTIVE","NEW","CONFIRMED","CLOSED","CANCELLED"];
 
 export async function createInspection({code,type,date,batchId,productId,inspectorId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId}){
     try{
@@ -2070,5 +2071,471 @@ export async function findByQualityCheckInspectorFirstNameContainingIgnoreCaseAn
     }
     catch(error){
         handleApiError(error,"Trenutno nismo pronasli ime "+firstName+" i prezime "+lastName+" inspektora za datu inspekciju");
+    }
+}
+
+export async function countQuantityInspectedByBatch(){
+    try{
+        const response = await api.get(url+`/count/quantity-inspected-batch`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj pregledane kolicine za batch");
+    }
+}
+
+export async function countQuantityRejectedByBatch(){
+    try{
+        const response = await api.get(url+`/count/quantity-rejected-batch`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj odbacene kolicine za batch");
+    }
+}
+
+export async function countQuantityAcceptedByBatch(){
+    try{
+        const response = await api.get(url+`/count/quantity-accepted-batch`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj prihvacene kolicine za batch");
+    }
+}
+
+export async function countQuantityInspectedByProduct(){
+    try{
+        const response = await api.get(url+`/count/quantity-inspected-product`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj pregledane kolicine za proizvod");
+    }
+}
+
+export async function countQuantityAcceptedByProduct(){
+    try{
+        const response = await api.get(url+`/count/quantity-accepted-product`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj prihvacene kolicine za proizvod");
+    }
+}
+
+export async function countQuantityRejectedByProduct(){
+    try{
+        const response = await api.get(url+`/count/quantity-rejected-product`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj odbacene kolicine za proizvod");
+    }
+}
+
+export async function countQuantityInspectedByInspector(){
+    try{
+        const response = await api.get(url+`/count/quantity-inspected-inspector`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj pregledane kolicine od strane ispektora");
+    }
+}
+
+export async function countQuantityAcceptedByInspector(){
+    try{
+        const response = await api.get(url+`/count/quantity-accepted-inspector`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj prihvacene kolicine od strane ispektora");
+    }
+}
+
+export async function countQuantityRejectedByInspector(){
+    try{
+        const response = await api.get(url+`/count/quantity-rejected-inspector`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj odbacene kolicine od strane ispektora");
+    }
+}
+
+export async function countQuantityInspectedByQualityCheck(){
+    try{
+        const response = await api.get(url+`/count/quantity-inspected-quality-check`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj pregledane kolicine za potvrdu kvaliteta");
+    }
+}
+
+export async function countQuantityAcceptedByQualityCheck(){
+    try{
+        const response = await api.get(url+`/count/quantity-accepted-quality-check`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj prihvacene kolicine za potvrdu kvaliteta");
+    }
+}
+
+export async function countQuantityRejectedByQualityCheck(){
+    try{
+        const response = await api.get(url+`/count/quantity-rejected-quality-check`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj odbacene kolicine za potvrdu kvaliteta");
+    }
+}
+
+export async function countInspectionByType(){
+    try{
+        const response = await api.get(url+`/count/by-type`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj inspekcija po datom tipu");
+    }
+}
+
+export async function countInspectionByResult(){
+    try{
+        const response = await api.get(url+`/count/by-result`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli broj inspekcija po datom tipu rezultata");
+    }
+}
+
+export async function trackInspectionByInspectionDefect(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" pracenja inspekcije prema inspekciji defekta, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-inspection-defect/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" inspekcije za pracenje prema inspekciji defekta");
+    }
+}
+
+export async function trackInspectionByTestMeasurement(id){
+    try{
+        if(isNaN(id) || id == null){
+            throw new Error("Dati id "+id+" pracenja inspekcije prema merama testiranja, nije pronadjen");
+        }
+        const response = await api.get(url+`/track-test-measurement/${id}`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" inspekcije za pracenje prema merama testiranja");
+    }
+}
+
+export async function findByReports({id, notes}){
+    try{
+        if(isNaN(id) || id == null || !notes?.trim()){
+            throw new Error("Dati id "+id+" i zapis "+notes+" date inspekcije, nisu pronadjeni");
+        }
+        const response = await api.get(url+`/reports`,{
+            params:{
+                id : id,
+                notes:notes
+            },
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli izvestaj po "+id+" id-iju i datom zapisu "+notes);
+    }
+}
+
+export async function confirmInspection(id){
+    try{
+        if(id == null || isNaN(id)){
+            throw new Error("Dati id"+id+" za potvrdjivanje inspekcije, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/confirm`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za potvrdjivanje date inspekcije");
+    }
+}
+
+export async function cancelInspection(id){
+    try{
+        if(id == null || isNaN(id)){
+            throw new Error("Dati id"+id+" za otkaziveanje inspekcije, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/cancel`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za otkazivanje date inspekcije");
+    }
+}
+
+export async function closeInspection(id){
+    try{
+        if(id == null || isNaN(id)){
+            throw new Error("Dati id"+id+" za zatvaranje inspekcije, nije pronadjen");
+        }
+        const response = await api.post(url+`/${id}/close`,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Trenutno nismo pronasli id "+id+" za zatvaranje date inspekcije");
+    }
+}
+
+export async function changeStatus({id, status}){
+    try{
+            if(isNaN(id) || id == null || !isInspectionStatusValid.includes(status?.toUpperCase())){
+                throw new Error("ID "+id+" i status inspekcije "+status+" nisu pronadjeni");
+            }
+            const response = await api.post(url+`/${id}/status/${status}`,{
+                headers:getHeader()
+            });
+            return response.data;
+        }
+        catch(error){
+             handleApiError(error,"Trenutno nismo pronasli id "+id+" i status inspekcije "+status);
+        }
+}
+
+export async function saveInspection({code,type,batchId, productId,inspectionId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId,status,confirmed = false}){
+    try{
+        const parseQuantityInspected = parseInt(quantityInspected, 10);
+        const parseQuantityAccepted = parseInt(quantityAccepted, 10);
+        const parseQuantityRejected = parseInt(quantityRejected, 10);
+        if(!code?.trim()){
+            throw new Error("Kod date inspekcije, mora biti unet");
+        }
+        if(!isInspectionTypeValid.includes(type?.toUpperCase())){
+            throw new Error("Tip inspekcije, mora biti izabran");
+        }
+        if(isNaN(productId) || productId == null){
+            throw new Error("Neispravan id za prozivod");
+        }
+        if(isNaN(batchId) || batchId == null){
+            throw new Error("Neisparavan id za batch");
+        }
+        if(isNaN(inspectionId) || inspectionId == null){
+            throw new Error("Neispravan id za inspektora");
+        }
+        if(isNaN(parseQuantityInspected) || parseQuantityInspected <= 0){
+            throw new Error("Pregledana kolicina, mora biti ceo broj");
+        }
+        if(isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0){
+            throw new Error("Prihvacena kolicina, mora biti ceo broj");
+        }
+        if(isNaN(parseQuantityRejected) || parseQuantityRejected <= 0){
+            throw new Error("Odbacena kolicna, mora biti ceo broj");
+        }
+        if(!notes?.trim()){
+            throw new Error("Zapis se mora uneti");
+        }
+        if(!isInspectionResultValid.includes(result?.toUpperCase())){
+            throw new Error("Tip rezultata inspekcije, se mora izabrati");
+        }
+        if(isNaN(qualityCheckId) || qualityCheckId == null){
+            throw new Error("Neispravan id za potvrdu kvaliteta");
+        }
+        if(!isInspectionStatusValid.includes(status?.toUpperCase())){
+            throw new Error("Status inspekcije, se mora izabrati");
+        }
+        if(typeof confirmed !== "boolean"){
+            throw new Error("Potvrda, mora biti: tacno ili netacno");
+        }
+        const requestBody = {code,type,batchId, productId,inspectionId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId,status,confirmed};
+        const response = await api.post(url+`/save`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja/save");
+    }
+}
+
+export async function saveAs({sourceId,code,type,batchId,productId,inspectionId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId}){
+    try{
+        const parseQuantityInspected = parseInt(quantityInspected, 10);
+        const parseQuantityAccepted = parseInt(quantityAccepted, 10);
+        const parseQuantityRejected = parseInt(quantityRejected, 10);
+        if(sourceId === undefined || sourceId == null || Number.isNaN(Number(sourceId))){
+            throw new Error("Id "+sourceId+" mora biti ceo broj");
+        }
+        if(!code?.trim()){
+            throw new Error("Kod date inspekcije, mora biti unet");
+        }
+        if(!isInspectionTypeValid.includes(type?.toUpperCase())){
+            throw new Error("Tip inspekcije, mora biti izabran");
+        }
+        if(isNaN(productId) || productId == null){
+            throw new Error("Neispravan id za prozivod");
+        }
+        if(isNaN(batchId) || batchId == null){
+            throw new Error("Neisparavan id za batch");
+        }
+        if(isNaN(inspectionId) || inspectionId == null){
+            throw new Error("Neispravan id za inspektora");
+        }
+        if(isNaN(parseQuantityInspected) || parseQuantityInspected <= 0){
+            throw new Error("Pregledana kolicina, mora biti ceo broj");
+        }
+        if(isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0){
+            throw new Error("Prihvacena kolicina, mora biti ceo broj");
+        }
+        if(isNaN(parseQuantityRejected) || parseQuantityRejected <= 0){
+            throw new Error("Odbacena kolicna, mora biti ceo broj");
+        }
+        if(!notes?.trim()){
+            throw new Error("Zapis se mora uneti");
+        }
+        if(!isInspectionResultValid.includes(result?.toUpperCase())){
+            throw new Error("Tip rezultata inspekcije, se mora izabrati");
+        }
+        if(isNaN(qualityCheckId) || qualityCheckId == null){
+            throw new Error("Neispravan id za potvrdu kvaliteta");
+        }
+        const requestBody = {code,type,batchId,productId,inspectionId,quantityInspected,quantityAccepted,quantityRejected,notes,result,qualityCheckId};
+        const response = await api.post(url+`/save-as`,requestBody,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom memorisanja-kao/save-as");
+    }
+}
+
+export async function saveAll(requests){
+    try{
+        if (!Array.isArray(requests) || requests.length === 0) {
+            throw new Error("Lista zahteva mora biti validan niz i ne sme biti prazna");
+        }
+        for(let i = 0; i < requests.length; i++){
+            const req = requests[i];
+            if (req.id == null || Number.isNaN(Number(req.id))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'id' je obavezan i mora biti broj`);
+            }
+            if(!req.code?.trim()){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'kod' inspekcije je obavezan`);
+            }
+            if (!req.type || !isInspectionTypeValid.includes(req.status.toUpperCase())) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'tip' inspekcije nije ispravan`);
+            }
+            if (req.batchId == null || Number.isNaN(Number(req.batchId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'batchId' je obavezan i mora biti broj`);
+            }
+            if (req.productId == null || Number.isNaN(Number(req.productId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'productId' je obavezan i mora biti broj`);
+            }
+            if (req.inspectionId == null || Number.isNaN(Number(req.inspectionId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'inspectionId' je obavezan i mora biti broj`);
+            }
+            const parseQuantityInspected = parseInt(req.quantityInspected, 10);
+            const parseQuantityAccepted = parseInt(req.quantityAccepted, 10);
+            const parseQuantityRejected = parseInt(req.quantityRejected, 10);
+            if(isNaN(parseQuantityInspected) || parseQuantityInspected <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'pregledana-kolicina' mora biti ceo broj`);
+            }
+            if(isNaN(parseQuantityAccepted) || parseQuantityAccepted <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'prihvacena-kolicina' mora biti ceo broj`);
+            }
+            if(isNaN(parseQuantityRejected) || parseQuantityRejected <= 0){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'odbacena-kolicina' mora biti ceo broj`);
+            }
+            if(!req.notes?.trim()){
+                throw new Error(`Nevalida zahteva na indexu ${i}: 'zapis' je obavezan`);
+            }
+            if(!req.result || !isInspectionResultValid.includes(req.result?.toUpperCase())){
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'tip-rezultata' nije ispravan`);
+            }
+            if (req.qualityCheckId == null || Number.isNaN(Number(req.qualityCheckId))) {
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'qualityCheckId' je obavezan i mora biti broj`);
+            }
+            if(!req.status || !isInspectionStatusValid.includes(req.status?.toUpperCase())){
+                throw new Error(`Nevalidan zahtev na indeksu ${i}: 'status-inspekcije' nije ispravan`);
+            }
+            if(!req.confirmed || typeof req.confirmed !== "boolean"){
+                throw new Error(`Nevalidan zahtev na indexu ${i}: 'confirmed' mora biti true ili false`);
+            }
+        }
+        const response = await api.post(url+`/save-all`,requests,{
+            headers:getHeader()
+        });
+        return response.data;
+    }
+    catch(error){
+        handleApiError(error,"Greska prilikom sveobuhvatnog memorisanja/save-all");
+    }
+}
+
+function cleanFilters(filters) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) => value !== null && value !== undefined && value !== "")
+    );
+}
+
+export async function generalSearch(filters = {}){
+    try{
+        const cleanedFilters = cleanFilters(filters);
+        const response = await api.post(url+`/general-search`,cleanedFilters,{
+            headers:getHeader()
+        });
+        return response.data;
+    }   
+    catch(error){
+        handleApiError(error,"Greska prilikom generalne pretrage");
     }
 }
